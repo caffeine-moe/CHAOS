@@ -7,7 +7,7 @@ If you feel so inclined, please contribute to this project. Or, buy me a coffee 
 
 # Features (Still under construction)
 - Fully custom discord API/Gateway interation.
-- <=~300ms Nitro Sniper
+- ~300ms Nitro Sniper
 - Leave all group DM's
 - Message spammer
 - Message purger
