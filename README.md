@@ -3,7 +3,8 @@ Caffeine's Hackable Accessible Open(Source) Selfbot
 
 Currently under HEAVY development.
 
-If you feel so inclined, please contribute to this project. 
+If you feel so inclined, please support me by contributing to this project. 
+
 Or, buy me a coffee : https://ko-fi.com/caffeine727
 
 # Features (Still under construction)
