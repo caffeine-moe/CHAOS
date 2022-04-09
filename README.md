@@ -18,5 +18,5 @@ If you feel so inclined, please contribute to this project. Or, buy me a coffee 
 - Website status/ping
 - IP Lookup
 - Avatar stealer
-And many more!
 
+And many more!
