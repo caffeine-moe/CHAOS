@@ -1,11 +1,10 @@
-# **CHAOS** - Like a utility knife for discord.
-Caffeine's Hackable Accessible Open(Source) Selfbot
+# CHAOS - Like a utility knife for discord.
 
 Currently under HEAVY development.
 
-If you feel so inclined, please support me by contributing to this project. 
+If you feel inclined, please support me by contributing to this project. 
 
-Or, buy me a coffee : https://ko-fi.com/caffeine727
+Or alternatively, by buying me a coffee : https://ko-fi.com/caffeine727
 
 ## Features (Still under construction)
 - Fully custom discord API/Gateway interation.
