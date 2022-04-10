@@ -1,4 +1,4 @@
-# CHAOS - Like a utility knife for discord.
+# **CHAOS** - Like a utility knife for discord.
 Caffeine's Hackable Accessible Open(Source) Selfbot
 
 Currently under HEAVY development.
