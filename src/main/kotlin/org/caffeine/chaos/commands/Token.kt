@@ -1,21 +1,27 @@
 package org.caffeine.chaos.commands
 
-import io.ktor.client.features.websocket.*
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import org.caffeine.chaos.Config
 import org.caffeine.chaos.LogV2
-import org.caffeine.chaos.api.Client
-import org.caffeine.chaos.api.messageCreate
-import org.caffeine.chaos.api.sendMessage
-import org.javacord.api.DiscordApi
-import org.javacord.api.event.message.MessageCreateEvent
+import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.message.MessageBuilder
+import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.concurrent.thread
 
-suspend fun Token(client: Client, event: messageCreate, config: Config) {
-        val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy hh:mm:ss"))
-        if (event.d.content.lowercase() == "${config.prefix}token") {
-            LogV2(config.token, "TOKEN:\u001B[38;5;33m")
-            sendMessage(event.d.channel_id,"Token logged to console.", config)
+suspend fun Token(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
+    if (event.message.content.lowercase() == "${config.prefix}token") {
+        LogV2(config.token, "TOKEN:\u001B[38;5;33m")
+        try {
+            event.message.channel.sendMessage(MessageBuilder().append("Token logged to console.").build(),
+                config,
+                client)
+                .thenAccept { message ->
+                    this.launch { bot(message, config) }
+                }
+        }catch (e: Exception){
+            e.printStackTrace()
         }
+    }
 }

@@ -15,7 +15,7 @@ data class status(
     val status: String
 )
 
-fun online(event: org.caffeine.chaos.api.D, config: Config) {
+/*fun online(event: org.caffeine.chaos.api.D, config: Config) {
     try {
         if (event.content == "${config.prefix}online") {
             runBlocking {
@@ -77,4 +77,4 @@ fun invis(event: org.caffeine.chaos.api.D, config: Config) {
             }
         }
     }
-}
+}*/

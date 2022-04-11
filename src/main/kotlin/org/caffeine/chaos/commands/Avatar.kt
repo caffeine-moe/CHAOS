@@ -1,19 +1,17 @@
 package org.caffeine.chaos.commands
 
 import org.caffeine.chaos.Config
-import org.javacord.api.DiscordApi
-import org.javacord.api.entity.message.MessageBuilder
-import org.javacord.api.event.message.MessageCreateEvent
+import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.message.MessageBuilder
+import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.concurrent.thread
 
-fun Avatar(client: DiscordApi, event: MessageCreateEvent, config: Config) {
-    thread {
+/*suspend fun Avatar(client: Client, event: MessageCreateEvent, config: Config) {
         val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy hh:mm:ss"))
-        if (event.messageContent.lowercase() == "${config.prefix}avatar" || event.messageContent.lowercase() == "${config.prefix}av") {
+        if (event.message.content.lowercase() == "${config.prefix}avatar" || event.message.content.lowercase() == "${config.prefix}av") {
             MessageBuilder()
-                .append("${event.messageAuthor.discriminatedName}'s Avatar")
+                .append("${event.message.author.discriminatedName}'s Avatar")
                 .addAttachment(event.messageAuthor.avatar)
                 .send(event.channel)
         }
@@ -29,11 +27,10 @@ fun Avatar(client: DiscordApi, event: MessageCreateEvent, config: Config) {
                     .send(event.channel)
             } else {
                 MessageBuilder()
-                    .append("Incorrect usage '${event.messageContent}'")
-                    .append("Error: '${event.messageContent.split(" ")[1]}' is not a mentioned user")
+                    .append("Incorrect usage '${event.message.content}'")
+                    .append("Error: '${event.message.content.split(" ")[1]}' is not a mentioned user")
                     .append("Correct usage: `${config.prefix}avatar @user`")
-                    .send(event.channel)
+                    .send(event.message.channel, config)
             }
         }
-    }
-}
+}*/

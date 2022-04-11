@@ -2,34 +2,36 @@ package org.caffeine.chaos
 
 import io.ktor.client.request.*
 import io.ktor.http.*
-import kotlinx.coroutines.runBlocking
 import org.caffeine.chaos.api.BASE_URL
-import org.caffeine.chaos.api.D
 import org.caffeine.chaos.api.httpclient
-import org.javacord.api.event.message.MessageCreateEvent
+import org.caffeine.chaos.api.client.message.Message
+import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import java.io.File
 
-fun NitroSniper(event: D, config: Config) {
+suspend fun NitroSniper(event: MessageCreateEvent, config: Config) {
     val giftPrefix = "discord.gift/"
     val rg = giftPrefix + ".{16,24}".toRegex()
-    val match = rg.toRegex().matches(event.content.toString())
+    val match = rg.toRegex().matches(event.message.content)
     if (match) {
         val start = System.currentTimeMillis()
-        val code = event.content.toString().removePrefix(giftPrefix)
+        val code = event.message.content.removePrefix(giftPrefix)
         val p = File("Resources")
-        if (!p.exists())
-            p.mkdir()
         val f = File("${p.absolutePath}/tried-nitro-codes.txt")
-        if (!f.exists()) f.createNewFile()
-        if (f.readText().contains(code)) return
+        if (!p.exists()) {
+            p.mkdir()
+        }
+        if (!f.exists()){
+            f.createNewFile()
+        }
+        if (f.readText().contains(code)){
+            return
+        }
         f.appendText("$code\n")
         try {
-            runBlocking {
-                httpclient.request<String>("$BASE_URL/entitlements/gift-codes/$code/redeem") {
-                    method = HttpMethod.Post
-                    headers {
-                        append(HttpHeaders.Authorization, config.token)
-                    }
+            httpclient.request<String>("$BASE_URL/entitlements/gift-codes/$code/redeem") {
+                method = HttpMethod.Post
+                headers {
+                    append(HttpHeaders.Authorization, config.token)
                 }
             }
         val end = System.currentTimeMillis()

@@ -1,13 +1,12 @@
 package org.caffeine.chaos.commands
 
 import org.caffeine.chaos.Config
-import org.javacord.api.entity.message.MessageBuilder
-import org.javacord.api.event.message.MessageCreateEvent
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.concurrent.thread
 
 private var cock = false
+/*
 
 fun Spam(event: MessageCreateEvent, config: Config) {
     thread {
@@ -19,7 +18,7 @@ fun Spam(event: MessageCreateEvent, config: Config) {
                 .append("**Error:** Not enough parameters!")
                 .append("Correct usage: `${config.prefix}spam String Int`")
                 .send(event.channel)
-                .thenAccept { message ->  }
+                .thenAccept { message -> }
         }
         if (event.messageContent.lowercase()
                 .startsWith("${config.prefix}spam ") && event.messageContent.lowercase() != "${config.prefix}spam "
@@ -38,7 +37,7 @@ fun Spam(event: MessageCreateEvent, config: Config) {
                         .append("**Error:** Int must be higher than 0!")
                         .append("**Correct usage:** `${config.prefix}spam String Int`")
                         .send(event.channel)
-                        .thenAccept { message ->  }
+                        .thenAccept { message -> }
                     return@thread
                 }
                 var done = 0
@@ -55,21 +54,21 @@ fun Spam(event: MessageCreateEvent, config: Config) {
                 }
                 if (done > 1) {
                     event.channel.sendMessage("Done spamming '$string' $done times!")
-                        .thenAccept { message ->  }
+                        .thenAccept { message -> }
                 }
                 if (done == 1) {
                     event.channel.sendMessage("Done spamming '$string' once!")
-                        .thenAccept { message ->  }
+                        .thenAccept { message -> }
                 }
             } catch (e: Exception) {
                 when (e) {
                     is java.lang.NumberFormatException -> {
                         event.channel.sendMessage("Incorrect usage '${event.messageContent}'\nError: '${msg[msg.last().lastIndex]}' is not an integer!\nCorrect usage: `${config.prefix}spam String Int`")
-                            .thenAccept { message ->  }
+                            .thenAccept { message -> }
                     }
                     is IndexOutOfBoundsException -> {
                         event.channel.sendMessage("Incorrect usage '${event.messageContent}'\nError: Not enough parameters!\nCorrect usage: `${config.prefix}spam String Int`")
-                            .thenAccept { message ->  }
+                            .thenAccept { message -> }
                     }
                     else -> {
                         println(e)
@@ -86,4 +85,4 @@ fun SSpam(event: MessageCreateEvent, config: Config) {
             cock = true
         }
     }
-}
+}*/

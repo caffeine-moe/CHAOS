@@ -5,7 +5,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import org.caffeine.chaos.api.connect
+import org.caffeine.chaos.api.client.Client
 import java.io.File
 import java.net.URL
 import kotlin.system.exitProcess
@@ -86,17 +86,18 @@ suspend fun main(): Unit = runBlocking{
     )
     println("─────────────────────────────────────────────")
     if (!File("config.json").exists()) {
-        val default = URL("https://caffeine.moe/CSB/config.json").readText(Charsets.UTF_8).trim()
+        val default = URL("https://caffeine.moe/CHAOS/config.json").readText(Charsets.UTF_8).trim()
         File("config.json").createNewFile()
         File("config.json").writeText(default)
         LogV2(
             "Config not found, we have generated one for you at ${File("config.json").absolutePath}",
             "\u001B[38;5;197mERROR:"
         )
-        Log("\u001B[38;5;33mPlease change the file accordingly. Documentation: https://caffeine.moe/CSB/")
+        Log("\u001B[38;5;33mPlease change the file accordingly. Documentation: https://caffeine.moe/CHAOS/")
         exitProcess(0)
     }
     Log("\u001B[38;5;33mInitialising gateway connection...")
     val config = Json.decodeFromString<Config>(File("config.json").readText())
-    launch{ connect(config) }.start()
+    val client = Client()
+    launch{ client.login(config, client) }.start()
 }

@@ -1,20 +1,29 @@
 package org.caffeine.chaos.commands
 
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.caffeine.chaos.Config
-import org.caffeine.chaos.api.Client
-import org.caffeine.chaos.api.editMessage
-import org.caffeine.chaos.api.messageCreate
-import org.caffeine.chaos.api.sendMessage
-import org.javacord.api.DiscordApi
-import org.javacord.api.entity.user.UserStatus
-import org.javacord.api.event.message.MessageCreateEvent
-import java.net.*
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import kotlin.concurrent.thread
+import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.message.MessageBuilder
+import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
+suspend fun Ping(client: Client, event: MessageCreateEvent, config: Config) {
+    if (event.message.content.lowercase() == "${config.prefix}ping") {
+        event.message.channel.sendMessage(MessageBuilder().append("Hello").build(), config, client).thenAccept {
+            runBlocking {
+                try {
+                    launch { bot(it, config) }
+                }catch (e: Exception){
+                    println(e.cause)
+                    println(e.stackTrace.toString())
+                }
+            }
+        }
+    }
+}
 
-suspend fun Ping(client: Client, event: messageCreate, config: Config) {
+/*
+suspend fun Ping(cli: Cli, event: messageCreate, config: Config) {
         if (event.d.content.lowercase() == "${config.prefix}ping") {
             val message = sendMessage(event.d.channel_id,"Pinging...", config)
             val start = System.currentTimeMillis()
@@ -24,6 +33,7 @@ suspend fun Ping(client: Client, event: messageCreate, config: Config) {
             if (event.d.content.lowercase()
                     .startsWith("${config.prefix}ping ") && event.d.content.lowercase() != "${config.prefix}ping"
             ) {
+*/
 /*                event.channel.sendMessage("Pinging...")
                     .thenAccept { message ->
                         val url = event.messageContent.replaceFirst("${config.prefix}ping ", "")
@@ -56,10 +66,12 @@ suspend fun Ping(client: Client, event: messageCreate, config: Config) {
                         message.edit(
                             ":ping_pong: Pong!\nTarget: $url\nLatency: ${ping}ms"
                         ).thenAccept { message -> bot(message, config) }
-                    }*/
+                    }*//*
+
             }
         }
 
+*/
 
 
 

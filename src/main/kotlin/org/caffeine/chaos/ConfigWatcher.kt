@@ -2,13 +2,13 @@ package org.caffeine.chaos
 
 import io.ktor.client.features.websocket.*
 import io.ktor.http.cio.websocket.*
-import org.caffeine.chaos.api.Client
+import org.caffeine.chaos.api.client.Client
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardWatchEventKinds
 
-suspend fun configWatcher(client: Client, ws: DefaultClientWebSocketSession) {
+suspend fun configWatcher(client: Client) {
     try {
         val watchService = FileSystems.getDefault().newWatchService()
         val path = Paths.get("").toAbsolutePath().toString()
@@ -23,13 +23,13 @@ suspend fun configWatcher(client: Client, ws: DefaultClientWebSocketSession) {
                 if (kind == StandardWatchEventKinds.ENTRY_DELETE && event.context().toString()
                         .contains("config.json")
                 ) {
-                    ws.close()
+                    client.logout()
                     main()
                 }
                 if (kind == StandardWatchEventKinds.ENTRY_MODIFY && event.context().toString()
                         .contains("config.json")
                 ) {
-                    ws.close()
+                    client.logout()
                     main()
                 }
             }

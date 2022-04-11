@@ -2,8 +2,6 @@ package org.caffeine.chaos.commands
 
 import org.caffeine.chaos.Config
 import org.caffeine.chaos.version
-import org.javacord.api.DiscordApi
-import org.javacord.api.event.message.MessageCreateEvent
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.concurrent.thread
@@ -40,6 +38,7 @@ val commandlist = arrayOf(
     "online"
 )
 
+/*
 fun Help(client: DiscordApi, event: MessageCreateEvent, config: Config) {
     thread {
         val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy hh:mm:ss"))
@@ -47,7 +46,7 @@ fun Help(client: DiscordApi, event: MessageCreateEvent, config: Config) {
         if (event.messageContent.lowercase() == "${config.prefix}help" || event.messageContent.lowercase() == "${config.prefix}cmds" || event.messageContent.lowercase() == "${config.prefix}commands") {
             event.channel.sendMessage(
                 "CSB $version\nCommands: https://docs.caffeine.moe/CSB/Commands/"
-            ).thenAccept {  }
+            ).thenAccept { }
         }
     }
-}
+}*/

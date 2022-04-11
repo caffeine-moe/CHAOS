@@ -1,24 +1,28 @@
 package org.caffeine.chaos.commands
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.caffeine.chaos.Config
-import org.caffeine.chaos.api.deleteMessage
-import org.caffeine.chaos.api.messageCreate
-import org.caffeine.chaos.api.sendMessageResponse
-import org.javacord.api.entity.message.Message
-import org.javacord.api.event.message.MessageCreateEvent
-import kotlin.concurrent.thread
+import org.caffeine.chaos.api.client.message.Message
+import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
 
-suspend fun user(event: messageCreate, config: Config) {
-    Thread.sleep(config.auto_delete.user_delay * 1000)
-    val message = event.d.id
-    val channel = event.d.channel_id
-    deleteMessage(channel.toString(), message.toString(), config)
+suspend fun user(event: MessageCreateEvent, config: Config) {
+    withContext(Dispatchers.IO) {
+        Thread.sleep(config.auto_delete.user_delay * 1000)
+    }
+    event.message.delete(event.message, config)
 }
 
-suspend fun bot(msg: sendMessageResponse, config: Config) {
+suspend fun bot(msg: Message, config: Config) {
     if (config.auto_delete.bot.enabled) {
-        Thread.sleep(config.auto_delete.bot_delay * 1000)
-        deleteMessage(msg.channel_id, msg.content, config)
+        withContext(Dispatchers.IO) {
+            Thread.sleep(config.auto_delete.bot_delay * 1000)
+        }
+        try {
+            msg.delete(msg, config)
+        }catch (e: Exception){
+            e.printStackTrace()
+        }
     }
 }

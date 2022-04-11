@@ -4,15 +4,13 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.caffeine.chaos.Config
-import org.javacord.api.DiscordApi
-import org.javacord.api.event.message.MessageCreateEvent
 import java.net.URL
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.concurrent.thread
 
 @Serializable
-data class main(
+data class exchange(
     val ticker: ticker,
 )
 
@@ -21,9 +19,10 @@ data class ticker(
     val base: String,
     val target: String,
     val price: Float,
-    val change: Float?
+    val change: Float?,
 )
 
+/*
 fun Exchange(client: DiscordApi, event: MessageCreateEvent, config: Config) {
     thread {
         val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy hh:mm:ss"))
@@ -35,7 +34,7 @@ fun Exchange(client: DiscordApi, event: MessageCreateEvent, config: Config) {
             val parsedresponse = Json { ignoreUnknownKeys = true }.decodeFromString<main>(response)
             event.channel.sendMessage(
                 ":money_with_wings: Exchange data for $basec to $targetc\nPrice in $targetc: ${parsedresponse.ticker.price} $targetc\nMarket change (24h): ${parsedresponse.ticker.change}%"
-            ).thenAccept { message ->  }
+            ).thenAccept { message -> }
         }
         if (event.messageContent.lowercase()
                 .startsWith("${config.prefix}exchange") && event.messageContent.lowercase() != ("${config.prefix}exchange") || event.messageContent.lowercase()
@@ -53,7 +52,7 @@ fun Exchange(client: DiscordApi, event: MessageCreateEvent, config: Config) {
                     val price = parsedresponse.ticker.price * number
                     event.channel.sendMessage(
                         ":money_with_wings: Exchange data for $number $base to $target\n$number $base in $target: $price $target\nMarket change (24h): ${parsedresponse.ticker.change}%\n$number $base in $target: $price $target"
-                    ).thenAccept { message ->  }
+                    ).thenAccept { message -> }
 
                 }
                 val base = msg[1].uppercase()
@@ -63,13 +62,13 @@ fun Exchange(client: DiscordApi, event: MessageCreateEvent, config: Config) {
                 val parsedresponse = Json.decodeFromString<main>(response)
                 event.channel.sendMessage(
                     ":money_with_wings: Exchange data for $base to $target\nPrice in $target: ${parsedresponse.ticker.price} $target"
-                ).thenAccept { message ->  }
+                ).thenAccept { message -> }
             } catch (e: Exception) {
                 when (e) {
                     is IndexOutOfBoundsException -> {
                         event.channel.sendMessage(
                             "Incorrect usage '${event.messageContent}'\nError: Not enough parameters!\nCorrect usage: `${config.prefix}exchange Currency(String) Currency(String)`"
-                        ).thenAccept { message ->  }
+                        ).thenAccept { message -> }
                     }
                     is NumberFormatException -> {
                         event.channel.sendMessage(
@@ -85,4 +84,4 @@ fun Exchange(client: DiscordApi, event: MessageCreateEvent, config: Config) {
             }
         }
     }
-}
+}*/
