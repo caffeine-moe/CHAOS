@@ -5,10 +5,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.caffeine.chaos.Config
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.Message
-import org.caffeine.chaos.api.client.message.MessageAuthor
-import org.caffeine.chaos.api.client.message.MessageChannel
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.client.message.*
 import org.caffeine.chaos.commandHandler
 
 @Serializable
@@ -27,7 +24,6 @@ private data class D(
     val components: List<String>?,
     val content: String,
     val edited_timestamp: String?,
-    val embeds: List<String>?,
     val flags: Int?,
     val id: String,
     val mention_everyone: Boolean?,
@@ -51,22 +47,23 @@ private data class Author(
 
 
 suspend fun messagecreate(payload: String, config: Config, client: Client){
-    val d = Json { ignoreUnknownKeys = true }.decodeFromString<messageCreate>(payload).d
-    val event = MessageCreateEvent()
     try {
-        event.message.content = d.content
-        event.message.id = d.id
-        event.message.author = MessageAuthor(
+    val d = Json { ignoreUnknownKeys = true }.decodeFromString<messageCreate>(payload).d
+        val messageauthor = MessageAuthor(
             d.author.username,
             d.author.discriminator,
             d.author.id,
             d.author.avatar
         )
-        event.message.channel.id = d.channel_id
+        val messagechannel = MessageChannel(d.channel_id)
+        val message = Message(d.id, messageauthor, d.content, messagechannel)
+    val event = MessageCreateEvent(message)
+        event.message.content = d.content
+        event.message.id = d.id
+        commandHandler(config, event, client)
     }catch (e: Exception){
         println("you are ugly")
         println(e)
-        println(e.stackTrace.toString())
+        e.printStackTrace()
     }
-    commandHandler(config, event, client)
 }

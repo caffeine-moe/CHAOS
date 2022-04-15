@@ -1,7 +1,3 @@
-val ktor_version: String by project
-val kotlin_version: String by project
-val logback_version: String by project
-
 plugins {
     application
     kotlin("jvm") version "1.5.21"
@@ -27,12 +23,10 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
-    runtimeOnly("org.apache.logging.log4j:log4j-core:2.11.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+    runtimeOnly("org.apache.logging.log4j:log4j-core:2.17.2")
     implementation("commons-validator:commons-validator:1.7")
-    implementation("io.ktor:ktor-client-core:$ktor_version")
-    implementation("io.ktor:ktor-client-cio:$ktor_version")
-    implementation("io.ktor:ktor-client-serialization:$ktor_version")
-    implementation("ch.qos.logback:logback-classic:$logback_version")
-    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
+    implementation("io.ktor:ktor-client-core:2.0.0")
+    implementation("io.ktor:ktor-client-cio:2.0.0")
+    implementation("io.ktor:ktor-client-content-negotiation:2.0.0")
 }

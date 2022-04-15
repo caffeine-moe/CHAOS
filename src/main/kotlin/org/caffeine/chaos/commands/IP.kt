@@ -1,15 +1,21 @@
 package org.caffeine.chaos.commands
 
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.caffeine.chaos.Config
+import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.message.MessageBuilder
+import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.httpclient
 import java.net.InetAddress
-import java.net.SocketTimeoutException
-import java.net.URL
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.concurrent.thread
 
 
 @Serializable
@@ -26,49 +32,61 @@ data class ipApiResponse(
     val query: String,
 )
 
-/*
-fun IP(client: DiscordApi, event: MessageCreateEvent, config: Config) {
-    thread {
-        val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy hh:mm:ss"))
-        if (event.messageContent.lowercase() == "${config.prefix}ip") {
-            event.channel.sendMessage(
-                "Incorrect usage '${event.messageContent}'\nError: No URL specified\nCorrect usage: `${config.prefix}ip IP/URL`"
-            ).thenAccept { message -> }
-        }
-        if (event.messageContent.lowercase()
-                .startsWith("${config.prefix}ip ") && event.messageContent.lowercase() != "${config.prefix}ip"
-        ) {
-            event.channel.sendMessage("Looking up IP...")
-                .thenAccept { message ->
-                    val url = event.messageContent.replaceFirst("${config.prefix}ip ", "")
+suspend fun IP(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
+    val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy hh:mm:ss"))
+    if (event.message.content.lowercase() == "${config.prefix}ip") {
+        event.message.channel.sendMessage(MessageBuilder()
+            .appendLine("**Incorrect usage** '${event.message.content}'")
+            .appendLine("**Error:** No IP/URL specified")
+            .appendLine("**Correct usage:** `${config.prefix}ip IP/URL`")
+            .build(), config, client)
+            .thenAccept { message -> this.launch { bot(message, config) } }
+    }
+    if (event.message.content.lowercase()
+            .startsWith("${config.prefix}ip ") && event.message.content.lowercase() != "${config.prefix}ip"
+    ) {
+        event.message.channel.sendMessage(MessageBuilder().appendLine("Looking up IP/URL").build(), config, client)
+            .thenAccept { message ->
+                this.launch {
+                    val url = event.message.content.replaceFirst("${config.prefix}ip ", "")
                     try {
                         val ip: InetAddress = InetAddress.getByName(url)
                         val cleanip = ip.hostAddress
                         val rqurl = "http://ip-api.com/json/${cleanip}?fields=1237817"
-                        val response = URL(rqurl).readText()
-                        val parsedresponse = Json.decodeFromString<Response>(response)
+                        val response = httpclient.request(rqurl) {
+                            method = HttpMethod.Get
+                        }
+                        val parsedresponse = Json { ignoreUnknownKeys = true }.decodeFromString<ipApiResponse>(response.body())
                         when (parsedresponse.status) {
                             "success" -> {
-                                message.edit("**Information for IP/URL $url**\nContinent: ${parsedresponse.continent}\nCountry: ${parsedresponse.country}\nRegion: ${parsedresponse.regionName}\nCity: ${parsedresponse.city}\nZip/Postal: ${parsedresponse.zip}\nTimezone: ${parsedresponse.timezone}\nISP: ${parsedresponse.isp}\nProxy: ${parsedresponse.proxy}")
-                                    .thenAccept { message -> }
+                                message.edit(MessageBuilder()
+                                    .appendLine("**Information for IP/URL $url**")
+                                    .appendLine("**Continent:** ${parsedresponse.continent}")
+                                    .appendLine("**Country:** ${parsedresponse.country}")
+                                    .appendLine("**Region:** ${parsedresponse.regionName}")
+                                    .appendLine("**City:** ${parsedresponse.city}")
+                                    .appendLine("**City:** ${parsedresponse.city}")
+                                    .appendLine("**Zip/Postal:** ${parsedresponse.zip}")
+                                    .appendLine("**Zip/Postal:** ${parsedresponse.zip}")
+                                    .appendLine("**Timezone:** ${parsedresponse.timezone}")
+                                    .appendLine("**ISP:** ${parsedresponse.isp}")
+                                    .appendLine("**Proxy:** ${parsedresponse.proxy}")
+                                    .build(), config)
+                                    .thenAccept { message -> this.launch { bot(message, config) } }
                             }
                             "fail" -> {
-                                message.edit(
-                                    "Incorrect usage '${event.messageContent}'\nError: Unable to lookup IP/URL '$url'\nCorrect usage: `${config.prefix}ip IP/URL`"
-                                ).thenAccept { message -> }
+                                message.edit(MessageBuilder()
+                                    .appendLine("Incorrect usage '${event.message.content}'")
+                                    .appendLine("**Error:** Unable to lookup IP/URL '$url'")
+                                    .appendLine("**Correct usage:** `${config.prefix}ip IP/URL`")
+                                    .build(), config)
+                                    .thenAccept { message -> this.launch { bot(message, config) } }
                             }
                         }
                     } catch (e: Exception) {
-                        if (e == SocketTimeoutException()) {
-                            message.edit(
-                                ":pensive: Connection timed out\nTry a different IP or URL..."
-                            ).thenAccept { message -> }
-                        }
-                        message.edit(
-                            "Incorrect usage '${event.messageContent}'\nError: ${e.message}\nCorrect usage: `${config.prefix}ip IP/URL`"
-                        ).thenAccept { message -> }
+                        println(e)
                     }
                 }
-        }
+            }
     }
-}*/
+}

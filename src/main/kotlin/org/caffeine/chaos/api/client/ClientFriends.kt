@@ -1,5 +1,6 @@
 package org.caffeine.chaos.api.client
 
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
@@ -11,26 +12,15 @@ import org.caffeine.chaos.api.httpclient
 import kotlin.properties.Delegates
 
 class ClientFriends() {
-    @Serializable
-    private data class Friend(
-        val user: User
-    )
-    @Serializable
-    private data class User (
-        val username: String,
-        val discriminator: Int,
-        val id: String,
-        val avatar: String?
-    )
     suspend fun getAmount(config: Config): Int {
         var number = 0
-        val response = httpclient.request<String>("$BASE_URL/users/@me/relationships") {
+        val response = httpclient.request("$BASE_URL/users/@me/relationships") {
             method = HttpMethod.Get
             headers {
                 append(HttpHeaders.Authorization, config.token)
             }
         }
-        val final = Json { ignoreUnknownKeys = true }.decodeFromString<List<Friend>>(response)
+        val final = Json { ignoreUnknownKeys = true }.decodeFromString<List<ClientFriend>>(response.body())
         for ((_) in final.withIndex()) {
             number++
         }
@@ -38,13 +28,13 @@ class ClientFriends() {
     }
     suspend fun getList(config: Config): StringBuilder {
         val sb = StringBuilder()
-        val response = httpclient.request<String>("$BASE_URL/users/@me/relationships") {
+        val response = httpclient.request("$BASE_URL/users/@me/relationships") {
             method = HttpMethod.Get
             headers {
                 append(HttpHeaders.Authorization, config.token)
             }
         }
-        val final = Json { ignoreUnknownKeys = true }.decodeFromString<List<Friend>>(response)
+        val final = Json { ignoreUnknownKeys = true }.decodeFromString<List<ClientFriend>>(response.body())
         for ((count) in final.withIndex()) {
             sb.appendLine("${final[count].user.username}#${final[count].user.discriminator}")
         }

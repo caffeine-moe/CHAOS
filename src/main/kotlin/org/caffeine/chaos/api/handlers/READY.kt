@@ -1,14 +1,11 @@
 package org.caffeine.chaos.api
 
-import io.ktor.client.features.websocket.*
+import io.ktor.client.plugins.websocket.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.caffeine.chaos.Config
 import org.caffeine.chaos.Log
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientUser
-import org.caffeine.chaos.api.client.ClientFriends
-import org.caffeine.chaos.api.client.ClientGuilds
+import org.caffeine.chaos.api.client.*
 import org.caffeine.chaos.configWatcher
 import org.caffeine.chaos.loginPrompt
 
@@ -59,7 +56,8 @@ suspend fun ready(client: Client, config: Config, ws: DefaultClientWebSocketSess
         d.bio,
         d.avatar,
         ClientFriends(),
-        ClientGuilds()
+        ClientGuilds(),
+        ClientChannels()
     )
     Log("\u001B[38;5;47mClient logged in!")
     print("\u001b[H\u001b[2J\u001B[38;5;255m")

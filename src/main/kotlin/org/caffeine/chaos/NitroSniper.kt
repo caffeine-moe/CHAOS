@@ -1,7 +1,13 @@
 package org.caffeine.chaos
 
+import io.ktor.client.call.*
+import io.ktor.client.plugins.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.network.selector.*
+import io.ktor.network.sockets.*
+import kotlinx.coroutines.Dispatchers
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.httpclient
 import org.caffeine.chaos.api.client.message.Message
@@ -28,11 +34,12 @@ suspend fun NitroSniper(event: MessageCreateEvent, config: Config) {
         }
         f.appendText("$code\n")
         try {
-            httpclient.request<String>("$BASE_URL/entitlements/gift-codes/$code/redeem") {
+            val response = httpclient.request("$BASE_URL/entitlements/gift-codes/$code/redeem") {
                 method = HttpMethod.Post
                 headers {
                     append(HttpHeaders.Authorization, config.token)
                 }
+                expectSuccess = true
             }
         val end = System.currentTimeMillis()
         if (!config.nitro_sniper.silent) {

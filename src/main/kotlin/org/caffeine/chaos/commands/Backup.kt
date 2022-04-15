@@ -1,10 +1,9 @@
 package org.caffeine.chaos.commands
 
-import io.ktor.client.request.*
-import io.ktor.http.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
+import kotlinx.coroutines.withContext
 import org.caffeine.chaos.Config
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
@@ -15,8 +14,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 suspend fun Backup(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
-    val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy hh:mm:ss"))
-    val ftime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd|MM|yy_hh:mm:ss"))
+    val ftime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yy_hh:mm:ss"))
     if (event.message.content.lowercase() == ("${config.prefix}backup")) {
         event.message.channel.sendMessage(MessageBuilder().append("Performing backup...").build(), config, client)
             .thenAccept { message ->
@@ -31,7 +29,9 @@ suspend fun Backup(client: Client, event: MessageCreateEvent, config: Config) = 
                     }
                     if (p.absolutePath.startsWith("/")) {
                         val f = File("${p.absolutePath}/$ftime")
-                        Files.createFile(f.toPath())
+                        withContext(Dispatchers.IO) {
+                            Files.createFile(f.toPath())
+                        }
                         File(
                             f.toPath().toString()
                         ).writeText(texttowrite)
@@ -53,7 +53,9 @@ suspend fun Backup(client: Client, event: MessageCreateEvent, config: Config) = 
                     e.printStackTrace()}
                     }
                     val f = File("${p.absolutePath}\\$ftime")
-                    Files.createFile(f.toPath())
+                    withContext(Dispatchers.IO) {
+                        Files.createFile(f.toPath())
+                    }
                     File(
                         f.toPath().toString()
                     ).writeText(texttowrite)

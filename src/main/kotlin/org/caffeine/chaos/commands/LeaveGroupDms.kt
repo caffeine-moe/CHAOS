@@ -1,39 +1,56 @@
 package org.caffeine.chaos.commands
 
-import io.ktor.client.request.*
-import io.ktor.http.*
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.caffeine.chaos.Config
-import org.caffeine.chaos.api.BASE_URL
-import org.caffeine.chaos.api.httpclient
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import kotlin.concurrent.thread
+import org.caffeine.chaos.LogV2
+import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.ClientChannel
+import org.caffeine.chaos.api.client.message.MessageBuilder
+import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
-private var chid = mutableListOf<String>()
 
-/*fun LGDM(client: DiscordApi, event: MessageCreateEvent, config: Config) {
-    thread {
-        val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy hh:mm:ss"))
-        if (event.messageContent.lowercase() == ("${config.prefix}lgdm") || event.messageContent.lowercase() == ("${config.prefix}leavegroups")) {
-            for (dm: GroupChannel in client.groupChannels) {
-                chid.add(dm.id.toString())
-            }
-            runBlocking {
+suspend fun LGDM(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
+        if (event.message.content.lowercase() == ("${config.prefix}lgdm") || event.message.content.lowercase() == ("${config.prefix}leavegroups")) {
+            var done = 0
+            val channels = StringBuilder()
                 try {
-                    for (item: String in chid) {
-                        httpclient.request<String>("$BASE_URL/channels/$item") {
-                            method = HttpMethod.Delete
-                            headers {
-                                append(HttpHeaders.Authorization, config.token)
-                            }
+                    val amount = client.user.channels.groupChannels.getList(config).size
+                    if (amount <= 0) {
+                        event.message.channel.sendMessage(MessageBuilder()
+                            .appendLine("There are no channels to delete!")
+                            .build(), config, client)
+                            .thenAccept { message -> this.launch { bot(message, config) } }
+                        return@coroutineScope
+                    }
+                    for (channel: ClientChannel in client.user.channels.groupChannels.getList(config)) {
+                        channel.delete(config)
+                        channels.append("${channel.name}, ")
+                        done ++
+                        withContext(Dispatchers.IO) {
+                            Thread.sleep(1000)
                         }
-                        Thread.sleep(500)
+                    }
+                    if (done > 1) {
+                        LogV2(channels.toString(), "CHANNELS DELETED:")
+                        event.message.channel.sendMessage(MessageBuilder()
+                            .appendLine("Done! Deleted $done channels!")
+                            .appendLine("Check the console to see a list of the deleted channels.")
+                            .build(), config, client)
+                            .thenAccept { message -> this.launch { bot(message, config) } }
+                    }
+                    if (done == 1){
+                        LogV2(channels.toString(), "CHANNELS DELETED:")
+                        event.message.channel.sendMessage(MessageBuilder()
+                            .appendLine("Done! Deleted $done channel!")
+                            .appendLine("Check the console to see the name of the deleted channel.")
+                            .build(), config, client)
+                            .thenAccept { message -> this.launch { bot(message, config) } }
                     }
                 } catch (e: Exception) {
                     println(e.printStackTrace())
                 }
             }
-        }
-    }
-}*/
+}

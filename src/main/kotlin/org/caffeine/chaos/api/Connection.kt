@@ -2,11 +2,11 @@ package org.caffeine.chaos.api
 
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.websocket.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.websocket.*
 import io.ktor.client.utils.*
 import io.ktor.http.*
-import io.ktor.http.cio.websocket.*
+import io.ktor.websocket.*
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
@@ -18,6 +18,7 @@ import org.caffeine.chaos.Log
 import org.caffeine.chaos.LogV2
 import org.caffeine.chaos.api.client.Client
 import java.io.File
+import kotlin.concurrent.fixedRateTimer
 
 @Serializable
 data class rpayload(
@@ -35,12 +36,13 @@ data class rd(
 
 val httpclient = HttpClient(CIO) {
     install(WebSockets)
-    install(JsonFeature)
+    install(ContentNegotiation)
     engine {
         buildHeaders {
             append(HttpHeaders.UserAgent,
                 "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36")
         }
+        pipelining = true
     }
 }
 

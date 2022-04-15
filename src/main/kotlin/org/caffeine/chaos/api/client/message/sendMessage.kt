@@ -1,8 +1,10 @@
 package org.caffeine.chaos.api.client.message
 
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 import org.caffeine.chaos.Config
@@ -34,24 +36,22 @@ private data class sendMessageResponse(
 )
 
 suspend fun sendMessage(channel: String, message: Message, config: Config) : CompletableFuture<Message> {
-        val response = httpclient.request<String>("$BASE_URL/channels/$channel/messages") {
+        val response = httpclient.request("$BASE_URL/channels/$channel/messages") {
             method = HttpMethod.Post
             headers {
                 append(HttpHeaders.Authorization, config.token)
                 append(HttpHeaders.ContentType, "application/json")
             }
-            body = Json.encodeToJsonElement(MessageSerialiser(message.content, System.currentTimeMillis().toString()))
+            setBody(Json.encodeToString(MessageSerialiser(message.content.toString(), System.currentTimeMillis().toString())))
         }
-        val parsedresponse = Json{ignoreUnknownKeys=true}.decodeFromString<sendMessageResponse>(response)
-        val sentmessage = Message()
-        sentmessage.content = parsedresponse.content
-        sentmessage.id = parsedresponse.id
-        sentmessage.channel.id = parsedresponse.channel_id
-        sentmessage.author = MessageAuthor(
+        val parsedresponse = Json{ignoreUnknownKeys=true}.decodeFromString<sendMessageResponse>(response.body())
+        val messageauthor =  MessageAuthor(
             parsedresponse.author.username,
             parsedresponse.author.discriminator,
             parsedresponse.author.id,
             parsedresponse.author.avatar
         )
+        val messagechannel = MessageChannel(parsedresponse.channel_id)
+        val sentmessage = Message(parsedresponse.id, messageauthor, parsedresponse.content, messagechannel)
     return CompletableFuture.completedFuture(sentmessage)
 }

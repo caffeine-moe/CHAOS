@@ -1,8 +1,10 @@
 package org.caffeine.chaos.api.client.message
 
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 import org.caffeine.chaos.Config
@@ -37,28 +39,22 @@ data class editContent(
 )
 
 suspend fun editMessage(message: Message, config: Config, newMessage: Message) : CompletableFuture<Message>{
-        val response = httpclient.request<String>("$BASE_URL/channels/${message.channel.id}/messages/${message.id}") {
+        val response = httpclient.request("$BASE_URL/channels/${message.channel.id}/messages/${message.id}") {
             method = HttpMethod.Patch
             headers {
                 append(HttpHeaders.Authorization, config.token)
                 append(HttpHeaders.ContentType, "application/json")
             }
-            body = Json.encodeToJsonElement(editContent(newMessage.content))
+            setBody(Json.encodeToString(editContent(newMessage.content)))
         }
-        val parsedresponse = Json { ignoreUnknownKeys = true }.decodeFromString<editMessageResponse>(response)
-        val returnMessage = Message()
-    try {
-        returnMessage.author = MessageAuthor(
-            parsedresponse.author.username,
-            parsedresponse.author.discriminator,
-            parsedresponse.author.id,
-            parsedresponse.author.avatar
-        )
-        returnMessage.channel.id = parsedresponse.channel_id
-        returnMessage.content = parsedresponse.content
-        returnMessage.id = parsedresponse.id
-    }catch (e: Exception){
-        e.printStackTrace()
-    }
-    return CompletableFuture.completedFuture(returnMessage)
+        val parsedresponse = Json { ignoreUnknownKeys = true }.decodeFromString<editMessageResponse>(response.body())
+    val messageauthor =  MessageAuthor(
+        parsedresponse.author.username,
+        parsedresponse.author.discriminator,
+        parsedresponse.author.id,
+        parsedresponse.author.avatar
+    )
+    val messagechannel = MessageChannel(parsedresponse.channel_id)
+    val editedmessage = Message(parsedresponse.id, messageauthor, parsedresponse.content, messagechannel)
+    return CompletableFuture.completedFuture(editedmessage)
 }

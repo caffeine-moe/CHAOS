@@ -1,10 +1,12 @@
 package org.caffeine.chaos.commands
 
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import org.caffeine.chaos.Config
+import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.message.MessageBuilder
+import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.version
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import kotlin.concurrent.thread
 
 val commandlist = arrayOf(
     "ping",
@@ -38,15 +40,16 @@ val commandlist = arrayOf(
     "online"
 )
 
-/*
-fun Help(client: DiscordApi, event: MessageCreateEvent, config: Config) {
-    thread {
-        val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy hh:mm:ss"))
-        val spc = "    "
-        if (event.messageContent.lowercase() == "${config.prefix}help" || event.messageContent.lowercase() == "${config.prefix}cmds" || event.messageContent.lowercase() == "${config.prefix}commands") {
-            event.channel.sendMessage(
-                "CSB $version\nCommands: https://docs.caffeine.moe/CSB/Commands/"
-            ).thenAccept { }
+suspend fun Help(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
+    if (event.message.content.lowercase() == "${config.prefix}help" || event.message.content.lowercase() == "${config.prefix}cmds" || event.message.content.lowercase() == "${config.prefix}commands") {
+        event.message.channel.sendMessage(MessageBuilder()
+            .appendLine("**CHAOS v$version**")
+            .appendLine("**Commands:** https://caffeine.moe/CHAOS/commands/")
+            .build(), config, client
+        ).thenAccept { message ->
+            this.launch {
+                bot(message, config)
+            }
         }
     }
-}*/
+}

@@ -1,5 +1,8 @@
 # CHAOS - Like a utility knife for discord.
 
+[![Build](https://github.com/caffeine-moe/CHAOS/actions/workflows/ci.yml/badge.svg)](https://github.com/caffeine-moe/CHAOS/actions/workflows/ci.yml) [![Issues](https://img.shields.io/github/issues/caffeine-moe/CHAOS)](https://github.com/caffeine-moe/CHAOS/issues) [![Pull Requests](https://img.shields.io/github/issues-pr/caffeine-moe/CHAOS)](https://github.com/caffeine-moe/CHAOS/pulls) [![Languages](https://img.shields.io/github/languages/top/caffeine-moe/CHAOS)](https://github.com/caffeine-moe/CHAOS/search?l=kotlin&type=code) [![License: MIT](https://img.shields.io/github/issues/caffeine-moe/CHAOS?style=for-the-badge)](https://mit-license.org/) [![Lines](https://img.shields.io/tokei/lines/github/caffeine-moe/CHAOS)]() [![Fuck Discord](https://img.shields.io/badge/Fuck-Discord-critical)](https://discord.com/developers/docs/topics/oauth2#bot-vs-user-accounts)
+
+
 Currently under HEAVY development.
 
 If you feel inclined, please support me by contributing to this project. 

@@ -9,18 +9,18 @@ import kotlin.concurrent.thread
 fun Purge(client: DiscordApi, event: MessageCreateEvent, config: Config) {
     thread {
         val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy hh:mm:ss"))
-        if (event.messageContent.lowercase() == "${config.prefix}purge" || event.messageContent.lowercase() == "${config.prefix}sclear") {
-            event.channel.sendMessage("Incorrect usage '${event.messageContent}'\nError: Not enough parameters!\nCorrect usage: `${config.prefix}purge Int`")
+        if (event.message.content.lowercase() == "${config.prefix}purge" || event.message.content.lowercase() == "${config.prefix}sclear") {
+            event.channel.sendMessage("Incorrect usage '${event.message.content}'\nError: Not enough parameters!\nCorrect usage: `${config.prefix}purge Int`")
                 .thenAccept { message -> }
         }
-        if (event.messageContent.lowercase().startsWith("${config.prefix}purge ") || event.messageContent.lowercase()
-                .startsWith("${config.prefix}sclear ") && event.messageContent.lowercase() != "${config.prefix}purge" && event.messageContent.lowercase() != "${config.prefix}sclear"
+        if (event.message.content.lowercase().startsWith("${config.prefix}purge ") || event.message.content.lowercase()
+                .startsWith("${config.prefix}sclear ") && event.message.content.lowercase() != "${config.prefix}purge" && event.message.content.lowercase() != "${config.prefix}sclear"
         ) {
-            val number = event.messageContent.lowercase().replace("[^0-9]".toRegex(), "")
+            val number = event.message.content.lowercase().replace("[^0-9]".toRegex(), "")
             try {
-                val number = event.messageContent.lowercase().replace("[^0-9]".toRegex(), "").toInt()
+                val number = event.message.content.lowercase().replace("[^0-9]".toRegex(), "").toInt()
                 if (number <= 0) {
-                    event.channel.sendMessage("Incorrect usage '${event.messageContent}'\nError: Int must be higher than 0!\nCorrect usage: `${config.prefix}purge Int`")
+                    event.channel.sendMessage("Incorrect usage '${event.message.content}'\nError: Int must be higher than 0!\nCorrect usage: `${config.prefix}purge Int`")
                         .thenAccept { message -> }
                     return@thread
                 }
@@ -50,7 +50,7 @@ fun Purge(client: DiscordApi, event: MessageCreateEvent, config: Config) {
             } catch (e: Exception) {
                 when (e) {
                     is NumberFormatException -> {
-                        event.channel.sendMessage("Incorrect usage '${event.messageContent}'\nError: '$number' is not an integer!\nCorrect usage: `${config.prefix}purge Int`")
+                        event.channel.sendMessage("Incorrect usage '${event.message.content}'\nError: '$number' is not an integer!\nCorrect usage: `${config.prefix}purge Int`")
                             .thenAccept { message -> }
                     }
                     else -> {

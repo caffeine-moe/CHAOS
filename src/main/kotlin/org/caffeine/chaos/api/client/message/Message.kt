@@ -5,13 +5,8 @@ import kotlinx.coroutines.runBlocking
 import org.caffeine.chaos.Config
 import java.util.concurrent.CompletableFuture
 
-class Message(
-) {
-    lateinit var id: String
-    lateinit var author: MessageAuthor
-    lateinit var content: String
-    var channel: MessageChannel = MessageChannel()
-
+class Message(var id: String?, var author: MessageAuthor?, var content: String, var channel: MessageChannel) {
+    //val mentionedUsers: String
     suspend fun edit(message: Message, config: Config) : CompletableFuture<Message>{
         return editMessage(this, config, message)
     }

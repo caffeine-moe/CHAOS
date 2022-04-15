@@ -1,26 +1,33 @@
 package org.caffeine.chaos.commands
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import org.caffeine.chaos.Config
+import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.message.MessageBuilder
+import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.concurrent.thread
+import kotlin.coroutines.CoroutineContext
 
-/*
-fun Coin(client: DiscordApi, event: MessageCreateEvent, config: Config) {
-    val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy hh:mm:ss"))
-        if (event.messageContent.lowercase() == ("${config.prefix}coin")) {
-            val headortail = arrayOf("heads", "tails").random()
-            if (headortail == "heads") {
-                event.channel.sendMessage(
-                    ":coin: Heads!"
-                ).thenAccept { message -> }
-                return@thread
+suspend fun Coin(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
+        if (event.message.content.lowercase() == ("${config.prefix}coin")) {
+            val face = arrayOf("heads", "tails").random()
+            if (face == "heads") {
+                event.message.channel.sendMessage(MessageBuilder()
+                    .appendLine(":coin: Heads!").build(), config, client).thenAccept { message -> this.launch{
+                         bot(message, config)
+                } }
+                return@coroutineScope
             }
-            if (headortail == "tails") {
-                event.channel.sendMessage(
-                    ":coin: Tails!"
-                ).thenAccept { message -> }
-                return@thread
+            else {
+                event.message.channel.sendMessage(MessageBuilder()
+                    .appendLine(":coin: Tails!").build(), config, client).thenAccept { message -> this.launch{
+                    bot(message, config)
+                } }
+                return@coroutineScope
             }
         }
-}*/
+}

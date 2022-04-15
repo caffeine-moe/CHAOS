@@ -11,7 +11,7 @@ import org.caffeine.chaos.api.httpclient
 
 suspend fun deleteMessage(message: Message, config: Config){
     try {
-        val response = httpclient.request<String>("$BASE_URL/channels/${message.channel.id}/messages/${message.id}") {
+        val response = httpclient.request("$BASE_URL/channels/${message.channel.id}/messages/${message.id}") {
             method = HttpMethod.Delete
             headers {
                 append(HttpHeaders.Authorization, config.token)

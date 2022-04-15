@@ -1,87 +1,143 @@
 package org.caffeine.chaos.commands
-
+/*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.caffeine.chaos.Config
-import java.net.URL
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import kotlin.concurrent.thread
+import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.message.MessageBuilder
+import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.httpclient
 
 @Serializable
-data class exchange(
-    val ticker: ticker,
+private data class cryrsp(
+    val error: String,
+    val success: Boolean,
+    val ticker: Ticker,
+    val timestamp: Int,
 )
 
 @Serializable
-data class ticker(
+private data class Ticker(
     val base: String,
-    val target: String,
+    val change: String,
     val price: Float,
-    val change: Float?,
+    val target: String,
+    val volume: String,
 )
 
-/*
-fun Exchange(client: DiscordApi, event: MessageCreateEvent, config: Config) {
-    thread {
-        val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy hh:mm:ss"))
-        if (event.messageContent.lowercase() == ("${config.prefix}exchange") || event.messageContent.lowercase() == ("${config.prefix}crypto")) {
-            val basec = config.exchange.base.uppercase()
-            val targetc = config.exchange.target.uppercase()
-            val url = "https://api.cryptonator.com/api/ticker/$basec-$targetc"
-            val response = URL(url).readText()
-            val parsedresponse = Json { ignoreUnknownKeys = true }.decodeFromString<main>(response)
-            event.channel.sendMessage(
-                ":money_with_wings: Exchange data for $basec to $targetc\nPrice in $targetc: ${parsedresponse.ticker.price} $targetc\nMarket change (24h): ${parsedresponse.ticker.change}%"
-            ).thenAccept { message -> }
+suspend fun Exchange(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
+    if (event.message.content.lowercase() == ("${config.prefix}exchange") || event.message.content.lowercase() == ("${config.prefix}crypto")) {
+        val basec = config.exchange.base.uppercase()
+        val targetc = config.exchange.target.uppercase()
+        val url = "https://api.cryptonator.com/api/ticker/$basec-$targetc"
+        val response = httpclient.request<String>(url) {
+            method = HttpMethod.Get
         }
-        if (event.messageContent.lowercase()
-                .startsWith("${config.prefix}exchange") && event.messageContent.lowercase() != ("${config.prefix}exchange") || event.messageContent.lowercase()
-                .startsWith("${config.prefix}crypto") && event.messageContent.lowercase() != ("${config.prefix}crypto")
-        ) {
-            try {
-                val msg = event.messageContent.lowercase().split(" ")
-                if (!msg[1].toFloat().isNaN()) {
-                    val number = msg[1].toFloat()
-                    val base = msg[2].uppercase()
-                    val target = msg[3].uppercase()
-                    val url = "https://api.cryptonator.com/api/ticker/$base-$target"
-                    val response = URL(url).readText()
-                    val parsedresponse = Json { ignoreUnknownKeys = true }.decodeFromString<main>(response)
-                    val price = parsedresponse.ticker.price * number
-                    event.channel.sendMessage(
-                        ":money_with_wings: Exchange data for $number $base to $target\n$number $base in $target: $price $target\nMarket change (24h): ${parsedresponse.ticker.change}%\n$number $base in $target: $price $target"
-                    ).thenAccept { message -> }
-
-                }
-                val base = msg[1].uppercase()
-                val target = msg[2].uppercase()
+        val parsedresponse = Json { ignoreUnknownKeys = true }.decodeFromString<cryrsp>(response)
+        when (parsedresponse.success) {
+            true -> {
+                event.message.channel.sendMessage(MessageBuilder()
+                    .appendLine(":money_with_wings: Exchange data for $basec to $targetc")
+                    .appendLine("Price in $targetc: ${parsedresponse.ticker.price} $targetc")
+                    .appendLine("Market change (24h): ${parsedresponse.ticker.change}%")
+                    .build(), config, client)
+                    .thenAccept { message -> this.launch { bot(message, config) } }
+            }
+            false -> {
+                event.message.channel.sendMessage(MessageBuilder()
+                    .appendLine("Error exchanging $basec to $targetc")
+                    .appendLine(parsedresponse.error)
+                    .build(), config, client)
+                    .thenAccept { message -> this.launch { bot(message, config) } }
+            }
+        }
+    }
+    if (event.message.content.lowercase()
+            .startsWith("${config.prefix}exchange") && event.message.content.lowercase() != ("${config.prefix}exchange") || event.message.content.lowercase()
+            .startsWith("${config.prefix}crypto") && event.message.content.lowercase() != ("${config.prefix}crypto")
+    ) {
+        try {
+            val msg = event.message.content.lowercase().split(" ")
+            if (!msg[1].toFloat().isNaN()) {
+                val number = msg[1].toFloat()
+                val base = msg[2].uppercase()
+                val target = msg[3].uppercase()
                 val url = "https://api.cryptonator.com/api/ticker/$base-$target"
-                val response = URL(url).readText()
-                val parsedresponse = Json.decodeFromString<main>(response)
-                event.channel.sendMessage(
-                    ":money_with_wings: Exchange data for $base to $target\nPrice in $target: ${parsedresponse.ticker.price} $target"
-                ).thenAccept { message -> }
-            } catch (e: Exception) {
-                when (e) {
-                    is IndexOutOfBoundsException -> {
-                        event.channel.sendMessage(
-                            "Incorrect usage '${event.messageContent}'\nError: Not enough parameters!\nCorrect usage: `${config.prefix}exchange Currency(String) Currency(String)`"
-                        ).thenAccept { message -> }
+                val response = httpclient.request<String>(url) {
+                    method = HttpMethod.Get
+                }
+                val parsedresponse = Json { ignoreUnknownKeys = true }.decodeFromString<cryrsp>(response)
+                val price = parsedresponse.ticker.price * number
+                when (parsedresponse.success) {
+                    true -> {
+                        event.message.channel.sendMessage(MessageBuilder()
+                            .appendLine(":money_with_wings: Exchange data for $number $base to $target")
+                            .appendLine("$number $base in $target: $price $target")
+                            .appendLine("Market change (24h): ${parsedresponse.ticker.change}%")
+                            .build(), config, client)
+                            .thenAccept { message -> this.launch { bot(message, config) } }
                     }
-                    is NumberFormatException -> {
-                        event.channel.sendMessage(
-                            "Incorrect usage '${event.messageContent}'\nError: ${
-                                event.messageContent.lowercase().split(" ")[3]
-                            } is not a valid number!\nCorrect usage: `${config.prefix}exchange Amount(Float/Int) Currency(String) Currency(String)`",
-                        ).thenAccept { message -> }
+                    false -> {
+                        event.message.channel.sendMessage(MessageBuilder()
+                            .appendLine("Error exchanging $number $base to $target")
+                            .appendLine(parsedresponse.error)
+                            .build(), config, client)
+                            .thenAccept { message -> this.launch { bot(message, config) } }
                     }
-                    else -> {
-                        println(e)
-                    }
+                }
+            }
+            val base = msg[1].uppercase()
+            val target = msg[2].uppercase()
+            val url = "https://api.cryptonator.com/api/ticker/$base-$target"
+            val response = httpclient.request<String>(url) {
+                method = HttpMethod.Get
+            }
+            val parsedresponse = Json { ignoreUnknownKeys = true }.decodeFromString<cryrsp>(response)
+            when (parsedresponse.success) {
+                true -> {
+                    event.message.channel.sendMessage(MessageBuilder()
+                        .appendLine(":money_with_wings: Exchange data for $base to $target")
+                        .appendLine("Price in $target: ${parsedresponse.ticker.price} $target")
+                        .appendLine("Market change (24h): ${parsedresponse.ticker.change}%")
+                        .build(), config, client)
+                        .thenAccept { message -> this.launch { bot(message, config) } }
+                }
+                false -> {
+                    event.message.channel.sendMessage(MessageBuilder()
+                        .appendLine("Error exchanging $base to $target")
+                        .appendLine(parsedresponse.error)
+                        .build(), config, client)
+                        .thenAccept { message -> this.launch { bot(message, config) } }
+                }
+            }
+        } catch (e: Exception) {
+            when (e) {
+                is IndexOutOfBoundsException -> {
+                    event.message.channel.sendMessage(MessageBuilder()
+                        .appendLine("Incorrect usage '${event.message.content}'")
+                        .appendLine("Error: Not enough parameters!")
+                        .appendLine("Correct usage: `${config.prefix}exchange Currency(String) Currency(String)`")
+                        .build(), config, client)
+                        .thenAccept { message -> this.launch { bot(message, config) } }
+                }
+                is NumberFormatException -> {
+                    event.message.channel.sendMessage(MessageBuilder()
+                        .appendLine("Incorrect usage '${event.message.content}'")
+                        .appendLine("Error: ${event.message.content.lowercase().split(" ")[3]} is not a valid number!")
+                        .appendLine("Correct usage: `${config.prefix}exchange Amount(Float/Int) Currency(String) Currency(String)`")
+                        .build(), config, client)
+                        .thenAccept { message -> this.launch { bot(message, config) } }
+                }
+                else -> {
+                    println(e)
                 }
             }
         }
     }
-}*/
+}
+*/

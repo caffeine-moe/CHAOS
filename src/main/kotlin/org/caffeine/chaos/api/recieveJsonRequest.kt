@@ -1,6 +1,6 @@
 package org.caffeine.chaos.api
 
-import io.ktor.client.features.websocket.*
+import io.ktor.client.plugins.websocket.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString

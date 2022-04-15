@@ -1,6 +1,6 @@
 package org.caffeine.chaos.api
 
-import io.ktor.client.features.websocket.*
+import io.ktor.client.plugins.websocket.*
 import kotlinx.coroutines.delay
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive

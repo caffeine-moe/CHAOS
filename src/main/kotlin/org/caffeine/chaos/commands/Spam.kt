@@ -1,88 +1,102 @@
 package org.caffeine.chaos.commands
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.caffeine.chaos.Config
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import kotlin.concurrent.thread
+import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.message.MessageBuilder
+import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
 private var cock = false
-/*
 
-fun Spam(event: MessageCreateEvent, config: Config) {
-    thread {
-        cock = false
-        val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy hh:mm:ss"))
-        if (event.messageContent.lowercase() == "${config.prefix}spam") {
+suspend fun Spam(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
+    cock = false
+    if (event.message.content.lowercase() == "${config.prefix}spam") {
+        event.message.channel.sendMessage(
             MessageBuilder()
-                .append("**Incorrect usage:** '${event.messageContent}'")
-                .append("**Error:** Not enough parameters!")
-                .append("Correct usage: `${config.prefix}spam String Int`")
-                .send(event.channel)
-                .thenAccept { message -> }
-        }
-        if (event.messageContent.lowercase()
-                .startsWith("${config.prefix}spam ") && event.messageContent.lowercase() != "${config.prefix}spam "
-        ) {
-            val msg = event.messageContent.removePrefix("${config.prefix}spam ").split(" ")
-            try {
-                val number = msg[msg.lastIndex].toInt()
-                val stringbuilder = StringBuilder()
-                for (str: String in msg.dropLast(1)) {
-                    stringbuilder.append("$str ")
-                }
-                val string = stringbuilder.toString().trim()
-                if (number <= 0) {
+                .appendLine("**Incorrect usage:** '${event.message.content}'")
+                .appendLine("**Error:** Not enough parameters!")
+                .appendLine("**Correct usage:** `${config.prefix}spam String Int`")
+                .build(), config, client)
+            .thenAccept { message -> this.launch { bot(message, config) } }
+    }
+    if (event.message.content.lowercase()
+            .startsWith("${config.prefix}spam ") && event.message.content.lowercase() != "${config.prefix}spam "
+    ) {
+        val msg = event.message.content.removePrefix("${config.prefix}spam ").split(" ")
+        try {
+            val number = msg[msg.lastIndex].replace("[^0-9]".toRegex(), "").toInt()
+            val stringbuilder = StringBuilder()
+            for (str: String in msg.dropLast(1)) {
+                stringbuilder.append("$str ")
+            }
+            val string = stringbuilder.toString().removePrefix("${config.prefix}spam ").trim()
+            if (number <= 0) {
+                event.message.channel.sendMessage(
                     MessageBuilder()
-                        .append("**Incorrect usage:** '${event.messageContent}'")
-                        .append("**Error:** Int must be higher than 0!")
-                        .append("**Correct usage:** `${config.prefix}spam String Int`")
-                        .send(event.channel)
-                        .thenAccept { message -> }
-                    return@thread
+                        .appendLine("**Incorrect usage:** '${event.message.content}'")
+                        .appendLine("**Error:** Int must be higher than 0!")
+                        .appendLine("**Correct usage:** `${config.prefix}spam String Int`")
+                        .build(), config, client)
+                    .thenAccept { message -> this.launch { bot(message, config) } }
+                return@coroutineScope
+            }
+            var done = 0
+            while (done < number) {
+                if (cock) {
+                    break
                 }
-                var done = 0
-                while (done < number) {
-                    if (cock) {
-                        break
-                    }
-                    if (done % 8 == 0 && done != 0) {
+                if (done % 8 == 0 && done != 0) {
+                    withContext(Dispatchers.IO) {
                         Thread.sleep(4500)
                     }
-                    event.channel.sendMessage(string)
+                }
+                event.message.channel.sendMessage(MessageBuilder().appendLine(string).build(), config, client)
+                withContext(Dispatchers.IO) {
                     Thread.sleep(500)
-                    done++
                 }
-                if (done > 1) {
-                    event.channel.sendMessage("Done spamming '$string' $done times!")
-                        .thenAccept { message -> }
+                done++
+            }
+            if (done > 1) {
+                event.message.channel.sendMessage(MessageBuilder().appendLine("Done spamming '$string' $done times!")
+                    .build(), config, client)
+                    .thenAccept { message -> this.launch { bot(message, config) } }
+            }
+            if (done == 1) {
+                event.message.channel.sendMessage(MessageBuilder().appendLine("Done spamming '$string' once!").build(),
+                    config,
+                    client)
+                    .thenAccept { message -> this.launch { bot(message, config) } }
+            }
+        } catch (e: Exception) {
+            when (e) {
+                is NumberFormatException -> {
+                    event.message.channel.sendMessage(
+                        MessageBuilder()
+                            .appendLine("**Incorrect usage:** '${event.message.content}'")
+                            .appendLine("**Error:** '${msg[msg.lastIndex]}' is not an integer!")
+                            .appendLine("**Correct usage:** `${config.prefix}spam String Int`")
+                            .build(), config, client)
+                        .thenAccept { message -> this.launch { bot(message, config) } }
                 }
-                if (done == 1) {
-                    event.channel.sendMessage("Done spamming '$string' once!")
-                        .thenAccept { message -> }
-                }
-            } catch (e: Exception) {
-                when (e) {
-                    is java.lang.NumberFormatException -> {
-                        event.channel.sendMessage("Incorrect usage '${event.messageContent}'\nError: '${msg[msg.last().lastIndex]}' is not an integer!\nCorrect usage: `${config.prefix}spam String Int`")
-                            .thenAccept { message -> }
-                    }
-                    is IndexOutOfBoundsException -> {
-                        event.channel.sendMessage("Incorrect usage '${event.messageContent}'\nError: Not enough parameters!\nCorrect usage: `${config.prefix}spam String Int`")
-                            .thenAccept { message -> }
-                    }
-                    else -> {
-                        println(e)
-                    }
+                is IndexOutOfBoundsException -> {
+                    event.message.channel.sendMessage(
+                        MessageBuilder()
+                            .appendLine("**Incorrect usage:** '${event.message.content}'")
+                            .appendLine("**Error:** Error: Not enough parameters!")
+                            .appendLine("**Correct usage:** `${config.prefix}spam String Int`")
+                            .build(), config, client)
+                        .thenAccept { message -> this.launch { bot(message, config) } }
                 }
             }
         }
     }
 }
 
-fun SSpam(event: MessageCreateEvent, config: Config) {
-    thread {
-        if (event.messageContent.lowercase() == "${config.prefix}sspam") {
+suspend fun SSpam(event: MessageCreateEvent, config: Config) = coroutineScope {
+        if (event.message.content.lowercase() == "${config.prefix}sspam") {
             cock = true
         }
     }
-}*/

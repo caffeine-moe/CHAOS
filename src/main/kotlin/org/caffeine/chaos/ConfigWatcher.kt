@@ -1,7 +1,5 @@
 package org.caffeine.chaos
 
-import io.ktor.client.features.websocket.*
-import io.ktor.http.cio.websocket.*
 import org.caffeine.chaos.api.client.Client
 import java.nio.file.FileSystems
 import java.nio.file.Path
