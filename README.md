@@ -12,16 +12,20 @@ Or alternatively, by buying me a coffee : https://ko-fi.com/caffeine727
 
 ## Features (Still under construction)
 - Fully custom discord API/Gateway interation.
-- ~300ms Nitro Sniper
+- ~250ms Nitro Sniper
+- Deleted message logger
 - Leave all group DM's
+- DM scammer/spammer auto blocker
 - Message spammer
 - Message purger
-- Account Backup (restore in progress)
+- Account backup
+- Account bestore
 - Auto delete user commands and bot responses
-- ytdl
-- Crypto and Fiat currency exchange rates
+- Create mirrors for file
 - Website status/ping
 - IP Lookup
+- User lookup
 - Avatar stealer
+- Optical Character Recognition
 
 And many more!
