@@ -5,7 +5,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.caffeine.chaos.Config
-import org.caffeine.chaos.LogV2
+import org.caffeine.chaos.log
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientChannel
 import org.caffeine.chaos.api.client.message.MessageBuilder
@@ -19,7 +19,7 @@ suspend fun LGDM(client: Client, event: MessageCreateEvent, config: Config) = co
                 try {
                     val amount = client.user.channels.groupChannels.getList(config).size
                     if (amount <= 0) {
-                        event.message.channel.sendMessage(MessageBuilder()
+                        event.channel.sendMessage(MessageBuilder()
                             .appendLine("There are no channels to delete!")
                             .build(), config, client)
                             .thenAccept { message -> this.launch { bot(message, config) } }
@@ -34,16 +34,16 @@ suspend fun LGDM(client: Client, event: MessageCreateEvent, config: Config) = co
                         }
                     }
                     if (done > 1) {
-                        LogV2(channels.toString(), "CHANNELS DELETED:")
-                        event.message.channel.sendMessage(MessageBuilder()
+                        log(channels.toString(), "CHANNELS DELETED:")
+                        event.channel.sendMessage(MessageBuilder()
                             .appendLine("Done! Deleted $done channels!")
                             .appendLine("Check the console to see a list of the deleted channels.")
                             .build(), config, client)
                             .thenAccept { message -> this.launch { bot(message, config) } }
                     }
                     if (done == 1){
-                        LogV2(channels.toString(), "CHANNELS DELETED:")
-                        event.message.channel.sendMessage(MessageBuilder()
+                        log(channels.toString(), "CHANNELS DELETED:")
+                        event.channel.sendMessage(MessageBuilder()
                             .appendLine("Done! Deleted $done channel!")
                             .appendLine("Check the console to see the name of the deleted channel.")
                             .build(), config, client)

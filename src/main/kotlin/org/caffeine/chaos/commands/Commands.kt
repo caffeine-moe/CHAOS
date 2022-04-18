@@ -16,6 +16,7 @@ val commandlist = arrayOf(
     "ip",
     "purge",
     "sclear",
+    "spurge",
     "spam",
     "sspam",
     "backup",
@@ -37,12 +38,12 @@ val commandlist = arrayOf(
     "donotdisturb",
     "invisible",
     "offline",
-    "online"
+    "online",
 )
 
 suspend fun Help(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
     if (event.message.content.lowercase() == "${config.prefix}help" || event.message.content.lowercase() == "${config.prefix}cmds" || event.message.content.lowercase() == "${config.prefix}commands") {
-        event.message.channel.sendMessage(MessageBuilder()
+        event.channel.sendMessage(MessageBuilder()
             .appendLine("**CHAOS v$version**")
             .appendLine("**Commands:** https://caffeine.moe/CHAOS/commands/")
             .build(), config, client

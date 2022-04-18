@@ -3,11 +3,8 @@ package org.caffeine.chaos.api
 import io.ktor.client.plugins.websocket.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import org.caffeine.chaos.Config
-import org.caffeine.chaos.Log
+import org.caffeine.chaos.*
 import org.caffeine.chaos.api.client.*
-import org.caffeine.chaos.configWatcher
-import org.caffeine.chaos.loginPrompt
 
 @kotlinx.serialization.Serializable
 private data class payload(
@@ -23,6 +20,7 @@ private data class d(
     val user: user,
     val user_settings_proto: String,
     val v: Int,
+    val session_id: String
 )
 
 @kotlinx.serialization.Serializable
@@ -45,22 +43,23 @@ private data class user(
     val verified: Boolean,
 )
 
-suspend fun ready(client: Client, config: Config, ws: DefaultClientWebSocketSession, payload: String) {
-    val d = Json { ignoreUnknownKeys = true }.decodeFromString<payload>(payload).d.user
+suspend fun ready(client: Client, config: Config, connection: Connection, payload: String) {
+    val d = Json { ignoreUnknownKeys = true }.decodeFromString<payload>(payload).d
     client.user = ClientUser(
-        d.verified,
-        d.username,
-        d.discriminator,
-        d.id,
-        d.email,
-        d.bio,
-        d.avatar,
+        d.user.verified,
+        d.user.username,
+        d.user.discriminator,
+        d.user.id,
+        d.user.email,
+        d.user.bio,
+        d.user.avatar,
         ClientFriends(),
         ClientGuilds(),
         ClientChannels()
     )
-    Log("\u001B[38;5;47mClient logged in!")
-    print("\u001b[H\u001b[2J\u001B[38;5;255m")
+    connection.sid = d.session_id
+    log("\u001B[38;5;47mClient logged in!")
+    clear()
     loginPrompt(client, config)
     configWatcher(client)
 }

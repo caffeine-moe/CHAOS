@@ -11,7 +11,7 @@ suspend fun user(event: MessageCreateEvent, config: Config) {
     withContext(Dispatchers.IO) {
         Thread.sleep(config.auto_delete.user_delay * 1000)
     }
-    event.message.delete(event.message, config)
+    event.message.delete(config)
 }
 
 suspend fun bot(msg: Message, config: Config) {
@@ -20,7 +20,7 @@ suspend fun bot(msg: Message, config: Config) {
             Thread.sleep(config.auto_delete.bot_delay * 1000)
         }
         try {
-            msg.delete(msg, config)
+            msg.delete(config)
         }catch (e: Exception){
             e.printStackTrace()
         }

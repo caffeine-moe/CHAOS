@@ -1,17 +1,15 @@
 package org.caffeine.chaos.api.client.message
 
-import io.ktor.http.*
-import org.caffeine.chaos.Config
-import org.caffeine.chaos.api.handlers.messagecreate
+import org.caffeine.chaos.api.client.Client
+import java.awt.image.BufferedImage
 import java.io.File
 import java.net.URL
-import java.util.concurrent.CompletableFuture
 
 class MessageBuilder {
     private var sb = StringBuilder()
-    fun build() : Message {
-        var message = Message(null, null, sb.toString(), MessageChannel(""))
-        return message
+    private var attachments =  mutableListOf<MessageAttachment>()
+    fun build(): Message {
+        return Message(null, sb.toString(), attachments = attachments)
     }
     fun append(text: String) : MessageBuilder{
         sb.append(text)
@@ -22,15 +20,8 @@ class MessageBuilder {
         return this
     }
 
-    fun addAttachment(attachment: URL): MessageBuilder {
-
+    fun addAttachment(attachment: MessageAttachment): MessageBuilder {
+        attachments.add(attachment)
         return this
     }
-    fun addAttachment(attachment: String): MessageBuilder {
-        return this
-    }
-    fun addAttachment(attachment: File): MessageBuilder {
-        return this
-    }
-
 }

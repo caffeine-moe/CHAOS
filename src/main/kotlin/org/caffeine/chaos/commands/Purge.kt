@@ -1,63 +1,114 @@
 package org.caffeine.chaos.commands
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.caffeine.chaos.Config
+import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.message.Message
+import org.caffeine.chaos.api.client.message.MessageBuilder
+import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.concurrent.thread
 
-/*
-fun Purge(client: DiscordApi, event: MessageCreateEvent, config: Config) {
-    thread {
-        val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy hh:mm:ss"))
-        if (event.message.content.lowercase() == "${config.prefix}purge" || event.message.content.lowercase() == "${config.prefix}sclear") {
-            event.channel.sendMessage("Incorrect usage '${event.message.content}'\nError: Not enough parameters!\nCorrect usage: `${config.prefix}purge Int`")
-                .thenAccept { message -> }
-        }
-        if (event.message.content.lowercase().startsWith("${config.prefix}purge ") || event.message.content.lowercase()
-                .startsWith("${config.prefix}sclear ") && event.message.content.lowercase() != "${config.prefix}purge" && event.message.content.lowercase() != "${config.prefix}sclear"
-        ) {
-            val number = event.message.content.lowercase().replace("[^0-9]".toRegex(), "")
-            try {
-                val number = event.message.content.lowercase().replace("[^0-9]".toRegex(), "").toInt()
-                if (number <= 0) {
-                    event.channel.sendMessage("Incorrect usage '${event.message.content}'\nError: Int must be higher than 0!\nCorrect usage: `${config.prefix}purge Int`")
-                        .thenAccept { message -> }
-                    return@thread
-                }
-                var done = 0
-                val count = event.channel.messagesAsStream.filter { x -> x.author == event.messageAuthor }.count()
-                if (count <= 0) {
-                    event.channel.sendMessage(
-                        "There is nothing to delete!"
-                    ).thenAccept { message -> }
-                    return@thread
-                }
-                for (Message: Message in event.channel.messagesAsStream.filter { x -> x.author == event.messageAuthor }) {
-                    if (done % 8 == 0 && done != 0) {
+private var cock = false
+
+suspend fun Purge(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
+    val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy hh:mm:ss"))
+    if (event.message.content.lowercase() == "${config.prefix}purge" || event.message.content.lowercase() == "${config.prefix}sclear") {
+        event.channel.sendMessage(MessageBuilder()
+            .appendLine("**Incorrect usage:** '${event.message.content}'")
+            .appendLine("**Error:** Not enough parameters!")
+            .appendLine("**Correct usage:** `${config.prefix}purge Int`")
+            .build(), config, client)
+            .thenAccept { message -> this.launch { bot(message, config) } }
+    }
+    if (event.message.content.lowercase().startsWith("${config.prefix}purge ") || event.message.content.lowercase()
+            .startsWith("${config.prefix}sclear ") && event.message.content.lowercase() != "${config.prefix}purge" && event.message.content.lowercase() != "${config.prefix}sclear"
+    ) {
+        cock = false
+        val number = event.message.content.lowercase().replace("[^0-9]".toRegex(), "")
+        try {
+            if (number.toInt() <= 0) {
+                event.channel.sendMessage(
+                    MessageBuilder()
+                        .appendLine("**Incorrect usage:** '${event.message.content}'")
+                        .appendLine("**Error:** Int must be higher than 0!")
+                        .appendLine("**Correct usage:** `${config.prefix}purge Int`")
+                        .build(), config, client)
+                    .thenAccept { message -> this.launch { bot(message, config) } }
+                return@coroutineScope
+            }
+            if (number.toInt() > 50) {
+                event.channel.sendMessage(
+                    MessageBuilder()
+                        .appendLine("**Incorrect usage:** '${event.message.content}'")
+                        .appendLine("**Error:** Int must be lower than 50!")
+                        .appendLine("**Correct usage:** `${config.prefix}purge Int`")
+                        .build(), config, client)
+                    .thenAccept { message -> this.launch { bot(message, config) } }
+                return@coroutineScope
+            }
+            var done = 0
+            val count = event.channel.messagesAsStream(config).filter { x -> x.author == event.message.author }.count()
+            if (count <= 0) {
+                event.channel.sendMessage(
+                    MessageBuilder()
+                        .appendLine("There is nothing to delete!")
+                        .build(), config, client)
+                    .thenAccept { message -> this.launch { bot(message, config) } }
+                return@coroutineScope
+            }
+            for (message: Message in event.channel.messagesAsStream(config).filter { x -> x.author == event.message.author }) {
+                if (done % 8 == 0 && done != 0) {
+                    withContext(Dispatchers.IO) {
                         Thread.sleep(4500)
                     }
-                    Message.delete()
+                }
+                message.delete(config)
+                withContext(Dispatchers.IO) {
                     Thread.sleep(500)
-                    done++
-                    if (done == number) break
                 }
-                if (done > 1) {
-                    event.channel.sendMessage("Removed $done messages!").thenAccept { message -> }
+                done++
+                if (cock) break
+                if (done == number.toInt()) break
+            }
+            if (done > 1) {
+                event.channel.sendMessage(MessageBuilder()
+                    .appendLine("Removed $done messages!")
+                    .build(),config, client)
+                    .thenAccept { message -> this.launch { bot(message, config) } }
+            }
+            if (done == 1) {
+                event.channel.sendMessage(MessageBuilder()
+                    .appendLine("Removed $done message!")
+                    .build(),config, client)
+                    .thenAccept { message -> this.launch { bot(message, config) } }
+            }
+        } catch (e: Exception) {
+            when (e) {
+                is NumberFormatException -> {
+                    event.channel.sendMessage(
+                        MessageBuilder()
+                            .appendLine("**Incorrect usage:** '${event.message.content}'")
+                            .appendLine("**Error:** $number is not an integer!")
+                            .appendLine("**Correct usage:** `${config.prefix}purge Int`")
+                            .build(), config, client)
+                        .thenAccept { message -> this.launch { bot(message, config) } }
+                    return@coroutineScope
                 }
-                if (done == 1) {
-                    event.channel.sendMessage("Removed $done message!").thenAccept { message -> }
-                }
-            } catch (e: Exception) {
-                when (e) {
-                    is NumberFormatException -> {
-                        event.channel.sendMessage("Incorrect usage '${event.message.content}'\nError: '$number' is not an integer!\nCorrect usage: `${config.prefix}purge Int`")
-                            .thenAccept { message -> }
-                    }
-                    else -> {
-                        println(e)
-                    }
+                else -> {
+                    println("purge")
+                    println(e)
                 }
             }
         }
     }
-}*/
+}
+
+suspend fun spurge(client: Client, event: MessageCreateEvent, config: Config) {
+    if (event.message.content.lowercase() == "${config.prefix}spurge") {
+        cock = true
+    }
+}

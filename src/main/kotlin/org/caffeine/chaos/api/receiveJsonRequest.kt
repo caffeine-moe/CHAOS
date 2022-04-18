@@ -1,7 +1,5 @@
 package org.caffeine.chaos.api
 
-import io.ktor.client.plugins.websocket.*
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -16,13 +14,13 @@ data class response(
     val t: String?
 )
 
-suspend fun recieveJsonRequest(payload: String, config: Config, ws: DefaultClientWebSocketSession, client: Client) {
+suspend fun receiveJsonRequest(payload: String, config: Config, connection: Connection, client: Client) {
     val event = Json{ignoreUnknownKeys = true}.decodeFromString<response>(payload)
     when (event.op){
         0 ->{
             when (event.t){
                 "READY" ->{
-                    ready(client, config, ws, payload)
+                    ready(client, config, connection, payload)
                 }
                 "MESSAGE_CREATE" ->{
                     messagecreate(payload, config, client)
@@ -30,7 +28,7 @@ suspend fun recieveJsonRequest(payload: String, config: Config, ws: DefaultClien
             }
         }
         7 ->{
-            println(payload)
+            connection.reconnect(config, connection.sid, connection.lasts, client)
         }
     }
 }

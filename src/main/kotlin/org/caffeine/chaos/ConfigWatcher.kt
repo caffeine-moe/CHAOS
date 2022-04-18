@@ -1,20 +1,24 @@
 package org.caffeine.chaos
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.caffeine.chaos.api.client.Client
 import java.nio.file.FileSystems
-import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardWatchEventKinds
 
 suspend fun configWatcher(client: Client) {
     try {
-        val watchService = FileSystems.getDefault().newWatchService()
-        val path = Paths.get("").toAbsolutePath().toString()
-        val directory = Path.of(path)
-        val watchKey = directory.register(
-            watchService,
-            StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE
-        )
+        val watchService = withContext(Dispatchers.IO) {
+            FileSystems.getDefault().newWatchService()
+        }
+        val path = Paths.get("").toAbsolutePath()
+        val watchKey = withContext(Dispatchers.IO) {
+            path.register(
+                watchService,
+                StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE
+            )
+        }
         while (true) {
             for (event in watchKey.pollEvents()) {
                 val kind = event.kind()

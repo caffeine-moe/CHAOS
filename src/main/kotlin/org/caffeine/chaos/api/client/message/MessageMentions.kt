@@ -1,6 +1,7 @@
 package org.caffeine.chaos.api.client.message
 
-data class MessageMentions(
+@kotlinx.serialization.Serializable
+data class MessageMention(
     val username: String,
     val discriminator: String,
     val id: String,

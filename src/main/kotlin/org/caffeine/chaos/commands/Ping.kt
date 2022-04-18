@@ -15,7 +15,7 @@ import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
 suspend fun Ping(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
     if (event.message.content.lowercase() == "${config.prefix}ping") {
-        event.message.channel.sendMessage(MessageBuilder()
+        event.channel.sendMessage(MessageBuilder()
             .appendLine("Pinging...")
             .build(), config, client)
             .thenAccept { message ->
@@ -33,13 +33,14 @@ suspend fun Ping(client: Client, event: MessageCreateEvent, config: Config) = co
                         .appendLine("Target: Discord API")
                         .appendLine("Latency: ${ping}ms")
                         .build(), config)
+                        .thenAccept { message -> this.launch { bot(message, config) } }
                 }
             }
     }
     if (event.message.content.lowercase()
             .startsWith("${config.prefix}ping ") && event.message.content.lowercase() != "${config.prefix}ping"
     ) {
-        event.message.channel.sendMessage(MessageBuilder()
+        event.channel.sendMessage(MessageBuilder()
             .appendLine("Pinging...")
             .build(), config, client)
             .thenAccept { message ->

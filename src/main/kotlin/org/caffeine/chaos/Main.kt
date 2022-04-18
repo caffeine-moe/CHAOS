@@ -1,7 +1,9 @@
 package org.caffeine.chaos
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -67,36 +69,24 @@ data class nitro_sniper(
     val silent: Boolean
 )
 
-//main function
-suspend fun main(): Unit = runBlocking{
-    //reset
-    print("\u001b[H\u001b[2J\u001B[38;5;255m")
-    //edgy hackerman logo
-    println(
-                " ▄████▄   ██░ ██  ▄▄▄       ▒█████    ██████ \n" +
-                "▒██▀ ▀█  ▓██░ ██▒▒████▄    ▒██▒  ██▒▒██    ▒ \n" +
-                "▒▓█    ▄ ▒██▀▀██░▒██  ▀█▄  ▒██░  ██▒░ ▓██▄   \n" +
-                "▒▓▓▄ ▄██▒░▓█ ░██ ░██▄▄▄▄██ ▒██   ██░  ▒   ██▒\n" +
-                "▒ ▓███▀ ░░▓█▒░██▓ ▓█   ▓██▒░ ████▓▒░▒██████▒▒\n" +
-                "░ ░▒ ▒  ░ ▒ ░░▒░▒ ▒▒   ▓▒█░░ ▒░▒░▒░ ▒ ▒▓▒ ▒ ░\n" +
-                "  ░  ▒    ▒ ░▒░ ░  ▒   ▒▒ ░  ░ ▒ ▒░ ░ ░▒  ░ ░\n" +
-                "░         ░  ░░ ░  ░   ▒   ░ ░ ░ ▒  ░  ░  ░  \n" +
-                "░ ░       ░  ░  ░      ░  ░    ░ ░        ░  \n" +
-                "░                                            "
-    )
-    println("─────────────────────────────────────────────")
+suspend fun main(): Unit = coroutineScope{
+    clear()
+    printLogo()
+    printSeparator()
     if (!File("config.json").exists()) {
         val default = URL("https://caffeine.moe/CHAOS/config.json").readText(Charsets.UTF_8).trim()
-        File("config.json").createNewFile()
+        withContext(Dispatchers.IO) {
+            File("config.json").createNewFile()
+        }
         File("config.json").writeText(default)
-        LogV2(
+        log(
             "Config not found, we have generated one for you at ${File("config.json").absolutePath}",
             "\u001B[38;5;197mERROR:"
         )
-        Log("\u001B[38;5;33mPlease change the file accordingly. Documentation: https://caffeine.moe/CHAOS/")
+        log("\u001B[38;5;33mPlease change the file accordingly. Documentation: https://caffeine.moe/CHAOS/")
         exitProcess(0)
     }
-    Log("\u001B[38;5;33mInitialising gateway connection...")
+    log("\u001B[38;5;33mInitialising gateway connection...")
     val config = Json.decodeFromString<Config>(File("config.json").readText())
     val client = Client()
     launch{ client.login(config, client) }.start()

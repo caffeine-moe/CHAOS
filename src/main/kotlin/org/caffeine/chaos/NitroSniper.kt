@@ -22,7 +22,7 @@ suspend fun NitroSniper(event: MessageCreateEvent, config: Config) {
         val start = System.currentTimeMillis()
         val code = event.message.content.removePrefix(giftPrefix)
         val p = File("Resources")
-        val f = File("${p.absolutePath}/tried-nitro-codes.txt")
+        val f = File("${p.absolutePath}tried-nitro-codes.txt")
         if (!p.exists()) {
             p.mkdir()
         }
@@ -34,7 +34,7 @@ suspend fun NitroSniper(event: MessageCreateEvent, config: Config) {
         }
         f.appendText("$code\n")
         try {
-            val response = httpclient.request("$BASE_URL/entitlements/gift-codes/$code/redeem") {
+            httpclient.request("$BASE_URL/entitlements/gift-codes/$code/redeem") {
                 method = HttpMethod.Post
                 headers {
                     append(HttpHeaders.Authorization, config.token)
@@ -44,19 +44,19 @@ suspend fun NitroSniper(event: MessageCreateEvent, config: Config) {
         val end = System.currentTimeMillis()
         if (!config.nitro_sniper.silent) {
             val time = start - end
-            LogV2("Redeemed code $code! in ${time.toString().replace("-", "")}ms", "NITRO SNIPER:")
+            log("Redeemed code $code! in ${time.toString().replace("-", "")}ms", "NITRO SNIPER:")
         }
         } catch (e: Exception) {
             val end = System.currentTimeMillis()
             val time = start - end
             if (e.toString().contains("Unknown Gift Code")) {
                 if (!config.nitro_sniper.silent) {
-                    LogV2("Code $code is invalid! (${time.toString().replace("-", "")}ms)", "NITRO SNIPER:")
+                    log("Code $code is invalid! (${time.toString().replace("-", "")}ms)", "NITRO SNIPER:")
                 }
             }
             if (e.toString().contains("e-mail")) {
                 if (!config.nitro_sniper.silent) {
-                    LogV2("You need to verify your email in order to use the nitro sniper! (Code: $code) (${time.toString().replace("-", "")}ms)", "NITRO SNIPER:")
+                    log("You need to verify your email in order to use the nitro sniper! (Code: $code) (${time.toString().replace("-", "")}ms)", "NITRO SNIPER:")
                 }
             }
         }

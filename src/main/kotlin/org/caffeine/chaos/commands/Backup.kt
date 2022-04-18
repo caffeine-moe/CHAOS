@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter
 suspend fun Backup(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
     val ftime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yy_hh:mm:ss"))
     if (event.message.content.lowercase() == ("${config.prefix}backup")) {
-        event.message.channel.sendMessage(MessageBuilder().append("Performing backup...").build(), config, client)
+        event.channel.sendMessage(MessageBuilder().append("Performing backup...").build(), config, client)
             .thenAccept { message ->
                 this.launch {
                     val texttowrite = "================================ SERVERS ================================\n" +

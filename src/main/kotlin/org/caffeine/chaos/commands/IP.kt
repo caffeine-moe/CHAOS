@@ -35,7 +35,7 @@ data class ipApiResponse(
 suspend fun IP(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
     val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy hh:mm:ss"))
     if (event.message.content.lowercase() == "${config.prefix}ip") {
-        event.message.channel.sendMessage(MessageBuilder()
+        event.channel.sendMessage(MessageBuilder()
             .appendLine("**Incorrect usage** '${event.message.content}'")
             .appendLine("**Error:** No IP/URL specified")
             .appendLine("**Correct usage:** `${config.prefix}ip IP/URL`")
@@ -45,7 +45,7 @@ suspend fun IP(client: Client, event: MessageCreateEvent, config: Config) = coro
     if (event.message.content.lowercase()
             .startsWith("${config.prefix}ip ") && event.message.content.lowercase() != "${config.prefix}ip"
     ) {
-        event.message.channel.sendMessage(MessageBuilder().appendLine("Looking up IP/URL").build(), config, client)
+        event.channel.sendMessage(MessageBuilder().appendLine("Looking up IP/URL").build(), config, client)
             .thenAccept { message ->
                 this.launch {
                     val url = event.message.content.replaceFirst("${config.prefix}ip ", "")

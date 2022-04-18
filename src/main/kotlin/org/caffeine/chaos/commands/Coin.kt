@@ -16,14 +16,14 @@ suspend fun Coin(client: Client, event: MessageCreateEvent, config: Config) = co
         if (event.message.content.lowercase() == ("${config.prefix}coin")) {
             val face = arrayOf("heads", "tails").random()
             if (face == "heads") {
-                event.message.channel.sendMessage(MessageBuilder()
+                event.channel.sendMessage(MessageBuilder()
                     .appendLine(":coin: Heads!").build(), config, client).thenAccept { message -> this.launch{
                          bot(message, config)
                 } }
                 return@coroutineScope
             }
             else {
-                event.message.channel.sendMessage(MessageBuilder()
+                event.channel.sendMessage(MessageBuilder()
                     .appendLine(":coin: Tails!").build(), config, client).thenAccept { message -> this.launch{
                     bot(message, config)
                 } }

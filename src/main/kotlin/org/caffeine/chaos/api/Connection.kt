@@ -8,17 +8,18 @@ import io.ktor.client.utils.*
 import io.ktor.http.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.launch
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.encodeToJsonElement
 import org.caffeine.chaos.Config
-import org.caffeine.chaos.Log
-import org.caffeine.chaos.LogV2
+import org.caffeine.chaos.log
 import org.caffeine.chaos.api.client.Client
 import java.io.File
-import kotlin.concurrent.fixedRateTimer
 
 @Serializable
 data class rpayload(
@@ -46,57 +47,70 @@ val httpclient = HttpClient(CIO) {
     }
 }
 
-private var cfg = Json.decodeFromString<Config>(File("config.json").readText())
-
-private val properties = JsonObject(
-    mapOf(
-        "\$os" to JsonPrimitive("Linux"),
-        "\$browser" to JsonPrimitive("Chrome"),
-        "\$device" to JsonPrimitive("")
-    )
+@Serializable
+data class Identify(
+    val op: Int,
+    val d: IdentifyD
 )
 
-private val d = JsonObject(
-    mapOf(
-        "token" to JsonPrimitive(cfg.token),
-        "properties" to JsonObject(properties)
-
-    )
+@Serializable
+data class IdentifyD(
+    val token: String,
+    val properties: IdentifyDProperties
 )
 
-private val payload = JsonObject(
-    mapOf(
-        "op" to JsonPrimitive(2),
-        "d" to JsonObject(d),
-    )
+@Serializable
+data class IdentifyDProperties(
+    @SerialName("\$os")
+    val os: String,
+    @SerialName("\$browser")
+    val browser: String,
+    @SerialName("\$device")
+    val device: String
 )
 
-class Connection(client: Client) {
+@Serializable
+data class Resume(
+    val op: Int,
+    val d: ResumeD
+)
 
+@Serializable
+data class ResumeD(
+    val token: String,
+    val session_id: String,
+    val seq: Int
+)
+
+class Connection {
+
+    var lasts = 0
+    var sid = ""
     lateinit var ws: DefaultClientWebSocketSession
 
     suspend fun login(config: Config, client: Client) {
-        val ws = httpclient.ws(
+        httpclient.ws(
             method = HttpMethod.Get,
             host = GATEWAY,
             path = "/?v=8&encoding=json",
             port = 8080
         ) {
-            Log("\u001B[38;5;47mConnected!")
+            log("\u001B[38;5;47mConnected!")
             ws = this@ws
             val event = this@ws.incoming.receive().data
             val pl = Json.decodeFromString<rpayload>(event.decodeToString())
             when (pl.op) {
                 10 -> {
-                    LogV2("Gateway sent opcode 10 HELLO, sending identification payload and starting heartbeat.",
+                    log("Gateway sent opcode 10 HELLO, sending identification payload and starting heartbeat.",
                         "API:")
-                    launch { sendHeartBeat(pl.d.heartbeat_interval, this@ws) }
-                    sendJsonRequest(this, payload)
+                    launch { sendHeartBeat(pl.d.heartbeat_interval, this@Connection) }
+                    val id = Json.encodeToString(Identify(2, IdentifyD(config.token, IdentifyDProperties("Linux", "Chrome", ""))))
+                    sendJsonRequest(this@Connection, id)
                     for (frame in incoming) {
                         frame as? Frame.Text ?: continue
                         val receivedText = frame.readText()
                         launch {
-                            recieveJsonRequest(receivedText, config, this@ws, client)
+                            receiveJsonRequest(receivedText, config, this@Connection, client)
                         }
                     }
                 }
@@ -105,6 +119,40 @@ class Connection(client: Client) {
     }
     suspend fun logout() {
         ws.close()
-        LogV2("Client logged out.","API:")
+        log("Client logged out.","API:")
+    }
+    suspend fun reconnect(config: Config, session_id: String, seq: Int, client: Client) {
+        log("Gateway sent opcode 7 RECONNECT, reconnecting...", "API:")
+        br = true
+        logout()
+        log("\u001B[38;5;33mInitialising gateway connection...")
+        httpclient.ws(
+            method = HttpMethod.Get,
+            host = GATEWAY,
+            path = "/?v=8&encoding=json",
+            port = 8080
+        ) {
+            log("\u001B[38;5;47mConnected!")
+            ws = this@ws
+            val event = this@ws.incoming.receive().data
+            val pl = Json.decodeFromString<rpayload>(event.decodeToString())
+            when (pl.op) {
+                10 -> {
+                    log("Gateway sent opcode 10 HELLO, sending identification payload and starting heartbeat.",
+                        "API:")
+                    launch { sendHeartBeat(pl.d.heartbeat_interval, this@Connection) }
+                    val id = Json.encodeToString(Identify(2, IdentifyD(config.token, IdentifyDProperties("Linux", "Chrome", ""))))
+                    sendJsonRequest(this@Connection, id)
+                    val rc = Json.encodeToString(Resume(6, ResumeD(config.token,session_id, seq)))
+                    for (frame in incoming) {
+                        frame as? Frame.Text ?: continue
+                        val receivedText = frame.readText()
+                        launch {
+                            receiveJsonRequest(receivedText, config, this@Connection, client)
+                        }
+                    }
+                }
+            }
+        }
     }
 }

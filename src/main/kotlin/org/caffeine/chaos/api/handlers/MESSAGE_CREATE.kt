@@ -18,8 +18,8 @@ private data class messageCreate(
 
 @Serializable
 private data class D(
-    val attachments: List<String>?,
-    val author: Author,
+    val attachments: List<MessageAttachment>?,
+    val author: MessageAuthor,
     val channel_id: String,
     val components: List<String>?,
     val content: String,
@@ -28,23 +28,14 @@ private data class D(
     val id: String,
     val mention_everyone: Boolean?,
     val mention_roles: List<String>?,
-    val mentions: List<String>?,
-    val nonce: String?,
+    val mentions: List<MessageMention>?,
+    val nonce: String? = null,
     val pinned: Boolean?,
-    val referenced_message: String?,
+    val referenced_message: D? = null,
     val timestamp: String?,
     val tts: Boolean?,
     val type: Int?
 )
-
-@Serializable
-private data class Author(
-    val avatar: String?,
-    val discriminator: Int,
-    val id: String,
-    val username: String
-)
-
 
 suspend fun messagecreate(payload: String, config: Config, client: Client){
     try {
@@ -55,15 +46,14 @@ suspend fun messagecreate(payload: String, config: Config, client: Client){
             d.author.id,
             d.author.avatar
         )
-        val messagechannel = MessageChannel(d.channel_id)
-        val message = Message(d.id, messageauthor, d.content, messagechannel)
-    val event = MessageCreateEvent(message)
-        event.message.content = d.content
-        event.message.id = d.id
+        val message = Message(d.id, d.content, d.channel_id, messageauthor, d.attachments)
+        val event = MessageCreateEvent(message, MessageChannel(d.channel_id))
         commandHandler(config, event, client)
     }catch (e: Exception){
+        println(payload)
         println("you are ugly")
         println(e)
+        println(e.cause)
         e.printStackTrace()
     }
 }
