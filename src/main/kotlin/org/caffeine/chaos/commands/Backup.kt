@@ -4,16 +4,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.caffeine.chaos.Config
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.config.Config
 import java.io.File
 import java.nio.file.Files
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-suspend fun Backup(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
+suspend fun backup(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
     val ftime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yy_hh:mm:ss"))
     if (event.message.content.lowercase() == ("${config.prefix}backup")) {
         event.channel.sendMessage(MessageBuilder().append("Performing backup...").build(), config, client)
@@ -35,22 +35,23 @@ suspend fun Backup(client: Client, event: MessageCreateEvent, config: Config) = 
                         File(
                             f.toPath().toString()
                         ).writeText(texttowrite)
-                        try{
-                        message.edit(MessageBuilder()
-                            .appendLine("Backup successful!")
-                            .appendLine("Saved to: ${f.toPath()}")
-                            .build(), config).thenAccept { message ->
-                            this.launch {
-                                try {
-                                    bot(message, config)
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
+                        try {
+                            message.edit(MessageBuilder()
+                                .appendLine("Backup successful!")
+                                .appendLine("Saved to: ${f.toPath()}")
+                                .build(), config).thenAccept { message ->
+                                this.launch {
+                                    try {
+                                        bot(message, config)
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
                                 }
                             }
-                        }
                             return@launch
-                    }catch (e: Exception){
-                    e.printStackTrace()}
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                     val f = File("${p.absolutePath}\\$ftime")
                     withContext(Dispatchers.IO) {

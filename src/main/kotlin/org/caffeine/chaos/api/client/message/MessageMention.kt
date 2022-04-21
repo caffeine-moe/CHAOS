@@ -5,5 +5,5 @@ data class MessageMention(
     val username: String,
     val discriminator: String,
     val id: String,
-    val avatar: String
+    val avatar: String? = "",
 )

@@ -1,8 +1,8 @@
 package org.caffeine.chaos.api.client.message
 
 @kotlinx.serialization.Serializable
-data class MessageSerialiser(
+data class MessageSerializer(
     var content: String,
     var nonce: String,
-    var tts: Boolean = false
+    var tts: Boolean = false,
 )

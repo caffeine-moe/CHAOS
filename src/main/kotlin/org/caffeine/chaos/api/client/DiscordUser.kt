@@ -7,5 +7,5 @@ data class DiscordUser(
     val username: String,
     val discriminator: Int,
     val id: String,
-    val avatar: String?
+    val avatar: String?,
 )

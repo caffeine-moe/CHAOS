@@ -1,9 +1,9 @@
 package org.caffeine.chaos.commands
 
-import org.caffeine.chaos.Config
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientStatusType
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.config.Config
 
 
 suspend fun online(client: Client, event: MessageCreateEvent, config: Config) {

@@ -4,27 +4,28 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.caffeine.chaos.Config
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.Connection
 import org.caffeine.chaos.api.client.message.Message
 import org.caffeine.chaos.api.client.message.MessageChannel
 import org.caffeine.chaos.api.httpclient
+import org.caffeine.chaos.config.Config
 import java.util.concurrent.CompletableFuture
 
 class Client {
     private val socket: Connection = Connection()
     lateinit var user: ClientUser
 
-    suspend fun login(config: Config, client: Client){
+    suspend fun login(config: Config, client: Client) {
         this.socket.login(config, client)
     }
-    suspend fun logout(){
+
+    suspend fun logout() {
         this.socket.logout()
     }
 
     suspend fun setStatus(config: Config, status: ClientStatusType) {
-        when (status){
+        when (status) {
             ClientStatusType.ONLINE -> {
                 httpclient.request("$BASE_URL/users/@me/settings") {
                     method = HttpMethod.Patch

@@ -6,17 +6,16 @@ import io.ktor.http.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.caffeine.chaos.Config
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.httpclient
+import org.caffeine.chaos.config.Config
 import java.util.concurrent.CompletableFuture
 
 @kotlinx.serialization.Serializable
-private data class editMessageResponse(
+private data class EditMessageResponse(
     val attachments: List<MessageAttachment>?,
     val author: MessageAuthor,
     val channel_id: String,
-    val components: List<String>?,
     val content: String,
     val edited_timestamp: String?,
     val flags: Int?,
@@ -26,28 +25,28 @@ private data class editMessageResponse(
     val mentions: List<MessageMention>?,
     val nonce: String? = null,
     val pinned: Boolean?,
-    val referenced_message: editMessageResponse? = null,
+    val referenced_message: EditMessageResponse? = null,
     val timestamp: String?,
     val tts: Boolean?,
-    val type: Int?
+    val type: Int?,
 )
 
 @kotlinx.serialization.Serializable
-data class editContent(
-    val content: String
+data class EditContent(
+    val content: String,
 )
 
-suspend fun editMessage(message: Message, config: Config, newMessage: Message) : CompletableFuture<Message>{
-        val response = httpclient.request("$BASE_URL/channels/${message.channel_id}/messages/${message.id}") {
-            method = HttpMethod.Patch
-            headers {
-                append(HttpHeaders.Authorization, config.token)
-                append(HttpHeaders.ContentType, "application/json")
-            }
-            setBody(Json.encodeToString(editContent(newMessage.content)))
+suspend fun editMessage(message: Message, config: Config, newMessage: Message): CompletableFuture<Message> {
+    val response = httpclient.request("$BASE_URL/channels/${message.channel_id}/messages/${message.id}") {
+        method = HttpMethod.Patch
+        headers {
+            append(HttpHeaders.Authorization, config.token)
+            append(HttpHeaders.ContentType, "application/json")
         }
-        val parsedresponse = Json { ignoreUnknownKeys = true }.decodeFromString<editMessageResponse>(response.body())
-    val messageauthor =  MessageAuthor(
+        setBody(Json.encodeToString(EditContent(newMessage.content)))
+    }
+    val parsedresponse = Json { ignoreUnknownKeys = true }.decodeFromString<EditMessageResponse>(response.body())
+    val messageauthor = MessageAuthor(
         parsedresponse.author.username,
         parsedresponse.author.discriminator,
         parsedresponse.author.id,

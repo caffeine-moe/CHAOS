@@ -1,23 +1,13 @@
 package org.caffeine.chaos.commands
 
-import io.ktor.util.Identity.decode
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import org.caffeine.chaos.Config
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.MessageAttachment
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.api.client.message.deleteMessage
-import java.io.File
-import java.net.URL
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import kotlin.coroutines.CoroutineContext
+import org.caffeine.chaos.config.Config
 
-suspend fun Avatar(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
-    val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy hh:mm:ss"))
+suspend fun avatar(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
     if (event.message.content.lowercase() == "${config.prefix}avatar" || event.message.content.lowercase() == "${config.prefix}av" && client.user.avatarUrl() != "") {
         event.channel.sendMessage(MessageBuilder()
             .appendLine("${client.user.discriminatedName}'s avatar")

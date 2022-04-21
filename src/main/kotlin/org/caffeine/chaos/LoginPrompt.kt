@@ -1,12 +1,7 @@
 package org.caffeine.chaos
 
-import io.ktor.client.request.*
-import io.ktor.http.*
-import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-import org.caffeine.chaos.api.httpclient
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.config.Config
 
 suspend fun loginPrompt(client: Client, config: Config) {
     val friends = client.user.friends.getAmount(config)

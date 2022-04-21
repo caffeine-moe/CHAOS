@@ -1,10 +1,13 @@
 package org.caffeine.chaos.api
 
-import io.ktor.client.plugins.websocket.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import org.caffeine.chaos.*
 import org.caffeine.chaos.api.client.*
+import org.caffeine.chaos.clear
+import org.caffeine.chaos.config.Config
+import org.caffeine.chaos.configWatcher
+import org.caffeine.chaos.log
+import org.caffeine.chaos.loginPrompt
 
 @kotlinx.serialization.Serializable
 private data class payload(
@@ -20,7 +23,7 @@ private data class d(
     val user: user,
     val user_settings_proto: String,
     val v: Int,
-    val session_id: String
+    val session_id: String,
 )
 
 @kotlinx.serialization.Serializable
@@ -57,8 +60,10 @@ suspend fun ready(client: Client, config: Config, connection: Connection, payloa
         ClientGuilds(),
         ClientChannels()
     )
+    ready = true
     connection.sid = d.session_id
-    log("\u001B[38;5;47mClient logged in!")
+    log("\u001B[38;5;47mClient logged in!", "API:")
+    log("\u001B[38;5;33mWelcome to CHAOS!")
     clear()
     loginPrompt(client, config)
     configWatcher(client)

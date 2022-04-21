@@ -4,18 +4,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.caffeine.chaos.Config
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.Message
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import org.caffeine.chaos.config.Config
 
 private var cock = false
 
-suspend fun Purge(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
-    val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy hh:mm:ss"))
+suspend fun purge(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
     if (event.message.content.lowercase() == "${config.prefix}purge" || event.message.content.lowercase() == "${config.prefix}sclear") {
         event.channel.sendMessage(MessageBuilder()
             .appendLine("**Incorrect usage:** '${event.message.content}'")
@@ -60,7 +57,8 @@ suspend fun Purge(client: Client, event: MessageCreateEvent, config: Config) = c
                     .thenAccept { message -> this.launch { bot(message, config) } }
                 return@coroutineScope
             }
-            for (message: Message in event.channel.messagesAsStream(config).filter { x -> x.author == event.message.author }) {
+            for (message: Message in event.channel.messagesAsStream(config)
+                .filter { x -> x.author == event.message.author }) {
                 if (done % 8 == 0 && done != 0) {
                     withContext(Dispatchers.IO) {
                         Thread.sleep(4500)
@@ -77,13 +75,13 @@ suspend fun Purge(client: Client, event: MessageCreateEvent, config: Config) = c
             if (done > 1) {
                 event.channel.sendMessage(MessageBuilder()
                     .appendLine("Removed $done messages!")
-                    .build(),config, client)
+                    .build(), config, client)
                     .thenAccept { message -> this.launch { bot(message, config) } }
             }
             if (done == 1) {
                 event.channel.sendMessage(MessageBuilder()
                     .appendLine("Removed $done message!")
-                    .build(),config, client)
+                    .build(), config, client)
                     .thenAccept { message -> this.launch { bot(message, config) } }
             }
         } catch (e: Exception) {
@@ -107,7 +105,7 @@ suspend fun Purge(client: Client, event: MessageCreateEvent, config: Config) = c
     }
 }
 
-suspend fun spurge(client: Client, event: MessageCreateEvent, config: Config) {
+suspend fun sPurge(client: Client, event: MessageCreateEvent, config: Config) {
     if (event.message.content.lowercase() == "${config.prefix}spurge") {
         cock = true
     }

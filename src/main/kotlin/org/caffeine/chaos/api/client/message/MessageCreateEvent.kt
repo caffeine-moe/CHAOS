@@ -1,5 +1,3 @@
 package org.caffeine.chaos.api.client.message
 
-class MessageCreateEvent(var message: Message, var channel: MessageChannel) {
-
-}
+class MessageCreateEvent(var message: Message, var channel: MessageChannel)

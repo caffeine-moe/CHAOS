@@ -7,13 +7,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.caffeine.chaos.Config
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.config.Config
 
-
-suspend fun Ping(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
+suspend fun ping(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
     if (event.message.content.lowercase() == "${config.prefix}ping") {
         event.channel.sendMessage(MessageBuilder()
             .appendLine("Pinging...")
@@ -48,9 +47,9 @@ suspend fun Ping(client: Client, event: MessageCreateEvent, config: Config) = co
                     val url = event.message.content.replaceFirst("${config.prefix}ping ", "")
                     val start = System.currentTimeMillis()
                     try {
-                            val selectorManager = ActorSelectorManager(Dispatchers.IO)
-                            val serverSocket = aSocket(selectorManager).tcp().connect(url, 80)
-                       } catch (e: Exception) {
+                        val selectorManager = ActorSelectorManager(Dispatchers.IO)
+                        aSocket(selectorManager).tcp().connect(url, 80)
+                    } catch (e: Exception) {
                         when (e) {
                             is UnresolvedAddressException -> {
                                 message.edit(MessageBuilder()

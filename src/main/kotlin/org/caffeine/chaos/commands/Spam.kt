@@ -4,14 +4,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.caffeine.chaos.Config
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.config.Config
 
 private var cock = false
 
-suspend fun Spam(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
+suspend fun spam(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
     cock = false
     if (event.message.content.lowercase() == "${config.prefix}spam") {
         event.channel.sendMessage(
@@ -95,8 +95,8 @@ suspend fun Spam(client: Client, event: MessageCreateEvent, config: Config) = co
     }
 }
 
-suspend fun SSpam(event: MessageCreateEvent, config: Config) = coroutineScope {
-        if (event.message.content.lowercase() == "${config.prefix}sspam") {
-            cock = true
-        }
+suspend fun sSpam(event: MessageCreateEvent, config: Config) = coroutineScope {
+    if (event.message.content.lowercase() == "${config.prefix}sspam") {
+        cock = true
     }
+}

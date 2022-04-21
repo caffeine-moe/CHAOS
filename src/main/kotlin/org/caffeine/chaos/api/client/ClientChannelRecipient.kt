@@ -7,5 +7,5 @@ data class ClientChannelRecipient(
     val avatar: String,
     val discriminator: String,
     val public_flags: Int,
-    val bot: Boolean = false
+    val bot: Boolean = false,
 )
