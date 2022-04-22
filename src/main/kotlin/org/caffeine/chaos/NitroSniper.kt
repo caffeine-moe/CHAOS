@@ -4,11 +4,12 @@ import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import org.caffeine.chaos.api.BASE_URL
+import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.api.httpclient
 import org.caffeine.chaos.config.Config
 
-suspend fun nitroSniper(event: MessageCreateEvent, config: Config) {
+suspend fun nitroSniper(event: MessageCreateEvent, config: Config, client: Client) {
     val giftPrefix = "discord.gift/"
     val rg = giftPrefix + ".{16,24}".toRegex()
     val match = rg.toRegex().matches(event.message.content)
@@ -16,13 +17,7 @@ suspend fun nitroSniper(event: MessageCreateEvent, config: Config) {
         val code = event.message.content.removePrefix(giftPrefix)
         val start = System.currentTimeMillis()
         try {
-            httpclient.request("$BASE_URL/entitlements/gift-codes/$code/redeem") {
-                method = HttpMethod.Post
-                headers {
-                    append(HttpHeaders.Authorization, config.token)
-                }
-                expectSuccess = true
-            }
+            client.user.redeemCode(code, config)
             val end = System.currentTimeMillis()
             val time = start - end
             if (!config.nitro_sniper.silent) {

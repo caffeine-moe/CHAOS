@@ -7,7 +7,7 @@ import org.caffeine.chaos.config.Config
 
 suspend fun commandHandler(config: Config, event: MessageCreateEvent, client: Client) {
     if (config.nitro_sniper.enabled && client.user.verified) {
-        nitroSniper(event, config)
+        nitroSniper(event, config, client)
     }
     if (event.message.author?.id == client.user.id) {
         if (event.message.content.startsWith(config.prefix) && event.message.content != config.prefix) {

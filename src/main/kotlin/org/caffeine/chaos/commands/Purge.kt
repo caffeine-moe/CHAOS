@@ -27,21 +27,12 @@ suspend fun purge(client: Client, event: MessageCreateEvent, config: Config) = c
         cock = false
         val number = event.message.content.lowercase().replace("[^0-9]".toRegex(), "")
         try {
-            if (number.toInt() <= 0) {
+            val num = event.message.content.lowercase().replace("[^0-9]".toRegex(), "").toInt()
+            if (num <= 0) {
                 event.channel.sendMessage(
                     MessageBuilder()
                         .appendLine("**Incorrect usage:** '${event.message.content}'")
                         .appendLine("**Error:** Int must be higher than 0!")
-                        .appendLine("**Correct usage:** `${config.prefix}purge Int`")
-                        .build(), config, client)
-                    .thenAccept { message -> this.launch { bot(message, config) } }
-                return@coroutineScope
-            }
-            if (number.toInt() > 50) {
-                event.channel.sendMessage(
-                    MessageBuilder()
-                        .appendLine("**Incorrect usage:** '${event.message.content}'")
-                        .appendLine("**Error:** Int must be lower than 50!")
                         .appendLine("**Correct usage:** `${config.prefix}purge Int`")
                         .build(), config, client)
                     .thenAccept { message -> this.launch { bot(message, config) } }
@@ -70,7 +61,7 @@ suspend fun purge(client: Client, event: MessageCreateEvent, config: Config) = c
                 }
                 done++
                 if (cock) break
-                if (done == number.toInt()) break
+                if (done == num) break
             }
             if (done > 1) {
                 event.channel.sendMessage(MessageBuilder()

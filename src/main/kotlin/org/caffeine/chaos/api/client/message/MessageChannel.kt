@@ -16,17 +16,31 @@ import java.util.stream.Stream
 class MessageChannel(var id: String) {
 
     suspend fun messagesAsStream(config: Config): Stream<Message> {
-        val collection: MutableCollection<Message> = mutableListOf()
-        val response = httpclient.request("$BASE_URL/channels/${this.id}/messages?limit=100") {
-            method = HttpMethod.Get
-            headers {
-                append(HttpHeaders.Authorization, config.token)
-                append(HttpHeaders.ContentType, "application/json")
+        val collection: MutableList<Message> = mutableListOf()
+        val messagesPerRequest = 100
+        val filters = (MessageFilters(null,null,null,null,null))
+        while (true) {
+            var parameters = ""
+            parameters += if (filters.limit != null) "limit=${messagesPerRequest.coerceAtMost(filters.limit!! - collection.size)}&"
+            else "limit=${messagesPerRequest}&";
+            if (filters.before_id != null) parameters += "before=${filters.before_id}&"
+            if (filters.after_id != null) parameters += "after=${filters.author_id}&"
+            if (filters.author_id != null) parameters += "author_id=${filters.author_id}&"
+            if (filters.mentioning_user_id != null) parameters += "mentions=${filters.mentioning_user_id}&"
+            val response = httpclient.request("$BASE_URL/channels/${this.id}/messages?${parameters}") {
+                method = HttpMethod.Get
+                headers {
+                    append(HttpHeaders.Authorization, config.token)
+                    append(HttpHeaders.ContentType, "application/json")
+                }
             }
-        }
-        val parsedresponse = Json { ignoreUnknownKeys = true }.decodeFromString<List<Message>>(response.body())
-        for (msg: Message in parsedresponse) {
-            collection.add(msg)
+            val newMessages = Json { ignoreUnknownKeys = true }.decodeFromString<List<Message>>(response.body())
+            collection.addAll(newMessages)
+
+            filters.before_id = collection.last().id?.toLong()
+
+            if (newMessages.size < messagesPerRequest)
+                break
         }
         return collection.stream()
     }
