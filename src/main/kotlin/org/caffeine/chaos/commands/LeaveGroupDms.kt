@@ -30,7 +30,7 @@ suspend fun lgdm(client: Client, event: MessageCreateEvent, config: Config) = co
                 channels.append("${channel.name}, ")
                 done++
                 withContext(Dispatchers.IO) {
-                    Thread.sleep(1000)
+                    Thread.sleep(2500)
                 }
             }
             if (done > 1) {

@@ -10,31 +10,31 @@ import org.caffeine.chaos.log
 import org.caffeine.chaos.loginPrompt
 
 @kotlinx.serialization.Serializable
-private data class payload(
-    val d: d,
+private data class Payload(
+    val d: D,
     val op: Int,
     val s: Int,
     val t: String,
 )
 
 @kotlinx.serialization.Serializable
-private data class d(
+private data class D(
     val country_code: String,
-    val user: user,
+    val user: User,
     val user_settings_proto: String,
     val v: Int,
     val session_id: String,
 )
 
 @kotlinx.serialization.Serializable
-private data class user(
+private data class User(
     val accent_color: Int,
-    val avatar: String,
+    val avatar: String?,
     val banner_color: String,
     val bio: String,
     val desktop: Boolean,
     val discriminator: Int,
-    val email: String,
+    val email: String?,
     val flags: Int,
     val id: String,
     val mfa_enabled: Boolean,
@@ -47,7 +47,7 @@ private data class user(
 )
 
 suspend fun ready(client: Client, config: Config, connection: Connection, payload: String) {
-    val d = Json { ignoreUnknownKeys = true }.decodeFromString<payload>(payload).d
+    val d = Json { ignoreUnknownKeys = true }.decodeFromString<Payload>(payload).d
     client.user = ClientUser(
         d.user.verified,
         d.user.username,

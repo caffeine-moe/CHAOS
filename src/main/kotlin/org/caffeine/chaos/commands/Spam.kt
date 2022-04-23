@@ -50,14 +50,14 @@ suspend fun spam(client: Client, event: MessageCreateEvent, config: Config) = co
                 }
                 if (done % 8 == 0 && done != 0) {
                     withContext(Dispatchers.IO) {
-                        Thread.sleep(4500)
+                        Thread.sleep(5000)
                     }
                 }
                 event.channel.sendMessage(MessageBuilder().appendLine(string).build(), config, client)
+                done++
                 withContext(Dispatchers.IO) {
                     Thread.sleep(500)
                 }
-                done++
             }
             if (done > 1) {
                 event.channel.sendMessage(MessageBuilder().appendLine("Done spamming '$string' $done times!")

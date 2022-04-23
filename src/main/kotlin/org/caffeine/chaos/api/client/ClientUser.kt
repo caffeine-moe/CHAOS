@@ -12,7 +12,7 @@ data class ClientUser(
         val username: String,
         val discriminator: Int,
         val id: String,
-        val email: String,
+        val email: String?,
         val bio: String?,
         val avatar: String?,
         val friends: ClientFriends,

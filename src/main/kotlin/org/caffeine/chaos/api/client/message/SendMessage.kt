@@ -32,14 +32,13 @@ private data class SendMessageResponse(
 )
 
 suspend fun sendMessage(channel: MessageChannel, message: Message, config: Config): CompletableFuture<Message> {
-    var sentmessage = message
     val response = httpclient.request("$BASE_URL/channels/${channel.id}/messages") {
         method = HttpMethod.Post
         headers {
             append(HttpHeaders.Authorization, config.token)
             append(HttpHeaders.ContentType, "application/json")
         }
-        setBody(Json.encodeToString(MessageSerializer(message.content.toString(),
+        setBody(Json.encodeToString(MessageSerializer(message.content,
             System.currentTimeMillis().toString())))
     }
     val parsedresponse = Json { ignoreUnknownKeys = true }.decodeFromString<SendMessageResponse>(response.body())
@@ -49,6 +48,6 @@ suspend fun sendMessage(channel: MessageChannel, message: Message, config: Confi
         parsedresponse.author.id,
         parsedresponse.author.avatar
     )
-    sentmessage = Message(parsedresponse.id, parsedresponse.content, parsedresponse.channel_id, messageauthor)
+    val sentmessage = Message(parsedresponse.id, parsedresponse.content, parsedresponse.channel_id, messageauthor)
     return CompletableFuture.completedFuture(sentmessage)
 }
