@@ -28,9 +28,9 @@ private data class D(
 
 @kotlinx.serialization.Serializable
 private data class User(
-    val accent_color: Int,
+    val accent_color: Int?,
     val avatar: String?,
-    val banner_color: String,
+    val banner_color: String?,
     val bio: String,
     val desktop: Boolean,
     val discriminator: Int,
