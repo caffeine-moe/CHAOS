@@ -5,6 +5,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.handlers.messageCreate
+import org.caffeine.chaos.api.handlers.ready
 import org.caffeine.chaos.config.Config
 
 @Serializable

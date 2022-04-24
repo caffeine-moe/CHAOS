@@ -1,7 +1,8 @@
-package org.caffeine.chaos.api
+package org.caffeine.chaos.api.handlers
 
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import org.caffeine.chaos.api.Connection
 import org.caffeine.chaos.api.client.*
 import org.caffeine.chaos.clear
 import org.caffeine.chaos.config.Config
@@ -10,30 +11,28 @@ import org.caffeine.chaos.log
 import org.caffeine.chaos.loginPrompt
 
 @kotlinx.serialization.Serializable
-private data class Payload(
-    val d: D,
+private data class ReadyPayload(
+    val d: ReadyPayloadD,
     val op: Int,
     val s: Int,
     val t: String,
 )
 
 @kotlinx.serialization.Serializable
-private data class D(
+private data class ReadyPayloadD(
     val country_code: String,
-    val user: User,
+    val user: ReadyPayloadDUser,
     val user_settings_proto: String,
     val v: Int,
     val session_id: String,
 )
 
 @kotlinx.serialization.Serializable
-private data class User(
-    val accent_color: Int?,
+private data class ReadyPayloadDUser(
     val avatar: String?,
-    val banner_color: String?,
     val bio: String,
     val desktop: Boolean,
-    val discriminator: Int,
+    val discriminator: String,
     val email: String?,
     val flags: Int,
     val id: String,
@@ -47,7 +46,8 @@ private data class User(
 )
 
 suspend fun ready(client: Client, config: Config, connection: Connection, payload: String) {
-    val d = Json { ignoreUnknownKeys = true }.decodeFromString<Payload>(payload).d
+    val d = Json { ignoreUnknownKeys = true
+    coerceInputValues = true}.decodeFromString<ReadyPayload>(payload).d
     client.user = ClientUser(
         d.user.verified,
         d.user.username,
@@ -60,7 +60,7 @@ suspend fun ready(client: Client, config: Config, connection: Connection, payloa
         ClientGuilds(),
         ClientChannels()
     )
-    ready = true
+    org.caffeine.chaos.api.ready = true
     connection.sid = d.session_id
     log("\u001B[38;5;47mClient logged in!", "API:")
     log("\u001B[38;5;33mWelcome to CHAOS!")

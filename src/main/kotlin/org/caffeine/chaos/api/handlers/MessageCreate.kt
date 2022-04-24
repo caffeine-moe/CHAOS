@@ -10,14 +10,14 @@ import org.caffeine.chaos.commandHandler
 
 @Serializable
 private data class MessageCreate(
-    val d: D,
+    val d: MessageCreateD,
     val op: Int?,
     val s: Int?,
     val t: String?,
 )
 
 @Serializable
-private data class D(
+private data class MessageCreateD(
     val attachments: List<MessageAttachment>?,
     val author: MessageAuthor,
     val channel_id: String,
@@ -29,7 +29,7 @@ private data class D(
     val mention_roles: List<String>?,
     val mentions: List<MessageMention>?,
     val pinned: Boolean?,
-    val referenced_message: D? = null,
+    val referenced_message: MessageCreateD? = null,
     val timestamp: String?,
     val tts: Boolean?,
     val type: Int?,

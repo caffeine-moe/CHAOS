@@ -10,7 +10,7 @@ import org.caffeine.chaos.config.Config
 data class ClientUser(
         val verified: Boolean,
         val username: String,
-        val discriminator: Int,
+        val discriminator: String,
         val id: String,
         val email: String?,
         val bio: String?,
