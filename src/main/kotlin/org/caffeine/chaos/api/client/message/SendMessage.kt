@@ -7,8 +7,8 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.caffeine.chaos.api.BASE_URL
+import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.httpclient
-import org.caffeine.chaos.config.Config
 import java.util.concurrent.CompletableFuture
 
 @kotlinx.serialization.Serializable
@@ -31,11 +31,11 @@ private data class SendMessageResponse(
     val type: Int?,
 )
 
-suspend fun sendMessage(channel: MessageChannel, message: Message, config: Config): CompletableFuture<Message> {
+suspend fun sendMessage(channel: MessageChannel, message: Message, client: Client): CompletableFuture<Message> {
     val response = httpclient.request("$BASE_URL/channels/${channel.id}/messages") {
         method = HttpMethod.Post
         headers {
-            append(HttpHeaders.Authorization, config.token)
+            append(HttpHeaders.Authorization, client.config.token)
             append(HttpHeaders.ContentType, "application/json")
         }
         setBody(Json.encodeToString(MessageSerializer(message.content,

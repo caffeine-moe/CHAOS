@@ -17,7 +17,7 @@ data class DefaultResponse(
 
 var ready = false
 
-suspend fun receiveJsonRequest(payload: String, config: Config, connection: Connection, client: Client) {
+suspend fun receiveJsonRequest(payload: String, connection: Connection, client: Client, config: Config) {
     val event = Json { ignoreUnknownKeys = true }.decodeFromString<DefaultResponse>(payload)
     when (event.op) {
         0 -> {
@@ -27,7 +27,7 @@ suspend fun receiveJsonRequest(payload: String, config: Config, connection: Conn
                 }
                 "MESSAGE_CREATE" -> {
                     if (ready) {
-                        messageCreate(payload, config, client)
+                        messageCreate(payload, client)
                     }
                 }
             }

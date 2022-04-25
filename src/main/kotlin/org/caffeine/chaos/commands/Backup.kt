@@ -7,22 +7,21 @@ import kotlinx.coroutines.withContext
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.config.Config
 import java.io.File
 import java.nio.file.Files
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-suspend fun backup(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
+suspend fun backup(client: Client, event: MessageCreateEvent) = coroutineScope {
     val ftime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yy_hh:mm:ss"))
-    if (event.message.content.lowercase() == ("${config.prefix}backup")) {
-        event.channel.sendMessage(MessageBuilder().append("Performing backup...").build(), config, client)
+    if (event.message.content.lowercase() == ("${client.config.prefix}backup")) {
+        event.channel.sendMessage(MessageBuilder().append("Performing backup...").build(), client)
             .thenAccept { message ->
                 this.launch {
                     val texttowrite = "================================ SERVERS ================================\n" +
-                            "${client.user.guilds.getList(config)}\n" +
+                            "${client.user.guilds.getList()}\n" +
                             "================================ FRIENDS ================================\n" +
-                            "${client.user.friends.getList(config)}"
+                            "${client.user.friends.getList()}"
                     val p = File("Backup")
                     if (!p.exists()) {
                         p.mkdir()
@@ -39,10 +38,10 @@ suspend fun backup(client: Client, event: MessageCreateEvent, config: Config) = 
                             message.edit(MessageBuilder()
                                 .appendLine("Backup successful!")
                                 .appendLine("Saved to: ${f.toPath()}")
-                                .build(), config).thenAccept { message ->
+                                .build(), client).thenAccept { message ->
                                 this.launch {
                                     try {
-                                        bot(message, config)
+                                        bot(message, client)
                                     } catch (e: Exception) {
                                         e.printStackTrace()
                                     }
@@ -63,9 +62,9 @@ suspend fun backup(client: Client, event: MessageCreateEvent, config: Config) = 
                     message.edit(MessageBuilder()
                         .appendLine("Backup successful!")
                         .appendLine("Saved to: ${f.toPath()}")
-                        .build(), config).thenAccept { message ->
+                        .build(), client).thenAccept { message ->
                         this.launch {
-                            bot(message, config)
+                            bot(message, client)
                         }
                     }
                 }

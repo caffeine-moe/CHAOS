@@ -8,21 +8,21 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.Message
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.config.Config
 
 private var cock = false
 
-suspend fun purge(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
-    if (event.message.content.lowercase() == "${config.prefix}purge" || event.message.content.lowercase() == "${config.prefix}sclear") {
+suspend fun purge(client: Client, event: MessageCreateEvent) = coroutineScope {
+    if (event.message.content.lowercase() == "${client.config.prefix}purge" || event.message.content.lowercase() == "${client.config.prefix}sclear") {
         event.channel.sendMessage(MessageBuilder()
             .appendLine("**Incorrect usage:** '${event.message.content}'")
             .appendLine("**Error:** Not enough parameters!")
-            .appendLine("**Correct usage:** `${config.prefix}purge Int`")
-            .build(), config, client)
-            .thenAccept { message -> this.launch { bot(message, config) } }
+            .appendLine("**Correct usage:** `${client.config.prefix}purge Int`")
+            .build(), client)
+            .thenAccept { message -> this.launch { bot(message, client) } }
     }
-    if (event.message.content.lowercase().startsWith("${config.prefix}purge ") || event.message.content.lowercase()
-            .startsWith("${config.prefix}sclear ") && event.message.content.lowercase() != "${config.prefix}purge" && event.message.content.lowercase() != "${config.prefix}sclear"
+    if (event.message.content.lowercase()
+            .startsWith("${client.config.prefix}purge ") || event.message.content.lowercase()
+            .startsWith("${client.config.prefix}sclear ") && event.message.content.lowercase() != "${client.config.prefix}purge" && event.message.content.lowercase() != "${client.config.prefix}sclear"
     ) {
         cock = false
         val number = event.message.content.lowercase().replace("[^0-9]".toRegex(), "")
@@ -33,29 +33,29 @@ suspend fun purge(client: Client, event: MessageCreateEvent, config: Config) = c
                     MessageBuilder()
                         .appendLine("**Incorrect usage:** '${event.message.content}'")
                         .appendLine("**Error:** Int must be higher than 0!")
-                        .appendLine("**Correct usage:** `${config.prefix}purge Int`")
-                        .build(), config, client)
-                    .thenAccept { message -> this.launch { bot(message, config) } }
+                        .appendLine("**Correct usage:** `${client.config.prefix}purge Int`")
+                        .build(), client)
+                    .thenAccept { message -> this.launch { bot(message, client) } }
                 return@coroutineScope
             }
             var done = 0
-            val count = event.channel.messagesAsStream(config).filter { x -> x.author == event.message.author }.count()
+            val count = event.channel.messagesAsStream().filter { x -> x.author == event.message.author }.count()
             if (count <= 0) {
                 event.channel.sendMessage(
                     MessageBuilder()
                         .appendLine("There is nothing to delete!")
-                        .build(), config, client)
-                    .thenAccept { message -> this.launch { bot(message, config) } }
+                        .build(), client)
+                    .thenAccept { message -> this.launch { bot(message, client) } }
                 return@coroutineScope
             }
-            for (message: Message in event.channel.messagesAsStream(config)
+            for (message: Message in event.channel.messagesAsStream()
                 .filter { x -> x.author == event.message.author }) {
                 if (done % 8 == 0 && done != 0) {
                     withContext(Dispatchers.IO) {
                         Thread.sleep(4500)
                     }
                 }
-                message.delete(config)
+                message.delete(client)
                 withContext(Dispatchers.IO) {
                     Thread.sleep(500)
                 }
@@ -66,14 +66,14 @@ suspend fun purge(client: Client, event: MessageCreateEvent, config: Config) = c
             if (done > 1) {
                 event.channel.sendMessage(MessageBuilder()
                     .appendLine("Removed $done messages!")
-                    .build(), config, client)
-                    .thenAccept { message -> this.launch { bot(message, config) } }
+                    .build(), client)
+                    .thenAccept { message -> this.launch { bot(message, client) } }
             }
             if (done == 1) {
                 event.channel.sendMessage(MessageBuilder()
                     .appendLine("Removed $done message!")
-                    .build(), config, client)
-                    .thenAccept { message -> this.launch { bot(message, config) } }
+                    .build(), client)
+                    .thenAccept { message -> this.launch { bot(message, client) } }
             }
         } catch (e: Exception) {
             when (e) {
@@ -82,9 +82,9 @@ suspend fun purge(client: Client, event: MessageCreateEvent, config: Config) = c
                         MessageBuilder()
                             .appendLine("**Incorrect usage:** '${event.message.content}'")
                             .appendLine("**Error:** $number is not an integer!")
-                            .appendLine("**Correct usage:** `${config.prefix}purge Int`")
-                            .build(), config, client)
-                        .thenAccept { message -> this.launch { bot(message, config) } }
+                            .appendLine("**Correct usage:** `${client.config.prefix}purge Int`")
+                            .build(), client)
+                        .thenAccept { message -> this.launch { bot(message, client) } }
                     return@coroutineScope
                 }
                 else -> {
@@ -96,8 +96,8 @@ suspend fun purge(client: Client, event: MessageCreateEvent, config: Config) = c
     }
 }
 
-suspend fun sPurge(client: Client, event: MessageCreateEvent, config: Config) {
-    if (event.message.content.lowercase() == "${config.prefix}spurge") {
+suspend fun sPurge(client: Client, event: MessageCreateEvent) {
+    if (event.message.content.lowercase() == "${client.config.prefix}spurge") {
         cock = true
     }
 }

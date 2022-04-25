@@ -2,9 +2,9 @@ package org.caffeine.chaos.api.client
 
 import io.ktor.client.request.*
 import io.ktor.http.*
+import kotlinx.serialization.Contextual
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.httpclient
-import org.caffeine.chaos.config.Config
 
 @kotlinx.serialization.Serializable
 data class ClientChannel(
@@ -15,12 +15,14 @@ data class ClientChannel(
     var name: String? = null,
     var icon: String? = null,
     var owner_id: String? = null,
+    @Contextual
+    val client: Client,
 ) {
-    suspend fun delete(config: Config) {
+    suspend fun delete() {
         httpclient.request("$BASE_URL/channels/${this.id}") {
             method = HttpMethod.Delete
             headers {
-                append(HttpHeaders.Authorization, config.token)
+                append(HttpHeaders.Authorization, client.config.token)
             }
         }
     }

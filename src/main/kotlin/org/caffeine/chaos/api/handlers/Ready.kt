@@ -46,8 +46,10 @@ private data class ReadyPayloadDUser(
 )
 
 suspend fun ready(client: Client, config: Config, connection: Connection, payload: String) {
-    val d = Json { ignoreUnknownKeys = true
-    coerceInputValues = true}.decodeFromString<ReadyPayload>(payload).d
+    val d = Json {
+        ignoreUnknownKeys = true
+        coerceInputValues = true
+    }.decodeFromString<ReadyPayload>(payload).d
     client.user = ClientUser(
         d.user.verified,
         d.user.username,
@@ -56,15 +58,17 @@ suspend fun ready(client: Client, config: Config, connection: Connection, payloa
         d.user.email,
         d.user.bio,
         d.user.avatar,
-        ClientFriends(),
-        ClientGuilds(),
-        ClientChannels()
+        ClientFriends(client),
+        ClientGuilds(client),
+        ClientChannels(client),
+        client
     )
     org.caffeine.chaos.api.ready = true
     connection.sid = d.session_id
+    client.config = config
     log("\u001B[38;5;47mClient logged in!", "API:")
     log("\u001B[38;5;33mWelcome to CHAOS!")
     clear()
-    loginPrompt(client, config)
+    loginPrompt(client)
     configWatcher(client)
 }

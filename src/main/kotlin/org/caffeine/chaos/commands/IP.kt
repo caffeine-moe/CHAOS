@@ -14,7 +14,6 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.api.httpclient
-import org.caffeine.chaos.config.Config
 import java.net.InetAddress
 
 @Serializable
@@ -31,22 +30,22 @@ data class ipApiResponse(
     val query: String,
 )
 
-suspend fun ip(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
-    if (event.message.content.lowercase() == "${config.prefix}ip") {
+suspend fun ip(client: Client, event: MessageCreateEvent) = coroutineScope {
+    if (event.message.content.lowercase() == "${client.config.prefix}ip") {
         event.channel.sendMessage(MessageBuilder()
             .appendLine("**Incorrect usage** '${event.message.content}'")
             .appendLine("**Error:** No IP/URL specified")
-            .appendLine("**Correct usage:** `${config.prefix}ip IP/URL`")
-            .build(), config, client)
-            .thenAccept { message -> this.launch { bot(message, config) } }
+            .appendLine("**Correct usage:** `${client.config.prefix}ip IP/URL`")
+            .build(), client)
+            .thenAccept { message -> this.launch { bot(message, client) } }
     }
     if (event.message.content.lowercase()
-            .startsWith("${config.prefix}ip ") && event.message.content.lowercase() != "${config.prefix}ip"
+            .startsWith("${client.config.prefix}ip ") && event.message.content.lowercase() != "${client.config.prefix}ip"
     ) {
-        event.channel.sendMessage(MessageBuilder().appendLine("Looking up IP/URL").build(), config, client)
+        event.channel.sendMessage(MessageBuilder().appendLine("Looking up IP/URL").build(), client)
             .thenAccept { message ->
                 this.launch {
-                    val url = event.message.content.replaceFirst("${config.prefix}ip ", "")
+                    val url = event.message.content.replaceFirst("${client.config.prefix}ip ", "")
                     try {
                         val ip: InetAddress = withContext(Dispatchers.IO) {
                             InetAddress.getByName(url)
@@ -72,16 +71,16 @@ suspend fun ip(client: Client, event: MessageCreateEvent, config: Config) = coro
                                     .appendLine("**Timezone:** ${parsedresponse.timezone}")
                                     .appendLine("**ISP:** ${parsedresponse.isp}")
                                     .appendLine("**Proxy:** ${parsedresponse.proxy}")
-                                    .build(), config)
-                                    .thenAccept { message -> this.launch { bot(message, config) } }
+                                    .build(), client)
+                                    .thenAccept { message -> this.launch { bot(message, client) } }
                             }
                             "fail" -> {
                                 message.edit(MessageBuilder()
                                     .appendLine("Incorrect usage '${event.message.content}'")
                                     .appendLine("**Error:** Unable to lookup IP/URL '$url'")
-                                    .appendLine("**Correct usage:** `${config.prefix}ip IP/URL`")
-                                    .build(), config)
-                                    .thenAccept { message -> this.launch { bot(message, config) } }
+                                    .appendLine("**Correct usage:** `${client.config.prefix}ip IP/URL`")
+                                    .build(), client)
+                                    .thenAccept { message -> this.launch { bot(message, client) } }
                             }
                         }
                     } catch (e: Exception) {

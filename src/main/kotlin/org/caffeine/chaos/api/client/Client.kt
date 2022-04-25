@@ -12,19 +12,20 @@ import org.caffeine.chaos.api.httpclient
 import org.caffeine.chaos.config.Config
 import java.util.concurrent.CompletableFuture
 
-class Client {
-    private val socket: Connection = Connection()
+data class Client(
+    var config: Config,
+) {
+    private val socket = Connection()
     lateinit var user: ClientUser
-
-    suspend fun login(config: Config, client: Client) {
-        this.socket.login(config, client)
+    suspend fun login(client: Client) {
+        this.socket.login(client, config)
     }
 
     suspend fun logout() {
         this.socket.logout()
     }
 
-    suspend fun setStatus(config: Config, status: ClientStatusType) {
+    suspend fun setStatus(status: ClientStatusType) {
         when (status) {
             ClientStatusType.ONLINE -> {
                 httpclient.request("$BASE_URL/users/@me/settings") {
@@ -69,7 +70,22 @@ class Client {
         }
     }
 
-    suspend fun sendMessage(channel: MessageChannel, message: Message, config: Config): CompletableFuture<Message> {
-        return org.caffeine.chaos.api.client.message.sendMessage(channel, message, config)
+    suspend fun sendMessage(channel: MessageChannel, message: Message): CompletableFuture<Message> {
+        return org.caffeine.chaos.api.client.message.sendMessage(channel, message, channel.client)
+    }
+
+    suspend fun validateChannelId(id: String): Boolean {
+        var valid = false
+        val response = httpclient.request("$BASE_URL/channels/${id}/messages?limit=1") {
+            method = HttpMethod.Get
+            headers {
+                append(HttpHeaders.Authorization, config.token)
+                append("Content-Type", "application/json")
+            }
+        }
+        if (response.status.isSuccess()) {
+            valid = true
+        }
+        return valid
     }
 }

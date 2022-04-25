@@ -35,6 +35,6 @@ suspend fun main(): Unit = coroutineScope {
     }
     log("\u001B[38;5;33mInitialising gateway connection...")
     val config = Json.decodeFromString<Config>(File("config.json").readText())
-    val client = Client()
-    launch { client.login(config, client) }.start()
+    val client = Client(config)
+    launch { client.login(client) }.start()
 }

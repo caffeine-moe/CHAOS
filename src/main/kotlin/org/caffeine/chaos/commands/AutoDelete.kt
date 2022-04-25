@@ -2,25 +2,25 @@ package org.caffeine.chaos.commands
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.Message
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.config.Config
 
 
-suspend fun user(event: MessageCreateEvent, config: Config) {
+suspend fun user(event: MessageCreateEvent, client: Client) {
     withContext(Dispatchers.IO) {
-        Thread.sleep(config.auto_delete.user.delay * 1000)
+        Thread.sleep(client.config.auto_delete.user.delay * 1000)
     }
-    event.message.delete(config)
+    event.message.delete(client)
 }
 
-suspend fun bot(msg: Message, config: Config) {
-    if (config.auto_delete.bot.enabled) {
+suspend fun bot(msg: Message, client: Client) {
+    if (client.config.auto_delete.bot.enabled) {
         withContext(Dispatchers.IO) {
-            Thread.sleep(config.auto_delete.bot.delay * 1000)
+            Thread.sleep(client.config.auto_delete.bot.delay * 1000)
         }
         try {
-            msg.delete(config)
+            msg.delete(client)
         } catch (e: Exception) {
             e.printStackTrace()
         }

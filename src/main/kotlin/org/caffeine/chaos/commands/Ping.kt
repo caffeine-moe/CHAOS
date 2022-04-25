@@ -10,13 +10,12 @@ import kotlinx.coroutines.withContext
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.config.Config
 
-suspend fun ping(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
-    if (event.message.content.lowercase() == "${config.prefix}ping") {
+suspend fun ping(client: Client, event: MessageCreateEvent) = coroutineScope {
+    if (event.message.content.lowercase() == "${client.config.prefix}ping") {
         event.channel.sendMessage(MessageBuilder()
             .appendLine("Pinging...")
-            .build(), config, client)
+            .build(), client)
             .thenAccept { message ->
                 this.launch {
                     val start = System.currentTimeMillis()
@@ -31,20 +30,20 @@ suspend fun ping(client: Client, event: MessageCreateEvent, config: Config) = co
                         .appendLine(":ping_pong: Pong!")
                         .appendLine("Target: Discord API")
                         .appendLine("Latency: ${ping}ms")
-                        .build(), config)
-                        .thenAccept { message -> this.launch { bot(message, config) } }
+                        .build(), client)
+                        .thenAccept { message -> this.launch { bot(message, client) } }
                 }
             }
     }
     if (event.message.content.lowercase()
-            .startsWith("${config.prefix}ping ") && event.message.content.lowercase() != "${config.prefix}ping"
+            .startsWith("${client.config.prefix}ping ") && event.message.content.lowercase() != "${client.config.prefix}ping"
     ) {
         event.channel.sendMessage(MessageBuilder()
             .appendLine("Pinging...")
-            .build(), config, client)
+            .build(), client)
             .thenAccept { message ->
                 this.launch {
-                    val url = event.message.content.replaceFirst("${config.prefix}ping ", "")
+                    val url = event.message.content.replaceFirst("${client.config.prefix}ping ", "")
                     val start = System.currentTimeMillis()
                     try {
                         val selectorManager = ActorSelectorManager(Dispatchers.IO)
@@ -55,24 +54,24 @@ suspend fun ping(client: Client, event: MessageCreateEvent, config: Config) = co
                                 message.edit(MessageBuilder()
                                     .appendLine("Incorrect usage '${event.message.content}'")
                                     .appendLine("Error: IP/URL '$url' is invalid.")
-                                    .appendLine("Correct usage: `${config.prefix}ip IP/URL`")
-                                    .build(), config)
-                                    .thenAccept { message -> this.launch { bot(message, config) } }
+                                    .appendLine("Correct usage: `${client.config.prefix}ip IP/URL`")
+                                    .build(), client)
+                                    .thenAccept { message -> this.launch { bot(message, client) } }
                                 return@launch
                             }
                             is SocketTimeoutException -> {
                                 message.edit(MessageBuilder()
                                     .appendLine(":pensive: Connection timed out")
                                     .appendLine("Try a different IP or URL...")
-                                    .build(), config)
-                                    .thenAccept { message -> this.launch { bot(message, config) } }
+                                    .build(), client)
+                                    .thenAccept { message -> this.launch { bot(message, client) } }
                                 return@launch
                             }
                             else -> {
                                 message.edit(MessageBuilder()
                                     .appendLine("Error: $e")
-                                    .build(), config)
-                                    .thenAccept { message -> this.launch { bot(message, config) } }
+                                    .build(), client)
+                                    .thenAccept { message -> this.launch { bot(message, client) } }
                                 return@launch
                             }
                         }
@@ -83,8 +82,8 @@ suspend fun ping(client: Client, event: MessageCreateEvent, config: Config) = co
                         .appendLine(":ping_pong: Pong!")
                         .appendLine("Target: $url")
                         .appendLine("Latency: ${ping}ms")
-                        .build(), config)
-                        .thenAccept { message -> this.launch { bot(message, config) } }
+                        .build(), client)
+                        .thenAccept { message -> this.launch { bot(message, client) } }
                 }
             }
 

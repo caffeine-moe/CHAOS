@@ -7,17 +7,15 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.httpclient
-import org.caffeine.chaos.config.Config
 
-
-class ClientChannels {
-    val groupChannels = ClientGroupChannels()
-    suspend fun getAmount(config: Config): Int {
+data class ClientChannels(val client: Client) {
+    val groupChannels = ClientGroupChannels(client)
+    suspend fun getAmount(): Int {
         var number = 0
         val response = httpclient.request("$BASE_URL/users/@me/channels") {
             method = HttpMethod.Get
             headers {
-                append(HttpHeaders.Authorization, config.token)
+                append(HttpHeaders.Authorization, client.config.token)
             }
         }
         println(response)
@@ -28,12 +26,12 @@ class ClientChannels {
         return number
     }
 
-    suspend fun getList(config: Config): StringBuilder {
+    suspend fun getList(): StringBuilder {
         val sb = StringBuilder()
         val response = httpclient.request("$BASE_URL/users/@me/channels") {
             method = HttpMethod.Get
             headers {
-                append(HttpHeaders.Authorization, config.token)
+                append(HttpHeaders.Authorization, client.config.token)
             }
         }
         println(response)

@@ -3,7 +3,6 @@ package org.caffeine.chaos.api.handlers
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import org.caffeine.chaos.config.Config
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.*
 import org.caffeine.chaos.commandHandler
@@ -35,7 +34,7 @@ private data class MessageCreateD(
     val type: Int?,
 )
 
-suspend fun messageCreate(payload: String, config: Config, client: Client) {
+suspend fun messageCreate(payload: String, client: Client) {
     try {
         val d = Json { ignoreUnknownKeys = true }.decodeFromString<MessageCreate>(payload).d
         val messageauthor = MessageAuthor(
@@ -45,8 +44,8 @@ suspend fun messageCreate(payload: String, config: Config, client: Client) {
             d.author.avatar
         )
         val message = Message(d.id, d.content, d.channel_id, messageauthor, d.attachments)
-        val event = MessageCreateEvent(message, MessageChannel(d.channel_id))
-        commandHandler(config, event, client)
+        val event = MessageCreateEvent(message, MessageChannel(d.channel_id, client))
+        commandHandler(event, client)
     } catch (e: Exception) {
         println(payload)
         println("you are ugly")

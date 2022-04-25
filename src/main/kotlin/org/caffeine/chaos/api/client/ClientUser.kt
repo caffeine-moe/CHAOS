@@ -5,19 +5,19 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.httpclient
-import org.caffeine.chaos.config.Config
 
 data class ClientUser(
-        val verified: Boolean,
-        val username: String,
-        val discriminator: String,
-        val id: String,
-        val email: String?,
-        val bio: String?,
-        val avatar: String?,
-        val friends: ClientFriends,
-        val guilds: ClientGuilds,
-        val channels: ClientChannels,
+    val verified: Boolean,
+    val username: String,
+    val discriminator: String,
+    val id: String,
+    val email: String?,
+    val bio: String?,
+    val avatar: String?,
+    val friends: ClientFriends,
+    val guilds: ClientGuilds,
+    val channels: ClientChannels,
+    val client: Client,
 ) {
     val discriminatedName = "$username#$discriminator"
     fun avatarUrl(): String {
@@ -28,11 +28,11 @@ data class ClientUser(
         return av
     }
 
-    suspend fun redeemCode(code: String, config: Config) {
+    suspend fun redeemCode(code: String) {
         httpclient.request("$BASE_URL/entitlements/gift-codes/$code/redeem") {
             method = HttpMethod.Post
             headers {
-                append(HttpHeaders.Authorization, config.token)
+                append(HttpHeaders.Authorization, client.config.token)
             }
             expectSuccess = true
         }

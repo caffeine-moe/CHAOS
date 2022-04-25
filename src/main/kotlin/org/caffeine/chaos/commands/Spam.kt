@@ -7,40 +7,39 @@ import kotlinx.coroutines.withContext
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.config.Config
 
 private var cock = false
 
-suspend fun spam(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
+suspend fun spam(client: Client, event: MessageCreateEvent) = coroutineScope {
     cock = false
-    if (event.message.content.lowercase() == "${config.prefix}spam") {
+    if (event.message.content.lowercase() == "${client.config.prefix}spam") {
         event.channel.sendMessage(
             MessageBuilder()
                 .appendLine("**Incorrect usage:** '${event.message.content}'")
                 .appendLine("**Error:** Not enough parameters!")
-                .appendLine("**Correct usage:** `${config.prefix}spam String Int`")
-                .build(), config, client)
-            .thenAccept { message -> this.launch { bot(message, config) } }
+                .appendLine("**Correct usage:** `${client.config.prefix}spam String Int`")
+                .build(), client)
+            .thenAccept { message -> this.launch { bot(message, client) } }
     }
     if (event.message.content.lowercase()
-            .startsWith("${config.prefix}spam ") && event.message.content.lowercase() != "${config.prefix}spam "
+            .startsWith("${client.config.prefix}spam ") && event.message.content.lowercase() != "${client.config.prefix}spam "
     ) {
-        val msg = event.message.content.removePrefix("${config.prefix}spam ").split(" ")
+        val msg = event.message.content.removePrefix("${client.config.prefix}spam ").split(" ")
         try {
             val number = msg[msg.lastIndex].replace("[^0-9]".toRegex(), "").toInt()
             val stringbuilder = StringBuilder()
             for (str: String in msg.dropLast(1)) {
                 stringbuilder.append("$str ")
             }
-            val string = stringbuilder.toString().removePrefix("${config.prefix}spam ").trim()
+            val string = stringbuilder.toString().removePrefix("${client.config.prefix}spam ").trim()
             if (number <= 0) {
                 event.channel.sendMessage(
                     MessageBuilder()
                         .appendLine("**Incorrect usage:** '${event.message.content}'")
                         .appendLine("**Error:** Int must be higher than 0!")
-                        .appendLine("**Correct usage:** `${config.prefix}spam String Int`")
-                        .build(), config, client)
-                    .thenAccept { message -> this.launch { bot(message, config) } }
+                        .appendLine("**Correct usage:** `${client.config.prefix}spam String Int`")
+                        .build(), client)
+                    .thenAccept { message -> this.launch { bot(message, client) } }
                 return@coroutineScope
             }
             var done = 0
@@ -53,22 +52,21 @@ suspend fun spam(client: Client, event: MessageCreateEvent, config: Config) = co
                         Thread.sleep(5000)
                     }
                 }
-                event.channel.sendMessage(MessageBuilder().appendLine(string).build(), config, client)
+                event.channel.sendMessage(MessageBuilder().appendLine(string).build(), client)
                 done++
                 withContext(Dispatchers.IO) {
-                    Thread.sleep(500)
+                    Thread.sleep(350)
                 }
             }
             if (done > 1) {
                 event.channel.sendMessage(MessageBuilder().appendLine("Done spamming '$string' $done times!")
-                    .build(), config, client)
-                    .thenAccept { message -> this.launch { bot(message, config) } }
+                    .build(), client)
+                    .thenAccept { message -> this.launch { bot(message, client) } }
             }
             if (done == 1) {
                 event.channel.sendMessage(MessageBuilder().appendLine("Done spamming '$string' once!").build(),
-                    config,
                     client)
-                    .thenAccept { message -> this.launch { bot(message, config) } }
+                    .thenAccept { message -> this.launch { bot(message, client) } }
             }
         } catch (e: Exception) {
             when (e) {
@@ -77,26 +75,26 @@ suspend fun spam(client: Client, event: MessageCreateEvent, config: Config) = co
                         MessageBuilder()
                             .appendLine("**Incorrect usage:** '${event.message.content}'")
                             .appendLine("**Error:** '${msg[msg.lastIndex]}' is not an integer!")
-                            .appendLine("**Correct usage:** `${config.prefix}spam String Int`")
-                            .build(), config, client)
-                        .thenAccept { message -> this.launch { bot(message, config) } }
+                            .appendLine("**Correct usage:** `${client.config.prefix}spam String Int`")
+                            .build(), client)
+                        .thenAccept { message -> this.launch { bot(message, client) } }
                 }
                 is IndexOutOfBoundsException -> {
                     event.channel.sendMessage(
                         MessageBuilder()
                             .appendLine("**Incorrect usage:** '${event.message.content}'")
                             .appendLine("**Error:** Error: Not enough parameters!")
-                            .appendLine("**Correct usage:** `${config.prefix}spam String Int`")
-                            .build(), config, client)
-                        .thenAccept { message -> this.launch { bot(message, config) } }
+                            .appendLine("**Correct usage:** `${client.config.prefix}spam String Int`")
+                            .build(), client)
+                        .thenAccept { message -> this.launch { bot(message, client) } }
                 }
             }
         }
     }
 }
 
-suspend fun sSpam(event: MessageCreateEvent, config: Config) = coroutineScope {
-    if (event.message.content.lowercase() == "${config.prefix}sspam") {
+suspend fun sSpam(client: Client, event: MessageCreateEvent) = coroutineScope {
+    if (event.message.content.lowercase() == "${client.config.prefix}sspam") {
         cock = true
     }
 }

@@ -1,10 +1,6 @@
 package org.caffeine.chaos.api
 
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.websocket.*
-import io.ktor.client.utils.*
 import io.ktor.http.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.launch
@@ -72,7 +68,7 @@ class Connection {
     var sid = ""
     lateinit var ws: DefaultClientWebSocketSession
 
-    suspend fun login(config: Config, client: Client) {
+    suspend fun login(client: Client, config: Config) {
         httpclient.ws(
             method = HttpMethod.Get,
             host = GATEWAY,
@@ -89,14 +85,14 @@ class Connection {
                         "API:")
                     launch { sendHeartBeat(pl.d.heartbeat_interval, this@Connection) }
                     val id = Json.encodeToString(Identify(2,
-                        IdentifyD(config.token, IdentifyDProperties("Linux", "Chrome", ""))))
+                        IdentifyD(client.config.token, IdentifyDProperties("Linux", "Chrome", ""))))
                     sendJsonRequest(this@Connection, id)
                     log("Identification sent.", "API:")
                     for (frame in incoming) {
                         frame as? Frame.Text ?: continue
                         val receivedText = frame.readText()
                         launch {
-                            receiveJsonRequest(receivedText, config, this@Connection, client)
+                            receiveJsonRequest(receivedText, this@Connection, client, config)
                         }
                     }
                 }
@@ -140,7 +136,7 @@ class Connection {
                         frame as? Frame.Text ?: continue
                         val receivedText = frame.readText()
                         launch {
-                            receiveJsonRequest(receivedText, config, this@Connection, client)
+                            receiveJsonRequest(receivedText, this@Connection, client, config)
                         }
                     }
                 }

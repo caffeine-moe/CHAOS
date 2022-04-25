@@ -10,17 +10,15 @@ import kotlinx.serialization.json.Json
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.httpclient
-import org.caffeine.chaos.config.Config
 import java.util.concurrent.CompletableFuture
 import java.util.stream.Stream
 
-@kotlinx.serialization.Serializable
-class MessageChannel(var id: String) {
+class MessageChannel(var id: String, var client: Client) {
 
-    suspend fun messagesAsStream(config: Config): Stream<Message> {
+    suspend fun messagesAsStream(): Stream<Message> {
         val collection: MutableList<Message> = mutableListOf()
         val messagesPerRequest = 100
-        val filters = (MessageFilters(null,null,null,null,null))
+        val filters = (MessageFilters(null, null, null, null, null))
         while (true) {
             var parameters = ""
             parameters += if (filters.limit != null) "limit=${messagesPerRequest.coerceAtMost(filters.limit!! - collection.size)}&"
@@ -32,7 +30,7 @@ class MessageChannel(var id: String) {
             val response = httpclient.request("$BASE_URL/channels/${this.id}/messages?${parameters}") {
                 method = HttpMethod.Get
                 headers {
-                    append(HttpHeaders.Authorization, config.token)
+                    append(HttpHeaders.Authorization, client.config.token)
                     append(HttpHeaders.ContentType, "application/json")
                 }
             }
@@ -51,7 +49,7 @@ class MessageChannel(var id: String) {
         return collection.stream()
     }
 
-    suspend fun sendMessage(message: Message, config: Config, client: Client): CompletableFuture<Message> {
-        return client.sendMessage(this, message, config)
+    suspend fun sendMessage(message: Message, client: Client): CompletableFuture<Message> {
+        return client.sendMessage(this, message)
     }
 }

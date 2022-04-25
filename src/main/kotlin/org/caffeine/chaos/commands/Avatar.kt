@@ -5,15 +5,14 @@ import kotlinx.coroutines.launch
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.config.Config
 
-suspend fun avatar(client: Client, event: MessageCreateEvent, config: Config) = coroutineScope {
-    if (event.message.content.lowercase() == "${config.prefix}avatar" || event.message.content.lowercase() == "${config.prefix}av" && client.user.avatarUrl() != "") {
+suspend fun avatar(client: Client, event: MessageCreateEvent) = coroutineScope {
+    if (event.message.content.lowercase() == "${client.config.prefix}avatar" || event.message.content.lowercase() == "${client.config.prefix}av" && client.user.avatarUrl() != "") {
         event.channel.sendMessage(MessageBuilder()
             .appendLine("${client.user.discriminatedName}'s avatar")
             .appendLine(client.user.avatarUrl())
-            .build(), config, client).thenAccept { message ->
-            this.launch { bot(message, config) }
+            .build(), client).thenAccept { message ->
+            this.launch { bot(message, client) }
         }
     }
 /*    if (event.message.content.lowercase()

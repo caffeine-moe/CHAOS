@@ -7,15 +7,14 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.httpclient
-import org.caffeine.chaos.config.Config
 
-class ClientGuilds {
-    suspend fun getAmount(config: Config): Int {
+class ClientGuilds(val client: Client) {
+    suspend fun getAmount(): Int {
         var number = 0
         val response = httpclient.request("$BASE_URL/users/@me/guilds") {
             method = HttpMethod.Get
             headers {
-                append(HttpHeaders.Authorization, config.token)
+                append(HttpHeaders.Authorization, client.config.token)
             }
         }
         val final = Json { ignoreUnknownKeys = true }.decodeFromString<List<ClientGuild>>(response.body())
@@ -25,12 +24,12 @@ class ClientGuilds {
         return number
     }
 
-    suspend fun getList(config: Config): StringBuilder {
+    suspend fun getList(): StringBuilder {
         val sb = StringBuilder()
         val response = httpclient.request("$BASE_URL/users/@me/guilds") {
             method = HttpMethod.Get
             headers {
-                append(HttpHeaders.Authorization, config.token)
+                append(HttpHeaders.Authorization, client.config.token)
             }
         }
         val final = Json { ignoreUnknownKeys = true }.decodeFromString<List<ClientGuild>>(response.body())
