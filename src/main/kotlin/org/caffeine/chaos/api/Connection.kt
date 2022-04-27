@@ -102,6 +102,7 @@ class Connection {
 
     suspend fun logout() {
         ws.close()
+        br = true
         log("Client logged out.", "API:")
     }
 

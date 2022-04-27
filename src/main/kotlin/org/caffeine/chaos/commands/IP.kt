@@ -61,6 +61,7 @@ suspend fun ip(client: Client, event: MessageCreateEvent) = coroutineScope {
                             "success" -> {
                                 message.edit(MessageBuilder()
                                     .appendLine("**Information for IP/URL $url**")
+                                    .appendLine("**IP:** ${parsedresponse.query}")
                                     .appendLine("**Continent:** ${parsedresponse.continent}")
                                     .appendLine("**Country:** ${parsedresponse.country}")
                                     .appendLine("**Region:** ${parsedresponse.regionName}")

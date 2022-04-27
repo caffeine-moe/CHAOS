@@ -1,6 +1,8 @@
 package org.caffeine.chaos.api
 
 import io.ktor.websocket.*
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 suspend fun sendJsonRequest(connection: Connection, request: String) {
     try {
@@ -10,5 +12,6 @@ suspend fun sendJsonRequest(connection: Connection, request: String) {
         e.printStackTrace()
         println(e.cause)
         println("sendjsonrequest")
+        println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy hh:mm:ss")))
     }
 }

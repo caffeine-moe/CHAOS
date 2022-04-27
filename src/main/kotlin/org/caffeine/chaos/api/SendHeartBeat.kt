@@ -17,7 +17,10 @@ suspend fun sendHeartBeat(interval: Long, connection: Connection) {
     br = false
     val hb = Json.encodeToString(Heartbeat(1, "null"))
     log("Heartbeat started.", "API:")
-    while (!br) {
+    while (true) {
+        if (br){
+            break
+        }
         delay(interval)
         sendJsonRequest(connection, hb)
     }

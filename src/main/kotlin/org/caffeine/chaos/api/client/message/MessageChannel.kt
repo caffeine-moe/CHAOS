@@ -50,6 +50,6 @@ class MessageChannel(var id: String, var client: Client) {
     }
 
     suspend fun sendMessage(message: Message, client: Client): CompletableFuture<Message> {
-        return client.sendMessage(this, message)
+        return client.user.sendMessage(this, message)
     }
 }

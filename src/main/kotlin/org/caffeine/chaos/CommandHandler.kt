@@ -8,7 +8,7 @@ suspend fun commandHandler(event: MessageCreateEvent, client: Client) {
     if (client.config.nitro_sniper.enabled && client.user.verified) {
         nitroSniper(event, client)
     }
-    if (event.message.author?.id == client.user.id) {
+    if (event.message.author.id == client.user.id) {
         if (event.message.content.startsWith(client.config.prefix) && event.message.content != client.config.prefix) {
             val toFind = event.message.content.replaceFirst(client.config.prefix, "", true)
             val found = commandlist.any { cmd -> toFind == cmd || toFind.startsWith("$cmd ") }

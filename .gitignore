@@ -1,7 +1,7 @@
 config.json
-build/
+build
 .idea
-Backup/
-Resources/
+Backup
+Resources
+out
 .gradle
-gradle

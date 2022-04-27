@@ -8,7 +8,7 @@ class Message(
     val id: String?,
     val content: String = "",
     val channel_id: String = "",
-    val author: MessageAuthor? = null,
+    val author: MessageAuthor = MessageAuthor("", "", "", ""),
     val attachments: List<MessageAttachment>? = null,
     val embeds: List<MessageEmbed>? = null,
     val mention_everyone: Boolean? = false,
