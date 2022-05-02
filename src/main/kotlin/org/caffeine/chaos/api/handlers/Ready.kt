@@ -5,7 +5,6 @@ import kotlinx.serialization.json.Json
 import org.caffeine.chaos.api.Connection
 import org.caffeine.chaos.api.client.*
 import org.caffeine.chaos.clear
-import org.caffeine.chaos.config.Config
 import org.caffeine.chaos.configWatcher
 import org.caffeine.chaos.log
 import org.caffeine.chaos.loginPrompt
@@ -45,7 +44,7 @@ private data class ReadyPayloadDUser(
     val verified: Boolean,
 )
 
-suspend fun ready(client: Client, config: Config, connection: Connection, payload: String) {
+suspend fun ready(client: Client, connection: Connection, payload: String) {
     val d = Json {
         ignoreUnknownKeys = true
         coerceInputValues = true
@@ -65,7 +64,6 @@ suspend fun ready(client: Client, config: Config, connection: Connection, payloa
     )
     org.caffeine.chaos.api.ready = true
     connection.sid = d.session_id
-    client.config = config
     log("\u001B[38;5;47mClient logged in!", "API:")
     log("\u001B[38;5;33mWelcome to CHAOS!")
     clear()

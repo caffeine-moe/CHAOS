@@ -17,7 +17,7 @@ import org.caffeine.chaos.api.httpclient
 import java.net.InetAddress
 
 @Serializable
-data class ipApiResponse(
+data class IpApiResponse(
     val status: String,
     val continent: String,
     val country: String,
@@ -56,7 +56,7 @@ suspend fun ip(client: Client, event: MessageCreateEvent) = coroutineScope {
                             method = HttpMethod.Get
                         }
                         val parsedresponse =
-                            Json { ignoreUnknownKeys = true }.decodeFromString<ipApiResponse>(response.body())
+                            Json { ignoreUnknownKeys = true }.decodeFromString<IpApiResponse>(response.body())
                         when (parsedresponse.status) {
                             "success" -> {
                                 message.edit(MessageBuilder()

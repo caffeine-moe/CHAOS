@@ -38,6 +38,7 @@ val commandlist = arrayOf(
     "invisible",
     "offline",
     "online",
+    "figlet"
 )
 
 suspend fun help(client: Client, event: MessageCreateEvent) = coroutineScope {

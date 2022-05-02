@@ -38,6 +38,7 @@ suspend fun commandHandler(event: MessageCreateEvent, client: Client) {
                 away(client, event)
                 dnd(client, event)
                 invis(client, event)
+                figlet(client, event)
             }
         }
     }

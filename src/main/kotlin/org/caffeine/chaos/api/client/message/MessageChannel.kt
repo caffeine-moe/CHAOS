@@ -15,18 +15,17 @@ import java.util.stream.Stream
 
 class MessageChannel(var id: String, var client: Client) {
 
-    suspend fun messagesAsStream(): Stream<Message> {
+    suspend fun messagesAsStream(filters: MessageFilters): Stream<Message> {
         val collection: MutableList<Message> = mutableListOf()
         val messagesPerRequest = 100
-        val filters = (MessageFilters(null, null, null, null, null))
         while (true) {
             var parameters = ""
-            parameters += if (filters.limit != null) "limit=${messagesPerRequest.coerceAtMost(filters.limit!! - collection.size)}&"
+            parameters += if (filters.limit > 0) "limit=${messagesPerRequest.coerceAtMost(filters.limit - collection.size)}&"
             else "limit=${messagesPerRequest}&"
-            if (filters.before_id != null) parameters += "before=${filters.before_id}&"
-            if (filters.after_id != null) parameters += "after=${filters.author_id}&"
-            if (filters.author_id != null) parameters += "author_id=${filters.author_id}&"
-            if (filters.mentioning_user_id != null) parameters += "mentions=${filters.mentioning_user_id}&"
+            if (filters.before_id.isNotBlank()) parameters += "before=${filters.before_id}&"
+            if (filters.after_id.isNotBlank()) parameters += "after=${filters.after_id}&"
+            if (filters.author_id.isNotBlank()) parameters += "author_id=${filters.author_id}&"
+            if (filters.mentioning_user_id.isNotBlank()) parameters += "mentions=${filters.mentioning_user_id}&"
             val response = httpclient.request("$BASE_URL/channels/${this.id}/messages?${parameters}") {
                 method = HttpMethod.Get
                 headers {
@@ -37,7 +36,7 @@ class MessageChannel(var id: String, var client: Client) {
             val newMessages = Json { ignoreUnknownKeys = true }.decodeFromString<List<Message>>(response.body())
             collection.addAll(newMessages)
 
-            filters.before_id = collection.last().id?.toLong()
+            filters.before_id = collection.last().id.toString()
 
             if (newMessages.size < messagesPerRequest)
                 break

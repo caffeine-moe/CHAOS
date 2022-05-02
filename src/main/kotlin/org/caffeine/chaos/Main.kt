@@ -2,10 +2,8 @@ package org.caffeine.chaos
 
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import io.ktor.utils.io.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -13,7 +11,6 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.httpclient
 import org.caffeine.chaos.config.Config
 import java.io.File
-import java.net.URL
 import kotlin.system.exitProcess
 
 //version lmao
@@ -40,5 +37,5 @@ suspend fun main(): Unit = coroutineScope {
     log("\u001B[38;5;33mInitialising gateway connection...")
     val config = Json.decodeFromString<Config>(File("config.json").readText())
     val client = Client(config)
-    launch { client.login(client) }.start()
+    client.login(config)
 }

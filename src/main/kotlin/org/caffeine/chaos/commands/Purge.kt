@@ -8,6 +8,7 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.Message
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.client.message.MessageFilters
 
 private var cock = false
 
@@ -39,17 +40,8 @@ suspend fun purge(client: Client, event: MessageCreateEvent) = coroutineScope {
                 return@coroutineScope
             }
             var done = 0
-            val count = event.channel.messagesAsStream().filter { x -> x.author == event.message.author }.count()
-            if (count <= 0) {
-                event.channel.sendMessage(
-                    MessageBuilder()
-                        .appendLine("There is nothing to delete!")
-                        .build(), client)
-                    .thenAccept { message -> this.launch { bot(message, client) } }
-                return@coroutineScope
-            }
-            for (message: Message in event.channel.messagesAsStream()
-                .filter { x -> x.author == event.message.author }) {
+            val messages = event.channel.messagesAsStream(MessageFilters(author_id = client.user.id)).toList()
+            for (message: Message in messages) {
                 if (done % 8 == 0 && done != 0) {
                     withContext(Dispatchers.IO) {
                         Thread.sleep(4500)
@@ -83,6 +75,14 @@ suspend fun purge(client: Client, event: MessageCreateEvent) = coroutineScope {
                             .appendLine("**Incorrect usage:** '${event.message.content}'")
                             .appendLine("**Error:** $number is not an integer!")
                             .appendLine("**Correct usage:** `${client.config.prefix}purge Int`")
+                            .build(), client)
+                        .thenAccept { message -> this.launch { bot(message, client) } }
+                    return@coroutineScope
+                }
+                is NoSuchElementException -> {
+                    event.channel.sendMessage(
+                        MessageBuilder()
+                            .appendLine("There is nothing to delete!")
                             .build(), client)
                         .thenAccept { message -> this.launch { bot(message, client) } }
                     return@coroutineScope

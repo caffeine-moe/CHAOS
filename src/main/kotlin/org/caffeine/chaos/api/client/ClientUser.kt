@@ -11,6 +11,7 @@ import org.caffeine.chaos.api.client.message.Message
 import org.caffeine.chaos.api.client.message.MessageChannel
 import org.caffeine.chaos.api.httpclient
 import java.util.concurrent.CompletableFuture
+import kotlin.math.absoluteValue
 
 data class ClientUser(
     val verified: Boolean,
@@ -84,14 +85,32 @@ data class ClientUser(
         return org.caffeine.chaos.api.client.message.sendMessage(channel, message, channel.client)
     }
 
-    suspend fun redeemCode(code: String) {
-        val rq = httpclient.request("$BASE_URL/entitlements/gift-codes/$code/redeem") {
-            method = HttpMethod.Post
-            headers {
-                append(HttpHeaders.Authorization, client.config.token)
+    suspend fun redeemCode(code: String): CompletableFuture<ClientUserRedeemedCode> {
+        var rc = ClientUserRedeemedCode()
+        var la: Long
+        val start = System.currentTimeMillis()
+        try {
+            val rq = httpclient.request("$BASE_URL/entitlements/gift-codes/$code/redeem") {
+                method = HttpMethod.Post
+                headers {
+                    append(HttpHeaders.Authorization, client.config.token)
+                }
+                expectSuccess = true
             }
-            expectSuccess = true
+            val end = System.currentTimeMillis()
+            la = (start - end)
+            rc = ClientUserRedeemedCode(code, la.absoluteValue, ClientUserRedeemedCodeStatus.SUCCESS)
+        } catch (ex: Exception) {
+            val end = System.currentTimeMillis()
+            la = (start - end)
+            if (ex.toString().contains("Unknown Gift Code")) {
+                rc = ClientUserRedeemedCode(code,
+                    la.absoluteValue,
+                    ClientUserRedeemedCodeStatus.INVALID,
+                    ClientUserRedeemedCodeError.UNKNOWN_CODE)
+            }
         }
+        return CompletableFuture.completedFuture(rc)
     }
 
     suspend fun validateChannelId(id: String): Boolean {

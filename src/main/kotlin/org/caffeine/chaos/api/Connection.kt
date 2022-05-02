@@ -1,16 +1,14 @@
 package org.caffeine.chaos.api
 
+import io.ktor.client.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.launch
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
+import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.config.Config
 import org.caffeine.chaos.log
 
 class Connection {
@@ -39,6 +37,9 @@ class Connection {
     data class IdentifyD(
         val token: String,
         val properties: IdentifyDProperties,
+        val presence: IdentifyDPresence = IdentifyDPresence(),
+        val compress: Boolean = false,
+        val client_state: IdentifyDClientState = IdentifyDClientState(),
     )
 
     @Serializable
@@ -50,6 +51,26 @@ class Connection {
         @SerialName("\$device")
         val device: String,
     )
+
+    @Serializable
+    data class IdentifyDPresence(
+        val status: String = "online",
+        val since: Int = 0,
+        val activities: Array<String> = emptyArray(),
+        val afk: Boolean = false,
+    )
+
+    @Serializable
+    data class IdentifyDClientState(
+        @Contextual
+        val guild_hashes: Empty = Json.decodeFromString("{}"),
+        val highest_last_message_id: String = "0",
+        val read_state_version: Int = 0,
+        val user_guild_settings_version: Int = -1,
+    )
+
+    @Serializable
+    class Empty
 
     @Serializable
     data class Resume(
@@ -64,20 +85,21 @@ class Connection {
         val seq: Int,
     )
 
-    var lasts = 0
+    var seq = 0
     var sid = ""
+    var httpClient = ConnectionHTTPClient().httpclient
     lateinit var ws: DefaultClientWebSocketSession
 
-    suspend fun login(client: Client, config: Config) {
-        httpclient.ws(
+    suspend fun connect(client: Client) {
+        httpClient.ws(
             method = HttpMethod.Get,
             host = GATEWAY,
             path = "/?v=8&encoding=json",
             port = 8080
         ) {
+            ws = this
             log("\u001B[38;5;47mConnected to the Discord gateway!", "API:")
-            ws = this@ws
-            val event = this@ws.incoming.receive().data
+            val event = this.incoming.receive().data
             val pl = Json.decodeFromString<Rpayload>(event.decodeToString())
             when (pl.op) {
                 10 -> {
@@ -92,7 +114,7 @@ class Connection {
                         frame as? Frame.Text ?: continue
                         val receivedText = frame.readText()
                         launch {
-                            receiveJsonRequest(receivedText, this@Connection, client, config)
+                            receiveJsonRequest(receivedText, this@Connection, client)
                         }
                     }
                 }
@@ -100,26 +122,30 @@ class Connection {
         }
     }
 
-    suspend fun logout() {
-        ws.close()
+    fun disconnect() {
+        httpClient.close()
         br = true
+        ready = false
         log("Client logged out.", "API:")
+        return
     }
 
-    suspend fun reconnect(config: Config, session_id: String, seq: Int, client: Client) {
+    suspend fun reconnect(session_id: String, seq: Int, client: Client) {
         log("Gateway sent opcode 7 RECONNECT, reconnecting...", "API:")
+        httpClient.close()
+        httpClient = ConnectionHTTPClient().httpclient
         br = true
-        logout()
+        ready = false
         log("\u001B[38;5;33mInitialising gateway connection...")
-        httpclient.ws(
+        httpClient.ws(
             method = HttpMethod.Get,
             host = GATEWAY,
             path = "/?v=8&encoding=json",
             port = 8080
         ) {
+            ws = this
             log("\u001B[38;5;47mConnected to the Discord gateway!", "API:")
-            ws = this@ws
-            val event = this@ws.incoming.receive().data
+            val event = this.incoming.receive().data
             val pl = Json.decodeFromString<Rpayload>(event.decodeToString())
             when (pl.op) {
                 10 -> {
@@ -127,17 +153,17 @@ class Connection {
                         "API:")
                     launch { sendHeartBeat(pl.d.heartbeat_interval, this@Connection) }
                     val id = Json.encodeToString(Identify(2,
-                        IdentifyD(config.token, IdentifyDProperties("Linux", "Chrome", ""))))
+                        IdentifyD(client.config.token, IdentifyDProperties("Linux", "Chrome", ""))))
                     sendJsonRequest(this@Connection, id)
                     log("Identification payload sent.", "API:")
-                    val rs = Json.encodeToString(Resume(6, ResumeD(config.token, session_id, seq)))
+                    val rs = Json.encodeToString(Resume(6, ResumeD(client.config.token, session_id, seq)))
                     sendJsonRequest(this@Connection, rs)
                     log("Resume payload sent.", "API:")
                     for (frame in incoming) {
                         frame as? Frame.Text ?: continue
                         val receivedText = frame.readText()
                         launch {
-                            receiveJsonRequest(receivedText, this@Connection, client, config)
+                            receiveJsonRequest(receivedText, this@Connection, client)
                         }
                     }
                 }

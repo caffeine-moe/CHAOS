@@ -7,8 +7,6 @@ import io.ktor.client.plugins.cache.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.cookies.*
 import io.ktor.client.plugins.websocket.*
-import io.ktor.client.utils.*
-import io.ktor.http.*
 
 val GATEWAY = "gateway.discord.gg"
 val BASE_URL = "https://discord.com/api/v8"
