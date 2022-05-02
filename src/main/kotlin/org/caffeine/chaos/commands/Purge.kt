@@ -40,7 +40,7 @@ suspend fun purge(client: Client, event: MessageCreateEvent) = coroutineScope {
                 return@coroutineScope
             }
             var done = 0
-            val messages = event.channel.messagesAsStream(MessageFilters(author_id = client.user.id)).toList()
+            val messages = event.channel.messagesAsCollection(MessageFilters(author_id = client.user.id))
             for (message: Message in messages) {
                 if (done % 8 == 0 && done != 0) {
                     withContext(Dispatchers.IO) {

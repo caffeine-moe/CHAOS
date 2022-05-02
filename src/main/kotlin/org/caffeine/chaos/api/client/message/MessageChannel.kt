@@ -15,7 +15,7 @@ import java.util.stream.Stream
 
 class MessageChannel(var id: String, var client: Client) {
 
-    suspend fun messagesAsStream(filters: MessageFilters): Stream<Message> {
+    suspend fun messagesAsCollection(filters: MessageFilters): Collection<Message> {
         val collection: MutableList<Message> = mutableListOf()
         val messagesPerRequest = 100
         while (true) {
@@ -45,7 +45,7 @@ class MessageChannel(var id: String, var client: Client) {
                 Thread.sleep(500)
             }
         }
-        return collection.stream()
+        return collection
     }
 
     suspend fun sendMessage(message: Message, client: Client): CompletableFuture<Message> {
