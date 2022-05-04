@@ -5,10 +5,10 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.httpclient
+import org.caffeine.chaos.api.discordHTTPClient
+import org.caffeine.chaos.api.json
 import java.util.concurrent.CompletableFuture
 
 @kotlinx.serialization.Serializable
@@ -32,16 +32,16 @@ private data class SendMessageResponse(
 )
 
 suspend fun sendMessage(channel: MessageChannel, message: Message, client: Client): CompletableFuture<Message> {
-    val response = httpclient.request("$BASE_URL/channels/${channel.id}/messages") {
+    val response = discordHTTPClient.request("$BASE_URL/channels/${channel.id}/messages") {
         method = HttpMethod.Post
         headers {
             append(HttpHeaders.Authorization, client.config.token)
             append(HttpHeaders.ContentType, "application/json")
         }
-        setBody(Json.encodeToString(MessageSerializer(message.content,
+        setBody(json.encodeToString(MessageSerializer(message.content,
             System.currentTimeMillis().toString())))
     }
-    val parsedresponse = Json { ignoreUnknownKeys = true }.decodeFromString<SendMessageResponse>(response.body())
+    val parsedresponse = json.decodeFromString<SendMessageResponse>(response.body())
     val messageauthor = MessageAuthor(
         parsedresponse.author.username,
         parsedresponse.author.discriminator,

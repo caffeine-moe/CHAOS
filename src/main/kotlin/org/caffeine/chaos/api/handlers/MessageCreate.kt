@@ -2,9 +2,9 @@ package org.caffeine.chaos.api.handlers
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.*
+import org.caffeine.chaos.api.json
 import org.caffeine.chaos.commandHandler
 
 @Serializable
@@ -36,7 +36,7 @@ private data class MessageCreateD(
 
 suspend fun messageCreate(payload: String, client: Client) {
     try {
-        val d = Json { ignoreUnknownKeys = true }.decodeFromString<MessageCreate>(payload).d
+        val d = json.decodeFromString<MessageCreate>(payload).d
         val messageauthor = MessageAuthor(
             d.author.username,
             d.author.discriminator,

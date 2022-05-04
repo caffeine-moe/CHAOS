@@ -7,15 +7,14 @@ import io.ktor.client.plugins.cache.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.cookies.*
 import io.ktor.client.plugins.websocket.*
+import io.ktor.client.request.*
 
-val GATEWAY = "gateway.discord.gg"
-val BASE_URL = "https://discord.com/api/v8"
-
-val httpclient: HttpClient = HttpClient(CIO) {
+val discordHTTPClient: HttpClient = HttpClient(CIO) {
     install(WebSockets)
     install(HttpCookies)
     install(HttpCache)
     install(ContentNegotiation)
+    install(DefaultRequest)
     install(HttpRequestRetry) {
         maxRetries = 5
         retryIf { _, response ->
@@ -25,7 +24,27 @@ val httpclient: HttpClient = HttpClient(CIO) {
             delay * 1000L
         }
     }
-    BrowserUserAgent()
+    defaultRequest {
+        port = 443
+        headers {
+            append("Accept-Language", "en-US")
+            append("Cache-Control", "no-cache")
+            append("Connection", "keep-alive")
+            append("Origin", "https://discord.com")
+            append("Pragma", "no-cache")
+            append("Referer", "https://discord.com/channels/@me")
+            append("Sec-CH-UA", "\"(Not(A:Brand\";v=\"8\", \"Chromium\";v=\"98\"")
+            append("Sec-CH-UA-Mobile", "?0")
+            append("Sec-CH-UA-Platform", "Windows")
+            append("Sec-Fetch-Dest", "empty")
+            append("Sec-Fetch-Mode", "cors")
+            append("Sec-Fetch-Site", "same-origin")
+            append("User-Agent", ua)
+            append("X-Discord-Locale", "en-US")
+            append("X-Debug-Options", "bugReporterEnabled")
+            append("X-Super-Properties", encsp)
+        }
+    }
     engine {
         pipelining = true
     }

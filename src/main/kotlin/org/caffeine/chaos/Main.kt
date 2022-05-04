@@ -8,7 +8,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.httpclient
+import org.caffeine.chaos.api.normalHTTPClient
 import org.caffeine.chaos.config.Config
 import java.io.File
 import kotlin.system.exitProcess
@@ -22,7 +22,7 @@ suspend fun main(): Unit = coroutineScope {
     printSeparator()
     log("\u001B[38;5;33mCHAOS is starting...")
     if (!File("config.json").exists()) {
-        val default = httpclient.get("https://caffeine.moe/CHAOS/config.json")
+        val default = normalHTTPClient.get("https://caffeine.moe/CHAOS/config.json")
         withContext(Dispatchers.IO) {
             File("config.json").createNewFile()
         }

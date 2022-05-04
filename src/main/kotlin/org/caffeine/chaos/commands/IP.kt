@@ -13,7 +13,7 @@ import kotlinx.serialization.json.Json
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.api.httpclient
+import org.caffeine.chaos.api.discordHTTPClient
 import java.net.InetAddress
 
 @Serializable
@@ -52,7 +52,7 @@ suspend fun ip(client: Client, event: MessageCreateEvent) = coroutineScope {
                         }
                         val cleanip = ip.hostAddress
                         val rqurl = "http://ip-api.com/json/${cleanip}?fields=1237817"
-                        val response = httpclient.request(rqurl) {
+                        val response = discordHTTPClient.request(rqurl) {
                             method = HttpMethod.Get
                         }
                         val parsedresponse =
@@ -66,8 +66,6 @@ suspend fun ip(client: Client, event: MessageCreateEvent) = coroutineScope {
                                     .appendLine("**Country:** ${parsedresponse.country}")
                                     .appendLine("**Region:** ${parsedresponse.regionName}")
                                     .appendLine("**City:** ${parsedresponse.city}")
-                                    .appendLine("**City:** ${parsedresponse.city}")
-                                    .appendLine("**Zip/Postal:** ${parsedresponse.zip}")
                                     .appendLine("**Zip/Postal:** ${parsedresponse.zip}")
                                     .appendLine("**Timezone:** ${parsedresponse.timezone}")
                                     .appendLine("**ISP:** ${parsedresponse.isp}")

@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 data class Config(
     val token: String,
     val prefix: String,
+    val auto_reconnect: Boolean,
     val logger: Logger,
     val auto_delete: AutoDelete,
     val exchange: Exchange,

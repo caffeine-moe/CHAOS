@@ -5,11 +5,11 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.client.message.Message
 import org.caffeine.chaos.api.client.message.MessageChannel
-import org.caffeine.chaos.api.httpclient
+import org.caffeine.chaos.api.discordHTTPClient
+import org.caffeine.chaos.api.json
 import java.util.concurrent.CompletableFuture
 import kotlin.math.absoluteValue
 
@@ -38,43 +38,43 @@ data class ClientUser(
     suspend fun setStatus(status: ClientStatusType) {
         when (status) {
             ClientStatusType.ONLINE -> {
-                httpclient.request("$BASE_URL/users/@me/settings") {
+                discordHTTPClient.request("$BASE_URL/users/@me/settings") {
                     method = HttpMethod.Patch
                     headers {
                         append(HttpHeaders.Authorization, client.config.token)
                         append("Content-Type", "application/json")
                     }
-                    setBody(Json.encodeToString(ClientStatus("online")))
+                    setBody(json.encodeToString(ClientStatus("online")))
                 }
             }
             ClientStatusType.IDLE -> {
-                httpclient.request("$BASE_URL/users/@me/settings") {
+                discordHTTPClient.request("$BASE_URL/users/@me/settings") {
                     method = HttpMethod.Patch
                     headers {
                         append(HttpHeaders.Authorization, client.config.token)
                         append("Content-Type", "application/json")
                     }
-                    setBody(Json.encodeToString(ClientStatus("idle")))
+                    setBody(json.encodeToString(ClientStatus("idle")))
                 }
             }
             ClientStatusType.DND -> {
-                httpclient.request("$BASE_URL/users/@me/settings") {
+                discordHTTPClient.request("$BASE_URL/users/@me/settings") {
                     method = HttpMethod.Patch
                     headers {
                         append(HttpHeaders.Authorization, client.config.token)
                         append("Content-Type", "application/json")
                     }
-                    setBody(Json.encodeToString(ClientStatus("dnd")))
+                    setBody(json.encodeToString(ClientStatus("dnd")))
                 }
             }
             ClientStatusType.INVISIBLE -> {
-                val rq = httpclient.request("$BASE_URL/users/@me/settings") {
+                val rq = discordHTTPClient.request("$BASE_URL/users/@me/settings") {
                     method = HttpMethod.Patch
                     headers {
                         append(HttpHeaders.Authorization, client.config.token)
                         append("Content-Type", "application/json")
                     }
-                    setBody(Json.encodeToString(ClientStatus("invisible")))
+                    setBody(json.encodeToString(ClientStatus("invisible")))
                 }
                 println(rq.request.headers.toString())
             }
@@ -90,7 +90,7 @@ data class ClientUser(
         var la: Long
         val start = System.currentTimeMillis()
         try {
-            val rq = httpclient.request("$BASE_URL/entitlements/gift-codes/$code/redeem") {
+            val rq = discordHTTPClient.request("$BASE_URL/entitlements/gift-codes/$code/redeem") {
                 method = HttpMethod.Post
                 headers {
                     append(HttpHeaders.Authorization, client.config.token)
@@ -115,7 +115,7 @@ data class ClientUser(
 
     suspend fun validateChannelId(id: String): Boolean {
         var valid = false
-        val response = httpclient.request("$BASE_URL/channels/${id}/messages?limit=1") {
+        val response = discordHTTPClient.request("$BASE_URL/channels/${id}/messages?limit=1") {
             method = HttpMethod.Get
             headers {
                 append(HttpHeaders.Authorization, client.config.token)

@@ -5,10 +5,10 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.httpclient
+import org.caffeine.chaos.api.discordHTTPClient
+import org.caffeine.chaos.api.json
 import java.util.concurrent.CompletableFuture
 
 @kotlinx.serialization.Serializable
@@ -37,15 +37,15 @@ data class EditContent(
 )
 
 suspend fun editMessage(message: Message, client: Client, newMessage: Message): CompletableFuture<Message> {
-    val response = httpclient.request("$BASE_URL/channels/${message.channel_id}/messages/${message.id}") {
+    val response = discordHTTPClient.request("$BASE_URL/channels/${message.channel_id}/messages/${message.id}") {
         method = HttpMethod.Patch
         headers {
             append(HttpHeaders.Authorization, client.config.token)
             append(HttpHeaders.ContentType, "application/json")
         }
-        setBody(Json.encodeToString(EditContent(newMessage.content)))
+        setBody(json.encodeToString(EditContent(newMessage.content)))
     }
-    val parsedresponse = Json { ignoreUnknownKeys = true }.decodeFromString<EditMessageResponse>(response.body())
+    val parsedresponse = json.decodeFromString<EditMessageResponse>(response.body())
     val messageauthor = MessageAuthor(
         parsedresponse.author.username,
         parsedresponse.author.discriminator,

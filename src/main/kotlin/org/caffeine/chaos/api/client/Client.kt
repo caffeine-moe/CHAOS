@@ -13,7 +13,7 @@ data class Client(
         socket.connect(client)
     }
 
-    fun logout() {
+    suspend fun logout() {
         this.socket.disconnect()
     }
 }

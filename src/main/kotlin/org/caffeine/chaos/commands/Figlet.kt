@@ -8,6 +8,15 @@ import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
 suspend fun figlet(client: Client, event: MessageCreateEvent) = coroutineScope {
+    if (event.message.content == "${client.config.prefix}figlet"
+    ) {
+        event.channel.sendMessage(MessageBuilder()
+            .appendLine("**Incorrect usage** '${event.message.content}'")
+            .appendLine("**Error:** No specified text to figletize")
+            .appendLine("**Correct usage:** `${client.config.prefix}figlet String`")
+            .build(), client)
+            .thenAccept { message -> this.launch { bot(message, client) } }
+    }
     if (event.message.content.lowercase()
             .startsWith("${client.config.prefix}figlet ") && event.message.content != "${client.config.prefix}figlet "
     ) {

@@ -1,15 +1,16 @@
 package org.caffeine.chaos.api
 
-import io.ktor.client.*
 import io.ktor.client.plugins.websocket.*
-import io.ktor.http.*
-import io.ktor.http.content.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.websocket.*
+import io.ktor.websocket.readText
 import kotlinx.coroutines.launch
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.log
+import java.util.*
 
 class Connection {
 
@@ -33,23 +34,14 @@ class Connection {
         val d: IdentifyD,
     )
 
+
     @Serializable
     data class IdentifyD(
         val token: String,
-        val properties: IdentifyDProperties,
+        val properties: SuperProperties,
         val presence: IdentifyDPresence = IdentifyDPresence(),
         val compress: Boolean = false,
         val client_state: IdentifyDClientState = IdentifyDClientState(),
-    )
-
-    @Serializable
-    data class IdentifyDProperties(
-        @SerialName("\$os")
-        val os: String,
-        @SerialName("\$browser")
-        val browser: String,
-        @SerialName("\$device")
-        val device: String,
     )
 
     @Serializable
@@ -85,29 +77,87 @@ class Connection {
         val seq: Int,
     )
 
-    var seq = 0
-    var sid = ""
-    var httpClient = ConnectionHTTPClient().httpclient
+    @Serializable
+    data class DUAProp(
+        val chrome_user_agent: String,
+        val chrome_version: String,
+        val client_build_number: Int,
+    )
+
+    var httpClient = ConnectionHTTPClient(this).httpclient
     lateinit var ws: DefaultClientWebSocketSession
+    lateinit var client: Client
+
+    @Serializable
+    data class SuperProperties(
+        var os: String,
+        var browser: String,
+        var device: String,
+        var browser_user_agent: String,
+        var browser_version: String,
+        var os_version: String,
+        var referrer: String,
+        var referring_domain: String,
+        var referrer_current: String,
+        var referring_domain_current: String,
+        var release_channel: String,
+        var system_locale: String,
+        var client_build_number: Int,
+        var client_event_source: Empty = Empty(),
+    )
 
     suspend fun connect(client: Client) {
-        httpClient.ws(
-            method = HttpMethod.Get,
+        val prop =
+            json.decodeFromString<DUAProp>(normalHTTPClient.get("https://discord-user-api.cf/api/v1/properties/web")
+                .bodyAsText())
+        ua = prop.chrome_user_agent
+        cv = prop.chrome_version
+        cbn = prop.client_build_number
+        sp = json.encodeToString(SuperProperties("Windows",
+            "Chrome",
+            "",
+            ua,
+            cv,
+            "10",
+            "",
+            "",
+            "",
+            "",
+            "stable",
+            "en-US",
+            cbn))
+        encsp = Base64.getEncoder().encodeToString(sp.toByteArray())
+        httpClient = ConnectionHTTPClient(this).httpclient
+        httpClient.wss(
             host = GATEWAY,
             path = "/?v=8&encoding=json",
-            port = 8080
+            port = 443
         ) {
             ws = this
+            this@Connection.client = client
             log("\u001B[38;5;47mConnected to the Discord gateway!", "API:")
             val event = this.incoming.receive().data
-            val pl = Json.decodeFromString<Rpayload>(event.decodeToString())
+            val pl = json.decodeFromString<Rpayload>(event.decodeToString())
             when (pl.op) {
                 10 -> {
                     log("Gateway sent opcode 10 HELLO, sending identification payload and starting heartbeat.",
                         "API:")
                     launch { sendHeartBeat(pl.d.heartbeat_interval, this@Connection) }
-                    val id = Json.encodeToString(Identify(2,
-                        IdentifyD(client.config.token, IdentifyDProperties("Linux", "Chrome", ""))))
+                    val id = json.encodeToString(Identify(2,
+                        IdentifyD(client.config.token,
+                            SuperProperties("Windows",
+                                "Chrome",
+                                "",
+                                ua,
+                                cv,
+                                "10",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "stable",
+                                "en-US",
+                                cbn))))
                     sendJsonRequest(this@Connection, id)
                     log("Identification sent.", "API:")
                     for (frame in incoming) {
@@ -122,41 +172,49 @@ class Connection {
         }
     }
 
-    fun disconnect() {
-        httpClient.close()
+    suspend fun disconnect() {
+        ws.close()
         br = true
         ready = false
         log("Client logged out.", "API:")
         return
     }
 
-    suspend fun reconnect(session_id: String, seq: Int, client: Client) {
+    suspend fun recRes(session_id: String, seq: Int, client: Client) {
         log("Gateway sent opcode 7 RECONNECT, reconnecting...", "API:")
-        httpClient.close()
-        httpClient = ConnectionHTTPClient().httpclient
-        br = true
-        ready = false
-        log("\u001B[38;5;33mInitialising gateway connection...")
-        httpClient.ws(
-            method = HttpMethod.Get,
+        disconnect()
+        httpClient.wss(
             host = GATEWAY,
             path = "/?v=8&encoding=json",
-            port = 8080
+            port = 443
         ) {
             ws = this
             log("\u001B[38;5;47mConnected to the Discord gateway!", "API:")
             val event = this.incoming.receive().data
-            val pl = Json.decodeFromString<Rpayload>(event.decodeToString())
+            val pl = json.decodeFromString<Rpayload>(event.decodeToString())
             when (pl.op) {
                 10 -> {
-                    log("Gateway sent opcode 10 HELLO, resending identification payload, sending resume payload and restarting heartbeat.",
+                    log("Gateway sent opcode 10 HELLO, sending identification payload and starting heartbeat.",
                         "API:")
                     launch { sendHeartBeat(pl.d.heartbeat_interval, this@Connection) }
-                    val id = Json.encodeToString(Identify(2,
-                        IdentifyD(client.config.token, IdentifyDProperties("Linux", "Chrome", ""))))
+                    val id = json.encodeToString(Identify(2,
+                        IdentifyD(client.config.token,
+                            SuperProperties("Windows",
+                                "Chrome",
+                                "",
+                                ua,
+                                cv,
+                                "10",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "stable",
+                                "en-US",
+                                cbn))))
                     sendJsonRequest(this@Connection, id)
-                    log("Identification payload sent.", "API:")
-                    val rs = Json.encodeToString(Resume(6, ResumeD(client.config.token, session_id, seq)))
+                    log("Identification sent.", "API:")
+                    val rs = json.encodeToString(Resume(6, ResumeD(client.config.token, session_id, seq)))
                     sendJsonRequest(this@Connection, rs)
                     log("Resume payload sent.", "API:")
                     for (frame in incoming) {
@@ -169,5 +227,10 @@ class Connection {
                 }
             }
         }
+    }
+
+    suspend fun reconnect(connection: Connection) {
+        connection.disconnect()
+        connect(client)
     }
 }

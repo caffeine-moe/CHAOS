@@ -29,7 +29,7 @@ suspend fun commandHandler(event: MessageCreateEvent, client: Client) {
                 purge(client, event)
                 sPurge(client, event)
                 backup(client, event)
-                //Exchange(client, event, config)
+                //exchange(client, event)
                 coin(client, event)
                 clear(client, event)
                 selfDestruct(client, event)
@@ -39,6 +39,7 @@ suspend fun commandHandler(event: MessageCreateEvent, client: Client) {
                 dnd(client, event)
                 invis(client, event)
                 figlet(client, event)
+                upload(client, event)
             }
         }
     }
