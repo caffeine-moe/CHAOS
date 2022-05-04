@@ -9,11 +9,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.api.discordHTTPClient
+import org.caffeine.chaos.api.json
+import org.caffeine.chaos.api.normalHTTPClient
 import java.net.InetAddress
 
 @Serializable
@@ -52,11 +52,11 @@ suspend fun ip(client: Client, event: MessageCreateEvent) = coroutineScope {
                         }
                         val cleanip = ip.hostAddress
                         val rqurl = "http://ip-api.com/json/${cleanip}?fields=1237817"
-                        val response = discordHTTPClient.request(rqurl) {
+                        val response = normalHTTPClient.request(rqurl) {
                             method = HttpMethod.Get
                         }
                         val parsedresponse =
-                            Json { ignoreUnknownKeys = true }.decodeFromString<IpApiResponse>(response.body())
+                            json.decodeFromString<IpApiResponse>(response.body())
                         when (parsedresponse.status) {
                             "success" -> {
                                 message.edit(MessageBuilder()
