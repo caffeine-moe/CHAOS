@@ -8,7 +8,7 @@ fun clear() {
 }
 
 fun log(text: String, prefix: String = "") {
-    val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy hh:mm:ss"))
+    val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss"))
     if (prefix != "") {
         println("\u001B[38;5;255m[\u001B[38;5;33m${time}\u001B[38;5;255m] $prefix \u001B[38;5;33m$text")
         return

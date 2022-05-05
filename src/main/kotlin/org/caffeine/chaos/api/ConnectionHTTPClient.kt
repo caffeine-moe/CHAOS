@@ -31,7 +31,7 @@ data class ConnectionHTTPClient(val connection: Connection) {
                 append("Origin", "https://discord.com")
                 append("Pragma", "no-cache")
                 append("Referer", "https://discord.com/channels/@me")
-                append("Sec-CH-UA", "\"(Not(A:Brand\";v=\"8\", \"Chromium\";v=\"98\"")
+                append("Sec-CH-UA", "\"(Not(A:Brand\";v=\"8\", \"Chromium\";v=\"$cv\"")
                 append("Sec-CH-UA-Mobile", "?0")
                 append("Sec-CH-UA-Platform", "Windows")
                 append("Sec-Fetch-Dest", "empty")

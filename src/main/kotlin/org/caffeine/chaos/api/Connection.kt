@@ -4,14 +4,18 @@ import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.websocket.*
-import io.ktor.websocket.readText
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.serialization.*
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.log
 import java.util.*
 
+@Serializable
 class Connection {
 
     @Serializable
@@ -84,7 +88,10 @@ class Connection {
         val client_build_number: Int,
     )
 
+    @Contextual
     var httpClient = ConnectionHTTPClient(this).httpclient
+
+    @Contextual
     lateinit var ws: DefaultClientWebSocketSession
     lateinit var client: Client
 
@@ -105,6 +112,14 @@ class Connection {
         var client_build_number: Int,
         var client_event_source: Empty = Empty(),
     )
+
+    @Serializable
+    private data class Heartbeat(
+        val op: Int,
+        val d: String,
+    )
+
+    private var br = false
 
     suspend fun connect(client: Client) {
         val prop =
@@ -133,14 +148,14 @@ class Connection {
             path = "/?v=8&encoding=json",
             port = 443
         ) {
-            ws = this
+            ws = this@wss
             this@Connection.client = client
             log("\u001B[38;5;47mConnected to the Discord gateway!", "API:")
             val event = this.incoming.receive().data
             val pl = json.decodeFromString<Rpayload>(event.decodeToString())
             when (pl.op) {
                 10 -> {
-                    log("Gateway sent opcode 10 HELLO, sending identification payload and starting heartbeat.",
+                    log("Client received OPCODE 10 HELLO, sending identification payload and starting heartbeat.",
                         "API:")
                     launch { sendHeartBeat(pl.d.heartbeat_interval, this@Connection) }
                     val id = json.encodeToString(Identify(2,
@@ -172,8 +187,23 @@ class Connection {
         }
     }
 
+    private suspend fun sendHeartBeat(interval: Long, connection: Connection) {
+        br = false
+        var hb = json.encodeToString(Heartbeat(1, "null"))
+        log("Heartbeat started.", "API:")
+        while (!br) {
+            if (seq > 0) {
+                hb = json.encodeToString(Heartbeat(1, "$seq"))
+            }
+            delay(interval)
+            if (!br) {
+                sendJsonRequest(connection, hb)
+            }
+        }
+    }
+
     suspend fun disconnect() {
-        ws.close()
+        this.ws.close()
         br = true
         ready = false
         log("Client logged out.", "API:")
@@ -181,8 +211,28 @@ class Connection {
     }
 
     suspend fun recRes(session_id: String, seq: Int, client: Client) {
-        log("Gateway sent opcode 7 RECONNECT, reconnecting...", "API:")
         disconnect()
+        val prop =
+            json.decodeFromString<DUAProp>(normalHTTPClient.get("https://discord-user-api.cf/api/v1/properties/web")
+                .bodyAsText())
+        ua = prop.chrome_user_agent
+        cv = prop.chrome_version
+        cbn = prop.client_build_number
+        sp = json.encodeToString(SuperProperties("Windows",
+            "Chrome",
+            "",
+            ua,
+            cv,
+            "10",
+            "",
+            "",
+            "",
+            "",
+            "stable",
+            "en-US",
+            cbn))
+        encsp = Base64.getEncoder().encodeToString(sp.toByteArray())
+        httpClient = ConnectionHTTPClient(this).httpclient
         httpClient.wss(
             host = GATEWAY,
             path = "/?v=8&encoding=json",
@@ -194,7 +244,7 @@ class Connection {
             val pl = json.decodeFromString<Rpayload>(event.decodeToString())
             when (pl.op) {
                 10 -> {
-                    log("Gateway sent opcode 10 HELLO, sending identification payload and starting heartbeat.",
+                    log("Client received OPCODE 10 HELLO, sending identification and resume payload then starting heartbeat.",
                         "API:")
                     launch { sendHeartBeat(pl.d.heartbeat_interval, this@Connection) }
                     val id = json.encodeToString(Identify(2,
@@ -214,6 +264,7 @@ class Connection {
                                 cbn))))
                     sendJsonRequest(this@Connection, id)
                     log("Identification sent.", "API:")
+                    launch { sendHeartBeat(pl.d.heartbeat_interval, this@Connection) }
                     val rs = json.encodeToString(Resume(6, ResumeD(client.config.token, session_id, seq)))
                     sendJsonRequest(this@Connection, rs)
                     log("Resume payload sent.", "API:")
@@ -229,8 +280,8 @@ class Connection {
         }
     }
 
-    suspend fun reconnect(connection: Connection) {
-        connection.disconnect()
+    suspend fun reconnect() {
+        this.disconnect()
         connect(client)
     }
 }

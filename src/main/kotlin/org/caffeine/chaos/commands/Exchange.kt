@@ -49,14 +49,14 @@ suspend fun exchange(client: Client, event: MessageCreateEvent) = coroutineScope
                     .appendLine("Price in $targetc: ${parsedresponse.ticker.price} $targetc")
                     .appendLine("Market change (24h): ${parsedresponse.ticker.change}%")
                     .build(), client)
-                    .thenAccept { message -> this.launch { bot(message, client) } }
+                    .thenAccept { message -> this.launch {  onComplete(message, client) } }
             }
             false -> {
                 event.channel.sendMessage(MessageBuilder()
                     .appendLine("Error exchanging $basec to $targetc")
                     .appendLine(parsedresponse.error)
                     .build(), client)
-                    .thenAccept { message -> this.launch { bot(message, client) } }
+                    .thenAccept { message -> this.launch {  onComplete(message, client) } }
             }
         }
     }
@@ -83,14 +83,14 @@ suspend fun exchange(client: Client, event: MessageCreateEvent) = coroutineScope
                             .appendLine("$number $base in $target: $price $target")
                             .appendLine("Market change (24h): ${parsedresponse.ticker.change}%")
                             .build(), client)
-                            .thenAccept { message -> this.launch { bot(message, client) } }
+                            .thenAccept { message -> this.launch {  onComplete(message, client) } }
                     }
                     false -> {
                         event.channel.sendMessage(MessageBuilder()
                             .appendLine("Error exchanging $number $base to $target")
                             .appendLine(parsedresponse.error)
                             .build(), client)
-                            .thenAccept { message -> this.launch { bot(message, client) } }
+                            .thenAccept { message -> this.launch {  onComplete(message, client) } }
                     }
                 }
             }
@@ -108,14 +108,14 @@ suspend fun exchange(client: Client, event: MessageCreateEvent) = coroutineScope
                         .appendLine("Price in $target: ${parsedresponse.ticker.price} $target")
                         .appendLine("Market change (24h): ${parsedresponse.ticker.change}%")
                         .build(), client)
-                        .thenAccept { message -> this.launch { bot(message, client) } }
+                        .thenAccept { message -> this.launch {  onComplete(message, client) } }
                 }
                 false -> {
                     event.channel.sendMessage(MessageBuilder()
                         .appendLine("Error exchanging $base to $target")
                         .appendLine(parsedresponse.error)
                         .build(), client)
-                        .thenAccept { message -> this.launch { bot(message, client) } }
+                        .thenAccept { message -> this.launch {  onComplete(message, client) } }
                 }
             }
         } catch (e: Exception) {
@@ -126,7 +126,7 @@ suspend fun exchange(client: Client, event: MessageCreateEvent) = coroutineScope
                         .appendLine("Error: Not enough parameters!")
                         .appendLine("Correct usage: `${client.config.prefix}exchange Currency(String) Currency(String)`")
                         .build(), client)
-                        .thenAccept { message -> this.launch { bot(message, client) } }
+                        .thenAccept { message -> this.launch {  onComplete(message, client) } }
                 }
                 is NumberFormatException -> {
                     event.channel.sendMessage(MessageBuilder()
@@ -134,7 +134,7 @@ suspend fun exchange(client: Client, event: MessageCreateEvent) = coroutineScope
                         .appendLine("Error: ${event.message.content.lowercase().split(" ")[3]} is not a valid number!")
                         .appendLine("Correct usage: `${client.config.prefix}exchange Amount(Float/Int) Currency(String) Currency(String)`")
                         .build(), client)
-                        .thenAccept { message -> this.launch { bot(message, client) } }
+                        .thenAccept { message -> this.launch {  onComplete(message, client) } }
                 }
                 else -> {
                     println(e)

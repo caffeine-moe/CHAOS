@@ -12,7 +12,7 @@ suspend fun avatar(client: Client, event: MessageCreateEvent) = coroutineScope {
             .appendLine("${client.user.discriminatedName}'s avatar")
             .appendLine(client.user.avatarUrl())
             .build(), client).thenAccept { message ->
-            this.launch { bot(message, client) }
+            this.launch { onComplete(message, client) }
         }
     }
 /*    if (event.message.content.lowercase()

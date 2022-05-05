@@ -34,8 +34,17 @@ suspend fun main(): Unit = coroutineScope {
         log("\u001B[38;5;33mPlease change the file accordingly. Documentation: https://caffeine.moe/CHAOS/")
         exitProcess(0)
     }
-    log("\u001B[38;5;33mInitialising gateway connection...")
-    val config = Json.decodeFromString<Config>(File("config.json").readText())
-    val client = Client(config)
-    client.login(config)
+    try {
+        val config = Json.decodeFromString<Config>(File("config.json").readText())
+        val client = Client(config)
+        log("\u001B[38;5;33mInitialising gateway connection...")
+        client.login(config)
+    } catch (e: Exception) {
+        if (e.toString().contains("JsonDecodingException")) {
+            log(
+                "Unable to interpret config, please make sure that the one you have is structured the same as the one here: https://caffeine.moe/CHAOS/config.json",
+                "\u001B[38;5;197mERROR:"
+            )
+        }
+    }
 }

@@ -14,7 +14,7 @@ suspend fun token(client: Client, event: MessageCreateEvent) = coroutineScope {
             event.channel.sendMessage(MessageBuilder().append("Token logged to console.").build(),
                 client)
                 .thenAccept { message ->
-                    this.launch { bot(message, client) }
+                    this.launch { onComplete(message, client) }
                 }
         } catch (e: Exception) {
             e.printStackTrace()

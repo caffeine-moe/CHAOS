@@ -19,7 +19,7 @@ suspend fun backup(client: Client, event: MessageCreateEvent) = coroutineScope {
             .thenAccept { message ->
                 this.launch {
                     val texttowrite = "================================ SERVERS ================================\n" +
-                            "${client.user.guilds.getList()}\n" +
+                            "${client.user.guilds.getListAsString()}\n" +
                             "================================ FRIENDS ================================\n" +
                             "${client.user.friends.getList()}"
                     val p = File("Backup")
@@ -41,7 +41,7 @@ suspend fun backup(client: Client, event: MessageCreateEvent) = coroutineScope {
                                 .build(), client).thenAccept { message ->
                                 this.launch {
                                     try {
-                                        bot(message, client)
+                                        onComplete(message, client)
                                     } catch (e: Exception) {
                                         e.printStackTrace()
                                     }
@@ -64,7 +64,7 @@ suspend fun backup(client: Client, event: MessageCreateEvent) = coroutineScope {
                         .appendLine("Saved to: ${f.toPath()}")
                         .build(), client).thenAccept { message ->
                         this.launch {
-                            bot(message, client)
+                            onComplete(message, client)
                         }
                     }
                 }

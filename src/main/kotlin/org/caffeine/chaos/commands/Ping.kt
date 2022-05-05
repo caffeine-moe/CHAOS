@@ -31,7 +31,7 @@ suspend fun ping(client: Client, event: MessageCreateEvent) = coroutineScope {
                         .appendLine("Target: Discord API")
                         .appendLine("Latency: ${ping}ms")
                         .build(), client)
-                        .thenAccept { message -> this.launch { bot(message, client) } }
+                        .thenAccept { message -> this.launch { onComplete(message, client) } }
                 }
             }
     }
@@ -56,7 +56,7 @@ suspend fun ping(client: Client, event: MessageCreateEvent) = coroutineScope {
                                     .appendLine("Error: IP/URL '$url' is invalid.")
                                     .appendLine("Correct usage: `${client.config.prefix}ip IP/URL`")
                                     .build(), client)
-                                    .thenAccept { message -> this.launch { bot(message, client) } }
+                                    .thenAccept { message -> this.launch { onComplete(message, client) } }
                                 return@launch
                             }
                             is SocketTimeoutException -> {
@@ -64,14 +64,14 @@ suspend fun ping(client: Client, event: MessageCreateEvent) = coroutineScope {
                                     .appendLine(":pensive: Connection timed out")
                                     .appendLine("Try a different IP or URL...")
                                     .build(), client)
-                                    .thenAccept { message -> this.launch { bot(message, client) } }
+                                    .thenAccept { message -> this.launch { onComplete(message, client) } }
                                 return@launch
                             }
                             else -> {
                                 message.edit(MessageBuilder()
                                     .appendLine("Error: $e")
                                     .build(), client)
-                                    .thenAccept { message -> this.launch { bot(message, client) } }
+                                    .thenAccept { message -> this.launch { onComplete(message, client) } }
                                 return@launch
                             }
                         }
@@ -83,7 +83,7 @@ suspend fun ping(client: Client, event: MessageCreateEvent) = coroutineScope {
                         .appendLine("Target: $url")
                         .appendLine("Latency: ${ping}ms")
                         .build(), client)
-                        .thenAccept { message -> this.launch { bot(message, client) } }
+                        .thenAccept { message -> this.launch { onComplete(message, client) } }
                 }
             }
 

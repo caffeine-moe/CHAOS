@@ -13,7 +13,7 @@ suspend fun sendJsonRequest(connection: Connection, request: String) {
         if (e is CancellationException) {
             if (connection.client.config.auto_reconnect) {
                 log("Websocket disconnected, reconnecting...", "API:")
-                connection.reconnect(connection)
+                connection.reconnect()
             }
         }
         println(e)

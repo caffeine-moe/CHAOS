@@ -19,7 +19,7 @@ suspend fun spam(client: Client, event: MessageCreateEvent) = coroutineScope {
                 .appendLine("**Error:** Not enough parameters!")
                 .appendLine("**Correct usage:** `${client.config.prefix}spam String Int`")
                 .build(), client)
-            .thenAccept { message -> this.launch { bot(message, client) } }
+            .thenAccept { message -> this.launch { onComplete(message, client) } }
     }
     if (event.message.content.lowercase()
             .startsWith("${client.config.prefix}spam ") && event.message.content.lowercase() != "${client.config.prefix}spam "
@@ -39,14 +39,11 @@ suspend fun spam(client: Client, event: MessageCreateEvent) = coroutineScope {
                         .appendLine("**Error:** Int must be higher than 0!")
                         .appendLine("**Correct usage:** `${client.config.prefix}spam String Int`")
                         .build(), client)
-                    .thenAccept { message -> this.launch { bot(message, client) } }
+                    .thenAccept { message -> this.launch { onComplete(message, client) } }
                 return@coroutineScope
             }
             var done = 0
-            while (done < number) {
-                if (cock) {
-                    break
-                }
+            while (done < number && !cock) {
                 if (done % 8 == 0 && done != 0) {
                     withContext(Dispatchers.IO) {
                         Thread.sleep(5000)
@@ -61,12 +58,12 @@ suspend fun spam(client: Client, event: MessageCreateEvent) = coroutineScope {
             if (done > 1) {
                 event.channel.sendMessage(MessageBuilder().appendLine("Done spamming '$string' $done times!")
                     .build(), client)
-                    .thenAccept { message -> this.launch { bot(message, client) } }
+                    .thenAccept { message -> this.launch { onComplete(message, client) } }
             }
             if (done == 1) {
                 event.channel.sendMessage(MessageBuilder().appendLine("Done spamming '$string' once!").build(),
                     client)
-                    .thenAccept { message -> this.launch { bot(message, client) } }
+                    .thenAccept { message -> this.launch { onComplete(message, client) } }
             }
         } catch (e: Exception) {
             when (e) {
@@ -77,7 +74,7 @@ suspend fun spam(client: Client, event: MessageCreateEvent) = coroutineScope {
                             .appendLine("**Error:** '${msg[msg.lastIndex]}' is not an integer!")
                             .appendLine("**Correct usage:** `${client.config.prefix}spam String Int`")
                             .build(), client)
-                        .thenAccept { message -> this.launch { bot(message, client) } }
+                        .thenAccept { message -> this.launch { onComplete(message, client) } }
                 }
                 is IndexOutOfBoundsException -> {
                     event.channel.sendMessage(
@@ -86,7 +83,7 @@ suspend fun spam(client: Client, event: MessageCreateEvent) = coroutineScope {
                             .appendLine("**Error:** Error: Not enough parameters!")
                             .appendLine("**Correct usage:** `${client.config.prefix}spam String Int`")
                             .build(), client)
-                        .thenAccept { message -> this.launch { bot(message, client) } }
+                        .thenAccept { message -> this.launch { onComplete(message, client) } }
                 }
             }
         }

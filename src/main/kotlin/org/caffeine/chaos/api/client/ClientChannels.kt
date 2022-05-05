@@ -8,6 +8,7 @@ import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.discordHTTPClient
 import org.caffeine.chaos.api.json
 
+@kotlinx.serialization.Serializable
 data class ClientChannels(val client: Client) {
     val groupChannels = ClientGroupChannels(client)
     suspend fun getAmount(): Int {

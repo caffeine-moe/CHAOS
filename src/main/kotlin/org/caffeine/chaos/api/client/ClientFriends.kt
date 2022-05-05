@@ -8,6 +8,7 @@ import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.discordHTTPClient
 import org.caffeine.chaos.api.json
 
+@kotlinx.serialization.Serializable
 data class ClientFriends(val client: Client) {
     suspend fun getAmount(): Int {
         var number = 0
@@ -34,7 +35,7 @@ data class ClientFriends(val client: Client) {
         }
         val final = json.decodeFromString<List<ClientFriend>>(response.body())
         for ((count) in final.withIndex()) {
-            sb.appendLine("${final[count].user.username}#${final[count].user.discriminator}")
+            sb.appendLine("${final[count].user.username}#${final[count].user.discriminator} : ${final[count].user.id}")
         }
         return sb
     }

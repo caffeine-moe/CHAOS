@@ -3,17 +3,17 @@ package org.caffeine.chaos.api.client
 import org.caffeine.chaos.api.Connection
 import org.caffeine.chaos.config.Config
 
+@kotlinx.serialization.Serializable
 data class Client(
     var config: Config,
+    private val socket: Connection = Connection(),
 ) {
-    private val socket = Connection()
     lateinit var user: ClientUser
     suspend fun login(config: Config) {
-        val client = Client(config)
-        socket.connect(client)
+        socket.connect(Client(config, socket))
     }
 
     suspend fun logout() {
-        this.socket.disconnect()
+        socket.disconnect()
     }
 }

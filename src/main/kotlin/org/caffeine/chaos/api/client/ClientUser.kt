@@ -13,6 +13,7 @@ import org.caffeine.chaos.api.json
 import java.util.concurrent.CompletableFuture
 import kotlin.math.absoluteValue
 
+@kotlinx.serialization.Serializable
 data class ClientUser(
     val verified: Boolean,
     val username: String,
@@ -90,7 +91,7 @@ data class ClientUser(
         var la: Long
         val start = System.currentTimeMillis()
         try {
-            val rq = discordHTTPClient.request("$BASE_URL/entitlements/gift-codes/$code/redeem") {
+            discordHTTPClient.request("$BASE_URL/entitlements/gift-codes/$code/redeem") {
                 method = HttpMethod.Post
                 headers {
                     append(HttpHeaders.Authorization, client.config.token)

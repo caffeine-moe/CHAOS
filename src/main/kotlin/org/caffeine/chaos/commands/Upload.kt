@@ -18,7 +18,7 @@ suspend fun upload(client: Client, event: MessageCreateEvent) = coroutineScope {
             .appendLine("**Error:** Message has no attachments!")
             .appendLine("**Correct usage:** `${client.config.prefix}upload (with attachment)`")
             .build(), client)
-            .thenAccept { message -> this.launch { bot(message, client) } }
+            .thenAccept { message -> this.launch { onComplete(message, client) } }
     }
     if (event.message.content.lowercase() == "${client.config.prefix}upload" && !event.message.attachments.isNullOrEmpty()) {
         event.channel.sendMessage(MessageBuilder()
@@ -35,10 +35,10 @@ suspend fun upload(client: Client, event: MessageCreateEvent) = coroutineScope {
                     ))
                 }
                 message.edit(MessageBuilder()
-                    .appendLine(rsp.bodyAsText()).build(), client).thenAccept {
+                    .appendLine(rsp.bodyAsText()).build(), client).thenAccept { message ->
                     if (client.config.auto_delete.bot.content_generation) {
                         this.launch {
-                            bot(it, client)
+                            onComplete(message, client)
                         }
                     }
                 }

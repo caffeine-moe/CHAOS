@@ -37,7 +37,7 @@ suspend fun ip(client: Client, event: MessageCreateEvent) = coroutineScope {
             .appendLine("**Error:** No IP/URL specified")
             .appendLine("**Correct usage:** `${client.config.prefix}ip IP/URL`")
             .build(), client)
-            .thenAccept { message -> this.launch { bot(message, client) } }
+            .thenAccept { message -> this.launch { onComplete(message, client) } }
     }
     if (event.message.content.lowercase()
             .startsWith("${client.config.prefix}ip ") && event.message.content.lowercase() != "${client.config.prefix}ip"
@@ -71,7 +71,7 @@ suspend fun ip(client: Client, event: MessageCreateEvent) = coroutineScope {
                                     .appendLine("**ISP:** ${parsedresponse.isp}")
                                     .appendLine("**Proxy:** ${parsedresponse.proxy}")
                                     .build(), client)
-                                    .thenAccept { message -> this.launch { bot(message, client) } }
+                                    .thenAccept { message -> this.launch { onComplete(message, client) } }
                             }
                             "fail" -> {
                                 message.edit(MessageBuilder()
@@ -79,7 +79,7 @@ suspend fun ip(client: Client, event: MessageCreateEvent) = coroutineScope {
                                     .appendLine("**Error:** Unable to lookup IP/URL '$url'")
                                     .appendLine("**Correct usage:** `${client.config.prefix}ip IP/URL`")
                                     .build(), client)
-                                    .thenAccept { message -> this.launch { bot(message, client) } }
+                                    .thenAccept { message -> this.launch { onComplete(message, client) } }
                             }
                         }
                     } catch (e: Exception) {

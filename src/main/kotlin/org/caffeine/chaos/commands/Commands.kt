@@ -50,7 +50,7 @@ suspend fun help(client: Client, event: MessageCreateEvent) = coroutineScope {
             .build(), client
         ).thenAccept { message ->
             this.launch {
-                bot(message, client)
+                onComplete(message, client)
             }
         }
     }
