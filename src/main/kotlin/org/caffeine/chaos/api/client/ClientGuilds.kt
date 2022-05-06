@@ -44,7 +44,7 @@ class ClientGuilds(val client: Client) {
             }
         }
         val list = json.decodeFromString<List<ClientGuild>>(response.body())
-        for (item: ClientGuild in list){
+        for (item: ClientGuild in list) {
             sb.appendLine("${item.name} : ${item.id}")
         }
         return sb.toString()
