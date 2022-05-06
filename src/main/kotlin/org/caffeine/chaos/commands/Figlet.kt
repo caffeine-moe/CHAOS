@@ -20,8 +20,8 @@ suspend fun figlet(client: Client, event: MessageCreateEvent) = coroutineScope {
     if (event.message.content.lowercase()
             .startsWith("${client.config.prefix}figlet ") && event.message.content != "${client.config.prefix}figlet "
     ) {
-        val texttofigletize =
-            event.message.content.removePrefix("${client.config.prefix}figlet ").trimIndent().replace("\n", " ")
+        val split = event.message.content.split(" ")
+        val texttofigletize = split.drop(1).joinToString(" ")
         val figletizedtext = FigletFont.convertOneLine(texttofigletize)
         event.channel.sendMessage(MessageBuilder()
             .appendLine("```$figletizedtext```")

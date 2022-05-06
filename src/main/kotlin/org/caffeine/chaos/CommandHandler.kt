@@ -10,7 +10,7 @@ suspend fun commandHandler(event: MessageCreateEvent, client: Client) {
     }
     if (event.message.author.id == client.user.id) {
         if (event.message.content.startsWith(client.config.prefix) && event.message.content != client.config.prefix) {
-            val toFind = event.message.content.replaceFirst(client.config.prefix, "", true)
+            val toFind = event.message.content.lowercase().replaceFirst(client.config.prefix, "")
             val found = commandlist.any { cmd -> toFind == cmd || toFind.startsWith("$cmd ") }
             if (found) {
                 if (client.config.logger.commands) {
