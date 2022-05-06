@@ -21,10 +21,6 @@ suspend fun bot(msg: Message, client: Client) {
         withContext(Dispatchers.IO) {
             Thread.sleep(client.config.auto_delete.bot.delay * 1000)
         }
-        try {
-            msg.delete(client)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        msg.delete(client)
     }
 }

@@ -8,7 +8,7 @@ import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
 suspend fun figlet(client: Client, event: MessageCreateEvent) = coroutineScope {
-    if (event.message.content == "${client.config.prefix}figlet"
+    if (event.message.content.lowercase() == "${client.config.prefix}figlet"
     ) {
         event.channel.sendMessage(MessageBuilder()
             .appendLine("**Incorrect usage** '${event.message.content}'")

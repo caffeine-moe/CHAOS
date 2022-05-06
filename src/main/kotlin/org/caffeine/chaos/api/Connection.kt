@@ -4,6 +4,8 @@ import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.websocket.*
+import kotlinx.coroutines.CompletableJob
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Contextual
@@ -119,9 +121,10 @@ class Connection {
         val d: String,
     )
 
-    private var br = false
+    private var hb = Job() as Job
 
     suspend fun connect(client: Client) {
+        log("\u001B[38;5;33mInitialising gateway connection...", "API:")
         val prop =
             json.decodeFromString<DUAProp>(normalHTTPClient.get("https://discord-user-api.cf/api/v1/properties/web")
                 .bodyAsText())
@@ -157,7 +160,8 @@ class Connection {
                 10 -> {
                     log("Client received OPCODE 10 HELLO, sending identification payload and starting heartbeat.",
                         "API:")
-                    launch { sendHeartBeat(pl.d.heartbeat_interval, this@Connection) }
+                    hb = launch { sendHeartBeat(pl.d.heartbeat_interval, this@Connection) }
+                    hb.start()
                     val id = json.encodeToString(Identify(2,
                         IdentifyD(client.config.token,
                             SuperProperties("Windows",
@@ -188,23 +192,20 @@ class Connection {
     }
 
     private suspend fun sendHeartBeat(interval: Long, connection: Connection) {
-        br = false
-        var hb = json.encodeToString(Heartbeat(1, "null"))
+        var heartbeat = json.encodeToString(Heartbeat(1, "null"))
         log("Heartbeat started.", "API:")
-        while (!br) {
+        while (true) {
             if (seq > 0) {
-                hb = json.encodeToString(Heartbeat(1, "$seq"))
+                heartbeat = json.encodeToString(Heartbeat(1, "$seq"))
             }
             delay(interval)
-            if (!br) {
-                sendJsonRequest(connection, hb)
-            }
+            sendJsonRequest(connection, heartbeat)
         }
     }
 
     suspend fun disconnect() {
+        this.hb.cancel()
         this.ws.close()
-        br = true
         ready = false
         log("Client logged out.", "API:")
         return
@@ -212,6 +213,7 @@ class Connection {
 
     suspend fun recRes(session_id: String, seq: Int, client: Client) {
         disconnect()
+        log("\u001B[38;5;33mInitialising gateway connection...", "API:")
         val prop =
             json.decodeFromString<DUAProp>(normalHTTPClient.get("https://discord-user-api.cf/api/v1/properties/web")
                 .bodyAsText())
@@ -246,7 +248,8 @@ class Connection {
                 10 -> {
                     log("Client received OPCODE 10 HELLO, sending identification and resume payload then starting heartbeat.",
                         "API:")
-                    launch { sendHeartBeat(pl.d.heartbeat_interval, this@Connection) }
+                    hb = launch { sendHeartBeat(pl.d.heartbeat_interval, this@Connection) } as CompletableJob
+                    hb.start()
                     val id = json.encodeToString(Identify(2,
                         IdentifyD(client.config.token,
                             SuperProperties("Windows",

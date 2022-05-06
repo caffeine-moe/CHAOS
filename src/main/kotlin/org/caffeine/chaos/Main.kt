@@ -37,7 +37,6 @@ suspend fun main(): Unit = coroutineScope {
     try {
         val config = Json.decodeFromString<Config>(File("config.json").readText())
         val client = Client(config)
-        log("\u001B[38;5;33mInitialising gateway connection...")
         client.login(config)
     } catch (e: Exception) {
         if (e.toString().contains("JsonDecodingException")) {

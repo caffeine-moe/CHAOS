@@ -13,7 +13,7 @@ fun log(text: String, prefix: String = "") {
         println("\u001B[38;5;255m[\u001B[38;5;33m${time}\u001B[38;5;255m] $prefix \u001B[38;5;33m$text")
         return
     }
-    println("\u001B[38;5;255m[\u001B[38;5;33m${time}\u001B[38;5;255m] $text")
+    println("\u001B[38;5;255m[\u001B[38;5;33m${time}\u001B[38;5;255m] CHAOS: \u001B[38;5;33m$text")
 }
 
 fun printLogo() {
