@@ -49,7 +49,7 @@ suspend fun purge(client: Client, event: MessageCreateEvent) = coroutineScope {
                 }
                 message.delete(client)
                 withContext(Dispatchers.IO) {
-                    Thread.sleep(500)
+                    Thread.sleep(300)
                 }
                 done++
                 if (cock) break

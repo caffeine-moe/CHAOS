@@ -1,10 +1,8 @@
 package org.caffeine.chaos.api.client.message
 
-import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.client.Client
@@ -32,17 +30,13 @@ class MessageChannel(var id: String, var client: Client) {
                     append(HttpHeaders.ContentType, "application/json")
                 }
             }
-            val newMessages = json.decodeFromString<List<Message>>(response.body())
+            val newMessages = json.decodeFromString<List<Message>>(response.bodyAsText())
             collection.addAll(newMessages)
 
             filters.before_id = collection.last().id.toString()
 
             if (newMessages.size < messagesPerRequest)
                 break
-
-            withContext(Dispatchers.IO) {
-                Thread.sleep(500)
-            }
         }
         return collection
     }
