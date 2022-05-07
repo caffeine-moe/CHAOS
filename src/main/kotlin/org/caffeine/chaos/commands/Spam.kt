@@ -47,7 +47,7 @@ suspend fun spam(client: Client, event: MessageCreateEvent) = coroutineScope {
                 }
                 event.channel.sendMessage(MessageBuilder().appendLine(msg).build(), client)
                 done++
-                withContext(Dispatchers.IO){
+                withContext(Dispatchers.IO) {
                     Thread.sleep(10)
                 }
             }

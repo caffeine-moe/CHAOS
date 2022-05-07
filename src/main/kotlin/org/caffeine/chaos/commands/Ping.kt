@@ -48,13 +48,14 @@ suspend fun ping(client: Client, event: MessageCreateEvent) = coroutineScope {
                     try {
                         val selectorManager = ActorSelectorManager(Dispatchers.IO)
                         aSocket(selectorManager).tcp().connect(url, 80)
+                        selectorManager.close()
                     } catch (e: Exception) {
                         when (e) {
                             is UnresolvedAddressException -> {
                                 message.edit(MessageBuilder()
                                     .appendLine("Incorrect usage '${event.message.content}'")
                                     .appendLine("Error: IP/URL '$url' is invalid.")
-                                    .appendLine("Correct usage: `${client.config.prefix}ip IP/URL`")
+                                    .appendLine("Correct usage: `${client.config.prefix}ping IP/URL`")
                                     .build(), client)
                                     .thenAccept { message -> this.launch { onComplete(message, client) } }
                                 return@launch

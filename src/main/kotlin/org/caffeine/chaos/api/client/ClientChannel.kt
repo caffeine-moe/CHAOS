@@ -14,7 +14,7 @@ data class ClientChannel(
     var name: String? = null,
     var icon: String? = null,
     var owner_id: String? = null,
-    var client: Client
+    var client: Client,
 ) {
     suspend fun delete() {
         discordHTTPClient.request("$BASE_URL/channels/${this.id}") {
