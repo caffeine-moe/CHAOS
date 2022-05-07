@@ -26,9 +26,19 @@ suspend fun purge(client: Client, event: MessageCreateEvent) = coroutineScope {
             .startsWith("${client.config.prefix}sclear ") && event.message.content.lowercase() != "${client.config.prefix}purge" && event.message.content.lowercase() != "${client.config.prefix}sclear"
     ) {
         cock = false
-        val number = event.message.content.lowercase().replace("[^0-9]".toRegex(), "")
+        val split = event.message.content.split(" ").drop(1)
+        if (split.last().toString().contains("[^0-9]".toRegex())) {
+            event.channel.sendMessage(
+                MessageBuilder()
+                    .appendLine("**Incorrect usage:** '${event.message.content}'")
+                    .appendLine("**Error:** ${split.last()} is not an integer!")
+                    .appendLine("**Correct usage:** `${client.config.prefix}purge Int`")
+                    .build(), client)
+                .thenAccept { message -> this.launch { onComplete(message, client) } }
+            return@coroutineScope
+        }
         try {
-            val num = event.message.content.lowercase().replace("[^0-9]".toRegex(), "").toInt()
+            val num = split.last().toString().replace("[^0-9]".toRegex(), "").toInt()
             if (num <= 0) {
                 event.channel.sendMessage(
                     MessageBuilder()
@@ -40,7 +50,7 @@ suspend fun purge(client: Client, event: MessageCreateEvent) = coroutineScope {
                 return@coroutineScope
             }
             var done = 0
-            val messages = event.channel.messagesAsCollection(MessageFilters(author_id = client.user.id))
+            val messages = event.channel.messagesAsCollection(MessageFilters(author_id = client.user.id, needed = num))
             for (message: Message in messages) {
                 if (done % 8 == 0 && done != 0) {
                     withContext(Dispatchers.IO) {
@@ -69,16 +79,6 @@ suspend fun purge(client: Client, event: MessageCreateEvent) = coroutineScope {
             }
         } catch (e: Exception) {
             when (e) {
-                is NumberFormatException -> {
-                    event.channel.sendMessage(
-                        MessageBuilder()
-                            .appendLine("**Incorrect usage:** '${event.message.content}'")
-                            .appendLine("**Error:** $number is not an integer!")
-                            .appendLine("**Correct usage:** `${client.config.prefix}purge Int`")
-                            .build(), client)
-                        .thenAccept { message -> this.launch { onComplete(message, client) } }
-                    return@coroutineScope
-                }
                 is NoSuchElementException -> {
                     event.channel.sendMessage(
                         MessageBuilder()
