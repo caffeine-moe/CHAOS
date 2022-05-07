@@ -18,10 +18,20 @@ data class ClientGroupChannels(val client: Client) {
                 append(HttpHeaders.Authorization, client.config.token)
             }
         }
-        val final = json.decodeFromString<List<ClientChannel>>(response.body())
+        val final = json.decodeFromString<List<SerialClientChannel>>(response.body())
         for ((count) in final.withIndex()) {
             if (final[count].type == 3) {
-                list.add(final[count])
+                val cc = ClientChannel(
+                    final[count].id,
+                    final[count].type,
+                    final[count].last_message_id,
+                    final[count].recipients,
+                    final[count].name,
+                    final[count].icon,
+                    final[count].owner_id,
+                    client
+                )
+                list.add(cc)
             }
         }
         return list

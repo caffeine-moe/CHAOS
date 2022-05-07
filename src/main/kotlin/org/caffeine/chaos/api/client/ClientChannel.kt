@@ -2,7 +2,6 @@ package org.caffeine.chaos.api.client
 
 import io.ktor.client.request.*
 import io.ktor.http.*
-import kotlinx.serialization.Contextual
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.discordHTTPClient
 
@@ -15,8 +14,7 @@ data class ClientChannel(
     var name: String? = null,
     var icon: String? = null,
     var owner_id: String? = null,
-    @Contextual
-    val client: Client,
+    var client: Client
 ) {
     suspend fun delete() {
         discordHTTPClient.request("$BASE_URL/channels/${this.id}") {
