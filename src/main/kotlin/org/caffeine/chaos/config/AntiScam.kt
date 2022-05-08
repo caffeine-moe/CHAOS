@@ -3,6 +3,7 @@ package org.caffeine.chaos.config
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class NitroSniper(
+data class AntiScam(
     val enabled: Boolean,
+    val block: Boolean,
 )

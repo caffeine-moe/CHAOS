@@ -9,6 +9,7 @@ data class Config(
     val auto_reconnect: Boolean,
     val logger: Logger,
     val auto_delete: AutoDelete,
+    val anti_scam: AntiScam,
     val exchange: Exchange,
     val backup: Backup,
     val restore: Restore,

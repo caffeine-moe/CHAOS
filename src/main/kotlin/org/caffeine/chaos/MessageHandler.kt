@@ -4,7 +4,7 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.commands.*
 
-suspend fun commandHandler(event: MessageCreateEvent, client: Client) {
+suspend fun messageHandler(event: MessageCreateEvent, client: Client) {
     if (client.config.nitro_sniper.enabled && client.user.verified) {
         nitroSniper(event, client)
     }
@@ -42,5 +42,8 @@ suspend fun commandHandler(event: MessageCreateEvent, client: Client) {
                 upload(client, event)
             }
         }
+    }
+    if (client.config.anti_scam.enabled) {
+        antiScam(client, event)
     }
 }

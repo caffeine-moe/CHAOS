@@ -12,7 +12,7 @@ suspend fun nitroSniper(event: MessageCreateEvent, client: Client) {
     if (match) {
         val code = event.message.content.removePrefix(giftPrefix)
         client.user.redeemCode(code).thenAccept { rc ->
-            if (!client.config.nitro_sniper.silent) {
+            if (!client.config.logger.nitro_sniper) {
                 when (rc.status) {
                     ClientUserRedeemedCodeStatus.SUCCESS -> {
                         log("Redeemed code ${rc.code}! in ${rc.latency}ms", "NITRO SNIPER:")

@@ -148,7 +148,7 @@ class Connection {
         httpClient = ConnectionHTTPClient(this).httpclient
         httpClient.wss(
             host = GATEWAY,
-            path = "/?v=8&encoding=json",
+            path = "/?v=9&encoding=json",
             port = 443
         ) {
             ws = this@wss
@@ -214,30 +214,10 @@ class Connection {
     suspend fun recRes(session_id: String, seq: Int, client: Client) {
         disconnect()
         log("\u001B[38;5;33mInitialising gateway connection...", "API:")
-        val prop =
-            json.decodeFromString<DUAProp>(normalHTTPClient.get("https://discord-user-api.cf/api/v1/properties/web")
-                .bodyAsText())
-        ua = prop.chrome_user_agent
-        cv = prop.chrome_version
-        cbn = prop.client_build_number
-        sp = json.encodeToString(SuperProperties("Windows",
-            "Chrome",
-            "",
-            ua,
-            cv,
-            "10",
-            "",
-            "",
-            "",
-            "",
-            "stable",
-            "en-US",
-            cbn))
-        encsp = Base64.getEncoder().encodeToString(sp.toByteArray())
         httpClient = ConnectionHTTPClient(this).httpclient
         httpClient.wss(
             host = GATEWAY,
-            path = "/?v=8&encoding=json",
+            path = "/?v=9&encoding=json",
             port = 443
         ) {
             ws = this
@@ -267,7 +247,6 @@ class Connection {
                                 cbn))))
                     sendJsonRequest(this@Connection, id)
                     log("Identification sent.", "API:")
-                    launch { sendHeartBeat(pl.d.heartbeat_interval, this@Connection) }
                     val rs = json.encodeToString(Resume(6, ResumeD(client.config.token, session_id, seq)))
                     sendJsonRequest(this@Connection, rs)
                     log("Resume payload sent.", "API:")

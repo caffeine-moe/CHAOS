@@ -8,7 +8,9 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.normalHTTPClient
+import org.caffeine.chaos.api.scamlinks
 import org.caffeine.chaos.config.Config
 import java.io.File
 import kotlin.system.exitProcess
@@ -36,6 +38,9 @@ suspend fun main(): Unit = coroutineScope {
     }
     try {
         val config = Json.decodeFromString<Config>(File("config.json").readText())
+        scamlinks =
+            json.decodeFromString<AntiScamResponse>(normalHTTPClient.get("https://raw.githubusercontent.com/nikolaischunk/discord-phishing-links/main/domain-list.json")
+                .bodyAsText()).domains
         val client = Client(config)
         client.login(config)
     } catch (e: Exception) {

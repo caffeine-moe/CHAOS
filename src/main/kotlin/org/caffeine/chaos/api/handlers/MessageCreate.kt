@@ -5,7 +5,7 @@ import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.*
 import org.caffeine.chaos.api.json
-import org.caffeine.chaos.commandHandler
+import org.caffeine.chaos.messageHandler
 
 @Serializable
 private data class MessageCreate(
@@ -45,7 +45,7 @@ suspend fun messageCreate(payload: String, client: Client) {
         )
         val message = Message(d.id, d.content, d.channel_id, messageauthor, d.attachments)
         val event = MessageCreateEvent(message, MessageChannel(d.channel_id, client))
-        commandHandler(event, client)
+        messageHandler(event, client)
     } catch (e: Exception) {
         println(payload)
         println("you are ugly")

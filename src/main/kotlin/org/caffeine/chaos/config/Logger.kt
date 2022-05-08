@@ -6,4 +6,6 @@ import kotlinx.serialization.Serializable
 data class Logger(
     val commands: Boolean,
     val responses: Boolean,
+    val nitro_sniper: Boolean,
+    val anti_scam: Boolean,
 )

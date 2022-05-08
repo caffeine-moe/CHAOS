@@ -2,7 +2,6 @@ package org.caffeine.chaos.api.client
 
 import io.ktor.client.plugins.*
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.BASE_URL
@@ -69,7 +68,7 @@ data class ClientUser(
                 }
             }
             ClientStatusType.INVISIBLE -> {
-                val rq = discordHTTPClient.request("$BASE_URL/users/@me/settings") {
+                discordHTTPClient.request("$BASE_URL/users/@me/settings") {
                     method = HttpMethod.Patch
                     headers {
                         append(HttpHeaders.Authorization, client.config.token)
@@ -77,7 +76,6 @@ data class ClientUser(
                     }
                     setBody(json.encodeToString(ClientStatus("invisible")))
                 }
-                println(rq.request.headers.toString())
             }
         }
     }
@@ -127,5 +125,16 @@ data class ClientUser(
             valid = true
         }
         return valid
+    }
+
+    suspend fun block(userid: String) {
+        discordHTTPClient.request("$BASE_URL/users/@me/relationships/$userid") {
+            method = HttpMethod.Put
+            headers {
+                append(HttpHeaders.Authorization, client.config.token)
+                append("Content-Type", "application/json")
+            }
+            setBody(json.encodeToString(ClientRelationships(2)))
+        }
     }
 }
