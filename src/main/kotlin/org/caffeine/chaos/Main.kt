@@ -16,7 +16,7 @@ import java.io.File
 import kotlin.system.exitProcess
 
 //version lmao
-const val version: Float = 1.0F
+const val version: Float = 1.1F
 
 suspend fun main(): Unit = coroutineScope {
     clear()
