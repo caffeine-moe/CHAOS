@@ -6,4 +6,5 @@ data class MessageFilters(
     var before_id: String = "",
     var after_id: String = "",
     var limit: Int = 0,
+    var needed: Int = 0,
 )

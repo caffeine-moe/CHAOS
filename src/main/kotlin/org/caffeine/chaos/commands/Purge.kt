@@ -50,7 +50,7 @@ suspend fun purge(client: Client, event: MessageCreateEvent) = coroutineScope {
                 return@coroutineScope
             }
             var done = 0
-            val messages = event.channel.messagesAsCollection(MessageFilters(author_id = client.user.id))
+            val messages = event.channel.messagesAsCollection(MessageFilters(author_id = client.user.id, needed = num))
             if (messages.isEmpty()) {
                 event.channel.sendMessage(
                     MessageBuilder()
@@ -59,8 +59,8 @@ suspend fun purge(client: Client, event: MessageCreateEvent) = coroutineScope {
                     .thenAccept { message -> this.launch { onComplete(message, client) } }
                 return@coroutineScope
             }
-            for (message: Message in messages) {
-                if (message.author.id == client.user.id && message.type != 3) {
+            for (message: Message in messages.filter { message -> message.author.id == client.user.id }) {
+                if (message.type != 3) {
                     if (done % 10 == 0 && done != 0) {
                         withContext(Dispatchers.IO) {
                             Thread.sleep(5000)
