@@ -32,11 +32,7 @@ class MessageChannel(var id: String, var client: Client) {
             }
             val newMessages = json.decodeFromString<List<Message>>(response.bodyAsText())
             collection.addAll(newMessages)
-
             filters.before_id = collection.last().id.toString()
-
-            if (filters.needed != 0 && collection.size >= filters.needed)
-                break
 
             if (newMessages.size < messagesPerRequest)
                 break

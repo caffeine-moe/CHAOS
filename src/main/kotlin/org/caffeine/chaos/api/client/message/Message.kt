@@ -16,6 +16,7 @@ class Message(
     val mentions: List<MessageMention>? = null,
     val pinned: Boolean? = false,
     val referenced_message: Message? = null,
+    val type: Int = 0,
 ) {
     //val mentionedUsers: String
     suspend fun edit(message: Message, client: Client): CompletableFuture<Message> {

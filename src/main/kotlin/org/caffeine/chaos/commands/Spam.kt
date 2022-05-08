@@ -40,7 +40,7 @@ suspend fun spam(client: Client, event: MessageCreateEvent) = coroutineScope {
             }
             var done = 0
             while (done < number && !cock) {
-                if (done % 8 == 0 && done != 0) {
+                if (done % 10 == 0 && done != 0) {
                     withContext(Dispatchers.IO) {
                         Thread.sleep(5000)
                     }
@@ -48,7 +48,7 @@ suspend fun spam(client: Client, event: MessageCreateEvent) = coroutineScope {
                 event.channel.sendMessage(MessageBuilder().appendLine(msg).build(), client)
                 done++
                 withContext(Dispatchers.IO) {
-                    Thread.sleep(10)
+                    Thread.sleep(1000)
                 }
             }
             if (done > 1) {

@@ -50,20 +50,38 @@ suspend fun purge(client: Client, event: MessageCreateEvent) = coroutineScope {
                 return@coroutineScope
             }
             var done = 0
-            val messages = event.channel.messagesAsCollection(MessageFilters(author_id = client.user.id, needed = num))
+            val messages = event.channel.messagesAsCollection(MessageFilters(author_id = client.user.id))
+            if (messages.isEmpty()) {
+                event.channel.sendMessage(
+                    MessageBuilder()
+                        .appendLine("There is nothing to delete!")
+                        .build(), client)
+                    .thenAccept { message -> this.launch { onComplete(message, client) } }
+                return@coroutineScope
+            }
             for (message: Message in messages) {
-                if (done % 8 == 0 && done != 0) {
-                    withContext(Dispatchers.IO) {
-                        Thread.sleep(4500)
+                if (message.author.id == client.user.id && message.type != 3) {
+                    if (done % 10 == 0 && done != 0) {
+                        withContext(Dispatchers.IO) {
+                            Thread.sleep(5000)
+                        }
                     }
+                    message.delete(client)
+                    withContext(Dispatchers.IO) {
+                        Thread.sleep(1000)
+                    }
+                    done++
+                    if (cock) break
+                    if (done == num) break
                 }
-                message.delete(client)
-                withContext(Dispatchers.IO) {
-                    Thread.sleep(300)
-                }
-                done++
-                if (cock) break
-                if (done == num) break
+            }
+            if (done < 1) {
+                event.channel.sendMessage(
+                    MessageBuilder()
+                        .appendLine("There is nothing to delete!")
+                        .build(), client)
+                    .thenAccept { message -> this.launch { onComplete(message, client) } }
+                return@coroutineScope
             }
             if (done > 1) {
                 event.channel.sendMessage(MessageBuilder()
@@ -80,12 +98,7 @@ suspend fun purge(client: Client, event: MessageCreateEvent) = coroutineScope {
         } catch (e: Exception) {
             when (e) {
                 is NoSuchElementException -> {
-                    event.channel.sendMessage(
-                        MessageBuilder()
-                            .appendLine("There is nothing to delete!")
-                            .build(), client)
-                        .thenAccept { message -> this.launch { onComplete(message, client) } }
-                    return@coroutineScope
+
                 }
                 else -> {
                     println("purge")

@@ -28,7 +28,7 @@ private data class EditMessageResponse(
     val referenced_message: EditMessageResponse? = null,
     val timestamp: String?,
     val tts: Boolean?,
-    val type: Int?,
+    val type: Int,
 )
 
 @kotlinx.serialization.Serializable
@@ -52,6 +52,10 @@ suspend fun editMessage(message: Message, client: Client, newMessage: Message): 
         parsedresponse.author.id,
         parsedresponse.author.avatar
     )
-    val editedmessage = Message(parsedresponse.id, parsedresponse.content, parsedresponse.channel_id, messageauthor)
+    val editedmessage = Message(parsedresponse.id,
+        parsedresponse.content,
+        parsedresponse.channel_id,
+        messageauthor,
+        type = parsedresponse.type)
     return CompletableFuture.completedFuture(editedmessage)
 }
