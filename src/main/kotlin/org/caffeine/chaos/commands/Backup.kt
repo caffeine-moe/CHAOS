@@ -41,7 +41,7 @@ suspend fun backup(client: Client, event: MessageCreateEvent) = coroutineScope {
                                 .build(), client).thenAccept { message ->
                                 this.launch {
                                     try {
-                                        onComplete(message, client)
+                                        onComplete(message, client, true)
                                     } catch (e: Exception) {
                                         e.printStackTrace()
                                     }
@@ -64,7 +64,7 @@ suspend fun backup(client: Client, event: MessageCreateEvent) = coroutineScope {
                         .appendLine("Saved to: ${f.toPath()}")
                         .build(), client).thenAccept { message ->
                         this.launch {
-                            onComplete(message, client)
+                            onComplete(message, client, true)
                         }
                     }
                 }

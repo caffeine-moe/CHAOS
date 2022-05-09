@@ -19,7 +19,7 @@ suspend fun purge(client: Client, event: MessageCreateEvent) = coroutineScope {
             .appendLine("**Error:** Not enough parameters!")
             .appendLine("**Correct usage:** `${client.config.prefix}purge Int`")
             .build(), client)
-            .thenAccept { message -> this.launch { onComplete(message, client) } }
+            .thenAccept { message -> this.launch { onComplete(message, client, true) } }
     }
     if (event.message.content.lowercase()
             .startsWith("${client.config.prefix}purge ") || event.message.content.lowercase()
@@ -34,7 +34,7 @@ suspend fun purge(client: Client, event: MessageCreateEvent) = coroutineScope {
                     .appendLine("**Error:** ${split.last()} is not an integer!")
                     .appendLine("**Correct usage:** `${client.config.prefix}purge Int`")
                     .build(), client)
-                .thenAccept { message -> this.launch { onComplete(message, client) } }
+                .thenAccept { message -> this.launch { onComplete(message, client, true) } }
             return@coroutineScope
         }
         try {
@@ -46,7 +46,7 @@ suspend fun purge(client: Client, event: MessageCreateEvent) = coroutineScope {
                         .appendLine("**Error:** Int must be higher than 0!")
                         .appendLine("**Correct usage:** `${client.config.prefix}purge Int`")
                         .build(), client)
-                    .thenAccept { message -> this.launch { onComplete(message, client) } }
+                    .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 return@coroutineScope
             }
             var done = 0
@@ -56,7 +56,7 @@ suspend fun purge(client: Client, event: MessageCreateEvent) = coroutineScope {
                     MessageBuilder()
                         .appendLine("There is nothing to delete!")
                         .build(), client)
-                    .thenAccept { message -> this.launch { onComplete(message, client) } }
+                    .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 return@coroutineScope
             }
             for (message: Message in messages.filter { message -> message.author.id == client.user.id }) {
@@ -80,20 +80,20 @@ suspend fun purge(client: Client, event: MessageCreateEvent) = coroutineScope {
                     MessageBuilder()
                         .appendLine("There is nothing to delete!")
                         .build(), client)
-                    .thenAccept { message -> this.launch { onComplete(message, client) } }
+                    .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 return@coroutineScope
             }
             if (done > 1) {
                 event.channel.sendMessage(MessageBuilder()
                     .appendLine("Removed $done messages!")
                     .build(), client)
-                    .thenAccept { message -> this.launch { onComplete(message, client) } }
+                    .thenAccept { message -> this.launch { onComplete(message, client, true) } }
             }
             if (done == 1) {
                 event.channel.sendMessage(MessageBuilder()
                     .appendLine("Removed $done message!")
                     .build(), client)
-                    .thenAccept { message -> this.launch { onComplete(message, client) } }
+                    .thenAccept { message -> this.launch { onComplete(message, client, true) } }
             }
         } catch (e: Exception) {
             when (e) {

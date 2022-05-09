@@ -40,6 +40,7 @@ suspend fun messageHandler(event: MessageCreateEvent, client: Client) {
                 invis(client, event)
                 figlet(client, event)
                 upload(client, event)
+                cat(client, event)
             }
         }
     }

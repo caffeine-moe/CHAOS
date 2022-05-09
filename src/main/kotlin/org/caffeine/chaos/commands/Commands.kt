@@ -39,7 +39,9 @@ val commandlist = arrayOf(
     "offline",
     "online",
     "figlet",
-    "upload"
+    "upload",
+    "cat",
+    "meow"
 )
 
 suspend fun help(client: Client, event: MessageCreateEvent) = coroutineScope {
@@ -50,7 +52,7 @@ suspend fun help(client: Client, event: MessageCreateEvent) = coroutineScope {
             .build(), client
         ).thenAccept { message ->
             this.launch {
-                onComplete(message, client)
+                onComplete(message, client, client.config.auto_delete.bot.content_generation)
             }
         }
     }

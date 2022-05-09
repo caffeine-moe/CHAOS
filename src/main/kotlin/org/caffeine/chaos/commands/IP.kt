@@ -96,7 +96,7 @@ suspend fun ip(client: Client, event: MessageCreateEvent) = coroutineScope {
             .appendLine("**Error:** No IP/URL specified")
             .appendLine("**Correct usage:** `${client.config.prefix}ip IP/URL`")
             .build(), client)
-            .thenAccept { message -> this.launch { onComplete(message, client) } }
+            .thenAccept { message -> this.launch { onComplete(message, client, true) } }
     }
     if (event.message.content.lowercase()
             .startsWith("${client.config.prefix}ip ") && event.message.content.lowercase() != "${client.config.prefix}ip"
@@ -134,7 +134,7 @@ suspend fun ip(client: Client, event: MessageCreateEvent) = coroutineScope {
                                     .appendLine("**ISP:** ${parsedresponse.connection.isp}")
                                     .appendLine("**Proxy:** ${parsedresponse.security.proxy}")
                                     .build(), client)
-                                    .thenAccept { message -> this.launch { onComplete(message, client) } }
+                                    .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                             }
                             false -> {
                                 message.edit(MessageBuilder()
@@ -142,7 +142,7 @@ suspend fun ip(client: Client, event: MessageCreateEvent) = coroutineScope {
                                     .appendLine("**Error:** ${parsedresponse.message}")
                                     .appendLine("**Correct usage:** `${client.config.prefix}ip IP/URL`")
                                     .build(), client)
-                                    .thenAccept { message -> this.launch { onComplete(message, client) } }
+                                    .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                             }
                         }
                     } catch (e: Exception) {
@@ -153,7 +153,7 @@ suspend fun ip(client: Client, event: MessageCreateEvent) = coroutineScope {
                                     .appendLine("Error: IP/URL '$url' is invalid.")
                                     .appendLine("Correct usage: `${client.config.prefix}ip IP/URL`")
                                     .build(), client)
-                                    .thenAccept { message -> this.launch { onComplete(message, client) } }
+                                    .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                                 return@launch
                             }
                             is SocketTimeoutException -> {
@@ -161,7 +161,7 @@ suspend fun ip(client: Client, event: MessageCreateEvent) = coroutineScope {
                                     .appendLine(":pensive: Connection timed out")
                                     .appendLine("Try a different IP or URL...")
                                     .build(), client)
-                                    .thenAccept { message -> this.launch { onComplete(message, client) } }
+                                    .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                                 return@launch
                             }
                             else -> {
@@ -170,7 +170,7 @@ suspend fun ip(client: Client, event: MessageCreateEvent) = coroutineScope {
                                     .appendLine("Error: ${e.message}")
                                     .appendLine("Correct usage: `${client.config.prefix}ip IP/URL`")
                                     .build(), client)
-                                    .thenAccept { message -> this.launch { onComplete(message, client) } }
+                                    .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                                 return@launch
                             }
                         }

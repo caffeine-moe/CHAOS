@@ -13,7 +13,7 @@ suspend fun coin(client: Client, event: MessageCreateEvent) = coroutineScope {
             event.channel.sendMessage(MessageBuilder()
                 .appendLine(":coin: Heads!").build(), client).thenAccept { message ->
                 this.launch {
-                    onComplete(message, client)
+                    onComplete(message, client, true)
                 }
             }
             return@coroutineScope
@@ -21,7 +21,7 @@ suspend fun coin(client: Client, event: MessageCreateEvent) = coroutineScope {
             event.channel.sendMessage(MessageBuilder()
                 .appendLine(":coin: Tails!").build(), client).thenAccept { message ->
                 this.launch {
-                    onComplete(message, client)
+                    onComplete(message, client, true)
                 }
             }
             return@coroutineScope

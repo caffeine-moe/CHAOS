@@ -15,7 +15,7 @@ suspend fun figlet(client: Client, event: MessageCreateEvent) = coroutineScope {
             .appendLine("**Error:** No specified text to figletize")
             .appendLine("**Correct usage:** `${client.config.prefix}figlet String`")
             .build(), client)
-            .thenAccept { message -> this.launch { onComplete(message, client) } }
+            .thenAccept { message -> this.launch { onComplete(message, client, true) } }
     }
     if (event.message.content.lowercase()
             .startsWith("${client.config.prefix}figlet ") && event.message.content != "${client.config.prefix}figlet "
@@ -27,9 +27,7 @@ suspend fun figlet(client: Client, event: MessageCreateEvent) = coroutineScope {
             .appendLine("```$figletizedtext```")
             .build(), client)
             .thenAccept { message ->
-                if (client.config.auto_delete.bot.content_generation) {
-                    this.launch { onComplete(message, client) }
-                }
+                this.launch { onComplete(message, client, client.config.auto_delete.bot.content_generation) }
             }
     }
 }
