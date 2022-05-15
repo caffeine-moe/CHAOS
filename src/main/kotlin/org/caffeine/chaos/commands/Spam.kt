@@ -24,7 +24,7 @@ class Spam : Command(arrayOf("spam")) {
                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 return@coroutineScope
             }
-            val msg = args.drop(args.lastIndex).joinToString(" ")
+            val msg = args.dropLast(1).joinToString(" ")
             try {
                 val number = args.last().toInt()
                 if (number <= 0) {
