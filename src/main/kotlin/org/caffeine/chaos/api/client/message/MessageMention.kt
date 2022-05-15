@@ -5,11 +5,8 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
-import org.caffeine.chaos.api.BASE_URL
+import org.caffeine.chaos.api.*
 import org.caffeine.chaos.api.client.DiscordUserInfo
-import org.caffeine.chaos.api.discordHTTPClient
-import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.token
 
 @Serializable
 data class MessageMention(
@@ -20,7 +17,7 @@ data class MessageMention(
 ) {
     val discriminatedName = "$username#$discriminator"
     fun avatarUrl(): String {
-        var av = ""
+        var av = "null"
         if (!avatar.isNullOrBlank()) {
             av = "https://cdn.discordapp.com/avatars/$id/$avatar?size=4096"
             if (avatar.startsWith("a_")) {
@@ -36,7 +33,7 @@ data class MessageMention(
                 append(HttpHeaders.Authorization, token)
             }
         }
-        val de = json.decodeFromString<DiscordUserInfo>(re.bodyAsText())
+        val de = jsonc.decodeFromString<DiscordUserInfo>(re.bodyAsText())
         var ba = "null"
         if (!de.banner.isNullOrBlank()) {
             ba = "https://cdn.discordapp.com/banners/${id}/${de.banner}?size=1024"
