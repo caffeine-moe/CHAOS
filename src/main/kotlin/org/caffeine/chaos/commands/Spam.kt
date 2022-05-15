@@ -26,7 +26,7 @@ class Spam : Command(arrayOf("spam")) {
             }
             val msg = args.dropLast(1).joinToString(" ")
             try {
-                val number = args.last().toInt()
+                val number = args.last().toLong()
                 if (number <= 0) {
                     event.channel.sendMessage(
                         MessageBuilder()
