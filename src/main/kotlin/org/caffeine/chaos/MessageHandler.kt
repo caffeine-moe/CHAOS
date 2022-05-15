@@ -4,6 +4,36 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.commands.*
 
+var commandList2: HashMap<String, Command> = HashMap()
+
+fun registerCommands() {
+    TestCommand()
+}
+
+suspend fun handleMessage(event: MessageCreateEvent, client: Client) {
+    if (event.message.author.id == client.user.id) {
+        if (event.message.content.startsWith(client.config.prefix) && event.message.content != client.config.prefix) {
+            var commandName: String = "";
+            try {
+                commandName = event.message.content.lowercase().replaceFirst(client.config.prefix, "").split(" ").first()
+            } catch (e: Exception) {
+                return
+            }
+
+            val command: Command = commandList2.get(commandName) ?: return
+
+            if (client.config.auto_delete.user.enabled) {
+                user(event, client)
+            }
+
+            val args = event.message.content.split(" ").toMutableList()
+            args.removeAt(0)
+
+            command.onCalled(client, event, args)
+        }
+    }
+}
+
 suspend fun messageHandler(event: MessageCreateEvent, client: Client) {
     if (client.config.nitro_sniper.enabled && client.user.verified) {
         nitroSniper(event, client)
@@ -23,7 +53,7 @@ suspend fun messageHandler(event: MessageCreateEvent, client: Client) {
                 help(client, event)
                 ping(client, event)
                 ip(client, event)
-                avatar(client, event)
+//                avatar(client, event)
                 spam(client, event)
                 sSpam(client, event)
                 purge(client, event)
