@@ -1,14 +1,11 @@
 package org.caffeine.chaos.api.handlers
 
 import kotlinx.serialization.decodeFromString
+import org.caffeine.chaos.*
 import org.caffeine.chaos.api.client.*
 import org.caffeine.chaos.api.jsonc
 import org.caffeine.chaos.api.sid
 import org.caffeine.chaos.api.token
-import org.caffeine.chaos.clear
-import org.caffeine.chaos.configWatcher
-import org.caffeine.chaos.log
-import org.caffeine.chaos.loginPrompt
 
 @kotlinx.serialization.Serializable
 private data class ReadyPayload(
@@ -67,5 +64,6 @@ suspend fun ready(client: Client, payload: String) {
     log("\u001B[38;5;33mWelcome to CHAOS!")
     clear()
     loginPrompt(client)
+    registerCommands()
     configWatcher(client)
 }
