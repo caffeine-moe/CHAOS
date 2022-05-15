@@ -11,7 +11,7 @@ import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.log
 
 
-suspend fun lgdm(client: Client, event: MessageCreateEvent) = coroutineScope {
+suspend fun leaveGroupDM(client: Client, event: MessageCreateEvent) = coroutineScope {
     if (event.message.content.lowercase() == ("${client.config.prefix}lgdm") || event.message.content.lowercase() == ("${client.config.prefix}leavegroups")) {
         var done = 0
         val channels = StringBuilder()

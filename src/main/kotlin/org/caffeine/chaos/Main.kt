@@ -10,14 +10,14 @@ import kotlinx.serialization.json.Json
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.normalHTTPClient
-import org.caffeine.chaos.api.scamlinks
+import org.caffeine.chaos.api.scamLinks
 import org.caffeine.chaos.config.Config
 import java.io.File
 import kotlin.system.exitProcess
 
 //version lmao
 const val version: Float = 1.1F
-val programstarted = System.currentTimeMillis()
+val programStartedTime = System.currentTimeMillis()
 
 suspend fun main(): Unit = coroutineScope {
     clear()
@@ -39,7 +39,7 @@ suspend fun main(): Unit = coroutineScope {
     }
     try {
         val config = Json.decodeFromString<Config>(File("config.json").readText())
-        scamlinks =
+        scamLinks =
             json.decodeFromString<AntiScamResponse>(normalHTTPClient.get("https://raw.githubusercontent.com/nikolaischunk/discord-phishing-links/main/domain-list.json")
                 .bodyAsText()).domains
         val client = Client(config)

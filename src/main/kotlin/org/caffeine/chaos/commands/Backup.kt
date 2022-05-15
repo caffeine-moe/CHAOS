@@ -18,7 +18,7 @@ suspend fun backup(client: Client, event: MessageCreateEvent) = coroutineScope {
         event.channel.sendMessage(MessageBuilder().append("Performing backup...").build())
             .thenAccept { message ->
                 this.launch {
-                    val texttowrite = "================================ SERVERS ================================\n" +
+                    val textToWrite = "================================ SERVERS ================================\n" +
                             "${client.user.guilds.getListAsString()}\n" +
                             "================================ FRIENDS ================================\n" +
                             "${client.user.friends.getList()}"
@@ -33,7 +33,7 @@ suspend fun backup(client: Client, event: MessageCreateEvent) = coroutineScope {
                         }
                         File(
                             f.toPath().toString()
-                        ).writeText(texttowrite)
+                        ).writeText(textToWrite)
                         try {
                             message.edit(MessageBuilder()
                                 .appendLine("Backup successful!")
@@ -58,7 +58,7 @@ suspend fun backup(client: Client, event: MessageCreateEvent) = coroutineScope {
                     }
                     File(
                         f.toPath().toString()
-                    ).writeText(texttowrite)
+                    ).writeText(textToWrite)
                     message.edit(MessageBuilder()
                         .appendLine("Backup successful!")
                         .appendLine("Saved to: ${f.toPath()}")

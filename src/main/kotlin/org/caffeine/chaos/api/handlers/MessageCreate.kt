@@ -37,13 +37,13 @@ private data class MessageCreateD(
 suspend fun messageCreate(payload: String, client: Client) {
     try {
         val d = json.decodeFromString<MessageCreate>(payload).d
-        val messageauthor = MessageAuthor(
+        val messageAuthor = MessageAuthor(
             d.author.username,
             d.author.discriminator,
             d.author.id,
             d.author.avatar
         )
-        val message = Message(d.id, d.content, d.channel_id, messageauthor, d.attachments, mentions = d.mentions)
+        val message = Message(d.id, d.content, d.channel_id, messageAuthor, d.attachments, mentions = d.mentions)
         val event = MessageCreateEvent(message, client, MessageChannel(d.channel_id))
         messageHandler(event, client)
     } catch (e: Exception) {

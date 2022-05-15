@@ -21,10 +21,10 @@ suspend fun figlet(client: Client, event: MessageCreateEvent) = coroutineScope {
             .startsWith("${client.config.prefix}figlet ") && event.message.content != "${client.config.prefix}figlet "
     ) {
         val split = event.message.content.split(" ")
-        val texttofigletize = split.drop(1).joinToString(" ")
-        val figletizedtext = FigletFont.convertOneLine(texttofigletize)
+        val textToFigletize = split.drop(1).joinToString(" ")
+        val figletizedText = FigletFont.convertOneLine(textToFigletize)
         event.channel.sendMessage(MessageBuilder()
-            .appendLine("```$figletizedtext```")
+            .appendLine("```$figletizedText```")
             .build())
             .thenAccept { message ->
                 this.launch { onComplete(message, client, client.config.auto_delete.bot.content_generation) }

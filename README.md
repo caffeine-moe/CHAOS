@@ -13,15 +13,15 @@ Or alternatively, by buying me a coffee : https://ko-fi.com/caffeine727
 Join our discord! : https://discord.gg/ASukH9Juxz
 
 ## Features (Still under construction)
-- Fully custom discord API/Gateway interation.
+- Fully custom discord API/Gateway interaction.
 - ~250ms Nitro Sniper
 - Deleted message logger
-- Leave all group DM's
+- Leave all group DMs
 - DM scammer/spammer auto blocker
 - Message spammer
 - Message purger
 - Account backup
-- Account bestore
+- Account restore
 - Auto delete user commands and bot responses
 - Create mirrors for file
 - Website status/ping

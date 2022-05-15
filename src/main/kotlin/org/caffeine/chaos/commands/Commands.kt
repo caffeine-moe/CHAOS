@@ -7,7 +7,7 @@ import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.version
 
-val commandlist = arrayOf(
+val commandList = arrayOf(
     "ping",
     "help",
     "cmds",

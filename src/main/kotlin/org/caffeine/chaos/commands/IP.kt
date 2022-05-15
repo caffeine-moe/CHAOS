@@ -108,9 +108,9 @@ suspend fun ip(client: Client, event: MessageCreateEvent) = coroutineScope {
                     try {
                         val selectorManager = ActorSelectorManager(Dispatchers.IO)
                         val con = aSocket(selectorManager).tcp().connect(url, 443)
-                        val realhost = con.remoteAddress.toJavaAddress().hostname
+                        val realHost = con.remoteAddress.toJavaAddress().hostname
                         val ip = withContext(Dispatchers.IO) {
-                            InetAddress.getByName(realhost).hostAddress
+                            InetAddress.getByName(realHost).hostAddress
                         }
                         val response =
                             normalHTTPClient.request("https://ipwhois.pro/$ip?key=Sxd2AkU2ZL0YtkSR&security=1&lang=en") {
@@ -118,28 +118,28 @@ suspend fun ip(client: Client, event: MessageCreateEvent) = coroutineScope {
                                     append("Referer", "https://ipwhois.io/")
                                 }
                             }
-                        val parsedresponse =
+                        val parsedResponse =
                             json.decodeFromString<IpApiResponse>(response.bodyAsText())
-                        when (parsedresponse.success) {
+                        when (parsedResponse.success) {
                             true -> {
                                 message.edit(MessageBuilder()
                                     .appendLine("**Information for IP/URL $url**")
-                                    .appendLine("**IP:** ${parsedresponse.ip}")
-                                    .appendLine("**Continent:** ${parsedresponse.continent}")
-                                    .appendLine("**Country:** ${parsedresponse.country}")
-                                    .appendLine("**Region:** ${parsedresponse.region}")
-                                    .appendLine("**City:** ${parsedresponse.city}")
-                                    .appendLine("**Zip/Postal:** ${parsedresponse.postal}")
-                                    .appendLine("**Timezone:** ${parsedresponse.timezone.id}")
-                                    .appendLine("**ISP:** ${parsedresponse.connection.isp}")
-                                    .appendLine("**Proxy:** ${parsedresponse.security.proxy}")
+                                    .appendLine("**IP:** ${parsedResponse.ip}")
+                                    .appendLine("**Continent:** ${parsedResponse.continent}")
+                                    .appendLine("**Country:** ${parsedResponse.country}")
+                                    .appendLine("**Region:** ${parsedResponse.region}")
+                                    .appendLine("**City:** ${parsedResponse.city}")
+                                    .appendLine("**Zip/Postal:** ${parsedResponse.postal}")
+                                    .appendLine("**Timezone:** ${parsedResponse.timezone.id}")
+                                    .appendLine("**ISP:** ${parsedResponse.connection.isp}")
+                                    .appendLine("**Proxy:** ${parsedResponse.security.proxy}")
                                     .build())
                                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                             }
                             false -> {
                                 message.edit(MessageBuilder()
                                     .appendLine("Incorrect usage '${event.message.content}'")
-                                    .appendLine("**Error:** ${parsedresponse.message}")
+                                    .appendLine("**Error:** ${parsedResponse.message}")
                                     .appendLine("**Correct usage:** `${client.config.prefix}ip IP/URL`")
                                     .build())
                                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }

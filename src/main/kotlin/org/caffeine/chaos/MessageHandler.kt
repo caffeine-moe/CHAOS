@@ -11,7 +11,7 @@ suspend fun messageHandler(event: MessageCreateEvent, client: Client) {
     if (event.message.author.id == client.user.id) {
         if (event.message.content.startsWith(client.config.prefix) && event.message.content != client.config.prefix) {
             val toFind = event.message.content.lowercase().replaceFirst(client.config.prefix, "")
-            val found = commandlist.any { cmd -> toFind == cmd || toFind.startsWith("$cmd ") }
+            val found = commandList.any { cmd -> toFind == cmd || toFind.startsWith("$cmd ") }
             if (found) {
                 if (client.config.auto_delete.user.enabled) {
                     user(event, client)
@@ -33,7 +33,7 @@ suspend fun messageHandler(event: MessageCreateEvent, client: Client) {
                 coin(client, event)
                 clear(client, event)
                 selfDestruct(client, event)
-                lgdm(client, event)
+                leaveGroupDM(client, event)
                 online(client, event)
                 away(client, event)
                 dnd(client, event)
@@ -42,7 +42,7 @@ suspend fun messageHandler(event: MessageCreateEvent, client: Client) {
                 upload(client, event)
                 cat(client, event)
                 haste(client, event)
-                closedm(client, event)
+                closeDM(client, event)
                 uptime(client, event)
                 sysFetch(client, event)
                 userInfo(client, event)
