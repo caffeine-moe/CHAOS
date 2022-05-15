@@ -8,12 +8,13 @@ var commandList2: HashMap<String, Command> = HashMap()
 
 fun registerCommands() {
     TestCommand()
+    Avatar()
 }
 
 suspend fun handleMessage(event: MessageCreateEvent, client: Client) {
     if (event.message.author.id == client.user.id) {
         if (event.message.content.startsWith(client.config.prefix) && event.message.content != client.config.prefix) {
-            var commandName: String = "";
+            val commandName: String
             try {
                 commandName = event.message.content.lowercase().replaceFirst(client.config.prefix, "").split(" ").first()
             } catch (e: Exception) {

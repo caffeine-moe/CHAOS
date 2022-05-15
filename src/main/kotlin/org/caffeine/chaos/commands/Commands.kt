@@ -19,8 +19,6 @@ val commandList = arrayOf(
     "spam",
     "sspam",
     "backup",
-    "avatar",
-    "av",
     "exchange",
     "crypto",
     "coin",

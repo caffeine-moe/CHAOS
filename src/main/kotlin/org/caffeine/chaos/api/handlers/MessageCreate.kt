@@ -27,7 +27,7 @@ private data class MessageCreateD(
     val id: String,
     val mention_everyone: Boolean?,
     val mention_roles: List<String>?,
-    val mentions: List<MessageMention>?,
+    val mentions: List<MessageMention> = mutableListOf(),
     val pinned: Boolean?,
     val referenced_message: MessageCreateD? = null,
     val timestamp: String?,

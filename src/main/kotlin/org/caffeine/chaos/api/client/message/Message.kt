@@ -12,7 +12,7 @@ class Message(
     val embeds: List<MessageEmbed>? = null,
     val mention_everyone: Boolean? = false,
     val mention_roles: List<String>? = null,
-    val mentions: List<MessageMention>? = null,
+    val mentions: List<MessageMention> = mutableListOf(),
     val pinned: Boolean? = false,
     val referenced_message: Message? = null,
     val type: Int = 0,
