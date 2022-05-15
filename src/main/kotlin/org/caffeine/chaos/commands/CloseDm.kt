@@ -1,11 +1,12 @@
 package org.caffeine.chaos.commands
 
+import org.caffeine.chaos.Command
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.log
 
-suspend fun closedm(client: Client, event: MessageCreateEvent) {
-    if (event.message.content == "${client.config.prefix}closedm") {
+class CloseDm : Command(arrayOf("closedm")) {
+    override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) {
         if (event.channel.type() == 1) {
             event.channel.delete()
             log("Channel ${event.channel.id} closed!", "RESPONSE:")

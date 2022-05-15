@@ -5,7 +5,7 @@ import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.*
 import org.caffeine.chaos.api.json
-import org.caffeine.chaos.messageHandler
+import org.caffeine.chaos.handleMessage
 
 @Serializable
 private data class MessageCreate(
@@ -26,7 +26,7 @@ private data class MessageCreateD(
     val id: String,
     val mention_everyone: Boolean?,
     val mention_roles: List<String>?,
-    val mentions: List<MessageMention>?,
+    val mentions: List<MessageMention> = mutableListOf(),
     val pinned: Boolean?,
     val referenced_message: MessageCreateD? = null,
     val timestamp: String?,
@@ -37,15 +37,15 @@ private data class MessageCreateD(
 suspend fun messageCreate(payload: String, client: Client) {
     try {
         val d = json.decodeFromString<MessageCreate>(payload).d
-        val messageauthor = MessageAuthor(
+        val messageAuthor = MessageAuthor(
             d.author.username,
             d.author.discriminator,
             d.author.id,
             d.author.avatar
         )
-        val message = Message(d.id, d.content, d.channel_id, messageauthor, d.attachments, mentions = d.mentions)
+        val message = Message(d.id, d.content, d.channel_id, messageAuthor, d.attachments, mentions = d.mentions)
         val event = MessageCreateEvent(message, client, MessageChannel(d.channel_id))
-        messageHandler(event, client)
+        handleMessage(event, client)
     } catch (e: Exception) {
         println(payload)
         println("you are ugly")

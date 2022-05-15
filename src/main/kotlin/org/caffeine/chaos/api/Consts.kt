@@ -11,7 +11,7 @@ import kotlinx.serialization.json.Json
 val GATEWAY = "gateway.discord.gg"
 val BASE_URL = "https://discord.com/api/v9"
 
-var scamlinks = listOf<String>()
+var scamLinks = listOf<String>()
 
 var token = ""
 

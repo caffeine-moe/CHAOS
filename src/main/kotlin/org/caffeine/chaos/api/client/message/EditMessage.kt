@@ -45,17 +45,17 @@ suspend fun editMessage(message: Message, newMessage: Message): CompletableFutur
         }
         setBody(json.encodeToString(EditContent(newMessage.content)))
     }
-    val parsedresponse = json.decodeFromString<EditMessageResponse>(response.body())
-    val messageauthor = MessageAuthor(
-        parsedresponse.author.username,
-        parsedresponse.author.discriminator,
-        parsedresponse.author.id,
-        parsedresponse.author.avatar
+    val parsedResponse = json.decodeFromString<EditMessageResponse>(response.body())
+    val messageAuthor = MessageAuthor(
+        parsedResponse.author.username,
+        parsedResponse.author.discriminator,
+        parsedResponse.author.id,
+        parsedResponse.author.avatar
     )
-    val editedmessage = Message(parsedresponse.id,
-        parsedresponse.content,
-        parsedresponse.channel_id,
-        messageauthor,
-        type = parsedresponse.type)
-    return CompletableFuture.completedFuture(editedmessage)
+    val editedMessage = Message(parsedResponse.id,
+        parsedResponse.content,
+        parsedResponse.channel_id,
+        messageAuthor,
+        type = parsedResponse.type)
+    return CompletableFuture.completedFuture(editedMessage)
 }

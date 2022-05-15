@@ -5,6 +5,7 @@ import io.ktor.client.statement.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
+import org.caffeine.chaos.Command
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
@@ -12,13 +13,19 @@ import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.normalHTTPClient
 import org.caffeine.chaos.api.ua
 
-@kotlinx.serialization.Serializable
-private data class CatResponse(
-    val url: String,
-)
+class Cat : Command(arrayOf("cat", "meow")) {
 
-suspend fun cat(client: Client, event: MessageCreateEvent) = coroutineScope {
-    if (event.message.content == "${client.config.prefix}cat" || event.message.content == "${client.config.prefix}meow") {
+    @kotlinx.serialization.Serializable
+    private data class CatResponse(
+        val url: String,
+    )
+
+    override suspend fun onCalled(
+        client: Client,
+        event: MessageCreateEvent,
+        args: MutableList<String>,
+        cmd: String,
+    ): Unit = coroutineScope {
         val response = normalHTTPClient.get("https://cataas.com/cat?json=true") {
             headers {
                 append("Host", "cataas.com")

@@ -41,13 +41,13 @@ suspend fun sendMessage(channel: MessageChannel, message: Message): CompletableF
         setBody(json.encodeToString(MessageSerializer(message.content,
             System.currentTimeMillis().toString())))
     }
-    val parsedresponse = json.decodeFromString<SendMessageResponse>(response.body())
+    val parsedResponse = json.decodeFromString<SendMessageResponse>(response.body())
     val messageauthor = MessageAuthor(
-        parsedresponse.author.username,
-        parsedresponse.author.discriminator,
-        parsedresponse.author.id,
-        parsedresponse.author.avatar
+        parsedResponse.author.username,
+        parsedResponse.author.discriminator,
+        parsedResponse.author.id,
+        parsedResponse.author.avatar
     )
-    val sentmessage = Message(parsedresponse.id, parsedresponse.content, parsedresponse.channel_id, messageauthor)
+    val sentmessage = Message(parsedResponse.id, parsedResponse.content, parsedResponse.channel_id, messageauthor)
     return CompletableFuture.completedFuture(sentmessage)
 }

@@ -6,21 +6,23 @@ import org.caffeine.chaos.Command
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.version
 
-class Coin : Command(arrayOf("coin")) {
+class Help : Command(arrayOf("help", "cmds", "commands")) {
     override suspend fun onCalled(
         client: Client,
         event: MessageCreateEvent,
         args: MutableList<String>,
         cmd: String,
-    ): Unit =
-        coroutineScope {
-            val face = arrayOf("Heads", "Tails").random()
-            event.channel.sendMessage(MessageBuilder()
-                .appendLine(":coin: $face!").build()).thenAccept { message ->
-                this.launch {
-                    onComplete(message, client, client.config.auto_delete.bot.content_generation)
-                }
+    ): Unit = coroutineScope {
+        event.channel.sendMessage(MessageBuilder()
+            .appendLine("**CHAOS v$version**")
+            .appendLine("**Commands:** https://caffeine.moe/CHAOS/commands/")
+            .build()
+        ).thenAccept { message ->
+            launch {
+                onComplete(message, client, client.config.auto_delete.bot.content_generation)
             }
         }
+    }
 }
