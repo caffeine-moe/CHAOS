@@ -25,11 +25,11 @@ suspend fun main(): Unit = coroutineScope {
     printSeparator()
     log("\u001B[38;5;33mCHAOS is starting...")
     if (!File("config.json").exists()) {
-        val default = normalHTTPClient.get("https://caffeine.moe/CHAOS/config.json")
+        val default = javaClass.classLoader.getResource("defaultconfig.json")
         withContext(Dispatchers.IO) {
             File("config.json").createNewFile()
         }
-        File("config.json").writeText(default.bodyAsText(Charsets.UTF_8))
+        File("config.json").writeText(default!!.readText())
         log(
             "Config not found, we have generated one for you at ${File("config.json").absolutePath}",
             "\u001B[38;5;197mERROR:"

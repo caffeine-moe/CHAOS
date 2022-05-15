@@ -1,0 +1,44 @@
+{
+  "token": "YOUR_TOKEN",
+  "prefix": ".",
+  "auto_reconnect": true,
+  "logger": {
+    "commands": true,
+    "responses": true,
+    "nitro_sniper": true,
+    "anti_scam": true
+  },
+  "auto_delete": {
+    "user": {
+      "enabled": true,
+      "delay": 0
+    },
+    "bot": {
+      "enabled": true,
+      "content_generation": false,
+      "delay": 5
+    }
+  },
+  "anti_scam": {
+    "enabled": true,
+    "block": false
+  },
+  "exchange": {
+    "base": "XMR",
+    "target": "GBP"
+  },
+  "backup": {
+    "servers": true,
+    "dmed_users": true,
+    "friends": true,
+    "block_list": true
+  },
+  "restore": {
+    "dmed_users": true,
+    "friends": true,
+    "block_list": true
+  },
+  "nitro_sniper": {
+    "enabled": true
+  }
+}
