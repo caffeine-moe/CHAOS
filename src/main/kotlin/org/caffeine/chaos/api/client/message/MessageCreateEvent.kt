@@ -1,3 +1,9 @@
 package org.caffeine.chaos.api.client.message
 
-class MessageCreateEvent(var message: Message, var channel: MessageChannel)
+import org.caffeine.chaos.api.client.Client
+
+data class MessageCreateEvent(
+    var message: Message,
+    var client: Client,
+    var channel: MessageChannel,
+)

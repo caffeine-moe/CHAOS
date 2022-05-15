@@ -11,8 +11,7 @@ suspend fun token(client: Client, event: MessageCreateEvent) = coroutineScope {
     if (event.message.content.lowercase() == "${client.config.prefix}token") {
         log(client.config.token, "TOKEN:\u001B[38;5;33m")
         try {
-            event.channel.sendMessage(MessageBuilder().append("Token logged to console.").build(),
-                client)
+            event.channel.sendMessage(MessageBuilder().append("Token logged to console.").build())
                 .thenAccept { message ->
                     this.launch { onComplete(message, client, true) }
                 }

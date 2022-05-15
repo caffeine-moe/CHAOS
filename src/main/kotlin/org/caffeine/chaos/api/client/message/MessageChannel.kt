@@ -5,12 +5,19 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.BASE_URL
-import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.discordHTTPClient
 import org.caffeine.chaos.api.json
+import org.caffeine.chaos.api.token
 import java.util.concurrent.CompletableFuture
 
-class MessageChannel(var id: String, var client: Client) {
+class MessageChannel(
+    var id: String,
+) {
+
+    @kotlinx.serialization.Serializable
+    data class TypeResponse(
+        val type: Int,
+    )
 
     suspend fun messagesAsCollection(filters: MessageFilters): Collection<Message> {
         val collection: MutableList<Message> = mutableListOf()
@@ -26,7 +33,7 @@ class MessageChannel(var id: String, var client: Client) {
             val response = discordHTTPClient.request("$BASE_URL/channels/${this.id}/messages?${parameters}") {
                 method = HttpMethod.Get
                 headers {
-                    append(HttpHeaders.Authorization, client.config.token)
+                    append(HttpHeaders.Authorization, token)
                     append(HttpHeaders.ContentType, "application/json")
                 }
             }
@@ -44,7 +51,26 @@ class MessageChannel(var id: String, var client: Client) {
         return collection
     }
 
-    suspend fun sendMessage(message: Message, client: Client): CompletableFuture<Message> {
-        return client.user.sendMessage(this, message)
+    suspend fun sendMessage(message: Message): CompletableFuture<Message> {
+        return sendMessage(this, message)
+    }
+
+    suspend fun type(): Int {
+        val response = discordHTTPClient.request("$BASE_URL/channels/${this.id}") {
+            method = HttpMethod.Get
+            headers {
+                append(HttpHeaders.Authorization, token)
+            }
+        }
+        return json.decodeFromString<TypeResponse>(response.bodyAsText()).type
+    }
+
+    suspend fun delete() {
+        discordHTTPClient.request("$BASE_URL/channels/${this.id}") {
+            method = HttpMethod.Delete
+            headers {
+                append(HttpHeaders.Authorization, token)
+            }
+        }
     }
 }

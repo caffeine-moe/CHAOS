@@ -21,11 +21,19 @@ data class ClientGroupChannels(val client: Client) {
         val final = json.decodeFromString<List<SerialClientChannel>>(response.body())
         for ((count) in final.withIndex()) {
             if (final[count].type == 3) {
+                val ccr = mutableListOf(ClientChannelRecipient(
+                    final[count].recipients[count].id,
+                    final[count].recipients[count].username,
+                    final[count].recipients[count].avatar,
+                    final[count].recipients[count].discriminator,
+                    final[count].recipients[count].public_flags,
+                    final[count].recipients[count].bot
+                ))
                 val cc = ClientChannel(
                     final[count].id,
                     final[count].type,
                     final[count].last_message_id,
-                    final[count].recipients,
+                    ccr,
                     final[count].name,
                     final[count].icon,
                     final[count].owner_id,

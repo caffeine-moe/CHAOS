@@ -4,6 +4,7 @@ import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.*
 import org.caffeine.chaos.api.jsonc
 import org.caffeine.chaos.api.sid
+import org.caffeine.chaos.api.token
 import org.caffeine.chaos.clear
 import org.caffeine.chaos.configWatcher
 import org.caffeine.chaos.log
@@ -61,6 +62,7 @@ suspend fun ready(client: Client, payload: String) {
     )
     org.caffeine.chaos.api.ready = true
     sid = d.session_id
+    token = client.config.token
     log("\u001B[38;5;47mClient logged in!", "API:")
     log("\u001B[38;5;33mWelcome to CHAOS!")
     clear()

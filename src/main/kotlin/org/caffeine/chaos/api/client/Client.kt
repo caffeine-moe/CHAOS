@@ -4,16 +4,21 @@ import org.caffeine.chaos.api.Connection
 import org.caffeine.chaos.config.Config
 
 @kotlinx.serialization.Serializable
-data class Client(
+class Client(
     var config: Config,
     private val socket: Connection = Connection(),
 ) {
     lateinit var user: ClientUser
     suspend fun login(config: Config) {
-        socket.connect(Client(config, socket))
+        this.config = config
+        socket.connect(this)
     }
 
     suspend fun logout() {
         socket.disconnect()
+    }
+
+    fun convertIdToUnix(id: String): Long {
+        return (id.toLong() / 4194304 + 1420070400000)
     }
 }

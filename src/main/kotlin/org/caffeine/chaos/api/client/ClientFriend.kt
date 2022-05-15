@@ -1,8 +1,6 @@
 package org.caffeine.chaos.api.client
 
-import kotlinx.serialization.Serializable
-
-@Serializable
+@kotlinx.serialization.Serializable
 data class ClientFriend(
     val user: DiscordUser,
 )

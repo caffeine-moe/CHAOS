@@ -8,7 +8,7 @@ import org.caffeine.chaos.api.handlers.ready
 import org.caffeine.chaos.log
 
 @Serializable
-data class DefaultResponse(
+private data class DefaultResponse(
     val op: Int?,
     val s: Int?,
     val t: String?,

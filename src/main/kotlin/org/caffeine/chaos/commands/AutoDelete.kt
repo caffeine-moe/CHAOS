@@ -12,7 +12,7 @@ suspend fun user(event: MessageCreateEvent, client: Client) {
         withContext(Dispatchers.IO) {
             Thread.sleep(client.config.auto_delete.user.delay * 1000)
         }
-        event.message.delete(client)
+        event.message.delete()
     }
 }
 
@@ -21,6 +21,6 @@ suspend fun bot(msg: Message, client: Client) {
         withContext(Dispatchers.IO) {
             Thread.sleep(client.config.auto_delete.bot.delay * 1000)
         }
-        msg.delete(client)
+        msg.delete()
     }
 }

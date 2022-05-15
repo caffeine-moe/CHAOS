@@ -6,9 +6,9 @@ import io.ktor.http.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.BASE_URL
-import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.discordHTTPClient
 import org.caffeine.chaos.api.json
+import org.caffeine.chaos.api.token
 import java.util.concurrent.CompletableFuture
 
 @kotlinx.serialization.Serializable
@@ -31,11 +31,11 @@ private data class SendMessageResponse(
     val type: Int?,
 )
 
-suspend fun sendMessage(channel: MessageChannel, message: Message, client: Client): CompletableFuture<Message> {
+suspend fun sendMessage(channel: MessageChannel, message: Message): CompletableFuture<Message> {
     val response = discordHTTPClient.request("$BASE_URL/channels/${channel.id}/messages") {
         method = HttpMethod.Post
         headers {
-            append(HttpHeaders.Authorization, client.config.token)
+            append(HttpHeaders.Authorization, token)
             append(HttpHeaders.ContentType, "application/json")
         }
         setBody(json.encodeToString(MessageSerializer(message.content,

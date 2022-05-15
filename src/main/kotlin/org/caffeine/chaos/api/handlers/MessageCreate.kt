@@ -43,8 +43,8 @@ suspend fun messageCreate(payload: String, client: Client) {
             d.author.id,
             d.author.avatar
         )
-        val message = Message(d.id, d.content, d.channel_id, messageauthor, d.attachments)
-        val event = MessageCreateEvent(message, MessageChannel(d.channel_id, client))
+        val message = Message(d.id, d.content, d.channel_id, messageauthor, d.attachments, mentions = d.mentions)
+        val event = MessageCreateEvent(message, client, MessageChannel(d.channel_id))
         messageHandler(event, client)
     } catch (e: Exception) {
         println(payload)

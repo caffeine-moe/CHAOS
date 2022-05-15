@@ -20,7 +20,7 @@ suspend fun lgdm(client: Client, event: MessageCreateEvent) = coroutineScope {
             if (amount <= 0) {
                 event.channel.sendMessage(MessageBuilder()
                     .appendLine("There are no channels to delete!")
-                    .build(), client)
+                    .build())
                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 return@coroutineScope
             }
@@ -37,7 +37,7 @@ suspend fun lgdm(client: Client, event: MessageCreateEvent) = coroutineScope {
                 event.channel.sendMessage(MessageBuilder()
                     .appendLine("Done! Deleted $done channels!")
                     .appendLine("Check the console to see a list of the deleted channels.")
-                    .build(), client)
+                    .build())
                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
             }
             if (done == 1) {
@@ -45,7 +45,7 @@ suspend fun lgdm(client: Client, event: MessageCreateEvent) = coroutineScope {
                 event.channel.sendMessage(MessageBuilder()
                     .appendLine("Done! Deleted $done channel!")
                     .appendLine("Check the console to see the name of the deleted channel.")
-                    .build(), client)
+                    .build())
                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
             }
         } catch (e: Exception) {

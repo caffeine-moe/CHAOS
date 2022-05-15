@@ -30,7 +30,7 @@ data class ClientUser(
     fun avatarUrl(): String {
         var av = ""
         if (!avatar.isNullOrBlank()) {
-            av = "https://cdn.discordapp.com/avatars/$id/$avatar"
+            av = "https://cdn.discordapp.com/avatars/$id/$avatar?size=4096"
         }
         return av
     }
@@ -81,7 +81,7 @@ data class ClientUser(
     }
 
     suspend fun sendMessage(channel: MessageChannel, message: Message): CompletableFuture<Message> {
-        return org.caffeine.chaos.api.client.message.sendMessage(channel, message, channel.client)
+        return org.caffeine.chaos.api.client.message.sendMessage(channel, message)
     }
 
     suspend fun redeemCode(code: String): CompletableFuture<ClientUserRedeemedCode> {
@@ -113,7 +113,6 @@ data class ClientUser(
     }
 
     suspend fun validateChannelId(id: String): Boolean {
-        var valid = false
         val response = discordHTTPClient.request("$BASE_URL/channels/${id}/messages?limit=1") {
             method = HttpMethod.Get
             headers {
@@ -121,10 +120,8 @@ data class ClientUser(
                 append("Content-Type", "application/json")
             }
         }
-        if (response.status.isSuccess()) {
-            valid = true
-        }
-        return valid
+        println(response)
+        return true
     }
 
     suspend fun block(userid: String) {

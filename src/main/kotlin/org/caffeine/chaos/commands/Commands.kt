@@ -41,7 +41,12 @@ val commandlist = arrayOf(
     "figlet",
     "upload",
     "cat",
-    "meow"
+    "meow",
+    "haste",
+    "closedm",
+    "uptime",
+    "sysfetch",
+    "info"
 )
 
 suspend fun help(client: Client, event: MessageCreateEvent) = coroutineScope {
@@ -49,7 +54,7 @@ suspend fun help(client: Client, event: MessageCreateEvent) = coroutineScope {
         event.channel.sendMessage(MessageBuilder()
             .appendLine("**CHAOS v$version**")
             .appendLine("**Commands:** https://caffeine.moe/CHAOS/commands/")
-            .build(), client
+            .build()
         ).thenAccept { message ->
             this.launch {
                 onComplete(message, client, client.config.auto_delete.bot.content_generation)

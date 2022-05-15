@@ -13,11 +13,11 @@ suspend fun messageHandler(event: MessageCreateEvent, client: Client) {
             val toFind = event.message.content.lowercase().replaceFirst(client.config.prefix, "")
             val found = commandlist.any { cmd -> toFind == cmd || toFind.startsWith("$cmd ") }
             if (found) {
-                if (client.config.logger.commands) {
-                    log(event.message.content, "COMMAND:\u001B[38;5;33m")
-                }
                 if (client.config.auto_delete.user.enabled) {
                     user(event, client)
+                }
+                if (client.config.logger.commands) {
+                    log(event.message.content, "COMMAND:\u001B[38;5;33m")
                 }
                 token(client, event)
                 help(client, event)
@@ -41,6 +41,11 @@ suspend fun messageHandler(event: MessageCreateEvent, client: Client) {
                 figlet(client, event)
                 upload(client, event)
                 cat(client, event)
+                haste(client, event)
+                closedm(client, event)
+                uptime(client, event)
+                sysFetch(client, event)
+                userInfo(client, event)
             }
         }
     }

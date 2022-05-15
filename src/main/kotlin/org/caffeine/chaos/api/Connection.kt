@@ -191,6 +191,7 @@ class Connection {
         }
     }
 
+
     private suspend fun sendHeartBeat(interval: Long, connection: Connection) {
         var heartbeat = json.encodeToString(Heartbeat(1, "null"))
         log("Heartbeat started.", "API:")
@@ -208,13 +209,12 @@ class Connection {
         this.ws.close()
         ready = false
         log("Client logged out.", "API:")
-        return
     }
 
     suspend fun recRes(session_id: String, seq: Int, client: Client) {
         disconnect()
         log("\u001B[38;5;33mInitialising gateway connection...", "API:")
-        httpClient = ConnectionHTTPClient(this).httpclient
+        httpClient = ConnectionHTTPClient(Connection()).httpclient
         httpClient.wss(
             host = GATEWAY,
             path = "/?v=9&encoding=json",

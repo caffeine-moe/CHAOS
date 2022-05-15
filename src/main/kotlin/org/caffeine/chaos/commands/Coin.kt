@@ -11,7 +11,7 @@ suspend fun coin(client: Client, event: MessageCreateEvent) = coroutineScope {
         val face = arrayOf("heads", "tails").random()
         if (face == "heads") {
             event.channel.sendMessage(MessageBuilder()
-                .appendLine(":coin: Heads!").build(), client).thenAccept { message ->
+                .appendLine(":coin: Heads!").build()).thenAccept { message ->
                 this.launch {
                     onComplete(message, client, true)
                 }
@@ -19,7 +19,7 @@ suspend fun coin(client: Client, event: MessageCreateEvent) = coroutineScope {
             return@coroutineScope
         } else {
             event.channel.sendMessage(MessageBuilder()
-                .appendLine(":coin: Tails!").build(), client).thenAccept { message ->
+                .appendLine(":coin: Tails!").build()).thenAccept { message ->
                 this.launch {
                     onComplete(message, client, true)
                 }

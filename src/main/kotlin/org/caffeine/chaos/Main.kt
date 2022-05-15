@@ -17,6 +17,7 @@ import kotlin.system.exitProcess
 
 //version lmao
 const val version: Float = 1.1F
+val programstarted = System.currentTimeMillis()
 
 suspend fun main(): Unit = coroutineScope {
     clear()

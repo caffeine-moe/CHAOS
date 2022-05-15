@@ -95,19 +95,19 @@ suspend fun ip(client: Client, event: MessageCreateEvent) = coroutineScope {
             .appendLine("**Incorrect usage** '${event.message.content}'")
             .appendLine("**Error:** No IP/URL specified")
             .appendLine("**Correct usage:** `${client.config.prefix}ip IP/URL`")
-            .build(), client)
+            .build())
             .thenAccept { message -> this.launch { onComplete(message, client, true) } }
     }
     if (event.message.content.lowercase()
             .startsWith("${client.config.prefix}ip ") && event.message.content.lowercase() != "${client.config.prefix}ip"
     ) {
-        event.channel.sendMessage(MessageBuilder().appendLine("Looking up IP/URL").build(), client)
+        event.channel.sendMessage(MessageBuilder().appendLine("Looking up IP/URL").build())
             .thenAccept { message ->
                 this.launch {
                     val url = event.message.content.replaceFirst("${client.config.prefix}ip ", "")
                     try {
                         val selectorManager = ActorSelectorManager(Dispatchers.IO)
-                        val con = aSocket(selectorManager).tcp().connect(url, 80)
+                        val con = aSocket(selectorManager).tcp().connect(url, 443)
                         val realhost = con.remoteAddress.toJavaAddress().hostname
                         val ip = withContext(Dispatchers.IO) {
                             InetAddress.getByName(realhost).hostAddress
@@ -133,7 +133,7 @@ suspend fun ip(client: Client, event: MessageCreateEvent) = coroutineScope {
                                     .appendLine("**Timezone:** ${parsedresponse.timezone.id}")
                                     .appendLine("**ISP:** ${parsedresponse.connection.isp}")
                                     .appendLine("**Proxy:** ${parsedresponse.security.proxy}")
-                                    .build(), client)
+                                    .build())
                                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                             }
                             false -> {
@@ -141,7 +141,7 @@ suspend fun ip(client: Client, event: MessageCreateEvent) = coroutineScope {
                                     .appendLine("Incorrect usage '${event.message.content}'")
                                     .appendLine("**Error:** ${parsedresponse.message}")
                                     .appendLine("**Correct usage:** `${client.config.prefix}ip IP/URL`")
-                                    .build(), client)
+                                    .build())
                                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                             }
                         }
@@ -152,7 +152,7 @@ suspend fun ip(client: Client, event: MessageCreateEvent) = coroutineScope {
                                     .appendLine("Incorrect usage '${event.message.content}'")
                                     .appendLine("Error: IP/URL '$url' is invalid.")
                                     .appendLine("Correct usage: `${client.config.prefix}ip IP/URL`")
-                                    .build(), client)
+                                    .build())
                                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                                 return@launch
                             }
@@ -160,7 +160,7 @@ suspend fun ip(client: Client, event: MessageCreateEvent) = coroutineScope {
                                 message.edit(MessageBuilder()
                                     .appendLine(":pensive: Connection timed out")
                                     .appendLine("Try a different IP or URL...")
-                                    .build(), client)
+                                    .build())
                                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                                 return@launch
                             }
@@ -169,7 +169,7 @@ suspend fun ip(client: Client, event: MessageCreateEvent) = coroutineScope {
                                     .appendLine("Incorrect usage '${event.message.content}'")
                                     .appendLine("Error: ${e.message}")
                                     .appendLine("Correct usage: `${client.config.prefix}ip IP/URL`")
-                                    .build(), client)
+                                    .build())
                                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                                 return@launch
                             }

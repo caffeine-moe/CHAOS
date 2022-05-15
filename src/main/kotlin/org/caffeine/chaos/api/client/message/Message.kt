@@ -1,6 +1,5 @@
 package org.caffeine.chaos.api.client.message
 
-import org.caffeine.chaos.api.client.Client
 import java.util.concurrent.CompletableFuture
 
 @kotlinx.serialization.Serializable
@@ -18,14 +17,13 @@ class Message(
     val referenced_message: Message? = null,
     val type: Int = 0,
 ) {
-    //val mentionedUsers: String
-    suspend fun edit(message: Message, client: Client): CompletableFuture<Message> {
-        return editMessage(this, client, message)
+    suspend fun edit(message: Message): CompletableFuture<Message> {
+        return editMessage(this, message)
     }
 
-    suspend fun delete(client: Client) {
+    suspend fun delete() {
         try {
-            deleteMessage(this, client)
+            deleteMessage(this)
         } catch (e: Exception) {
             e.printStackTrace()
         }

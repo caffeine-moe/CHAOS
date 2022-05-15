@@ -14,7 +14,7 @@ suspend fun figlet(client: Client, event: MessageCreateEvent) = coroutineScope {
             .appendLine("**Incorrect usage** '${event.message.content}'")
             .appendLine("**Error:** No specified text to figletize")
             .appendLine("**Correct usage:** `${client.config.prefix}figlet String`")
-            .build(), client)
+            .build())
             .thenAccept { message -> this.launch { onComplete(message, client, true) } }
     }
     if (event.message.content.lowercase()
@@ -25,7 +25,7 @@ suspend fun figlet(client: Client, event: MessageCreateEvent) = coroutineScope {
         val figletizedtext = FigletFont.convertOneLine(texttofigletize)
         event.channel.sendMessage(MessageBuilder()
             .appendLine("```$figletizedtext```")
-            .build(), client)
+            .build())
             .thenAccept { message ->
                 this.launch { onComplete(message, client, client.config.auto_delete.bot.content_generation) }
             }

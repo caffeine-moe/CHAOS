@@ -28,4 +28,4 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:2.0.1")
     implementation("io.ktor:ktor-client-content-negotiation:2.0.1")
     implementation("com.github.lalyos:jfiglet:0.0.9")
-}
+    implementation("com.github.oshi:oshi-core:6.1.6") }

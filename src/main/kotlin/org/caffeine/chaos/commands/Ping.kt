@@ -15,7 +15,7 @@ suspend fun ping(client: Client, event: MessageCreateEvent) = coroutineScope {
     if (event.message.content.lowercase() == "${client.config.prefix}ping") {
         event.channel.sendMessage(MessageBuilder()
             .appendLine("Pinging...")
-            .build(), client)
+            .build())
             .thenAccept { message ->
                 this.launch {
                     val start = System.currentTimeMillis()
@@ -30,7 +30,7 @@ suspend fun ping(client: Client, event: MessageCreateEvent) = coroutineScope {
                         .appendLine(":ping_pong: Pong!")
                         .appendLine("Target: Discord API")
                         .appendLine("Latency: ${ping}ms")
-                        .build(), client)
+                        .build())
                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 }
             }
@@ -40,7 +40,7 @@ suspend fun ping(client: Client, event: MessageCreateEvent) = coroutineScope {
     ) {
         event.channel.sendMessage(MessageBuilder()
             .appendLine("Pinging...")
-            .build(), client)
+            .build())
             .thenAccept { message ->
                 this.launch {
                     val url = event.message.content.replaceFirst("${client.config.prefix}ping ", "")
@@ -56,7 +56,7 @@ suspend fun ping(client: Client, event: MessageCreateEvent) = coroutineScope {
                                     .appendLine("Incorrect usage '${event.message.content}'")
                                     .appendLine("Error: IP/URL '$url' is invalid.")
                                     .appendLine("Correct usage: `${client.config.prefix}ping IP/URL`")
-                                    .build(), client)
+                                    .build())
                                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                                 return@launch
                             }
@@ -64,14 +64,14 @@ suspend fun ping(client: Client, event: MessageCreateEvent) = coroutineScope {
                                 message.edit(MessageBuilder()
                                     .appendLine(":pensive: Connection timed out")
                                     .appendLine("Try a different IP or URL...")
-                                    .build(), client)
+                                    .build())
                                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                                 return@launch
                             }
                             else -> {
                                 message.edit(MessageBuilder()
                                     .appendLine("Error: $e")
-                                    .build(), client)
+                                    .build())
                                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                                 return@launch
                             }
@@ -83,7 +83,7 @@ suspend fun ping(client: Client, event: MessageCreateEvent) = coroutineScope {
                         .appendLine(":ping_pong: Pong!")
                         .appendLine("Target: $url")
                         .appendLine("Latency: ${ping}ms")
-                        .build(), client)
+                        .build())
                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 }
             }
