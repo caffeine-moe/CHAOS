@@ -4,12 +4,11 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.Message
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
 class Avatar : Command(arrayOf("av", "avatar")) {
-    override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>) =
+    override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
         coroutineScope {
             if (args.isNotEmpty() && event.message.mentions.isEmpty()) {
                 event.channel.sendMessage(
@@ -28,11 +27,11 @@ class Avatar : Command(arrayOf("av", "avatar")) {
             val avatarURL: String
 
             if (args.isEmpty()) {
-                userName = client.user.discriminatedName;
+                userName = client.user.discriminatedName
                 avatarURL = client.user.avatarUrl()
             } else {
-                val user = event.message.mentions.first();
-                userName = user.discriminatedName;
+                val user = event.message.mentions.first()
+                userName = user.discriminatedName
                 avatarURL = user.avatarUrl()
             }
 

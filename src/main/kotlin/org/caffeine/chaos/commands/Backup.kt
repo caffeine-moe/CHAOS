@@ -4,6 +4,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.caffeine.chaos.Command
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
@@ -12,22 +13,28 @@ import java.nio.file.Files
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-suspend fun backup(client: Client, event: MessageCreateEvent) = coroutineScope {
-    val ftime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yy_hh:mm:ss"))
-    if (event.message.content.lowercase() == ("${client.config.prefix}backup")) {
+class Backup : Command(arrayOf("backup")) {
+    override suspend fun onCalled(
+        client: Client,
+        event: MessageCreateEvent,
+        args: MutableList<String>,
+        cmd: String,
+    ): Unit = coroutineScope {
+        val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yy_hh:mm:ss"))
         event.channel.sendMessage(MessageBuilder().append("Performing backup...").build())
             .thenAccept { message ->
-                this.launch {
-                    val textToWrite = "================================ SERVERS ================================\n" +
-                            "${client.user.guilds.getListAsString()}\n" +
-                            "================================ FRIENDS ================================\n" +
-                            "${client.user.friends.getList()}"
+                launch {
+                    val textToWrite =
+                        "================================ SERVERS ================================\n" +
+                                "${client.user.guilds.getListAsString()}\n" +
+                                "================================ FRIENDS ================================\n" +
+                                "${client.user.friends.getList()}"
                     val p = File("Backup")
                     if (!p.exists()) {
                         p.mkdir()
                     }
                     if (p.absolutePath.startsWith("/")) {
-                        val f = File("${p.absolutePath}/$ftime")
+                        val f = File("${p.absolutePath}/$time")
                         withContext(Dispatchers.IO) {
                             Files.createFile(f.toPath())
                         }
@@ -39,7 +46,7 @@ suspend fun backup(client: Client, event: MessageCreateEvent) = coroutineScope {
                                 .appendLine("Backup successful!")
                                 .appendLine("Saved to: ${f.toPath()}")
                                 .build()).thenAccept { message ->
-                                this.launch {
+                                launch {
                                     try {
                                         onComplete(message, client, true)
                                     } catch (e: Exception) {
@@ -52,7 +59,7 @@ suspend fun backup(client: Client, event: MessageCreateEvent) = coroutineScope {
                             e.printStackTrace()
                         }
                     }
-                    val f = File("${p.absolutePath}\\$ftime")
+                    val f = File("${p.absolutePath}\\$time")
                     withContext(Dispatchers.IO) {
                         Files.createFile(f.toPath())
                     }
@@ -63,7 +70,7 @@ suspend fun backup(client: Client, event: MessageCreateEvent) = coroutineScope {
                         .appendLine("Backup successful!")
                         .appendLine("Saved to: ${f.toPath()}")
                         .build()).thenAccept { message ->
-                        this.launch {
+                        launch {
                             onComplete(message, client, true)
                         }
                     }

@@ -6,7 +6,6 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.*
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.handleMessage
-import org.caffeine.chaos.messageHandler
 
 @Serializable
 private data class MessageCreate(
@@ -46,7 +45,6 @@ suspend fun messageCreate(payload: String, client: Client) {
         )
         val message = Message(d.id, d.content, d.channel_id, messageAuthor, d.attachments, mentions = d.mentions)
         val event = MessageCreateEvent(message, client, MessageChannel(d.channel_id))
-        messageHandler(event, client)
         handleMessage(event, client)
     } catch (e: Exception) {
         println(payload)
