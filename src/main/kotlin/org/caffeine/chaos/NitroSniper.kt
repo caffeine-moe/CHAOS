@@ -6,9 +6,9 @@ import org.caffeine.chaos.api.client.ClientUserRedeemedCodeStatus
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
 suspend fun nitroSniper(event: MessageCreateEvent, client: Client) {
-    val rg = ("discord.gift/" + ".{16,24}".toRegex()).toRegex()
+    val rg = ("https://discord.gift/" + ".{16,24}".toRegex()).toRegex()
     if (rg.matches(event.message.content)) {
-        val code = event.message.content.removePrefix("discord.gift/")
+        val code = event.message.content.removePrefix("https://discord.gift/")
         client.user.redeemCode(code).thenAccept { rc ->
             if (client.config.logger.nitro_sniper) {
                 when (rc.status) {
