@@ -6,7 +6,7 @@ import org.caffeine.chaos.api.client.message.MessageCreateEvent
 abstract class Command(commandNames: Array<String>) {
     init {
         for (name in commandNames) {
-            commandList[name] = this
+            this.also { commandList[name] = it }
         }
     }
 
