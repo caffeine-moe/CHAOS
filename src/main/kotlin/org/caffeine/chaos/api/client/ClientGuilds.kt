@@ -2,6 +2,7 @@ package org.caffeine.chaos.api.client
 
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.BASE_URL
@@ -48,5 +49,15 @@ class ClientGuilds(val client: Client) {
             sb.appendLine("${item.name} : ${item.id}")
         }
         return sb.toString()
+    }
+
+    suspend fun getListAsJsonObject(): List<ClientGuild> {
+        val response = discordHTTPClient.request("$BASE_URL/users/@me/guilds") {
+            method = HttpMethod.Get
+            headers {
+                append(HttpHeaders.Authorization, client.config.token)
+            }
+        }
+        return json.decodeFromString(response.bodyAsText())
     }
 }

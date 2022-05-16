@@ -4,75 +4,65 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.ClientFriend
+import org.caffeine.chaos.api.client.ClientGuild
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.json
 import java.io.File
 import java.nio.file.Files
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class Backup : Command(arrayOf("backup")) {
+
+    @kotlinx.serialization.Serializable
+    data class BackupStructure(
+        val friends: List<ClientFriend>,
+        val guilds: List<ClientGuild>,
+    )
+
     override suspend fun onCalled(
         client: Client,
         event: MessageCreateEvent,
         args: MutableList<String>,
         cmd: String,
     ): Unit = coroutineScope {
-        val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yy_hh:mm:ss"))
+        val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yy_HH:mm:ss"))
         event.channel.sendMessage(MessageBuilder().append("Performing backup...").build())
             .thenAccept { message ->
                 launch {
-                    val textToWrite =
-                        "================================ SERVERS ================================\n" +
-                                "${client.user.guilds.getListAsString()}\n" +
-                                "================================ FRIENDS ================================\n" +
-                                "${client.user.friends.getList()}"
+                    val friends = client.user.friends.getListAsJsonObject()
+                    val guilds = client.user.guilds.getListAsJsonObject()
+                    val textToWrite = json.encodeToString(BackupStructure(friends, guilds))
                     val p = File("Backup")
                     if (!p.exists()) {
                         p.mkdir()
                     }
+                    var f: File
+                    f = File("${p.absolutePath}\\$time")
                     if (p.absolutePath.startsWith("/")) {
-                        val f = File("${p.absolutePath}/$time")
-                        withContext(Dispatchers.IO) {
-                            Files.createFile(f.toPath())
-                        }
-                        File(
-                            f.toPath().toString()
-                        ).writeText(textToWrite)
-                        try {
-                            message.edit(MessageBuilder()
-                                .appendLine("Backup successful!")
-                                .appendLine("Saved to: ${f.toPath()}")
-                                .build()).thenAccept { message ->
-                                launch {
-                                    try {
-                                        onComplete(message, client, true)
-                                    } catch (e: Exception) {
-                                        e.printStackTrace()
-                                    }
-                                }
-                            }
-                            return@launch
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
+                        f = File("${p.absolutePath}/$time")
                     }
-                    val f = File("${p.absolutePath}\\$time")
                     withContext(Dispatchers.IO) {
                         Files.createFile(f.toPath())
                     }
-                    File(
-                        f.toPath().toString()
-                    ).writeText(textToWrite)
-                    message.edit(MessageBuilder()
-                        .appendLine("Backup successful!")
-                        .appendLine("Saved to: ${f.toPath()}")
-                        .build()).thenAccept { message ->
-                        launch {
-                            onComplete(message, client, true)
+                    File(f.toPath().toString()).writeText(textToWrite)
+                    try {
+                        message.edit(MessageBuilder()
+                            .appendLine("Backup successful!")
+                            .appendLine("Saved to: ${f.absolutePath}")
+                            .build()).thenAccept { message ->
+                            launch {
+                                onComplete(message, client, true)
+                            }
                         }
+                        return@launch
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
                 }
             }
