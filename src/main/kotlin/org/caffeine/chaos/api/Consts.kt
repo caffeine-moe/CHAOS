@@ -29,6 +29,7 @@ val jsonc = Json {
     ignoreUnknownKeys = true
     coerceInputValues = true
 }
+val jsonp = Json { prettyPrint = true }
 
 val normalHTTPClient: HttpClient = HttpClient(CIO) {
     install(WebSockets)

@@ -11,7 +11,7 @@ import org.caffeine.chaos.api.client.ClientFriend
 import org.caffeine.chaos.api.client.ClientGuild
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.api.json
+import org.caffeine.chaos.api.jsonp
 import java.io.File
 import java.nio.file.Files
 import java.time.LocalDateTime
@@ -37,15 +37,15 @@ class Backup : Command(arrayOf("backup")) {
                 launch {
                     val friends = client.user.friends.getListAsJsonObject()
                     val guilds = client.user.guilds.getListAsJsonObject()
-                    val textToWrite = json.encodeToString(BackupStructure(friends, guilds))
+                    val textToWrite = jsonp.encodeToString(BackupStructure(friends, guilds))
                     val p = File("Backup")
                     if (!p.exists()) {
                         p.mkdir()
                     }
                     var f: File
-                    f = File("${p.absolutePath}\\$time")
+                    f = File("${p.absolutePath}\\$time.json")
                     if (p.absolutePath.startsWith("/")) {
-                        f = File("${p.absolutePath}/$time")
+                        f = File("${p.absolutePath}/$time.json")
                     }
                     withContext(Dispatchers.IO) {
                         Files.createFile(f.toPath())
