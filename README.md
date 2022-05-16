@@ -14,7 +14,7 @@ Join our discord! : https://discord.gg/ASukH9Juxz
 
 ## Features (Still under construction)
 - Fully custom discord API/Gateway interaction.
-- ~250ms Nitro Sniper
+- ~450ms Nitro Sniper
 - Deleted message logger
 - Leave all group DMs
 - DM scammer/spammer auto blocker
