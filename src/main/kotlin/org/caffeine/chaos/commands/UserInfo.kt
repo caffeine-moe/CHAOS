@@ -9,20 +9,20 @@ import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
 
 class UserInfo : Command(arrayOf("info", "userinfo")) {
-    override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
+    override suspend fun onCalled(
+        client: Client,
+        event: MessageCreateEvent,
+        args: MutableList<String>,
+        cmd: String,
+    ): Unit =
         coroutineScope {
+            var error = ""
             if (args.isEmpty() && event.message.mentions.isEmpty()) {
-                event.channel.sendMessage(
-                    MessageBuilder()
-                        .appendLine("Incorrect usage '${event.message.content}'")
-                        .appendLine("Error: No users were mentioned.")
-                        .appendLine("Correct usage: `${client.config.prefix}info @user`")
-                        .build()).thenAccept { message ->
-                    this.launch { onComplete(message, client, true) }
-                }
-                return@coroutineScope
+                error = "Error: No users were mentioned."
+            } else if (event.message.mentions.isEmpty() && args.isNotEmpty()) {
+                error = "Error: '${args.joinToString(" ")}' is not a mentioned user."
             }
-            if (event.message.mentions.isNotEmpty()) {
+            if (error.isNotBlank()) {
                 val usr = event.message.mentions.first()
                 val usrinfo = event.message.mentions.first().userInfo()
                 val sdf = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -47,16 +47,14 @@ class UserInfo : Command(arrayOf("info", "userinfo")) {
                     return@thenAccept
                 }
             }
-            if (event.message.mentions.isEmpty() && args.isNotEmpty()) {
-                event.channel.sendMessage(
-                    MessageBuilder()
-                        .appendLine("Incorrect usage '${event.message.content}'")
-                        .appendLine("Error: '${args.joinToString(" ")}' is not a mentioned user.")
-                        .appendLine("Correct usage: `${client.config.prefix}info @user`")
-                        .build()).thenAccept { message ->
-                    this.launch { onComplete(message, client, true) }
-                    return@thenAccept
-                }
+            event.channel.sendMessage(
+                MessageBuilder()
+                    .appendLine("Incorrect usage '${event.message.content}'")
+                    .appendLine(error)
+                    .appendLine("Correct usage: `${client.config.prefix}info @user`")
+                    .build()).thenAccept { message ->
+                this.launch { onComplete(message, client, true) }
+                return@thenAccept
             }
         }
 }
