@@ -37,10 +37,10 @@ class Backup : Command(arrayOf("backup")) {
         event.channel.sendMessage(MessageBuilder().append("Performing backup...").build())
             .thenAccept { message ->
                 launch {
-                    val blocklist = client.user.relationships.blockedUsers.getList()
+                    val blockList = client.user.relationships.blockedUsers.getList()
                     val friends = client.user.relationships.friends.getList()
                     val guilds = client.user.guilds.getList()
-                    val textToWrite = jsonp.encodeToString(BackupStructure(blocklist, friends, guilds))
+                    val textToWrite = jsonp.encodeToString(BackupStructure(blockList, friends, guilds))
                     val p = File("Backup")
                     if (!p.exists()) {
                         p.mkdir()
