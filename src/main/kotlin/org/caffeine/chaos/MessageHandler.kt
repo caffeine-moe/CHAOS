@@ -20,6 +20,7 @@ fun registerCommands() {
     Purge()
     SPurge()
     Backup()
+    Restore()
     //exchange(client, event)
     Coin()
     Clear()
