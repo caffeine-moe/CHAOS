@@ -35,15 +35,13 @@ class Haste : Command(arrayOf("haste")) {
                 if (!event.message.attachments.isNullOrEmpty()) {
                     try {
                         body = normalHTTPClient.get(event.message.attachments?.first()?.url.toString()).bodyAsText()
-                    } catch (e: Exception) {
-                        if (e is MalformedInputException) {
-                            val filename = event.message.attachments?.first()?.filename
-                            message.edit(MessageBuilder().appendLine("**Incorrect usage** '${event.message.content} [$filename]'")
-                                .appendLine("**Error:** Unable to parse text from attached file. You must only upload text documents.")
-                                .appendLine("**Correct usage:** `${client.config.prefix}haste [file.txt]`").build())
-                                .thenAccept { this@coroutineScope.launch { onComplete(it, client, true) } }
-                            return@launch
-                        }
+                    } catch (e: MalformedInputException) {
+                        val filename = event.message.attachments?.first()?.filename
+                        message.edit(MessageBuilder().appendLine("**Incorrect usage** '${event.message.content} [$filename]'")
+                            .appendLine("**Error:** Unable to parse text from attached file. You must only upload text documents.")
+                            .appendLine("**Correct usage:** `${client.config.prefix}haste [file.txt]`").build())
+                            .thenAccept { this@coroutineScope.launch { onComplete(it, client, true) } }
+                        return@launch
                     }
                 }
                 if (args.isEmpty() && event.message.attachments.isNullOrEmpty()) {
