@@ -21,11 +21,12 @@ data class ClientUser(
     val email: String?,
     val bio: String?,
     val avatar: String?,
-    val friends: ClientFriends,
+    val relationships: ClientRelationships,
     val guilds: ClientGuilds,
     val channels: ClientChannels,
     val client: Client,
-) {
+)
+{
     val discriminatedName = "$username#$discriminator"
     fun avatarUrl(): String {
         var av = ""
@@ -131,7 +132,7 @@ data class ClientUser(
                 append(HttpHeaders.Authorization, client.config.token)
                 append("Content-Type", "application/json")
             }
-            setBody(json.encodeToString(ClientRelationships(2)))
+            setBody(json.encodeToString("{type: 2}"))
         }
     }
 }

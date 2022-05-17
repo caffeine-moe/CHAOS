@@ -9,6 +9,7 @@ import org.caffeine.chaos.Command
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientFriend
 import org.caffeine.chaos.api.client.ClientGuild
+import org.caffeine.chaos.api.client.DiscordUser
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.api.jsonp
@@ -21,6 +22,7 @@ class Backup : Command(arrayOf("backup")) {
 
     @kotlinx.serialization.Serializable
     data class BackupStructure(
+        val blocklist: List<DiscordUser>,
         val friends: List<ClientFriend>,
         val guilds: List<ClientGuild>,
     )
@@ -35,9 +37,10 @@ class Backup : Command(arrayOf("backup")) {
         event.channel.sendMessage(MessageBuilder().append("Performing backup...").build())
             .thenAccept { message ->
                 launch {
-                    val friends = client.user.friends.getListAsJsonObject()
-                    val guilds = client.user.guilds.getListAsJsonObject()
-                    val textToWrite = jsonp.encodeToString(BackupStructure(friends, guilds))
+                    val blocklist = client.user.relationships.blockedUsers.getList()
+                    val friends = client.user.relationships.friends.getList()
+                    val guilds = client.user.guilds.getList()
+                    val textToWrite = jsonp.encodeToString(BackupStructure(blocklist, friends, guilds))
                     val p = File("Backup")
                     if (!p.exists()) {
                         p.mkdir()
