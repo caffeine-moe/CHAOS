@@ -43,7 +43,7 @@ class UserInfo : Command(arrayOf("info", "userinfo")) {
                         .appendLine("**Public Flags:** ${usrInfo.publicFlags}")
                         .appendLine("**Account Creation Date:** $acd")
                         .build()).thenAccept { message ->
-                    this.launch { onComplete(message, client, true) }
+                    this.launch { onComplete(message, client, client.config.auto_delete.bot.content_generation) }
                 }
                 return@coroutineScope
             }
