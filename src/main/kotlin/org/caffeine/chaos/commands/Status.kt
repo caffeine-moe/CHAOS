@@ -15,4 +15,3 @@ class Status : Command(arrayOf("online", "idle", "away", "dnd", "donotdisturb", 
         }
     }
 }
-

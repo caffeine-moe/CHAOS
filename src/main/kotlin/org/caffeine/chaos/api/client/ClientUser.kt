@@ -25,8 +25,7 @@ data class ClientUser(
     val guilds: ClientGuilds,
     val channels: ClientChannels,
     val client: Client,
-)
-{
+) {
     val discriminatedName = "$username#$discriminator"
     fun avatarUrl(): String {
         var av = ""

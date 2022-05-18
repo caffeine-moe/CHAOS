@@ -23,7 +23,7 @@ data class ClientFriends(val client: Client) {
         }
         val final = json.decodeFromString<List<ClientRelationship>>(response.body())
         for (friend in final) {
-            if (friend.type == 1){
+            if (friend.type == 1) {
                 number++
             }
         }

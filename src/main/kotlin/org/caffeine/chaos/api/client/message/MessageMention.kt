@@ -5,8 +5,11 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
-import org.caffeine.chaos.api.*
+import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.client.DiscordUserInfo
+import org.caffeine.chaos.api.discordHTTPClient
+import org.caffeine.chaos.api.jsonc
+import org.caffeine.chaos.api.token
 
 @Serializable
 data class MessageMention(

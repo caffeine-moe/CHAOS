@@ -12,4 +12,3 @@ class Clear : Command(arrayOf("clear")) {
         loginPrompt(client)
     }
 }
-
