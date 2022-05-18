@@ -15,7 +15,7 @@ import org.caffeine.chaos.api.client.message.MessageCreateEvent
 class Upload : Command(arrayOf("upload")) {
     override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
         coroutineScope {
-            if (event.message.attachments.isNullOrEmpty()) {
+            if (event.message.attachments.isEmpty()) {
                 event.channel.sendMessage(MessageBuilder()
                     .appendLine("**Incorrect usage** '${event.message.content}'")
                     .appendLine("**Error:** Message has no attachments!")
@@ -28,7 +28,7 @@ class Upload : Command(arrayOf("upload")) {
                 .appendLine("Uploading...")
                 .build()).thenAccept { message ->
                 this.launch {
-                    val attachmentUrl = event.message.attachments!!.first().url
+                    val attachmentUrl = event.message.attachments.first().url
                     val rsp = HttpClient().request("https://0x0.st") {
                         method = HttpMethod.Post
                         setBody(MultiPartFormDataContent(
