@@ -44,8 +44,8 @@ class UserInfo : Command(arrayOf("info", "userinfo")) {
                         .appendLine("**Account Creation Date:** $acd")
                         .build()).thenAccept { message ->
                     this.launch { onComplete(message, client, true) }
-                    return@thenAccept
                 }
+                return@coroutineScope
             }
             event.channel.sendMessage(
                 MessageBuilder()
