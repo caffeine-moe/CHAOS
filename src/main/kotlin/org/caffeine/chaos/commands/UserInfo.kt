@@ -22,7 +22,7 @@ class UserInfo : Command(arrayOf("info", "userinfo")) {
             } else if (event.message.mentions.isEmpty() && args.isNotEmpty()) {
                 error = "Error: '${args.joinToString(" ")}' is not a mentioned user."
             }
-            if (error.isNotBlank()) {
+            if (error.isBlank()) {
                 val usr = event.message.mentions.first()
                 val usrInfo = event.message.mentions.first().userInfo()
                 val sdf = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
