@@ -21,8 +21,8 @@ class Ping : Command(arrayOf("ping")) {
                     .build())
                     .thenAccept { message ->
                         this.launch {
-                            val start = System.currentTimeMillis()
                             val selectorManager = ActorSelectorManager(Dispatchers.IO)
+                            val start = System.currentTimeMillis()
                             val serverSocket = aSocket(selectorManager).tcp().connect("gateway.discord.gg", 80)
                             val stop = System.currentTimeMillis()
                             withContext(Dispatchers.IO) {

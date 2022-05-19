@@ -17,11 +17,11 @@ suspend fun antiScam(client: Client, event: MessageCreateEvent) {
         val scam = scamLinks.any { link -> scamLink = link; event.message.content.contains(link) }
         if (scam) {
             if (client.config.logger.anti_scam) {
-                log("Found scam link \"${scamLink}\" in channel ${event.channel.id} by ${event.message.author.discriminatedName} in ${(start - System.currentTimeMillis()).absoluteValue}ms.",
+                log("Found scam link \"${scamLink}\" in channel ${event.channel.id} by ${event.message.author.discriminatedName} in ${(System.currentTimeMillis() - start).absoluteValue}ms.",
                     "ANTI SCAM:")
                 if (client.config.anti_scam.block) {
                     client.user.block(event.message.author.id)
-                    log("Blocked user ${event.message.author.discriminatedName} in ${(start - System.currentTimeMillis()).absoluteValue}ms.",
+                    log("Blocked user ${event.message.author.discriminatedName} in ${(System.currentTimeMillis() - start).absoluteValue}ms.",
                         "ANTI SCAM:")
                     return
                 }
