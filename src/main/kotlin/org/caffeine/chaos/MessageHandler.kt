@@ -69,8 +69,10 @@ suspend fun handleMessage(event: MessageCreateEvent, client: Client) {
             command.onCalled(client, event, args, commandName)
         }
 
-        if (client.config.anti_scam.enabled) {
-            antiScam(client, event)
-        }
     }
+
+    if (client.config.anti_scam.enabled) {
+        antiScam(client, event)
+    }
+
 }
