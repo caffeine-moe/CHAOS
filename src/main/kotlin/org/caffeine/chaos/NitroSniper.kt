@@ -5,12 +5,20 @@ import org.caffeine.chaos.api.client.ClientUserRedeemedCodeError
 import org.caffeine.chaos.api.client.ClientUserRedeemedCodeStatus
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
+//executed whenever a message is received
 suspend fun nitroSniper(event: MessageCreateEvent, client: Client) {
+    //regex for a discord gift (nitro) link
     val rg = ("https://discord.gift/" + ".{16,24}".toRegex()).toRegex()
+    //if the message content matches the regex (contains a nitro link) then do stuff
     if (rg.matches(event.message.content)) {
+        //removes the url prefix to get the code
         val code = event.message.content.removePrefix("https://discord.gift/")
+        //redeems the code then on completion does stuff
         client.user.redeemCode(code).thenAccept { rc ->
+            //if the nitro sniper logger is enabled then do stuff
             if (client.config.logger.nitro_sniper) {
+                //when the redeemer function returns success, print that the code was redeemed etc.
+                //when the redeemer function returns invalid and the error is that the code is unknown, say that the code was invalid.
                 when (rc.status) {
                     ClientUserRedeemedCodeStatus.SUCCESS -> {
                         log("Redeemed code ${rc.code} from ${event.message.author.discriminatedName} in ${event.channel.id}! (${rc.latency}ms)", "NITRO SNIPER:")
