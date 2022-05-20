@@ -3,19 +3,25 @@ package org.caffeine.chaos
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+//clears console and sets colour to white
 fun clear() {
     print("\u001b[H\u001b[2J\u001B[38;5;255m")
 }
 
+//logger utility
 fun log(text: String, prefix: String = "") {
+    //gets current date and time
     val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss"))
-    if (prefix != "") {
+    //if the prefix parameter is not blank then log the message with the specified prefix
+    if (prefix.isNotBlank()) {
         println("\u001B[38;5;255m[\u001B[38;5;33m${time}\u001B[38;5;255m] $prefix \u001B[38;5;33m$text")
         return
     }
+    //if the prefix is blank then log the message with the default prefix
     println("\u001B[38;5;255m[\u001B[38;5;33m${time}\u001B[38;5;255m] CHAOS: \u001B[38;5;33m$text")
 }
 
+//prints edgy hackerman logo
 fun printLogo() {
     println("\u001B[38;5;255m" +
             " ▄████▄   ██░ ██  ▄▄▄       ▒█████    ██████ \n" +
@@ -31,6 +37,7 @@ fun printLogo() {
     )
 }
 
+//prints line separator lol
 fun printSeparator() {
     println("\u001B[38;5;255m─────────────────────────────────────────────")
 }
