@@ -124,6 +124,11 @@ data class ClientUser(
         return true
     }
 
+    @kotlinx.serialization.Serializable
+    private data class Type(
+        val type: Int
+    )
+
     suspend fun block(userid: String) {
         discordHTTPClient.request("$BASE_URL/users/@me/relationships/$userid") {
             method = HttpMethod.Put
@@ -131,7 +136,7 @@ data class ClientUser(
                 append(HttpHeaders.Authorization, client.config.token)
                 append("Content-Type", "application/json")
             }
-            setBody(json.encodeToString("{type: 2}"))
+            setBody(json.encodeToString(Type(2)))
         }
     }
 }
