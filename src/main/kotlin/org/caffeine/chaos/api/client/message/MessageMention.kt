@@ -6,6 +6,7 @@ import io.ktor.http.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.BASE_URL
+import org.caffeine.chaos.api.client.DiscordUser
 import org.caffeine.chaos.api.client.DiscordUserInfo
 import org.caffeine.chaos.api.discordHTTPClient
 import org.caffeine.chaos.api.jsonc
@@ -13,11 +14,11 @@ import org.caffeine.chaos.api.token
 
 @Serializable
 data class MessageMention(
-    val username: String,
-    val discriminator: String,
-    val id: String,
-    val avatar: String? = "",
-) {
+    override val username: String,
+    override val discriminator: String,
+    override val id: String,
+    override val avatar: String? = "",
+) : DiscordUser(username, discriminator, id, avatar) {
     val discriminatedName = "$username#$discriminator"
     fun avatarUrl(): String {
         var av = "null"

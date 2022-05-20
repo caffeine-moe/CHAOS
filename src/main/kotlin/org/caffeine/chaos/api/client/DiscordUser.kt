@@ -1,11 +1,12 @@
 package org.caffeine.chaos.api.client
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @Serializable
-data class DiscordUser(
-    val username: String,
-    val discriminator: String,
-    val id: String,
-    val avatar: String?,
+open class DiscordUser(
+    @Transient open val username: String = "",
+    @Transient open val discriminator: String = "",
+    @Transient open val id: String = "",
+    @Transient open val avatar: String? = "",
 )
