@@ -4,9 +4,12 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.commands.*
 
+//HashMap of commands
 var commandList: HashMap<String, Command> = HashMap()
 
+//spam stopper, if true, stops the message spammer
 var spamCock = false
+//purge stopper, if true, stops the message purger
 var purgeCock = false
 
 //loads all the commands into the hashmap commandList
