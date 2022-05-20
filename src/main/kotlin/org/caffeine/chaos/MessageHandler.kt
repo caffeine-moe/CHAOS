@@ -53,13 +53,7 @@ suspend fun handleMessage(event: MessageCreateEvent, client: Client) {
         //if the message starts with the configured prefix and isn't just the prefix
         //then remove the prefix and set the first item in the message (the command) as a value
         if (event.message.content.startsWith(client.config.prefix) && event.message.content != client.config.prefix) {
-            val commandName: String
-            try {
-                commandName =
-                    event.message.content.lowercase().replaceFirst(client.config.prefix, "").split(" ").first()
-            } catch (e: Exception) {
-                return
-            }
+            val commandName: String = event.message.content.lowercase().replaceFirst(client.config.prefix, "").split(" ").first()
             //creates a new command object and
             //checks if the first item in the message (commandName) is a command and matches it to the command in the HashMap commandList.
             //if it can't, return
