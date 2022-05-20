@@ -17,6 +17,7 @@ import kotlin.system.exitProcess
 
 //version lmao
 const val version: Float = 1.1F
+
 //gets time in ms when program starts
 val programStartedTime = System.currentTimeMillis()
 

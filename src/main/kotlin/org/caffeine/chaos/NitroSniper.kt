@@ -21,11 +21,13 @@ suspend fun nitroSniper(event: MessageCreateEvent, client: Client) {
                 //when the redeemer function returns invalid and the error is that the code is unknown, say that the code was invalid.
                 when (rc.status) {
                     ClientUserRedeemedCodeStatus.SUCCESS -> {
-                        log("Redeemed code ${rc.code} from ${event.message.author.discriminatedName} in ${event.channel.id}! (${rc.latency}ms)", "NITRO SNIPER:")
+                        log("Redeemed code ${rc.code} from ${event.message.author.discriminatedName} in ${event.channel.id}! (${rc.latency}ms)",
+                            "NITRO SNIPER:")
                     }
                     ClientUserRedeemedCodeStatus.INVALID -> {
                         if (rc.error == ClientUserRedeemedCodeError.UNKNOWN_CODE) {
-                            log("Code ${rc.code} from ${event.message.author.discriminatedName} in ${event.channel.id} was invalid! (${rc.latency}ms)", "NITRO SNIPER:")
+                            log("Code ${rc.code} from ${event.message.author.discriminatedName} in ${event.channel.id} was invalid! (${rc.latency}ms)",
+                                "NITRO SNIPER:")
                         }
                     }
                 }

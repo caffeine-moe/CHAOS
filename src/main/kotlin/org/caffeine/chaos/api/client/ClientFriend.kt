@@ -14,7 +14,8 @@ data class ClientFriend(
     override val username: String,
     override val discriminator: String,
     override val id: String,
-    override val avatar: String?,) : DiscordUser(username, discriminator, id, avatar) {
+    override val avatar: String?,
+) : DiscordUser(username, discriminator, id, avatar) {
     val discriminatedName = "$username#$discriminator"
     fun avatarUrl(): String {
         var av = "null"
@@ -54,4 +55,4 @@ data class ClientFriend(
             de.username
         )
     }
-    }
+}
