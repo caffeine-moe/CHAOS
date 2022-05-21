@@ -10,13 +10,4 @@ data class MessageAuthor(
     override val discriminator: String,
     override val id: String,
     override val avatar: String? = "",
-) : DiscordUser(username, discriminator, id, avatar) {
-    val discriminatedName = "$username#$discriminator"
-    suspend fun blocked(client: Client) : Boolean {
-        var torf = false
-        if (client.user.relationships.blockedUsers.getList().contains(this)) {
-            torf = true
-        }
-        return torf
-    }
-}
+) : DiscordUser(username, discriminator, id, avatar)
