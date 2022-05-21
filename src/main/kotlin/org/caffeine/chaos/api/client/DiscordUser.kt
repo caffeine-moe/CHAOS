@@ -18,7 +18,7 @@ open class DiscordUser(
     @Transient open val id: String = "",
     @Transient open val avatar: String? = "",
 ) {
-    val discriminatedName = "$username#$discriminator"
+    @Transient open val discriminatedName = ""
     fun avatarUrl(): String {
         var av = "null"
         if (!avatar.isNullOrBlank()) {

@@ -1,8 +1,6 @@
 package org.caffeine.chaos.api.client.message
 
-import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.DiscordUser
-import org.caffeine.chaos.api.discordHTTPClient
 
 @kotlinx.serialization.Serializable
 data class MessageAuthor(
@@ -10,4 +8,6 @@ data class MessageAuthor(
     override val discriminator: String,
     override val id: String,
     override val avatar: String? = "",
-) : DiscordUser(username, discriminator, id, avatar)
+) : DiscordUser(username, discriminator, id, avatar) {
+    override val discriminatedName = "$username#$discriminator"
+}
