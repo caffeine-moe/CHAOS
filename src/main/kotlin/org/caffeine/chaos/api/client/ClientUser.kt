@@ -15,26 +15,17 @@ import kotlin.math.absoluteValue
 @kotlinx.serialization.Serializable
 data class ClientUser(
     val verified: Boolean,
-    val username: String,
-    val discriminator: String,
-    val id: String,
+    override val username: String,
+    override val discriminator: String,
+    override val id: String,
     val email: String?,
     val bio: String?,
-    val avatar: String?,
+    override val avatar: String?,
     val relationships: ClientRelationships,
     val guilds: ClientGuilds,
     val channels: ClientChannels,
     val client: Client,
-) {
-    val discriminatedName = "$username#$discriminator"
-    fun avatarUrl(): String {
-        var av = ""
-        if (!avatar.isNullOrBlank()) {
-            av = "https://cdn.discordapp.com/avatars/$id/$avatar?size=4096"
-        }
-        return av
-    }
-
+) : DiscordUser() {
     suspend fun setStatus(status: ClientStatusType) {
         when (status) {
             ClientStatusType.ONLINE -> {
