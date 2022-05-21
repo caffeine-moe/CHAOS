@@ -19,7 +19,7 @@ suspend fun antiScam(client: Client, event: MessageCreateEvent) {
             if (client.config.logger.anti_scam) {
                 log("Found scam link \"${scamLink}\" in channel ${event.channel.id} by ${event.message.author.discriminatedName} in ${(System.currentTimeMillis() - start).absoluteValue}ms.",
                     "ANTI SCAM:")
-                if (client.config.anti_scam.block && !event.message.author.blocked(client)) {
+                if (client.config.anti_scam.block && !event.message.author.isBlocked(client)) {
                     client.user.block(event.message.author.id)
                     log("Blocked user ${event.message.author.discriminatedName} in ${(System.currentTimeMillis() - start).absoluteValue}ms.",
                         "ANTI SCAM:")
