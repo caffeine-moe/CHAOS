@@ -57,4 +57,11 @@ open class DiscordUser(
             de.username
         )
     }
+    suspend fun isBlocked(client: Client) : Boolean {
+        var torf = false
+        if (client.user.relationships.blockedUsers.getList().contains(this)) {
+            torf = true
+        }
+        return torf
+    }
 }
