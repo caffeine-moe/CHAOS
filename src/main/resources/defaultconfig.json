@@ -43,7 +43,6 @@
     "enabled": true
   },
   "auto_bump": {
-    "enabled": true,
     "interval": 2,
     "error": [5, 15]
   }
