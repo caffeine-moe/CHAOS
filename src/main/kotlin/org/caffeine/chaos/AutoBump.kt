@@ -11,7 +11,7 @@ class AutoBump : Command(arrayOf("bump", "autobump", "sbump")) {
     override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) {
         var err = ""
         val logging = client.config.logger.auto_bump
-        if (cmd != "sbump") {
+        if (cmd != "sbump" && bumping.isNotEmpty()) {
             if (bumping.last().id == event.channel.id)
                 err = "Already bumping in this channel."
             autoBumpCock = false
