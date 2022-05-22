@@ -22,7 +22,7 @@ class Backup : Command(arrayOf("backup")) {
 
     @kotlinx.serialization.Serializable
     data class BackupStructure(
-        val blocklist: List<DiscordUser>,
+        val blockList: List<DiscordUser>,
         val friends: List<ClientFriend>,
         val guilds: List<ClientGuild>,
     )
