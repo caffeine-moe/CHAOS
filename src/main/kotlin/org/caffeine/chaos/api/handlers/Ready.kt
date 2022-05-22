@@ -52,7 +52,7 @@ suspend fun ready(client: Client, payload: String) {
         d.user.email,
         d.user.bio,
         d.user.avatar,
-        ClientFriends(client),
+        ClientRelationships(ClientFriends(client), ClientBlockedUsers(client)),
         ClientGuilds(client),
         ClientChannels(client),
         client

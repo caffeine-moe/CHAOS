@@ -14,7 +14,7 @@ Join our discord! : https://discord.gg/ASukH9Juxz
 
 ## Features (Still under construction)
 - Fully custom discord API/Gateway interaction.
-- ~250ms Nitro Sniper
+- ~450ms(*) Nitro Sniper
 - Deleted message logger
 - Leave all group DMs
 - DM scammer/spammer auto blocker
@@ -31,3 +31,6 @@ Join our discord! : https://discord.gg/ASukH9Juxz
 - Optical Character Recognition
 
 And many more!
+
+(*) https://www.speedtest.net/result/13161426797
+![image](https://user-images.githubusercontent.com/45857025/168665832-740ef04b-1511-46ef-be0b-37cf1b571a46.png)

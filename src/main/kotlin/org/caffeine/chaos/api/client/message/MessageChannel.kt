@@ -3,6 +3,8 @@ package org.caffeine.chaos.api.client.message
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.discordHTTPClient
@@ -47,6 +49,10 @@ class MessageChannel(
 
             if (newMessages.size < messagesPerRequest)
                 break
+
+            withContext(Dispatchers.IO) {
+                Thread.sleep(200)
+            }
         }
         return collection
     }

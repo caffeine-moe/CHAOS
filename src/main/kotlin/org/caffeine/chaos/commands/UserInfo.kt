@@ -4,59 +4,59 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.DiscordUser
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
 
 class UserInfo : Command(arrayOf("info", "userinfo")) {
-    override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
+    override suspend fun onCalled(
+        client: Client,
+        event: MessageCreateEvent,
+        args: MutableList<String>,
+        cmd: String,
+    ): Unit =
         coroutineScope {
-            if (args.isEmpty() && event.message.mentions.isEmpty()) {
+            var error = ""
+            var usr: DiscordUser = client.user
+            if (event.message.mentions.isNotEmpty()) {
+                usr = event.message.mentions.first()
+            } else if (event.message.mentions.isEmpty() && args.isNotEmpty()) {
+                error = "Error: '${args.joinToString(" ")}' is not a mentioned user."
+            }
+            if (error.isNotBlank()) {
                 event.channel.sendMessage(
                     MessageBuilder()
                         .appendLine("Incorrect usage '${event.message.content}'")
-                        .appendLine("Error: No users were mentioned.")
+                        .appendLine(error)
                         .appendLine("Correct usage: `${client.config.prefix}info @user`")
                         .build()).thenAccept { message ->
                     this.launch { onComplete(message, client, true) }
                 }
                 return@coroutineScope
             }
-            if (event.message.mentions.isNotEmpty()) {
-                val usr = event.message.mentions.first()
-                val usrinfo = event.message.mentions.first().userInfo()
-                val sdf = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-                val date = java.util.Date(client.convertIdToUnix(usrinfo.id))
-                val acd = sdf.format(date)
-                event.channel.sendMessage(
-                    MessageBuilder()
-                        .appendLine("**User info for ${usr.discriminatedName}**")
-                        .appendLine("**Id:** ${usrinfo.id}")
-                        .appendLine("**Username:** ${usrinfo.username}")
-                        .appendLine("**Discriminator:** ${usrinfo.discriminator}")
-                        .appendLine("**Avatar:** <${usrinfo.avatar}>")
-                        .appendLine("**Avatar Decoration:** ${usrinfo.avatarDecoration}")
-                        .appendLine("**Banner:** <${usrinfo.banner}>")
-                        .appendLine("**Banner Colour:** ${usrinfo.bannerColor}")
-                        .appendLine("**Accent Colour:** ${usrinfo.accentColor}")
-                        .appendLine("**Bot:** ${usrinfo.bot}")
-                        .appendLine("**Public Flags:** ${usrinfo.publicFlags}")
-                        .appendLine("**Account Creation Date:** $acd")
-                        .build()).thenAccept { message ->
-                    this.launch { onComplete(message, client, true) }
-                    return@thenAccept
-                }
+            val usrInfo = usr.userInfo()
+            val sdf = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+            val date = java.util.Date(client.convertIdToUnix(usrInfo.id))
+            val acd = sdf.format(date)
+            event.channel.sendMessage(
+                MessageBuilder()
+                    .appendLine("**User info for ${usr.discriminatedName}**")
+                    .appendLine("**Id:** ${usrInfo.id}")
+                    .appendLine("**Username:** ${usrInfo.username}")
+                    .appendLine("**Discriminator:** ${usrInfo.discriminator}")
+                    .appendLine("**Avatar:** <${usrInfo.avatar}>")
+                    .appendLine("**Avatar Decoration:** ${usrInfo.avatarDecoration}")
+                    .appendLine("**Banner:** <${usrInfo.banner}>")
+                    .appendLine("**Banner Colour:** ${usrInfo.bannerColor}")
+                    .appendLine("**Accent Colour:** ${usrInfo.accentColor}")
+                    .appendLine("**Bot:** ${usrInfo.bot}")
+                    .appendLine("**Public Flags:** ${usrInfo.publicFlags}")
+                    .appendLine("**Account Creation Date:** $acd")
+                    .build()).thenAccept { message ->
+                this.launch { onComplete(message, client, client.config.auto_delete.bot.content_generation) }
             }
-            if (event.message.mentions.isEmpty() && args.isNotEmpty()) {
-                event.channel.sendMessage(
-                    MessageBuilder()
-                        .appendLine("Incorrect usage '${event.message.content}'")
-                        .appendLine("Error: '${args.joinToString(" ")}' is not a mentioned user.")
-                        .appendLine("Correct usage: `${client.config.prefix}info @user`")
-                        .build()).thenAccept { message ->
-                    this.launch { onComplete(message, client, true) }
-                    return@thenAccept
-                }
-            }
+            return@coroutineScope
+
         }
 }

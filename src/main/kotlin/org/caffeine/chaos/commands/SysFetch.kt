@@ -15,23 +15,23 @@ class SysFetch : Command(arrayOf("sysfetch", "sysinfo", "fetch")) {
         args: MutableList<String>,
         cmd: String,
     ): Unit = coroutineScope {
-        val sysinfo = SystemInfo()
-        val proc = sysinfo.hardware.processor
-        val gpu = sysinfo.hardware.graphicsCards.first()
-        val ram = sysinfo.hardware.memory
-        val up = sysinfo.operatingSystem.systemUptime
+        val sysInfo = SystemInfo()
+        val proc = sysInfo.hardware.processor
+        val gpu = sysInfo.hardware.graphicsCards.first()
+        val ram = sysInfo.hardware.memory
+        val up = sysInfo.operatingSystem.systemUptime
         event.channel.sendMessage(MessageBuilder()
             .appendLine("Fetching info...").build()).thenAccept { message ->
             this.launch {
                 message.edit(MessageBuilder()
                     .appendLine("```")
-                    .appendLine("OS: ${sysinfo.operatingSystem.family}")
+                    .appendLine("OS: ${sysInfo.operatingSystem.family}")
                     .appendLine("UPTIME: ${up / (60 * 60 * 24)}d ${(up % 86400) / (60 * 60)}h ${(up / 60) % 60}m ${up % 60}s")
                     .appendLine("CPU: ${proc.processorIdentifier.name} (${proc.physicalProcessorCount}C ${proc.logicalProcessorCount}T)")
                     .appendLine("RAM: ${ram.total / (1073741824)}GB")
                     .appendLine("GPU: ${gpu.name}")
-                    .appendLine("HOST: ${sysinfo.hardware.computerSystem.baseboard.model}")
-                    .appendLine("OS VER: ${sysinfo.operatingSystem.versionInfo}")
+                    .appendLine("HOST: ${sysInfo.hardware.computerSystem.baseboard.model}")
+                    .appendLine("OS VER: ${sysInfo.operatingSystem.versionInfo}")
                     .appendLine("```")
                     .build()
                 ).thenAccept {

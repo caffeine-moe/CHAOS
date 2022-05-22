@@ -134,6 +134,9 @@ class IP : Command(arrayOf("ip")) {
                                         .appendLine("**Timezone:** ${parsedResponse.timezone.id}")
                                         .appendLine("**ISP:** ${parsedResponse.connection.isp}")
                                         .appendLine("**Proxy:** ${parsedResponse.security.proxy}")
+                                        .appendLine("**VPN:** ${parsedResponse.security.vpn}")
+                                        .appendLine("**Hosting:** ${parsedResponse.security.hosting}")
+                                        .appendLine("**Tor:** ${parsedResponse.security.tor}")
                                         .build())
                                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                                 }

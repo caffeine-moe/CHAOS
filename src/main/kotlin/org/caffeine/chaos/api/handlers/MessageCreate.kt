@@ -17,7 +17,7 @@ private data class MessageCreate(
 
 @Serializable
 private data class MessageCreateD(
-    val attachments: List<MessageAttachment>?,
+    val attachments: List<MessageAttachment> = mutableListOf(),
     val author: MessageAuthor,
     val channel_id: String,
     val content: String,

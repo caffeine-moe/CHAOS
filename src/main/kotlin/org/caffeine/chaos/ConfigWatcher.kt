@@ -7,6 +7,7 @@ import java.nio.file.FileSystems
 import java.nio.file.Paths
 import java.nio.file.StandardWatchEventKinds
 
+//checks if anything happens to the config file, if something does, then reload
 suspend fun configWatcher(client: Client) {
     try {
         val watchService = withContext(Dispatchers.IO) {

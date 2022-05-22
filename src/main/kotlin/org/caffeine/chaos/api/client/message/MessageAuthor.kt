@@ -1,11 +1,13 @@
 package org.caffeine.chaos.api.client.message
 
+import org.caffeine.chaos.api.client.DiscordUser
+
 @kotlinx.serialization.Serializable
 data class MessageAuthor(
-    val username: String,
-    val discriminator: String,
-    val id: String,
-    val avatar: String? = "",
-) {
-    val discriminatedName = "$username#$discriminator"
+    override val username: String,
+    override val discriminator: String,
+    override val id: String,
+    override val avatar: String? = "",
+) : DiscordUser(username, discriminator, id, avatar) {
+    override val discriminatedName = "$username#$discriminator"
 }

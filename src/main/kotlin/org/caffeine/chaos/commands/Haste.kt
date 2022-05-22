@@ -20,63 +20,48 @@ class Haste : Command(arrayOf("haste")) {
         val key: String,
     )
 
-    override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
-        coroutineScope {
-            if (!event.message.attachments.isNullOrEmpty()) {
-                event.channel.sendMessage(MessageBuilder()
-                    .appendLine("Creating haste...")
-                    .build()).thenAccept { message ->
-                    this.launch {
-                        val response = normalHTTPClient.post("https://www.toptal.com/developers/hastebin/documents") {
-                            try {
-                                setBody(normalHTTPClient.get(event.message.attachments?.first()?.url.toString())
-                                    .bodyAsText())
-                            } catch (e: Exception) {
-                                if (e is MalformedInputException) {
-                                    message.edit(MessageBuilder()
-                                        .appendLine("**Incorrect usage** '${event.message.content} [${event.message.attachments?.first()?.filename}]'")
-                                        .appendLine("**Error:** Unable to parse text from attached file. You must only upload text documents.")
-                                        .appendLine("**Correct usage:** `${client.config.prefix}haste [file.txt]`")
-                                        .build())
-                                        .thenAccept { this@coroutineScope.launch { onComplete(it, client, true) } }
-                                    return@launch
-                                }
-                            }
-                        }
-                        val haste = json.decodeFromString<HasteResponse>(response.bodyAsText())
-                        message.edit(MessageBuilder()
-                            .appendLine("https://www.toptal.com/developers/hastebin/${haste.key}")
-                            .build()).thenAccept {
-                            this.launch {
-                                onComplete(it,
-                                    client,
-                                    client.config.auto_delete.bot.content_generation)
-                            }
-                        }
+    override suspend fun onCalled(
+        client: Client,
+        event: MessageCreateEvent,
+        args: MutableList<String>,
+        cmd: String,
+    ): Unit = coroutineScope {
+        event.channel.sendMessage(MessageBuilder().appendLine("Creating haste...").build()).thenAccept { message ->
+            launch {
+                var body = ""
+                if (args.isNotEmpty()) {
+                    body = args.joinToString(" ")
+                }
+                if (event.message.attachments.isNotEmpty()) {
+                    try {
+                        body = normalHTTPClient.get(event.message.attachments.first().url).bodyAsText()
+                    } catch (e: MalformedInputException) {
+                        val filename = event.message.attachments.first().filename
+                        message.edit(MessageBuilder().appendLine("**Incorrect usage** '${event.message.content} [$filename]'")
+                            .appendLine("**Error:** Unable to parse text from attached file. You must only upload text documents.")
+                            .appendLine("**Correct usage:** `${client.config.prefix}haste [file.txt]`").build())
+                            .thenAccept { this@coroutineScope.launch { onComplete(it, client, true) } }
+                        return@launch
                     }
                 }
-                return@coroutineScope
-            }
-            if (args.isNotEmpty() && event.message.attachments?.isEmpty() == true) {
-                event.channel.sendMessage(MessageBuilder()
-                    .appendLine("Creating haste...")
+                if (args.isEmpty() && event.message.attachments.isEmpty()) {
+                    message.edit(MessageBuilder().appendLine("**Incorrect usage** '${event.message.content}'")
+                        .appendLine("**Error:** You must have at least one file attached OR other text written after the command.")
+                        .appendLine("**Correct usage:** `${client.config.prefix}haste <text> || [file.txt]`").build())
+                        .thenAccept { this@coroutineScope.launch { onComplete(it, client, true) } }
+                    return@launch
+                }
+                val response = normalHTTPClient.post("https://www.toptal.com/developers/hastebin/documents") {
+                    setBody(body)
+                }
+                val haste = json.decodeFromString<HasteResponse>(response.bodyAsText())
+                message.edit(MessageBuilder().appendLine("https://www.toptal.com/developers/hastebin/${haste.key}")
                     .build()).thenAccept { message ->
                     this.launch {
-                        val response = normalHTTPClient.post("https://www.toptal.com/developers/hastebin/documents") {
-                            setBody(args.joinToString(" "))
-                        }
-                        val haste = json.decodeFromString<HasteResponse>(response.bodyAsText())
-                        message.edit(MessageBuilder()
-                            .appendLine("https://www.toptal.com/developers/hastebin/${haste.key}")
-                            .build()).thenAccept { message ->
-                            this.launch {
-                                onComplete(message,
-                                    client,
-                                    client.config.auto_delete.bot.content_generation)
-                            }
-                        }
+                        onComplete(message, client, client.config.auto_delete.bot.content_generation)
                     }
                 }
             }
         }
+    }
 }

@@ -15,26 +15,18 @@ import kotlin.math.absoluteValue
 @kotlinx.serialization.Serializable
 data class ClientUser(
     val verified: Boolean,
-    val username: String,
-    val discriminator: String,
-    val id: String,
+    override val username: String,
+    override val discriminator: String,
+    override val id: String,
     val email: String?,
     val bio: String?,
-    val avatar: String?,
-    val friends: ClientFriends,
+    override val avatar: String?,
+    val relationships: ClientRelationships,
     val guilds: ClientGuilds,
     val channels: ClientChannels,
     val client: Client,
-) {
-    val discriminatedName = "$username#$discriminator"
-    fun avatarUrl(): String {
-        var av = ""
-        if (!avatar.isNullOrBlank()) {
-            av = "https://cdn.discordapp.com/avatars/$id/$avatar?size=4096"
-        }
-        return av
-    }
-
+) : DiscordUser(username, discriminator, id, avatar) {
+    override val discriminatedName = "$username#$discriminator"
     suspend fun setStatus(status: ClientStatusType) {
         when (status) {
             ClientStatusType.ONLINE -> {
@@ -124,6 +116,11 @@ data class ClientUser(
         return true
     }
 
+    @kotlinx.serialization.Serializable
+    private data class Type(
+        val type: Int
+    )
+
     suspend fun block(userid: String) {
         discordHTTPClient.request("$BASE_URL/users/@me/relationships/$userid") {
             method = HttpMethod.Put
@@ -131,7 +128,7 @@ data class ClientUser(
                 append(HttpHeaders.Authorization, client.config.token)
                 append("Content-Type", "application/json")
             }
-            setBody(json.encodeToString(ClientRelationships(2)))
+            setBody(json.encodeToString(Type(2)))
         }
     }
 }

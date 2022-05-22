@@ -16,14 +16,19 @@ import java.io.File
 import kotlin.system.exitProcess
 
 //version lmao
-const val version: Float = 1.1F
+const val version: Float = 2.0F
+
+//gets time in ms when program starts
 val programStartedTime = System.currentTimeMillis()
 
+//main function
 suspend fun main(): Unit = coroutineScope {
+    //init
     clear()
     printLogo()
     printSeparator()
     log("\u001B[38;5;33mCHAOS is starting...")
+    //checks if config exists, if not, create one and exit
     if (!File("config.json").exists()) {
         val default = javaClass.classLoader.getResource("defaultconfig.json")
         withContext(Dispatchers.IO) {
@@ -38,13 +43,19 @@ suspend fun main(): Unit = coroutineScope {
         exitProcess(0)
     }
     try {
+        //tries to read config
         val config = Json.decodeFromString<Config>(File("config.json").readText())
-        scamLinks =
-            json.decodeFromString<AntiScamResponse>(normalHTTPClient.get("https://raw.githubusercontent.com/nikolaischunk/discord-phishing-links/main/domain-list.json")
-                .bodyAsText()).domains
+        //gets antiscam links
+        if (config.anti_scam.enabled) {
+            scamLinks =
+                json.decodeFromString<AntiScamResponse>(normalHTTPClient.get("https://raw.githubusercontent.com/nikolaischunk/discord-phishing-links/main/domain-list.json")
+                    .bodyAsText()).domains
+        }
+        //makes new client and logs in
         val client = Client(config)
         client.login(config)
     } catch (e: Exception) {
+        //if it cant read the config then it logs that its invalid
         if (e.toString().contains("JsonDecodingException")) {
             log(
                 "Unable to interpret config, please make sure that the one you have is structured the same as the one here: https://caffeine.moe/CHAOS/config.json",

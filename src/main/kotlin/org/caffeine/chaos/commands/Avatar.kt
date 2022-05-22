@@ -4,10 +4,11 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.DiscordUser
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
-class Avatar : Command(arrayOf("av", "avatar")) {
+class Avatar : Command(arrayOf("av", "avatar", "pfp")) {
     override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
         coroutineScope {
             if (args.isNotEmpty() && event.message.mentions.isEmpty()) {
@@ -23,21 +24,20 @@ class Avatar : Command(arrayOf("av", "avatar")) {
                 return@coroutineScope
             }
 
-            val userName: String
+            val user: DiscordUser
             val avatarURL: String
 
             if (args.isEmpty()) {
-                userName = client.user.discriminatedName
+                user = client.user
                 avatarURL = client.user.avatarUrl()
             } else {
-                val user = event.message.mentions.first()
-                userName = user.discriminatedName
+                user = event.message.mentions.first()
                 avatarURL = user.avatarUrl()
             }
 
             event.channel.sendMessage(
                 MessageBuilder()
-                    .appendLine("${userName}'s Avatar")
+                    .appendLine("${user.discriminatedName}'s Avatar")
                     .appendLine(avatarURL)
                     .build()
             )
