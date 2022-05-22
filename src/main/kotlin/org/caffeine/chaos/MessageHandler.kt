@@ -13,6 +13,10 @@ var spamCock = false
 //purge stopper, if true, stops the message purger
 var purgeCock = false
 
+//autobump stopper, if true, stops autobump
+var autoBumpCock = false
+var bumping = false
+
 //loads all the commands into the hashmap commandList
 fun registerCommands() {
     Token()
