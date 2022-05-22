@@ -9,10 +9,12 @@ import kotlin.math.absoluteValue
 
 class AutoBump : Command(arrayOf("bump", "autobump", "sbump")) {
     override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) {
+        var err = ""
+        val logging = client.config.logger.auto_bump
         if (cmd != "sbump") {
-            if (bumping) return
+            if (bumping.last().id == event.channel.id)
+                err = "Already bumping in this channel."
             autoBumpCock = false
-            var err = ""
 
             if (client.config.auto_bump.error.size > 2)
                 err = "Config line 47, array is only meant to have two elements."
@@ -23,12 +25,12 @@ class AutoBump : Command(arrayOf("bump", "autobump", "sbump")) {
             val l = client.config.auto_bump.error.last()
 
             if (err.isNotBlank()) {
-                if (client.config.logger.auto_bump) {
+                if (logging) {
                     log(err, "AUTO BUMP:")
                 }
                 return
             }
-            bumping = true
+            bumping.add(event.channel)
             while (!autoBumpCock) {
                 val rand = ((f..l).random()) * 60000
                 withContext(Dispatchers.IO) {
@@ -37,11 +39,15 @@ class AutoBump : Command(arrayOf("bump", "autobump", "sbump")) {
                 event.channel.sendMessage(MessageBuilder()
                     .append("d!bump")
                     .build()
-                )
+                ).thenAccept { b ->
+                    if (logging) {
+                        log("Bump! in channel ${b.channel_id}")
+                    }
+                }
             }
             return
         }
         autoBumpCock = true
-        bumping = false
+        bumping = mutableListOf()
     }
 }

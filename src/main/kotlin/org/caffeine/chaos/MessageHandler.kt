@@ -1,6 +1,7 @@
 package org.caffeine.chaos
 
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.message.MessageChannel
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.commands.*
 
@@ -15,7 +16,9 @@ var purgeCock = false
 
 //autobump stopper, if true, stops autobump
 var autoBumpCock = false
-var bumping = false
+
+//list of channels that autobump is currently bumping
+var bumping = mutableListOf<MessageChannel>()
 
 //loads all the commands into the hashmap commandList
 fun registerCommands() {
