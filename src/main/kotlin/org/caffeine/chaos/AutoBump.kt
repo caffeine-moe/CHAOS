@@ -41,7 +41,7 @@ class AutoBump : Command(arrayOf("bump", "autobump", "sbump")) {
                     .build()
                 ).thenAccept { b ->
                     if (logging) {
-                        log("Bump! in channel ${b.channel_id}")
+                        log("Bump! in channel ${b.channel_id}", "AUTO BUMP:")
                     }
                 }
             }
