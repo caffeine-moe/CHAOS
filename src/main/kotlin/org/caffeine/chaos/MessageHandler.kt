@@ -40,6 +40,7 @@ fun registerCommands() {
     Uptime()
     SysFetch()
     UserInfo()
+    AutoBump()
 }
 
 //executed whenever a message event is received by the client

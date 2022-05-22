@@ -14,4 +14,5 @@ data class Config(
     val backup: Backup,
     val restore: Restore,
     val nitro_sniper: NitroSniper,
+    val auto_bump: AutoBump
 )

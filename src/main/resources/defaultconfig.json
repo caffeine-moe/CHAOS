@@ -1,12 +1,13 @@
 {
-  "token": "YOUR_TOKEN",
+  "token": "YOUR-TOKEN",
   "prefix": ".",
   "auto_reconnect": true,
   "logger": {
     "commands": true,
     "responses": true,
+    "anti_scam": true,
     "nitro_sniper": true,
-    "anti_scam": true
+    "auto_bump": true
   },
   "auto_delete": {
     "user": {
@@ -21,7 +22,7 @@
   },
   "anti_scam": {
     "enabled": true,
-    "block": false
+    "block": true
   },
   "exchange": {
     "base": "XMR",
@@ -40,5 +41,10 @@
   },
   "nitro_sniper": {
     "enabled": true
+  },
+  "auto_bump": {
+    "enabled": true,
+    "interval": 2,
+    "error": [5, 15]
   }
 }
