@@ -12,8 +12,9 @@ class AutoBump : Command(arrayOf("bump", "autobump", "sbump")) {
         var err = ""
         val logging = client.config.logger.auto_bump
         if (cmd != "sbump") {
-            if (bumping.last().id == event.channel.id)
+            if (bumping.isNotEmpty() && bumping.any { it.id == event.channel.id }) {
                 err = "Already bumping in this channel."
+            }
             autoBumpCock = false
 
             if (client.config.auto_bump.error.size > 2)
