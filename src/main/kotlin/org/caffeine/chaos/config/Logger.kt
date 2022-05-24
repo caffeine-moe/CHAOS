@@ -8,5 +8,5 @@ data class Logger(
     val responses: Boolean,
     val anti_scam: Boolean,
     val nitro_sniper: Boolean,
-    val auto_bump: Boolean
+    val auto_bump: Boolean,
 )

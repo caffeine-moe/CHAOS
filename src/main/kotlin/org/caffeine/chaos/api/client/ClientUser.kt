@@ -118,7 +118,7 @@ data class ClientUser(
 
     @kotlinx.serialization.Serializable
     private data class Type(
-        val type: Int
+        val type: Int,
     )
 
     suspend fun block(userid: String) {
