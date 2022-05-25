@@ -34,3 +34,10 @@ And many more!
 
 (*) https://www.speedtest.net/result/13161426797
 ![image](https://user-images.githubusercontent.com/45857025/168665832-740ef04b-1511-46ef-be0b-37cf1b571a46.png)
+
+## Install and Usage
+- Make sure you have Java 17+ installed
+- Download the jar file from the [latest release](https://github.com/caffeine-moe/CHAOS/releases/latest)
+- The config for CHAOS will be in the same directory from where you run it so I would recommend putting `CHAOS-all.jar` into its own directory somewhere easily accessible.
+- Run CHAOS by opening a command prompt/terminal window in the folder and running `java -jar "CHAOS-all.jar"`
+- Join the [Discord server](https://discord.gg/ASukH9Juxz) if you run into any problems :)
