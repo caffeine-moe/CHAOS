@@ -20,13 +20,23 @@ class Figlet : Command(arrayOf("fig", "figlet")) {
                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 return@coroutineScope
             }
-            val textToFigletize = args.joinToString(" ")
-            val figletizedText = FigletFont.convertOneLine(textToFigletize)
-            event.channel.sendMessage(MessageBuilder()
-                .appendLine("```$figletizedText```")
-                .build())
-                .thenAccept { message ->
-                    this.launch { onComplete(message, client, client.config.auto_delete.bot.content_generation) }
-                }
+            try {
+                val textToFigletize = args.joinToString(" ")
+                val figletizedText = FigletFont.convertOneLine(textToFigletize)
+                event.channel.sendMessage(MessageBuilder()
+                    .appendLine("```$figletizedText```")
+                    .build())
+                    .thenAccept { message ->
+                        this.launch { onComplete(message, client, client.config.auto_delete.bot.content_generation) }
+                    }
+            }catch (e: ArrayIndexOutOfBoundsException) {
+                event.channel.sendMessage(MessageBuilder()
+                    .appendLine("**Incorrect usage** '${event.message.content}'")
+                    .appendLine("**Error:** Text contains non ASCII characters.")
+                    .appendLine("**Correct usage:** `${client.config.prefix}figlet String`")
+                    .build())
+                    .thenAccept { message -> this.launch { onComplete(message, client, true) } }
+                return@coroutineScope
+            }
         }
 }
