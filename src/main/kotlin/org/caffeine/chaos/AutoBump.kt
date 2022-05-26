@@ -1,6 +1,8 @@
 package org.caffeine.chaos
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
@@ -8,7 +10,7 @@ import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import kotlin.math.absoluteValue
 
 class AutoBump : Command(arrayOf("bump", "autobump", "sbump")) {
-    override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) {
+    override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) = coroutineScope{
         var err = ""
         val logging = client.config.logger.auto_bump
         if (cmd != "sbump") {
@@ -29,7 +31,7 @@ class AutoBump : Command(arrayOf("bump", "autobump", "sbump")) {
                 if (logging) {
                     log(err, "AUTO BUMP:")
                 }
-                return
+                return@coroutineScope
             }
             bumping.add(event.channel)
             while (!autoBumpCock) {
@@ -42,11 +44,13 @@ class AutoBump : Command(arrayOf("bump", "autobump", "sbump")) {
                     .build()
                 ).thenAccept { b ->
                     if (logging) {
-                        log("Bump! in channel ${b.channel_id}", "AUTO BUMP:")
+                        this.launch {
+                            log("Bump! in channel ${b.channel_id}", "AUTO BUMP:")
+                        }
                     }
                 }
             }
-            return
+            return@coroutineScope
         }
         autoBumpCock = true
         bumping = mutableListOf()

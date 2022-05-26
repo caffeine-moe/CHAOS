@@ -4,6 +4,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -12,6 +13,7 @@ import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.normalHTTPClient
 import org.caffeine.chaos.api.scamLinks
 import org.caffeine.chaos.config.Config
+import org.caffeine.chaos.ui.WebUI
 import java.io.File
 import kotlin.system.exitProcess
 
@@ -24,6 +26,7 @@ val programStartedTime = System.currentTimeMillis()
 //main function
 suspend fun main(): Unit = coroutineScope {
     //init
+    val ui = WebUI()
     clear()
     printLogo()
     printSeparator()
@@ -53,6 +56,8 @@ suspend fun main(): Unit = coroutineScope {
         }
         //makes new client and logs in
         val client = Client(config)
+        //launches the webui init
+        launch {ui.init(client)}
         client.login(config)
     } catch (e: Exception) {
         //if it cant read the config then it logs that its invalid
@@ -61,6 +66,7 @@ suspend fun main(): Unit = coroutineScope {
                 "Unable to interpret config, please make sure that the one you have is structured the same as the one here: https://caffeine.moe/CHAOS/config.json",
                 "\u001B[38;5;197mERROR:"
             )
+            exitProcess(69)
         }
     }
 }
