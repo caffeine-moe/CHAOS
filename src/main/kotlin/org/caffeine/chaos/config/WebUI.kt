@@ -1,6 +1,6 @@
 package org.caffeine.chaos.config
 
 @kotlinx.serialization.Serializable
-data class WebUI (
+data class WebUI(
     val enabled: Boolean,
 )

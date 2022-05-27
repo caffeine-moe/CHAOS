@@ -57,7 +57,7 @@ suspend fun main(): Unit = coroutineScope {
         //makes new client and logs in
         val client = Client(config)
         //launches the webui init
-        launch {ui.init(client)}
+        launch { ui.init(client) }
         client.login(config)
     } catch (e: Exception) {
         //if it cant read the config then it logs that its invalid

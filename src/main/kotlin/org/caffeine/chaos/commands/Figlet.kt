@@ -29,7 +29,7 @@ class Figlet : Command(arrayOf("fig", "figlet")) {
                     .thenAccept { message ->
                         this.launch { onComplete(message, client, client.config.auto_delete.bot.content_generation) }
                     }
-            }catch (e: ArrayIndexOutOfBoundsException) {
+            } catch (e: ArrayIndexOutOfBoundsException) {
                 event.channel.sendMessage(MessageBuilder()
                     .appendLine("**Incorrect usage** '${event.message.content}'")
                     .appendLine("**Error:** Text contains non ASCII characters.")
