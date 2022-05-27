@@ -25,7 +25,7 @@ data class ClientUser(
     val guilds: ClientGuilds,
     val channels: ClientChannels,
     val client: Client,
-) : DiscordUser(username, discriminator, id, avatar) {
+) : DiscordUser() {
     override val discriminatedName = "$username#$discriminator"
     suspend fun setStatus(status: ClientStatusType) {
         when (status) {

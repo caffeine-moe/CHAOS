@@ -6,6 +6,6 @@ data class ClientFriend(
     override val discriminator: String,
     override val id: String,
     override val avatar: String?,
-) : DiscordUser(username, discriminator, id, avatar) {
+) : DiscordUser() {
     override val discriminatedName = "$username#$discriminator"
 }

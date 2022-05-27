@@ -22,7 +22,7 @@ class ClientBlockedUsers(val client: Client) {
         for (blockedUser in final) {
             if (blockedUser.type == 2) {
                 val user = blockedUser.user
-                blocked.add(DiscordUser(user.username, user.discriminator, user.id, user.avatar))
+                blocked.add(user)
             }
         }
         return blocked
