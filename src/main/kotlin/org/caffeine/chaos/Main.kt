@@ -54,9 +54,8 @@ suspend fun main(): Unit = coroutineScope {
                 json.decodeFromString<AntiScamResponse>(normalHTTPClient.get("https://raw.githubusercontent.com/nikolaischunk/discord-phishing-links/main/domain-list.json")
                     .bodyAsText()).domains
         }
-        //makes new client and logs in
+        //makes new client, launches the webui and logs in
         val client = Client(config)
-        //launches the webui init
         launch { ui.init(client) }
         client.login(config)
     } catch (e: Exception) {
