@@ -36,9 +36,9 @@ class AutoBump : Command(arrayOf("bump", "autobump", "sbump")) {
                 }
                 bumping.add(event.channel)
                 while (!autoBumpCock) {
-                    val rand = ((f..l).random()) * 60000
+                    val nonce = ((f..l).random()) * 60000
                     withContext(Dispatchers.IO) {
-                        Thread.sleep(interval + rand)
+                        Thread.sleep(interval + nonce)
                     }
                     event.channel.sendMessage(MessageBuilder()
                         .append("d!bump")
