@@ -48,6 +48,7 @@ fun registerCommands() {
     SysFetch()
     UserInfo()
     AutoBump()
+    MuteAllServers()
 }
 
 //executed whenever a message event is received by the client
