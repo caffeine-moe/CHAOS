@@ -9,6 +9,9 @@
     "nitro_sniper": true,
     "auto_bump": true
   },
+  "web_ui" : {
+    "enabled" : true
+  },
   "auto_delete": {
     "user": {
       "enabled": true,
