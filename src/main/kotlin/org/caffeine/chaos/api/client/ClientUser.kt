@@ -25,7 +25,7 @@ data class ClientUser(
     val guilds: ClientGuilds,
     val channels: ClientChannels,
     val client: Client,
-) : DiscordUser(username, discriminator, id, avatar) {
+) : DiscordUser() {
     override val discriminatedName = "$username#$discriminator"
     suspend fun setStatus(status: ClientStatusType) {
         when (status) {
@@ -118,7 +118,7 @@ data class ClientUser(
 
     @kotlinx.serialization.Serializable
     private data class Type(
-        val type: Int
+        val type: Int,
     )
 
     suspend fun block(userid: String) {

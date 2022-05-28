@@ -19,6 +19,7 @@ import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.normalHTTPClient
 import java.net.InetAddress
+import java.net.URL
 
 class IP : Command(arrayOf("ip")) {
     @Serializable
@@ -107,11 +108,17 @@ class IP : Command(arrayOf("ip")) {
                     this.launch {
                         val url = args.joinToString(" ")
                         try {
-                            val selectorManager = ActorSelectorManager(Dispatchers.IO)
-                            val con = aSocket(selectorManager).tcp().connect(url, 443)
-                            val realHost = con.remoteAddress.toJavaAddress().hostname
+                            val host = if (url.contains("://")) {
+                                withContext(Dispatchers.IO) {
+                                    URL(url).host
+                                }
+                            } else {
+                                val selectorManager = ActorSelectorManager(Dispatchers.IO)
+                                val con = aSocket(selectorManager).tcp().connect(url, 443)
+                                con.remoteAddress.toJavaAddress().hostname
+                            }
                             val ip = withContext(Dispatchers.IO) {
-                                InetAddress.getByName(realHost).hostAddress
+                                InetAddress.getByName(host).hostAddress
                             }
                             val response =
                                 normalHTTPClient.request("https://ipwhois.pro/$ip?key=Sxd2AkU2ZL0YtkSR&security=1&lang=en") {

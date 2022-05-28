@@ -11,8 +11,9 @@ import org.caffeine.chaos.Command
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import java.net.URL
 
-class Ping : Command(arrayOf("ping")) {
+class Ping : Command(arrayOf("ping", "latency")) {
     override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
         coroutineScope {
             if (args.isEmpty()) {
@@ -45,10 +46,20 @@ class Ping : Command(arrayOf("ping")) {
                 .thenAccept { message ->
                     this.launch {
                         val url = args.joinToString(" ")
-                        val start = System.currentTimeMillis()
+                        val start: Long
                         try {
+                            val host = if (url.contains("://")) {
+                                withContext(Dispatchers.IO) {
+                                    URL(url).host
+                                }
+                            } else {
+                                val selectorManager = ActorSelectorManager(Dispatchers.IO)
+                                val con = aSocket(selectorManager).tcp().connect(url, 443)
+                                con.remoteAddress.toJavaAddress().hostname
+                            }
+                            start = System.currentTimeMillis()
                             val selectorManager = ActorSelectorManager(Dispatchers.IO)
-                            aSocket(selectorManager).tcp().connect(url, 80)
+                            aSocket(selectorManager).tcp().connect(host, 80)
                             selectorManager.close()
                         } catch (e: Exception) {
                             when (e) {
@@ -71,7 +82,9 @@ class Ping : Command(arrayOf("ping")) {
                                 }
                                 else -> {
                                     message.edit(MessageBuilder()
-                                        .appendLine("Error: $e")
+                                        .appendLine("Incorrect usage '${event.message.content}'")
+                                        .appendLine("Error: ${e.message}")
+                                        .appendLine("Correct usage: `${client.config.prefix}ping IP/URL`")
                                         .build())
                                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                                     return@launch

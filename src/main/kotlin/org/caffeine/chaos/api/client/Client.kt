@@ -17,8 +17,4 @@ class Client(
     suspend fun logout() {
         socket.disconnect()
     }
-
-    fun convertIdToUnix(id: String): Long {
-        return (id.toLong() / 4194304 + 1420070400000)
-    }
 }

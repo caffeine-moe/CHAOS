@@ -47,7 +47,7 @@ class Spam : Command(arrayOf("spam")) {
                     event.channel.sendMessage(MessageBuilder().appendLine(msg).build())
                     done++
                     withContext(Dispatchers.IO) {
-                        Thread.sleep(1000)
+                        Thread.sleep(250)
                     }
                 }
                 if (done > 1) {

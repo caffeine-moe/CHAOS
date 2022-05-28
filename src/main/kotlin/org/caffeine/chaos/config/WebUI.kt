@@ -1,7 +1,6 @@
 package org.caffeine.chaos.config
 
 @kotlinx.serialization.Serializable
-data class AutoBump(
-    val interval: Int,
-    val error: List<Int>,
+data class WebUI(
+    val enabled: Boolean,
 )

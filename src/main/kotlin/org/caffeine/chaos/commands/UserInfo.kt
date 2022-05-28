@@ -7,6 +7,7 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.DiscordUser
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.client.utils.convertIdToUnix
 
 
 class UserInfo : Command(arrayOf("info", "userinfo")) {
@@ -37,7 +38,7 @@ class UserInfo : Command(arrayOf("info", "userinfo")) {
             }
             val usrInfo = usr.userInfo()
             val sdf = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-            val date = java.util.Date(client.convertIdToUnix(usrInfo.id))
+            val date = java.util.Date(convertIdToUnix(usrInfo.id))
             val acd = sdf.format(date)
             event.channel.sendMessage(
                 MessageBuilder()

@@ -11,14 +11,18 @@ fun clear() {
 //logger utility
 fun log(text: String, prefix: String = "") {
     //gets current date and time
+    var message: String
     val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss"))
-    //if the prefix parameter is not blank then log the message with the specified prefix
+
+    //if the prefix is blank set the message with the default prefix
+    message = "\u001B[38;5;255m[\u001B[38;5;33m${time}\u001B[38;5;255m] CHAOS: \u001B[38;5;33m$text"
+
+    //if the prefix parameter is not blank then set the message with the specified prefix
     if (prefix.isNotBlank()) {
-        println("\u001B[38;5;255m[\u001B[38;5;33m${time}\u001B[38;5;255m] $prefix \u001B[38;5;33m$text")
-        return
+        message = "\u001B[38;5;255m[\u001B[38;5;33m${time}\u001B[38;5;255m] $prefix \u001B[38;5;33m$text"
     }
-    //if the prefix is blank then log the message with the default prefix
-    println("\u001B[38;5;255m[\u001B[38;5;33m${time}\u001B[38;5;255m] CHAOS: \u001B[38;5;33m$text")
+
+    println(message)
 }
 
 //prints edgy hackerman logo

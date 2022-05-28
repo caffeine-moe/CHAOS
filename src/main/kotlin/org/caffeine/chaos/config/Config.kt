@@ -8,11 +8,12 @@ data class Config(
     val prefix: String,
     val auto_reconnect: Boolean,
     val logger: Logger,
+    val web_ui: WebUI,
     val auto_delete: AutoDelete,
     val anti_scam: AntiScam,
     val exchange: Exchange,
     val backup: Backup,
     val restore: Restore,
     val nitro_sniper: NitroSniper,
-    val auto_bump: AutoBump
+    val auto_bump: AutoBump,
 )

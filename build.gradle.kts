@@ -22,10 +22,12 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
     implementation("commons-validator:commons-validator:1.7")
     implementation("io.ktor:ktor-client-core:2.0.1")
     implementation("io.ktor:ktor-client-cio:2.0.1")
     implementation("io.ktor:ktor-client-content-negotiation:2.0.1")
+    implementation("io.ktor:ktor-server-cio:2.0.1")
+    implementation("io.ktor:ktor-server-websockets:2.0.1")
     implementation("com.github.lalyos:jfiglet:0.0.9")
     implementation("com.github.oshi:oshi-core:6.1.6") }

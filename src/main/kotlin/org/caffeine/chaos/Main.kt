@@ -16,9 +16,9 @@ import java.io.File
 import kotlin.system.exitProcess
 
 //version lmao
-const val version: Float = 2.0F
+const val version: Float = 2.1F
 
-//gets time in ms when program starts
+//gets unix time in ms when program starts
 val programStartedTime = System.currentTimeMillis()
 
 //main function
@@ -51,8 +51,11 @@ suspend fun main(): Unit = coroutineScope {
                 json.decodeFromString<AntiScamResponse>(normalHTTPClient.get("https://raw.githubusercontent.com/nikolaischunk/discord-phishing-links/main/domain-list.json")
                     .bodyAsText()).domains
         }
-        //makes new client and logs in
+        //makes new client, and logs in
         val client = Client(config)
+        //web ui benched for now
+        /* val ui = WebUI()
+        launch { ui.init(client) } */
         client.login(config)
     } catch (e: Exception) {
         //if it cant read the config then it logs that its invalid
@@ -61,6 +64,7 @@ suspend fun main(): Unit = coroutineScope {
                 "Unable to interpret config, please make sure that the one you have is structured the same as the one here: https://caffeine.moe/CHAOS/config.json",
                 "\u001B[38;5;197mERROR:"
             )
+            exitProcess(69)
         }
     }
 }

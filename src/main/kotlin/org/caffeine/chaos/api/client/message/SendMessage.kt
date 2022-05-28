@@ -6,6 +6,7 @@ import io.ktor.http.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.BASE_URL
+import org.caffeine.chaos.api.client.utils.calcNonce
 import org.caffeine.chaos.api.discordHTTPClient
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.token
@@ -39,7 +40,7 @@ suspend fun sendMessage(channel: MessageChannel, message: Message): CompletableF
             append(HttpHeaders.ContentType, "application/json")
         }
         setBody(json.encodeToString(MessageSerializer(message.content,
-            System.currentTimeMillis().toString())))
+            calcNonce())))
     }
     val parsedResponse = json.decodeFromString<SendMessageResponse>(response.body())
     val messageauthor = MessageAuthor(
