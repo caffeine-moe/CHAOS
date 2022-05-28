@@ -4,7 +4,6 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -13,7 +12,6 @@ import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.normalHTTPClient
 import org.caffeine.chaos.api.scamLinks
 import org.caffeine.chaos.config.Config
-import org.caffeine.chaos.ui.WebUI
 import java.io.File
 import kotlin.system.exitProcess
 
@@ -26,7 +24,6 @@ val programStartedTime = System.currentTimeMillis()
 //main function
 suspend fun main(): Unit = coroutineScope {
     //init
-    val ui = WebUI()
     clear()
     printLogo()
     printSeparator()
@@ -54,9 +51,11 @@ suspend fun main(): Unit = coroutineScope {
                 json.decodeFromString<AntiScamResponse>(normalHTTPClient.get("https://raw.githubusercontent.com/nikolaischunk/discord-phishing-links/main/domain-list.json")
                     .bodyAsText()).domains
         }
-        //makes new client, launches the webui and logs in
+        //makes new client, and logs in
         val client = Client(config)
-        launch { ui.init(client) }
+        //web ui benched for now
+        /* val ui = WebUI()
+        launch { ui.init(client) } */
         client.login(config)
     } catch (e: Exception) {
         //if it cant read the config then it logs that its invalid
