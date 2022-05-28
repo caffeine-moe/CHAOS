@@ -16,7 +16,8 @@ import java.io.File
 import kotlin.system.exitProcess
 
 //version lmao
-const val version: Float = 2.1F
+const val versionString: String = "2.2.0"
+const val versionDouble: Double = 2.20
 
 //gets unix time in ms when program starts
 val programStartedTime = System.currentTimeMillis()
@@ -44,7 +45,7 @@ suspend fun main(): Unit = coroutineScope {
     }
     try {
         //tries to read config
-        val config = Json.decodeFromString<Config>(File("config.json").readText())
+        val config: Config = Json.decodeFromString(File("config.json").readText())
         //gets antiscam links
         if (config.anti_scam.enabled) {
             scamLinks =

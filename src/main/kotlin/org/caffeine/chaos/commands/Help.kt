@@ -6,7 +6,7 @@ import org.caffeine.chaos.Command
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.version
+import org.caffeine.chaos.versionString
 
 class Help : Command(arrayOf("help", "cmds", "commands")) {
     override suspend fun onCalled(
@@ -16,7 +16,7 @@ class Help : Command(arrayOf("help", "cmds", "commands")) {
         cmd: String,
     ): Unit = coroutineScope {
         event.channel.sendMessage(MessageBuilder()
-            .appendLine("**CHAOS v$version**")
+            .appendLine("**CHAOS v$versionString**")
             .appendLine("**Commands:** https://caffeine.moe/CHAOS/commands/")
             .build()
         ).thenAccept { message ->
