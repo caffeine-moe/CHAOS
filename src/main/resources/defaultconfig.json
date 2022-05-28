@@ -1,6 +1,12 @@
 {
   "token": "YOUR-TOKEN",
   "prefix": ".",
+  "updater": {
+    "enabled": true,
+    "notify": true,
+    "auto_download": true,
+    "exit": true
+  },
   "auto_reconnect": true,
   "logger": {
     "commands": true,
