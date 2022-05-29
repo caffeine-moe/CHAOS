@@ -31,7 +31,7 @@ private data class MessageCreateD(
     val referenced_message: MessageCreateD? = null,
     val timestamp: String?,
     val tts: Boolean?,
-    val type: Int?,
+    val type: Int,
 )
 
 suspend fun messageCreate(payload: String, client: Client) {
