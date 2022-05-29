@@ -34,6 +34,9 @@ suspend fun receiveJsonRequest(payload: String, connection: Connection, client: 
                 }
             }
         }
+        1 -> {
+            connection.sendHeartBeat()
+        }
         7 -> {
             log("Gateway sent opcode 7 RECONNECT, reconnecting...", "API:")
             connection.recRes(sid, seq, client)

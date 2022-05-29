@@ -160,7 +160,7 @@ class Connection {
                 10 -> {
                     log("Client received OPCODE 10 HELLO, sending identification payload and starting heartbeat.",
                         "API:")
-                    hb = launch { sendHeartBeat(pl.d.heartbeat_interval, this@Connection) }
+                    hb = launch { startHeartBeat(pl.d.heartbeat_interval) }
                     hb.start()
                     val id = json.encodeToString(Identify(2,
                         IdentifyD(client.config.token,
@@ -191,16 +191,19 @@ class Connection {
         }
     }
 
-
-    private suspend fun sendHeartBeat(interval: Long, connection: Connection) {
+    suspend fun sendHeartBeat() {
         var heartbeat = json.encodeToString(Heartbeat(1, "null"))
+        if (seq > 0) {
+            heartbeat = json.encodeToString(Heartbeat(1, "$seq"))
+        }
+        sendJsonRequest(this, heartbeat)
+    }
+
+    private suspend fun startHeartBeat(interval: Long) {
         log("Heartbeat started.", "API:")
         while (true) {
-            if (seq > 0) {
-                heartbeat = json.encodeToString(Heartbeat(1, "$seq"))
-            }
             delay(interval)
-            sendJsonRequest(connection, heartbeat)
+            sendHeartBeat()
         }
     }
 
@@ -228,7 +231,7 @@ class Connection {
                 10 -> {
                     log("Client received OPCODE 10 HELLO, sending identification and resume payload then starting heartbeat.",
                         "API:")
-                    hb = launch { sendHeartBeat(pl.d.heartbeat_interval, this@Connection) } as CompletableJob
+                    hb = launch { startHeartBeat(pl.d.heartbeat_interval) } as CompletableJob
                     hb.start()
                     val id = json.encodeToString(Identify(2,
                         IdentifyD(client.config.token,
