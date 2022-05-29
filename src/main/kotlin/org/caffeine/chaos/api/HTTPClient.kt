@@ -8,6 +8,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.cookies.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
+import org.caffeine.chaos.log
 
 val discordHTTPClient: HttpClient = HttpClient(CIO) {
     install(WebSockets)
@@ -49,4 +50,10 @@ val discordHTTPClient: HttpClient = HttpClient(CIO) {
         pipelining = true
     }
     expectSuccess = true
+
+    HttpResponseValidator {
+        handleResponseExceptionWithRequest { cause, request ->
+            log("Error: ${cause.message}", "API:")
+        }
+    }
 }
