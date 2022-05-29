@@ -1,5 +1,9 @@
 package org.caffeine.chaos.api.client.message
 
+import io.ktor.client.request.*
+import io.ktor.http.*
+import org.caffeine.chaos.api.discordHTTPClient
+import org.caffeine.chaos.api.token
 import java.util.concurrent.CompletableFuture
 
 @kotlinx.serialization.Serializable
@@ -26,6 +30,15 @@ class Message(
             deleteMessage(this)
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+    }
+
+    suspend fun pinMessage() {
+        discordHTTPClient.request("https://discord.com/api/v9/channels/$channel_id/pins/$id") {
+            method = HttpMethod.Put
+            headers {
+                append(HttpHeaders.Authorization, token)
+            }
         }
     }
 }
