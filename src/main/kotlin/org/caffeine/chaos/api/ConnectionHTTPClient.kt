@@ -7,6 +7,7 @@ import io.ktor.client.plugins.cache.*
 import io.ktor.client.plugins.cookies.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
+import org.caffeine.chaos.log
 
 data class ConnectionHTTPClient(val connection: Connection) {
     val httpclient: HttpClient = HttpClient(CIO) {
@@ -47,5 +48,11 @@ data class ConnectionHTTPClient(val connection: Connection) {
             pipelining = true
         }
         expectSuccess = true
+
+        HttpResponseValidator {
+            handleResponseExceptionWithRequest { cause, request ->
+                log("Error: ${cause.message}", "API:")
+            }
+        }
     }
 }
