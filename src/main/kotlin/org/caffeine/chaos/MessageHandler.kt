@@ -49,6 +49,7 @@ fun registerCommands() {
     UserInfo()
     AutoBump()
     MuteAllServers()
+    Theme()
 }
 
 //executed whenever a message event is received by the client

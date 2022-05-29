@@ -27,6 +27,22 @@ data class ClientUser(
     val client: Client,
 ) : DiscordUser() {
     override val discriminatedName = "$username#$discriminator"
+
+    suspend fun setTheme(theme: DiscordTheme) {
+        val thstr = when (theme) {
+            DiscordTheme.DARK -> "dark"
+            DiscordTheme.LIGHT -> "light"
+        }
+        discordHTTPClient.request("$BASE_URL/users/@me/settings") {
+            method = HttpMethod.Patch
+            headers {
+                append(HttpHeaders.Authorization, client.config.token)
+                append("Content-Type", "application/json")
+            }
+            setBody(json.encodeToString(ClientTheme(thstr)))
+        }
+    }
+
     suspend fun setStatus(status: ClientStatusType) {
         when (status) {
             ClientStatusType.ONLINE -> {
