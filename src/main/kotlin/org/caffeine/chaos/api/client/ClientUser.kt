@@ -44,47 +44,19 @@ data class ClientUser(
     }
 
     suspend fun setStatus(status: ClientStatusType) {
-        when (status) {
-            ClientStatusType.ONLINE -> {
-                discordHTTPClient.request("$BASE_URL/users/@me/settings") {
-                    method = HttpMethod.Patch
-                    headers {
-                        append(HttpHeaders.Authorization, client.config.token)
-                        append("Content-Type", "application/json")
-                    }
-                    setBody(json.encodeToString(ClientStatus("online")))
-                }
+        val ststr = when (status) {
+            ClientStatusType.ONLINE -> "online"
+            ClientStatusType.IDLE -> "idle"
+            ClientStatusType.DND -> "dnd"
+            ClientStatusType.INVISIBLE -> "invisible"
+        }
+        discordHTTPClient.request("$BASE_URL/users/@me/settings") {
+            method = HttpMethod.Patch
+            headers {
+                append(HttpHeaders.Authorization, client.config.token)
+                append("Content-Type", "application/json")
             }
-            ClientStatusType.IDLE -> {
-                discordHTTPClient.request("$BASE_URL/users/@me/settings") {
-                    method = HttpMethod.Patch
-                    headers {
-                        append(HttpHeaders.Authorization, client.config.token)
-                        append("Content-Type", "application/json")
-                    }
-                    setBody(json.encodeToString(ClientStatus("idle")))
-                }
-            }
-            ClientStatusType.DND -> {
-                discordHTTPClient.request("$BASE_URL/users/@me/settings") {
-                    method = HttpMethod.Patch
-                    headers {
-                        append(HttpHeaders.Authorization, client.config.token)
-                        append("Content-Type", "application/json")
-                    }
-                    setBody(json.encodeToString(ClientStatus("dnd")))
-                }
-            }
-            ClientStatusType.INVISIBLE -> {
-                discordHTTPClient.request("$BASE_URL/users/@me/settings") {
-                    method = HttpMethod.Patch
-                    headers {
-                        append(HttpHeaders.Authorization, client.config.token)
-                        append("Content-Type", "application/json")
-                    }
-                    setBody(json.encodeToString(ClientStatus("invisible")))
-                }
-            }
+            setBody(json.encodeToString(ClientStatus(ststr)))
         }
     }
 
