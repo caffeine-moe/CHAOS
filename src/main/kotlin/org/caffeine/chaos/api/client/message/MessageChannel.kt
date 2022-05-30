@@ -7,6 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.BASE_URL
+import org.caffeine.chaos.api.client.DiscordChannelType
 import org.caffeine.chaos.api.discordHTTPClient
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.token
@@ -61,14 +62,19 @@ class MessageChannel(
         return sendMessage(this, message)
     }
 
-    suspend fun type(): Int {
+    suspend fun type(): DiscordChannelType {
         val response = discordHTTPClient.request("$BASE_URL/channels/${this.id}") {
             method = HttpMethod.Get
             headers {
                 append(HttpHeaders.Authorization, token)
             }
         }
-        return json.decodeFromString<TypeResponse>(response.bodyAsText()).type
+        val type = when (json.decodeFromString<TypeResponse>(response.bodyAsText()).type) {
+            1 -> return DiscordChannelType.DM
+            3 -> return DiscordChannelType.GROUP
+            else -> {DiscordChannelType.GUILD}
+        }
+        return type
     }
 
     suspend fun delete() {
