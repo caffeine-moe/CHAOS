@@ -24,10 +24,10 @@ private data class MessageCreateD(
     val edited_timestamp: String?,
     val flags: Int?,
     val id: String,
-    val mention_everyone: Boolean?,
-    val mention_roles: List<String>?,
+    val mention_everyone: Boolean = false,
+    val mention_roles: List<String> = mutableListOf(),
     val mentions: List<MessageMention> = mutableListOf(),
-    val pinned: Boolean?,
+    val pinned: Boolean,
     val referenced_message: MessageCreateD? = null,
     val timestamp: String?,
     val tts: Boolean?,
@@ -42,17 +42,38 @@ suspend fun messageCreate(payload: String, client: Client) {
         d.author.id,
         d.author.avatar
     )
-    var message: Message
-    message = Message(d.id, d.content, d.channel_id, messageAuthor, d.attachments, mentions = d.mentions)
+    val message = Message(
+        d.id,
+        d.content,
+        d.channel_id,
+        messageAuthor,
+        d.attachments,
+        mentions = d.mentions
+    )
     if (d.referenced_message != null) {
-        message = Message(d.id,
-            d.content,
-            d.channel_id,
-            messageAuthor,
-            d.attachments,
-            mentions = d.mentions
-        )
+        message.referenced_message = createReferencedMessage(d.referenced_message)
     }
     val event = MessageCreateEvent(message, client, MessageChannel(d.channel_id))
     handleMessage(event, client)
+}
+
+private fun createReferencedMessage(ref: MessageCreateD) : Message {
+    val refAuthor = MessageAuthor(
+        ref.author.username,
+        ref.author.discriminator,
+        ref.author.id,
+        ref.author.avatar
+    )
+    val message = Message(
+        ref.id,
+        ref.content,
+        ref.channel_id,
+        refAuthor,
+        ref.attachments,
+        mentions = ref.mentions
+    )
+    if (ref.referenced_message != null) {
+        message.referenced_message = createReferencedMessage(ref.referenced_message)
+    }
+    return message
 }

@@ -4,7 +4,7 @@ class MessageBuilder {
     private var sb = StringBuilder()
     private var attachments = mutableListOf<MessageAttachment>()
     fun build(): Message {
-        return Message(null, sb.toString(), attachments = attachments)
+        return Message("", sb.toString(), attachments = attachments)
     }
 
     fun append(text: String): MessageBuilder {

@@ -7,19 +7,19 @@ import org.caffeine.chaos.api.token
 import java.util.concurrent.CompletableFuture
 
 @kotlinx.serialization.Serializable
-class Message(
-    val id: String = "",
-    val content: String = "",
-    val channel_id: String = "",
-    val author: MessageAuthor = MessageAuthor("", "", "", ""),
-    val attachments: List<MessageAttachment> = mutableListOf(),
-    val embeds: List<MessageEmbed> = mutableListOf(),
-    val mention_everyone: Boolean = false,
-    val mention_roles: List<String> = mutableListOf(),
-    val mentions: List<MessageMention> = mutableListOf(),
-    val pinned: Boolean = false,
-    val referenced_message: Message? = null,
-    val type: Int = 0,
+data class Message(
+    var id: String = "",
+    var content: String = "",
+    var channel_id: String = "",
+    var author: MessageAuthor = MessageAuthor("", "", "", ""),
+    var attachments: List<MessageAttachment> = mutableListOf(),
+    var embeds: List<MessageEmbed> = mutableListOf(),
+    var mention_everyone: Boolean = false,
+    var mention_roles: List<String> = mutableListOf(),
+    var mentions: List<MessageMention> = mutableListOf(),
+    var pinned: Boolean = false,
+    var referenced_message: Message? = null,
+    var type: Int = 0,
 ) {
     suspend fun edit(message: Message): CompletableFuture<Message> {
         return editMessage(this, message)
