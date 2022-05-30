@@ -51,6 +51,7 @@ fun registerCommands() {
     MuteAllServers()
     Theme()
     Pin()
+    HypeSquad()
 }
 
 //executed whenever a message event is received by the client

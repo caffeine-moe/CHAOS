@@ -2,6 +2,7 @@ package org.caffeine.chaos.api.client
 
 import io.ktor.client.plugins.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.BASE_URL
@@ -27,6 +28,33 @@ data class ClientUser(
     val client: Client,
 ) : DiscordUser() {
     override val discriminatedName = "$username#$discriminator"
+
+    suspend fun setHouse(house: DiscordHypeSquadHouse) {
+        val houseid = when (house) {
+            DiscordHypeSquadHouse.NONE -> 0
+            DiscordHypeSquadHouse.BRAVERY -> 1
+            DiscordHypeSquadHouse.BRILLIANCE -> 2
+            DiscordHypeSquadHouse.BALANCE -> 3
+        }
+        if (house == DiscordHypeSquadHouse.NONE) {
+            discordHTTPClient.request("$BASE_URL/hypesquad/online") {
+                method = HttpMethod.Delete
+                headers {
+                    append(HttpHeaders.Authorization, client.config.token)
+                }
+            }
+            return
+        }
+        val req = discordHTTPClient.request("$BASE_URL/hypesquad/online") {
+            method = HttpMethod.Post
+            headers {
+                append(HttpHeaders.Authorization, client.config.token)
+                append("Content-Type", "application/json")
+            }
+            setBody(json.encodeToString(json.parseToJsonElement("{\"house_id\":$houseid}")))
+        }
+        println(req.request.content.toString())
+    }
 
     suspend fun setTheme(theme: DiscordTheme) {
         val thstr = when (theme) {
