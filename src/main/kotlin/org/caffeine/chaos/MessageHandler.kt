@@ -52,6 +52,7 @@ fun registerCommands() {
     Theme()
     Pin()
     HypeSquad()
+    Dice()
 }
 
 //executed whenever a message event is received by the client
