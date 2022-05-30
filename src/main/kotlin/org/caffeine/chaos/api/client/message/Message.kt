@@ -33,9 +33,18 @@ data class Message(
         }
     }
 
-    suspend fun pinMessage() {
+    suspend fun pin() {
         discordHTTPClient.request("https://discord.com/api/v9/channels/$channel_id/pins/$id") {
-            method = HttpMethod.Put
+            this.method = HttpMethod.Put
+            headers {
+                append(HttpHeaders.Authorization, token)
+            }
+        }
+    }
+
+    suspend fun unpin() {
+        discordHTTPClient.request("https://discord.com/api/v9/channels/$channel_id/pins/$id") {
+            this.method = HttpMethod.Delete
             headers {
                 append(HttpHeaders.Authorization, token)
             }

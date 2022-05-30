@@ -11,7 +11,11 @@ import org.caffeine.chaos.log
 class Pin : Command(arrayOf("pin", "p")) {
     override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String): Unit = coroutineScope {
         if (event.message.referenced_message != null) {
-            event.message.referenced_message!!.pinMessage()
+            val refmes = event.message.referenced_message!!
+            when (refmes.pinned) {
+                true -> refmes.unpin()
+                false -> refmes.pin()
+            }
             return@coroutineScope
         }
         if (args.isEmpty()) {
@@ -22,7 +26,7 @@ class Pin : Command(arrayOf("pin", "p")) {
             .build()
         ).thenAccept {
             this.launch {
-                it.pinMessage()
+                it.pin()
             }
         }
     }

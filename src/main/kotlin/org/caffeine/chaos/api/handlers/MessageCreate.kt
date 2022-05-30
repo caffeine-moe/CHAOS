@@ -48,7 +48,8 @@ suspend fun messageCreate(payload: String, client: Client) {
         d.channel_id,
         messageAuthor,
         d.attachments,
-        mentions = d.mentions
+        mentions = d.mentions,
+        pinned = d.pinned
     )
     if (d.referenced_message != null) {
         message.referenced_message = createReferencedMessage(d.referenced_message)
@@ -70,7 +71,8 @@ private fun createReferencedMessage(ref: MessageCreateD) : Message {
         ref.channel_id,
         refAuthor,
         ref.attachments,
-        mentions = ref.mentions
+        mentions = ref.mentions,
+        pinned = ref.pinned
     )
     if (ref.referenced_message != null) {
         message.referenced_message = createReferencedMessage(ref.referenced_message)
