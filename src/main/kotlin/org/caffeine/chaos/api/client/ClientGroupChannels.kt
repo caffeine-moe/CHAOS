@@ -18,7 +18,7 @@ data class ClientGroupChannels(val client: Client) {
                 append(HttpHeaders.Authorization, client.config.token)
             }
         }
-        val final = json.decodeFromString<List<SerialClientChannel>>(response.body())
+        val final = json.decodeFromString<List<ClientChannel>>(response.body())
         for ((count) in final.withIndex()) {
             if (final[count].type == 3) {
                 val ccr = mutableListOf(ClientChannelRecipient(
@@ -37,7 +37,6 @@ data class ClientGroupChannels(val client: Client) {
                     final[count].name,
                     final[count].icon,
                     final[count].owner_id,
-                    client
                 )
                 list.add(cc)
             }
