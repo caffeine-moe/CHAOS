@@ -42,7 +42,17 @@ suspend fun messageCreate(payload: String, client: Client) {
         d.author.id,
         d.author.avatar
     )
-    val message = Message(d.id, d.content, d.channel_id, messageAuthor, d.attachments, mentions = d.mentions)
+    var message: Message
+    message = Message(d.id, d.content, d.channel_id, messageAuthor, d.attachments, mentions = d.mentions)
+    if (d.referenced_message != null) {
+        message = Message(d.id,
+            d.content,
+            d.channel_id,
+            messageAuthor,
+            d.attachments,
+            mentions = d.mentions
+        )
+    }
     val event = MessageCreateEvent(message, client, MessageChannel(d.channel_id))
     handleMessage(event, client)
 }

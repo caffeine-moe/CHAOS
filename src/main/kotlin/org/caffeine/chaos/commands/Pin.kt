@@ -10,6 +10,10 @@ import org.caffeine.chaos.log
 
 class Pin : Command(arrayOf("pin", "p")) {
     override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String): Unit = coroutineScope {
+        if (event.message.referenced_message != null) {
+            event.message.referenced_message!!.pinMessage()
+            return@coroutineScope
+        }
         if (args.isEmpty()) {
             log("Unable to pin message, no arguments."); return@coroutineScope
         }
