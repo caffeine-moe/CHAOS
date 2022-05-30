@@ -6,10 +6,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.Command
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientFriend
-import org.caffeine.chaos.api.client.ClientGuild
-import org.caffeine.chaos.api.client.DiscordUser
+import org.caffeine.chaos.api.client.*
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.api.jsonp
@@ -22,7 +19,7 @@ class Backup : Command(arrayOf("backup")) {
 
     @kotlinx.serialization.Serializable
     data class BackupStructure(
-        val blockList: List<DiscordUser>,
+        val blockList: List<ClientBlockedUser>,
         val friends: List<ClientFriend>,
         val guilds: List<ClientGuild>,
     )
