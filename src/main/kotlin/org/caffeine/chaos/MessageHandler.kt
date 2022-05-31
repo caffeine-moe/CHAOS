@@ -72,7 +72,7 @@ suspend fun handleMessage(event: MessageCreateEvent, client: Client) {
             //creates a new command object and
             //checks if the first item in the message (commandName) is a command and matches it to the command in the HashMap commandList.
             //if it can't, return
-            val command: Command = commandList.get(commandName) ?: return
+            val command: Command = commandList[commandName] ?: return
 
             //if the command logger is enabled then log the command
             if (client.config.logger.commands) {
