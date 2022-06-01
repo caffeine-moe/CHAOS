@@ -9,7 +9,7 @@ import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.log
 
-class Token : Command(arrayOf("token"), CommandInfo("Token","token", "Logs your token into the console.")) {
+class Token : Command(arrayOf("token"), CommandInfo("Token", "token", "Logs your token into the console.")) {
     override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
         coroutineScope {
             if (event.message.content.lowercase() == "${client.config.prefix}token") {

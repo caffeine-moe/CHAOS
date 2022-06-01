@@ -10,7 +10,7 @@ import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
 class Avatar : Command(arrayOf("avatar", "pfp", "av"),
-    CommandInfo("Avatar","av [@user]", "Sends your avatar or a mentioned users avatar.")) {
+    CommandInfo("Avatar", "av [@user]", "Sends your avatar or a mentioned users avatar.")) {
     override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
         coroutineScope {
             if (args.isNotEmpty() && event.message.mentions.isEmpty()) {

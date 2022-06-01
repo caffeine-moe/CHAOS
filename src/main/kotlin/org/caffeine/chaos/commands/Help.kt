@@ -11,7 +11,7 @@ import org.caffeine.chaos.commandList
 import org.caffeine.chaos.versionString
 
 class Help : Command(arrayOf("help", "cmds", "commands"),
-    CommandInfo("Help","help [command]", "Sends the command list URL OR Displays info about a specified command.")) {
+    CommandInfo("Help", "help [command]", "Sends the command list URL OR Displays info about a specified command.")) {
     override suspend fun onCalled(
         client: Client,
         event: MessageCreateEvent,
@@ -52,8 +52,9 @@ class Help : Command(arrayOf("help", "cmds", "commands"),
             }
             return@coroutineScope
         }
-        event.channel.sendMessage(error(client, event, "${args.joinToString(" ")} is not a command.", commandInfo)).thenAccept {
-            launch { onComplete(it, client, true) }
-        }
+        event.channel.sendMessage(error(client, event, "${args.joinToString(" ")} is not a command.", commandInfo))
+            .thenAccept {
+                launch { onComplete(it, client, true) }
+            }
     }
 }

@@ -10,7 +10,7 @@ import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import oshi.SystemInfo
 
 class SysFetch : Command(arrayOf("sysfetch", "sysinfo", "fetch"),
-    CommandInfo("SysFetch","sysfetch", "Sends your system information (specs).")) {
+    CommandInfo("SysFetch", "sysfetch", "Sends your system information (specs).")) {
     override suspend fun onCalled(
         client: Client,
         event: MessageCreateEvent,

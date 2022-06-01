@@ -11,7 +11,7 @@ import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
 class MuteAllServers : Command(arrayOf("muteallservers", "mas", "muteservers", "muteguilds", "muteallguilds", "mag"),
-    CommandInfo("MuteAllServers","mas", "Mutes all servers indefinitely.")) {
+    CommandInfo("MuteAllServers", "mas", "Mutes all servers indefinitely.")) {
     override suspend fun onCalled(
         client: Client,
         event: MessageCreateEvent,

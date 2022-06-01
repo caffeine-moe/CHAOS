@@ -13,7 +13,8 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
-class Upload : Command(arrayOf("upload"), CommandInfo("Upload","upload <attachment.ext>", "Uploads a file to 0x0.st.")) {
+class Upload :
+    Command(arrayOf("upload"), CommandInfo("Upload", "upload <attachment.ext>", "Uploads a file to 0x0.st.")) {
     override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
         coroutineScope {
             if (event.message.attachments.isEmpty()) {
