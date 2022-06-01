@@ -58,7 +58,7 @@ suspend fun messageCreate(payload: String, client: Client) {
     handleMessage(event, client)
 }
 
-private fun createReferencedMessage(ref: MessageCreateD) : Message {
+private fun createReferencedMessage(ref: MessageCreateD): Message {
     val refAuthor = MessageAuthor(
         ref.author.username,
         ref.author.discriminator,

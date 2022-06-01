@@ -1,7 +1,7 @@
 package org.caffeine.chaos.api.client
 
 @kotlinx.serialization.Serializable
-data class ClientBlockedUser (
+data class ClientBlockedUser(
     override val username: String,
     override val discriminator: String,
     override val avatar: String?,

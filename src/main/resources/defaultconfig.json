@@ -15,8 +15,8 @@
     "nitro_sniper": true,
     "auto_bump": true
   },
-  "web_ui" : {
-    "enabled" : true
+  "web_ui": {
+    "enabled": true
   },
   "auto_delete": {
     "user": {
@@ -53,6 +53,9 @@
   },
   "auto_bump": {
     "interval": 2,
-    "error": [5, 15]
+    "error": [
+      5,
+      15
+    ]
   }
 }

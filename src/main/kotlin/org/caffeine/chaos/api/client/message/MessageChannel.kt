@@ -42,7 +42,7 @@ class MessageChannel(
             }
             val newMessages = json.decodeFromString<List<Message>>(response.bodyAsText())
             collection.addAll(newMessages)
-            filters.before_id = collection.last().id.toString()
+            filters.before_id = collection.last().id
             collection.removeIf { filters.author_id.isNotBlank(); it.author.id != filters.author_id }
 
             if (filters.needed != 0 && collection.size >= filters.needed)
@@ -72,7 +72,9 @@ class MessageChannel(
         val type = when (json.decodeFromString<TypeResponse>(response.bodyAsText()).type) {
             1 -> return DiscordChannelType.DM
             3 -> return DiscordChannelType.GROUP
-            else -> {DiscordChannelType.GUILD}
+            else -> {
+                DiscordChannelType.GUILD
+            }
         }
         return type
     }
