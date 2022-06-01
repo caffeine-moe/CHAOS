@@ -36,6 +36,9 @@ class AutoBump : Command(arrayOf("bump", "autobump", "sbump"), CommandInfo("Auto
                 }
                 bumping.add(event.channel)
                 while (!autoBumpCock) {
+                    if (logging) {
+                        log("Started bumping in channel ${event.channel.id}", "AUTO BUMP:")
+                    }
                     val nonce = ((f..l).random()) * 60000
                     withContext(Dispatchers.IO) {
                         Thread.sleep(interval + nonce)
@@ -52,6 +55,9 @@ class AutoBump : Command(arrayOf("bump", "autobump", "sbump"), CommandInfo("Auto
                     }
                 }
                 return@coroutineScope
+            }
+            if (logging) {
+                log("Stopped bumping.", "AUTO BUMP:")
             }
             autoBumpCock = true
             bumping = mutableListOf()
