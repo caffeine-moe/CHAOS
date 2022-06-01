@@ -23,7 +23,7 @@ class Status : Command(arrayOf("status", "st"), CommandInfo("status <Status>", "
                 "offline", "invis", "invisible" -> client.user.setStatus(ClientStatusType.INVISIBLE)
                     .also { return@coroutineScope }
                 else -> {
-                    err = "Invalid status ${args.joinToString(" ")}."
+                    err = "Invalid status '${args.joinToString(" ")}'."
                 }
             }
         }
