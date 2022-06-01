@@ -11,7 +11,7 @@ import org.caffeine.chaos.programStartedTime
 import kotlin.math.absoluteValue
 
 class Uptime : Command(arrayOf("uptime"),
-    CommandInfo("uptime", "Displays how long CHAOS has been running for in Days, Hours, Minutes and Seconds.")) {
+    CommandInfo("Uptime","uptime", "Displays how long CHAOS has been running for in Days, Hours, Minutes and Seconds.")) {
     override suspend fun onCalled(
         client: Client,
         event: MessageCreateEvent,

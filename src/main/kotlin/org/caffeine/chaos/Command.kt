@@ -6,11 +6,12 @@ import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
 data class CommandInfo(
+    val name: String,
     val usage: String,
     val description: String,
 )
 
-abstract class Command(commandNames: Array<String>, val commandInfo: CommandInfo) {
+abstract class Command(val commandNames: Array<String>, val commandInfo: CommandInfo) {
     init {
         for (name in commandNames) {
             this.also { commandList[name] = it }

@@ -14,7 +14,7 @@ import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.normalHTTPClient
 import org.caffeine.chaos.api.ua
 
-class Cat : Command(arrayOf("cat", "meow"), CommandInfo("cat", "Sends a random cat from cataas.com.")) {
+class Cat : Command(arrayOf("cat", "meow"), CommandInfo("Cat","cat", "Sends a random cat from cataas.com.")) {
 
     @kotlinx.serialization.Serializable
     private data class CatResponse(

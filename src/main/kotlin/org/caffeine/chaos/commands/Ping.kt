@@ -15,7 +15,7 @@ import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import java.net.URL
 
 class Ping : Command(arrayOf("ping", "latency"),
-    CommandInfo("ping [IP/URL]", "Checks how long it takes to connect to the discord gateway OR a specified IP or URL in milliseconds.")) {
+    CommandInfo("Ping","ping [IP/URL]", "Checks how long it takes to connect to the discord gateway OR a specified IP or URL in milliseconds.")) {
     override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
         coroutineScope {
             if (args.isEmpty()) {

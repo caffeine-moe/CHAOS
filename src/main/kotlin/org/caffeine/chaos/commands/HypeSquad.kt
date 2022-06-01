@@ -9,7 +9,7 @@ import org.caffeine.chaos.api.client.DiscordHypeSquadHouse
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
 class HypeSquad :
-    Command(arrayOf("hypesquad", "house", "hs"), CommandInfo("hypesquad <House>", "Changes your HypeSquad house.")) {
+    Command(arrayOf("hypesquad", "house", "hs"), CommandInfo("HypeSquad","hypesquad <House>", "Changes your HypeSquad house.")) {
     override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
         coroutineScope {
             var house = DiscordHypeSquadHouse.NONE

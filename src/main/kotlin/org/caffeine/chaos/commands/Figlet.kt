@@ -9,7 +9,7 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
-class Figlet : Command(arrayOf("figlet", "fig"), CommandInfo("fig <Text>", "Turns your text into an ascii figlet.")) {
+class Figlet : Command(arrayOf("figlet", "fig"), CommandInfo("Figlet","fig <Text>", "Turns your text into an ascii figlet.")) {
     override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
         coroutineScope {
             if (args.isEmpty()) {

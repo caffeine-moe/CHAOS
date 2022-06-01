@@ -7,7 +7,7 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientStatusType
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
-class Status : Command(arrayOf("status", "st"), CommandInfo("status <Status>", "Changes your current status.")) {
+class Status : Command(arrayOf("status", "st"), CommandInfo("Status","status <Status>", "Changes your current status.")) {
     override suspend fun onCalled(
         client: Client,
         event: MessageCreateEvent,

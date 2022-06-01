@@ -22,7 +22,7 @@ import org.caffeine.chaos.api.normalHTTPClient
 import java.net.InetAddress
 import java.net.URL
 
-class IP : Command(arrayOf("ip"), CommandInfo("ip <IP/URL>", "Looks up information about a specified IP/URL.")) {
+class IP : Command(arrayOf("ip"), CommandInfo("IP","ip <IP/URL>", "Looks up information about a specified IP/URL.")) {
     @Serializable
     private data class IpApiResponse(
         val borders: String = "",

@@ -14,7 +14,7 @@ import org.caffeine.chaos.api.client.message.MessageFilters
 import org.caffeine.chaos.purgeCock
 
 class Purge : Command(arrayOf("purge", "sclear"),
-    CommandInfo("purge <Amount>", "Deletes a specified amount of YOUR messages from a channel.")) {
+    CommandInfo("Purge","purge <Amount>", "Deletes a specified amount of YOUR messages from a channel.")) {
     override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
         coroutineScope {
             if (args.isEmpty()) {

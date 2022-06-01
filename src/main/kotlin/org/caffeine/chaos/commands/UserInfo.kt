@@ -12,7 +12,7 @@ import org.caffeine.chaos.api.client.utils.convertIdToUnix
 
 
 class UserInfo :
-    Command(arrayOf("userinfo", "info"), CommandInfo("info <@user>", "Displays information about a mentioned user.")) {
+    Command(arrayOf("userinfo", "info"), CommandInfo("UserInfo","info <@user>", "Displays information about a mentioned user.")) {
     override suspend fun onCalled(
         client: Client,
         event: MessageCreateEvent,

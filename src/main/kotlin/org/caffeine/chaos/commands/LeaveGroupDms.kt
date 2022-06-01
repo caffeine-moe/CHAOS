@@ -13,7 +13,7 @@ import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.log
 
 class LeaveGroupDms :
-    Command(arrayOf("leavegroupdms", "lgdm", "leavegroups"), CommandInfo("lgdm", "Leaves all group DMs.")) {
+    Command(arrayOf("leavegroupdms", "lgdm", "leavegroups"), CommandInfo("LeaveGroupDms","lgdm", "Leaves all group DMs.")) {
     override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
         coroutineScope {
             var done = 0

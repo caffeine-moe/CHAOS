@@ -15,7 +15,7 @@ import org.caffeine.chaos.api.normalHTTPClient
 import java.nio.charset.MalformedInputException
 
 class Haste : Command(arrayOf("haste"),
-    CommandInfo("haste <Text> OR <file.txt>", "Uploads text OR a text document to Hastebin.")) {
+    CommandInfo("Haste","haste <Text> OR <file.txt>", "Uploads text OR a text document to Hastebin.")) {
 
     @kotlinx.serialization.Serializable
     private data class HasteResponse(

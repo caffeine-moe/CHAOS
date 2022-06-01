@@ -11,7 +11,7 @@ import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.spamCock
 
-class Spam : Command(arrayOf("spam"), CommandInfo("spam <Message> <Amount>", "Spams messages in a channel.")) {
+class Spam : Command(arrayOf("spam"), CommandInfo("Spam","spam <Message> <Amount>", "Spams messages in a channel.")) {
     override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
         coroutineScope {
             spamCock = false

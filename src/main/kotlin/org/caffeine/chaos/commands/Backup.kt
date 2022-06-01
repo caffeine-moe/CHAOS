@@ -20,7 +20,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class Backup :
-    Command(arrayOf("backup", "bak"), CommandInfo("backup", "Backs up your discord account in json format.")) {
+    Command(arrayOf("backup", "bak"), CommandInfo("Backup","backup", "Backs up your discord account in json format.")) {
 
     @kotlinx.serialization.Serializable
     data class BackupStructure(

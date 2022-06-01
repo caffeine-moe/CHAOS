@@ -8,7 +8,7 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
-class Dice : Command(arrayOf("dice", "d6"), CommandInfo("dice", "Rolls a dice (Sends a random number from 1 - 6).")) {
+class Dice : Command(arrayOf("dice", "d6"), CommandInfo("Dice","dice", "Rolls a dice (Sends a random number from 1 - 6).")) {
     override suspend fun onCalled(
         client: Client,
         event: MessageCreateEvent,
