@@ -1,3 +1,4 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/baec8f3543d94da999e09ce143403a5b)](https://app.codacy.com/gh/caffeine-moe/CHAOS?utm_source=github.com&utm_medium=referral&utm_content=caffeine-moe/CHAOS&utm_campaign=Badge_Grade_Settings)
 [![Logo](https://caffeine.moe/CHAOS/logo-min.jpg)](https://caffeine.moe/CHAOS/)
 # CHAOS - Like a utility knife for discord.
 
