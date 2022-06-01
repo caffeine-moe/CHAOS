@@ -3,12 +3,12 @@ package org.caffeine.chaos.commands
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.caffeine.chaos.Command
+import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.DiscordTheme
-import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
-class Theme : Command(arrayOf("theme", "dth")) {
+class Theme : Command(arrayOf("theme", "dth"), CommandInfo("theme <Theme>", "Changes your discord theme.")) {
     override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
         coroutineScope {
             val err: String = if (args.isNotEmpty()) {
@@ -25,12 +25,7 @@ class Theme : Command(arrayOf("theme", "dth")) {
             } else {
                 "No arguments passed for theme."
             }
-            event.channel.sendMessage(MessageBuilder()
-                .appendLine("**Incorrect usage:** '${event.message.content}'")
-                .appendLine("**Error:** $err")
-                .appendLine("**Correct usage:** `${client.config.prefix}theme Theme`")
-                .build()
-            ).thenAccept {
+            event.channel.sendMessage(error(client, event, err, commandInfo)).thenAccept {
                 this.launch {
                     onComplete(it, client, true)
                 }

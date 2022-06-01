@@ -8,12 +8,14 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.caffeine.chaos.Command
+import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import java.net.URL
 
-class Ping : Command(arrayOf("ping", "latency")) {
+class Ping : Command(arrayOf("ping", "latency"),
+    CommandInfo("ping <IP/URL>", "Checks how long it takes to connect to a URL or IP in milliseconds.")) {
     override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
         coroutineScope {
             if (args.isEmpty()) {
@@ -45,8 +47,8 @@ class Ping : Command(arrayOf("ping", "latency")) {
                 .build())
                 .thenAccept { message ->
                     this.launch {
+                        var start: Long = -1
                         val url = args.joinToString(" ")
-                        val start: Long
                         try {
                             val host = if (url.contains("://")) {
                                 withContext(Dispatchers.IO) {
@@ -62,15 +64,9 @@ class Ping : Command(arrayOf("ping", "latency")) {
                             aSocket(selectorManager).tcp().connect(host, 80)
                             selectorManager.close()
                         } catch (e: Exception) {
-                            when (e) {
+                            val err: String = when (e) {
                                 is UnresolvedAddressException -> {
-                                    message.edit(MessageBuilder()
-                                        .appendLine("Incorrect usage '${event.message.content}'")
-                                        .appendLine("Error: IP/URL '$url' is invalid.")
-                                        .appendLine("Correct usage: `${client.config.prefix}ping IP/URL`")
-                                        .build())
-                                        .thenAccept { message -> this.launch { onComplete(message, client, true) } }
-                                    return@launch
+                                    "IP/URL '$url' is invalid."
                                 }
                                 is SocketTimeoutException -> {
                                     message.edit(MessageBuilder()
@@ -81,15 +77,10 @@ class Ping : Command(arrayOf("ping", "latency")) {
                                     return@launch
                                 }
                                 else -> {
-                                    message.edit(MessageBuilder()
-                                        .appendLine("Incorrect usage '${event.message.content}'")
-                                        .appendLine("Error: ${e.message}")
-                                        .appendLine("Correct usage: `${client.config.prefix}ping IP/URL`")
-                                        .build())
-                                        .thenAccept { message -> this.launch { onComplete(message, client, true) } }
-                                    return@launch
+                                    e.message!!
                                 }
                             }
+                            message.edit(error(client, event, err, commandInfo))
                         }
                         val stop = System.currentTimeMillis()
                         val ping = stop - start

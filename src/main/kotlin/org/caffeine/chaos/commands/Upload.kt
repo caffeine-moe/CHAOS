@@ -8,19 +8,16 @@ import io.ktor.http.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.caffeine.chaos.Command
+import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
-class Upload : Command(arrayOf("upload")) {
+class Upload : Command(arrayOf("upload"), CommandInfo("upload <attachment.ext>", "Uploads a file to 0x0.st.")) {
     override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
         coroutineScope {
             if (event.message.attachments.isEmpty()) {
-                event.channel.sendMessage(MessageBuilder()
-                    .appendLine("**Incorrect usage** '${event.message.content}'")
-                    .appendLine("**Error:** Message has no attachments!")
-                    .appendLine("**Correct usage:** `${client.config.prefix}upload [attachment.ext]`")
-                    .build())
+                event.channel.sendMessage(error(client, event, "Message has no attachments!", commandInfo))
                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 return@coroutineScope
             }

@@ -6,6 +6,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.Command
+import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
@@ -13,7 +14,8 @@ import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.normalHTTPClient
 import java.nio.charset.MalformedInputException
 
-class Haste : Command(arrayOf("haste")) {
+class Haste : Command(arrayOf("haste"),
+    CommandInfo("haste <Text> OR <file.txt>", "Uploads text OR a text document to Hastebin.")) {
 
     @kotlinx.serialization.Serializable
     private data class HasteResponse(
@@ -36,18 +38,19 @@ class Haste : Command(arrayOf("haste")) {
                     try {
                         body = normalHTTPClient.get(event.message.attachments.first().url).bodyAsText()
                     } catch (e: MalformedInputException) {
-                        val filename = event.message.attachments.first().filename
-                        message.edit(MessageBuilder().appendLine("**Incorrect usage** '${event.message.content} [$filename]'")
-                            .appendLine("**Error:** Unable to parse text from attached file. You must only upload text documents.")
-                            .appendLine("**Correct usage:** `${client.config.prefix}haste [file.txt]`").build())
+                        message.edit(error(client,
+                            event,
+                            "Unable to parse text from attached file. You must only upload text documents.",
+                            commandInfo))
                             .thenAccept { this@coroutineScope.launch { onComplete(it, client, true) } }
                         return@launch
                     }
                 }
                 if (args.isEmpty() && event.message.attachments.isEmpty()) {
-                    message.edit(MessageBuilder().appendLine("**Incorrect usage** '${event.message.content}'")
-                        .appendLine("**Error:** You must have at least one file attached OR other text written after the command.")
-                        .appendLine("**Correct usage:** `${client.config.prefix}haste <text> || [file.txt]`").build())
+                    message.edit(error(client,
+                        event,
+                        "You must have at least one file attached OR other text written after the command.",
+                        commandInfo))
                         .thenAccept { this@coroutineScope.launch { onComplete(it, client, true) } }
                     return@launch
                 }

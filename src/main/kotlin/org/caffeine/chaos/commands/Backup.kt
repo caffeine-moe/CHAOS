@@ -6,7 +6,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.Command
-import org.caffeine.chaos.api.client.*
+import org.caffeine.chaos.CommandInfo
+import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.ClientBlockedUser
+import org.caffeine.chaos.api.client.ClientFriend
+import org.caffeine.chaos.api.client.ClientGuild
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.api.jsonp
@@ -15,7 +19,8 @@ import java.nio.file.Files
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class Backup : Command(arrayOf("backup")) {
+class Backup :
+    Command(arrayOf("backup", "bak"), CommandInfo("backup", "Backs up your discord account in json format.")) {
 
     @kotlinx.serialization.Serializable
     data class BackupStructure(

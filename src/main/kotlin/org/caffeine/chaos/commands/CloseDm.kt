@@ -1,12 +1,13 @@
 package org.caffeine.chaos.commands
 
 import org.caffeine.chaos.Command
+import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.DiscordChannelType
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.log
 
-class CloseDm : Command(arrayOf("closedm")) {
+class CloseDm : Command(arrayOf("closedm"), CommandInfo("closedm", "Closes a dm channel.")) {
     override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) {
         val message: String = when (event.channel.type()) {
             DiscordChannelType.DM,

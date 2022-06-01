@@ -3,6 +3,7 @@ package org.caffeine.chaos.commands
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.caffeine.chaos.Command
+import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.DiscordUser
 import org.caffeine.chaos.api.client.message.MessageBuilder
@@ -10,7 +11,8 @@ import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.api.client.utils.convertIdToUnix
 
 
-class UserInfo : Command(arrayOf("info", "userinfo")) {
+class UserInfo :
+    Command(arrayOf("userinfo", "info"), CommandInfo("info <@user>", "Displays information about a mentioned user.")) {
     override suspend fun onCalled(
         client: Client,
         event: MessageCreateEvent,
@@ -23,17 +25,13 @@ class UserInfo : Command(arrayOf("info", "userinfo")) {
             if (event.message.mentions.isNotEmpty()) {
                 usr = event.message.mentions.first()
             } else if (event.message.mentions.isEmpty() && args.isNotEmpty()) {
-                error = "Error: '${args.joinToString(" ")}' is not a mentioned user."
+                error = "'${args.joinToString(" ")}' is not a mentioned user."
             }
             if (error.isNotBlank()) {
-                event.channel.sendMessage(
-                    MessageBuilder()
-                        .appendLine("Incorrect usage '${event.message.content}'")
-                        .appendLine(error)
-                        .appendLine("Correct usage: `${client.config.prefix}info @user`")
-                        .build()).thenAccept { message ->
-                    this.launch { onComplete(message, client, true) }
-                }
+                event.channel.sendMessage(error(client, event, error, commandInfo))
+                    .thenAccept { message ->
+                        this.launch { onComplete(message, client, true) }
+                    }
                 return@coroutineScope
             }
             val usrInfo = usr.userInfo()

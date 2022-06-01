@@ -9,7 +9,7 @@ import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import kotlin.math.absoluteValue
 
-class AutoBump : Command(arrayOf("bump", "autobump", "sbump")) {
+class AutoBump : Command(arrayOf("bump", "autobump", "sbump"), CommandInfo("bump", "Autobumps.")) {
     override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
         coroutineScope {
             var err = ""
