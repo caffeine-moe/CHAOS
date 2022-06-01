@@ -5,7 +5,6 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import kotlin.math.absoluteValue
 
@@ -15,6 +14,17 @@ class AutoBump : Command(arrayOf("bump", "autobump", "sbump"), CommandInfo("Auto
             var err = ""
             val logging = client.config.logger.auto_bump
             if (cmd != "sbump") {
+
+                val channel = event.channel
+
+                var guildId = ""
+
+                if (event.channel.getGuild() != null) {
+                    guildId = event.channel.getGuild()!!.id
+                } else {
+                    err = "Channel ${channel.id} is not in a guild."
+                }
+
                 if (bumping.isNotEmpty() && bumping.any { it.id == event.channel.id }) {
                     err = "Already bumping in this channel."
                 }
@@ -34,22 +44,19 @@ class AutoBump : Command(arrayOf("bump", "autobump", "sbump"), CommandInfo("Auto
                     }
                     return@coroutineScope
                 }
-                bumping.add(event.channel)
+                bumping.add(channel)
+                if (logging) {
+                    log("Started bumping in channel ${channel.id}", "AUTO BUMP:")
+                }
                 while (!autoBumpCock) {
-                    if (logging) {
-                        log("Started bumping in channel ${event.channel.id}", "AUTO BUMP:")
-                    }
                     val nonce = ((f..l).random()) * 60000
                     withContext(Dispatchers.IO) {
                         Thread.sleep(interval + nonce)
                     }
-                    event.channel.sendMessage(MessageBuilder()
-                        .append("d!bump")
-                        .build()
-                    ).thenAccept { b ->
+                    channel.sendInteraction("bump", guildId).thenAccept {
                         if (logging) {
                             this.launch {
-                                log("Bump! in channel ${b.channel_id}", "AUTO BUMP:")
+                                log("Bump! in channel ${channel.id}", "AUTO BUMP:")
                             }
                         }
                     }
