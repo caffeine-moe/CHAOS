@@ -49,7 +49,8 @@ class Ping : Command(arrayOf("ping", "latency"),
                 .build())
                 .thenAccept { message ->
                     this.launch {
-                        var start: Long = -1
+                        val start: Long
+                        val stop: Long
                         val url = args.joinToString(" ")
                         try {
                             val host = if (url.contains("://")) {
@@ -61,9 +62,10 @@ class Ping : Command(arrayOf("ping", "latency"),
                                 val con = aSocket(selectorManager).tcp().connect(url, 443)
                                 con.remoteAddress.toJavaAddress().hostname
                             }
-                            start = System.currentTimeMillis()
                             val selectorManager = ActorSelectorManager(Dispatchers.IO)
+                            start = System.currentTimeMillis()
                             aSocket(selectorManager).tcp().connect(host, 80)
+                            stop = System.currentTimeMillis()
                             selectorManager.close()
                         } catch (e: Exception) {
                             val err: String = when (e) {
@@ -83,8 +85,8 @@ class Ping : Command(arrayOf("ping", "latency"),
                                 }
                             }
                             message.edit(error(client, event, err, commandInfo))
+                            return@launch
                         }
-                        val stop = System.currentTimeMillis()
                         val ping = stop - start
                         message.edit(MessageBuilder()
                             .appendLine(":ping_pong: Pong!")
