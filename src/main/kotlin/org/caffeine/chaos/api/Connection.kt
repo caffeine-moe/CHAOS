@@ -99,19 +99,19 @@ class Connection {
 
     @Serializable
     data class SuperProperties(
-        var os: String,
-        var browser: String,
-        var device: String,
-        var browser_user_agent: String,
-        var browser_version: String,
-        var os_version: String,
-        var referrer: String,
-        var referring_domain: String,
-        var referrer_current: String,
-        var referring_domain_current: String,
-        var release_channel: String,
-        var system_locale: String,
-        var client_build_number: Int,
+        var os: String = "",
+        var browser: String = "",
+        var device: String = "",
+        var browser_user_agent: String = "",
+        var browser_version: String = "",
+        var os_version: String = "",
+        var referrer: String = "",
+        var referring_domain: String = "",
+        var referrer_current: String = "",
+        var referring_domain_current: String = "",
+        var release_channel: String = "",
+        var system_locale: String = "",
+        var client_build_number: Int = 0,
         var client_event_source: Empty = Empty(),
     )
 
@@ -131,7 +131,7 @@ class Connection {
         ua = prop.chrome_user_agent
         cv = prop.chrome_version
         cbn = prop.client_build_number
-        sp = json.encodeToString(SuperProperties("Windows",
+        spo = SuperProperties("Windows",
             "Chrome",
             "",
             ua,
@@ -143,7 +143,8 @@ class Connection {
             "",
             "stable",
             "en-US",
-            cbn))
+            cbn)
+        sp = json.encodeToString(spo)
         encsp = Base64.getEncoder().encodeToString(sp.toByteArray())
         httpClient = ConnectionHTTPClient(this).httpclient
         httpClient.wss(
@@ -163,20 +164,7 @@ class Connection {
                     hb = launch { startHeartBeat(pl.d.heartbeat_interval) }
                     hb.start()
                     val id = json.encodeToString(Identify(2,
-                        IdentifyD(client.config.token,
-                            SuperProperties("Windows",
-                                "Chrome",
-                                "",
-                                ua,
-                                cv,
-                                "10",
-                                "",
-                                "",
-                                "",
-                                "",
-                                "stable",
-                                "en-US",
-                                cbn))))
+                        IdentifyD(client.config.token, spo)))
                     sendJsonRequest(this@Connection, id)
                     log("Identification sent.", "API:")
                     for (frame in incoming) {

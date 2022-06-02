@@ -23,6 +23,7 @@ var seq = 0
 var sid = ""
 var sp = ""
 var encsp: String = ""
+var spo = Connection.SuperProperties()
 
 val json = Json { ignoreUnknownKeys = true }
 val jsonc = Json {
