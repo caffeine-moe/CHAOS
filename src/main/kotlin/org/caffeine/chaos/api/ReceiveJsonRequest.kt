@@ -39,7 +39,7 @@ suspend fun receiveJsonRequest(payload: String, connection: Connection, client: 
         }
         7 -> {
             log("Gateway sent opcode 7 RECONNECT, reconnecting...", "API:")
-            connection.recRes(sid, seq, client)
+            connection.reconnect()
         }
         9 -> {
             log("Client received OPCODE 9 INVALID SESSION, reconnecting...", "API:")

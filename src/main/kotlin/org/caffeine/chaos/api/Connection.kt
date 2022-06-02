@@ -4,7 +4,6 @@ import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.websocket.*
-import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -69,19 +68,6 @@ class Connection {
 
     @Serializable
     class Empty
-
-    @Serializable
-    data class Resume(
-        val op: Int,
-        val d: ResumeD,
-    )
-
-    @Serializable
-    data class ResumeD(
-        val token: String,
-        val session_id: String,
-        val seq: Int,
-    )
 
     @Serializable
     data class DUAProp(
@@ -200,57 +186,6 @@ class Connection {
         this.ws.close()
         ready = false
         log("Client logged out.", "API:")
-    }
-
-    suspend fun recRes(session_id: String, seq: Int, client: Client) {
-        disconnect()
-        log("\u001B[38;5;33mInitialising gateway connection...", "API:")
-        httpClient = ConnectionHTTPClient(Connection()).httpclient
-        httpClient.wss(
-            host = GATEWAY,
-            path = "/?v=9&encoding=json",
-            port = 443
-        ) {
-            ws = this
-            log("\u001B[38;5;47mConnected to the Discord gateway!", "API:")
-            val event = this.incoming.receive().data
-            val pl = json.decodeFromString<Rpayload>(event.decodeToString())
-            when (pl.op) {
-                10 -> {
-                    log("Client received OPCODE 10 HELLO, sending identification and resume payload then starting heartbeat.",
-                        "API:")
-                    hb = launch { startHeartBeat(pl.d.heartbeat_interval) } as CompletableJob
-                    hb.start()
-                    val id = json.encodeToString(Identify(2,
-                        IdentifyD(client.config.token,
-                            SuperProperties("Windows",
-                                "Chrome",
-                                "",
-                                ua,
-                                cv,
-                                "10",
-                                "",
-                                "",
-                                "",
-                                "",
-                                "stable",
-                                "en-US",
-                                cbn))))
-                    sendJsonRequest(this@Connection, id)
-                    log("Identification sent.", "API:")
-                    val rs = json.encodeToString(Resume(6, ResumeD(client.config.token, session_id, seq)))
-                    sendJsonRequest(this@Connection, rs)
-                    log("Resume payload sent.", "API:")
-                    for (frame in incoming) {
-                        frame as? Frame.Text ?: continue
-                        val receivedText = frame.readText()
-                        launch {
-                            receiveJsonRequest(receivedText, this@Connection, client)
-                        }
-                    }
-                }
-            }
-        }
     }
 
     suspend fun reconnect() {
