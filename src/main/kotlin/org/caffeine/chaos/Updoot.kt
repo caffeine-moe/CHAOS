@@ -7,6 +7,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
+import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.normalHTTPClient
 import java.io.File
@@ -89,8 +90,9 @@ data class Updoot(
     val latestVer: Double,
 )
 
-suspend fun updateStatus(): Updoot {
+suspend fun updateStatus(client: Client): Updoot {
 
+    //semver fucking rocks
     val git = git()
     val gnum = git.tagName.replace("[A-z]".toRegex(), "").split(".")
     val gmajor = gnum[0]
@@ -109,8 +111,11 @@ suspend fun updateStatus(): Updoot {
 
     var clientIsOutOfDate = false
 
-    if (versionDouble != gver && !git.prerelease) {
+    if (versionDouble != gver) {
         clientIsOutOfDate = true
+        if (git.prerelease && !client.config.updater.prereleases) {
+            clientIsOutOfDate = false
+        }
     }
     return Updoot(clientIsOutOfDate, downUrl, gnum.joinToString("."), gver)
 }
