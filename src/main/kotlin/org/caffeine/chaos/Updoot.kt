@@ -98,7 +98,11 @@ suspend fun updateStatus(client: Client): Updoot {
     val gmajor = gnum[0]
     val gminor = gnum[1]
     val gpatch = gnum[2]
-    val gver = "$gmajor.$gminor$gpatch".toDouble()
+    val gver = if (gnum[3].toIntOrNull() != null && client.config.updater.prereleases) {
+        "$gmajor.$gminor$gpatch${gnum[3]}".toDouble()
+    } else {
+        "$gmajor.$gminor$gpatch".toDouble()
+    }
 
     var downUrl = ""
     for (i in git.assets) {
