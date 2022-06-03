@@ -13,6 +13,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.utils.tokenValidator
 import org.caffeine.chaos.log
 import java.util.*
 
@@ -21,49 +22,49 @@ class Connection {
 
     @Serializable
     data class Rpayload(
-        val t: String?,
-        val s: String?,
-        val op: Int,
-        val d: Rd,
+        val t : String?,
+        val s : String?,
+        val op : Int,
+        val d : Rd,
     )
 
     @Serializable
     data class Rd(
-        val heartbeat_interval: Long,
-        val _trace: List<String>,
+        val heartbeat_interval : Long,
+        val _trace : List<String>,
     )
 
     @Serializable
     data class Identify(
-        val op: Int,
-        val d: IdentifyD,
+        val op : Int,
+        val d : IdentifyD,
     )
 
 
     @Serializable
     data class IdentifyD(
-        val token: String,
-        val properties: SuperProperties,
-        val presence: IdentifyDPresence = IdentifyDPresence(),
-        val compress: Boolean = false,
-        val client_state: IdentifyDClientState = IdentifyDClientState(),
+        val token : String,
+        val properties : SuperProperties,
+        val presence : IdentifyDPresence = IdentifyDPresence(),
+        val compress : Boolean = false,
+        val client_state : IdentifyDClientState = IdentifyDClientState(),
     )
 
     @Serializable
     data class IdentifyDPresence(
-        val status: String = "online",
-        val since: Int = 0,
-        val activities: Array<String> = emptyArray(),
-        val afk: Boolean = false,
+        val status : String = "online",
+        val since : Int = 0,
+        val activities : Array<String> = emptyArray(),
+        val afk : Boolean = false,
     )
 
     @Serializable
     data class IdentifyDClientState(
         @Contextual
-        val guild_hashes: Empty = Json.decodeFromString("{}"),
-        val highest_last_message_id: String = "0",
-        val read_state_version: Int = 0,
-        val user_guild_settings_version: Int = -1,
+        val guild_hashes : Empty = Json.decodeFromString("{}"),
+        val highest_last_message_id : String = "0",
+        val read_state_version : Int = 0,
+        val user_guild_settings_version : Int = -1,
     )
 
     @Serializable
@@ -71,45 +72,45 @@ class Connection {
 
     @Serializable
     data class DUAProp(
-        val chrome_user_agent: String,
-        val chrome_version: String,
-        val client_build_number: Int,
+        val chrome_user_agent : String,
+        val chrome_version : String,
+        val client_build_number : Int,
     )
 
     @Contextual
     var httpClient = ConnectionHTTPClient(this).httpclient
 
     @Contextual
-    lateinit var ws: DefaultClientWebSocketSession
-    lateinit var client: Client
+    lateinit var ws : DefaultClientWebSocketSession
+    lateinit var client : Client
 
     @Serializable
     data class SuperProperties(
-        var os: String = "",
-        var browser: String = "",
-        var device: String = "",
-        var browser_user_agent: String = "",
-        var browser_version: String = "",
-        var os_version: String = "",
-        var referrer: String = "",
-        var referring_domain: String = "",
-        var referrer_current: String = "",
-        var referring_domain_current: String = "",
-        var release_channel: String = "",
-        var system_locale: String = "",
-        var client_build_number: Int = 0,
-        var client_event_source: Empty = Empty(),
+        var os : String = "",
+        var browser : String = "",
+        var device : String = "",
+        var browser_user_agent : String = "",
+        var browser_version : String = "",
+        var os_version : String = "",
+        var referrer : String = "",
+        var referring_domain : String = "",
+        var referrer_current : String = "",
+        var referring_domain_current : String = "",
+        var release_channel : String = "",
+        var system_locale : String = "",
+        var client_build_number : Int = 0,
+        var client_event_source : Empty = Empty(),
     )
 
     @Serializable
     private data class Heartbeat(
-        val op: Int,
-        val d: String,
+        val op : Int,
+        val d : String,
     )
 
     private var hb = Job() as Job
 
-    suspend fun connect(client: Client) {
+    suspend fun connect(client : Client) {
         log("\u001B[38;5;33mInitialising gateway connection...", "API:")
         val prop =
             json.decodeFromString<DUAProp>(normalHTTPClient.get("https://discord-user-api.cf/api/v1/properties/web")
@@ -147,6 +148,7 @@ class Connection {
                 10 -> {
                     log("Client received OPCODE 10 HELLO, sending identification payload and starting heartbeat.",
                         "API:")
+                    tokenValidator(client.config.token)
                     hb = launch { startHeartBeat(pl.d.heartbeat_interval) }
                     hb.start()
                     val id = json.encodeToString(Identify(2,
@@ -173,7 +175,7 @@ class Connection {
         sendJsonRequest(this, heartbeat)
     }
 
-    private suspend fun startHeartBeat(interval: Long) {
+    private suspend fun startHeartBeat(interval : Long) {
         log("Heartbeat started.", "API:")
         while (true) {
             delay(interval)
