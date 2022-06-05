@@ -33,7 +33,7 @@ class Help : Command(arrayOf("help", "cmds", "commands"),
         val command: Command? = commandList[args.first().replace(client.config.prefix, "")]
         if (command != null) {
             val msg = MessageBuilder()
-                .appendLine("**${command.commandInfo.name}**")
+                .appendLine("__**${command.commandInfo.name}**__")
             val sb = StringBuilder()
             if (command.commandNames.size > 1) {
                 for (i: String in command.commandNames) {
