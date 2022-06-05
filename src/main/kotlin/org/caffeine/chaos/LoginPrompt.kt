@@ -1,9 +1,7 @@
 package org.caffeine.chaos
 
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import org.caffeine.chaos.api.client.Client
-import kotlin.system.exitProcess
 
 
 //executed whenever the client is logged in successfully
@@ -27,27 +25,6 @@ suspend fun loginPrompt(client: Client) = coroutineScope {
     printSeparator()
     //checks if client is up to date
     if (client.config.updater.enabled) {
-        val updateStatus = updateStatus()
-        if (updateStatus.clientIsOutOfDate) {
-            if (client.config.updater.notify) {
-                log("Client is out of date!", "UPDATER:")
-                log("You are on version $versionString", "UPDATER:")
-                log("Latest version is ${updateStatus.latestVerString}", "UPDATER:")
-                if (!client.config.updater.auto_download) {
-                    log("Please update here: ${updateStatus.downUrl}", "UPDATER:")
-                }
-            }
-            if (client.config.updater.auto_download) {
-                downloadUpdate(updateStatus.downUrl).thenAccept {
-                    this.launch {
-                        log("Downloaded latest update to ${it}!", "UPDATER:")
-                        if (client.config.updater.exit) {
-                            client.logout()
-                            exitProcess(69)
-                        }
-                    }
-                }
-            }
-        }
+        update(client)
     }
 }
