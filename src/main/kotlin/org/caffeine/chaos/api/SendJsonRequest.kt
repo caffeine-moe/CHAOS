@@ -6,15 +6,13 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.coroutines.cancellation.CancellationException
 
-suspend fun sendJsonRequest(connection: Connection, request: String) {
+suspend fun sendJsonRequest(connection : Connection, request : String) {
     try {
         connection.ws.send(request)
-    } catch (e: Exception) {
+    } catch (e : Exception) {
         if (e is CancellationException) {
-            if (connection.client.config.auto_reconnect) {
-                log("Websocket disconnected, reconnecting...", "API:")
-                connection.reconnect()
-            }
+            log("Websocket disconnected, reconnecting...", "API:")
+            connection.reconnect()
         }
         println(e)
         e.printStackTrace()
