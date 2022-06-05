@@ -57,6 +57,10 @@ suspend fun main(): Unit = coroutineScope {
         //web ui benched for now
         /* val ui = WebUI()
         launch { ui.init(client) } */
+        //checks if client is up to date
+        if (client.config.updater.enabled) {
+            update(client)
+        }
         client.login(config)
     } catch (e: Exception) {
         //if it cant read the config then it logs that its invalid

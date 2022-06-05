@@ -85,7 +85,9 @@ suspend fun update(client: Client) = coroutineScope{
                 }
             }
         }
+        return@coroutineScope
     }
+    log("\u001B[38;5;47mClient is up to date!", "UPDATER:")
 }
 
 private suspend fun updateStatus(): Updoot {

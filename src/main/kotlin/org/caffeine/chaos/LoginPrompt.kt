@@ -23,8 +23,4 @@ suspend fun loginPrompt(client: Client) = coroutineScope {
     println("\u001B[38;5;255mGuilds: \u001B[38;5;33m$guilds")
     //prints line separator lol
     printSeparator()
-    //checks if client is up to date
-    if (client.config.updater.enabled) {
-        update(client)
-    }
 }
