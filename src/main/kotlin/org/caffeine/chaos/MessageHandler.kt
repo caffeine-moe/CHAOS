@@ -53,6 +53,7 @@ fun registerCommands() {
     Pin()
     HypeSquad()
     Dice()
+    IdToDate()
 }
 
 //executed whenever a message event is received by the client
