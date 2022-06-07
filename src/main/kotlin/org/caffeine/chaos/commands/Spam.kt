@@ -5,22 +5,23 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.caffeine.chaos.Command
+import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.spamCock
 
-class Spam : Command(arrayOf("spam")) {
-    override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
+class Spam : Command(arrayOf("spam"), CommandInfo("Spam", "spam <Message> <Amount>", "Spams messages in a channel.")) {
+    override suspend fun onCalled(
+        client : Client,
+        event : MessageCreateEvent,
+        args : MutableList<String>,
+        cmd : String,
+    ) =
         coroutineScope {
             spamCock = false
             if (args.isEmpty()) {
-                event.channel.sendMessage(
-                    MessageBuilder()
-                        .appendLine("**Incorrect usage:** '${event.message.content}'")
-                        .appendLine("**Error:** Not enough parameters!")
-                        .appendLine("**Correct usage:** `${client.config.prefix}spam String Int`")
-                        .build())
+                event.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))
                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 return@coroutineScope
             }
@@ -28,12 +29,7 @@ class Spam : Command(arrayOf("spam")) {
             try {
                 val number = args.last().toLong()
                 if (number <= 0) {
-                    event.channel.sendMessage(
-                        MessageBuilder()
-                            .appendLine("**Incorrect usage:** '${event.message.content}'")
-                            .appendLine("**Error:** Int must be higher than 0!")
-                            .appendLine("**Correct usage:** `${client.config.prefix}spam String Int`")
-                            .build())
+                    event.channel.sendMessage(error(client, event, "Amount must be higher than 0.", commandInfo))
                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                     return@coroutineScope
                 }
@@ -51,32 +47,25 @@ class Spam : Command(arrayOf("spam")) {
                     }
                 }
                 if (done > 1) {
-                    event.channel.sendMessage(MessageBuilder().appendLine("Done spamming '$msg' $done times!")
+                    event.channel.sendMessage(MessageBuilder().appendLine("Done spamming '$msg' $done times.")
                         .build())
                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 }
                 if (done == 1) {
-                    event.channel.sendMessage(MessageBuilder().appendLine("Done spamming '$msg' once!").build())
+                    event.channel.sendMessage(MessageBuilder().appendLine("Done spamming '$msg' once.").build())
                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 }
-            } catch (e: Exception) {
+            } catch (e : Exception) {
                 when (e) {
                     is NumberFormatException -> {
-                        event.channel.sendMessage(
-                            MessageBuilder()
-                                .appendLine("**Incorrect usage:** '${event.message.content}'")
-                                .appendLine("**Error:** '${args.last()}' is not an integer!")
-                                .appendLine("**Correct usage:** `${client.config.prefix}spam String Int`")
-                                .build())
+                        event.channel.sendMessage(error(client,
+                            event,
+                            "'${args.last()}' is not an integer.",
+                            commandInfo))
                             .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                     }
                     is IndexOutOfBoundsException -> {
-                        event.channel.sendMessage(
-                            MessageBuilder()
-                                .appendLine("**Incorrect usage:** '${event.message.content}'")
-                                .appendLine("**Error:** Error: Not enough parameters!")
-                                .appendLine("**Correct usage:** `${client.config.prefix}spam String Int`")
-                                .build())
+                        event.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))
                             .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                     }
                 }

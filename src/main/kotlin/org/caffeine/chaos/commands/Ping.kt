@@ -8,13 +8,22 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.caffeine.chaos.Command
+import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import java.net.URL
 
-class Ping : Command(arrayOf("ping", "latency")) {
-    override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
+class Ping : Command(arrayOf("ping", "latency"),
+    CommandInfo("Ping",
+        "ping [IP/URL]",
+        "Checks how long it takes to connect to the discord gateway OR a specified IP or URL in milliseconds.")) {
+    override suspend fun onCalled(
+        client : Client,
+        event : MessageCreateEvent,
+        args : MutableList<String>,
+        cmd : String,
+    ) =
         coroutineScope {
             if (args.isEmpty()) {
                 event.channel.sendMessage(MessageBuilder()
@@ -45,8 +54,9 @@ class Ping : Command(arrayOf("ping", "latency")) {
                 .build())
                 .thenAccept { message ->
                     this.launch {
+                        val start : Long
+                        val stop : Long
                         val url = args.joinToString(" ")
-                        val start: Long
                         try {
                             val host = if (url.contains("://")) {
                                 withContext(Dispatchers.IO) {
@@ -57,20 +67,15 @@ class Ping : Command(arrayOf("ping", "latency")) {
                                 val con = aSocket(selectorManager).tcp().connect(url, 443)
                                 con.remoteAddress.toJavaAddress().hostname
                             }
-                            start = System.currentTimeMillis()
                             val selectorManager = ActorSelectorManager(Dispatchers.IO)
+                            start = System.currentTimeMillis()
                             aSocket(selectorManager).tcp().connect(host, 80)
+                            stop = System.currentTimeMillis()
                             selectorManager.close()
-                        } catch (e: Exception) {
-                            when (e) {
+                        } catch (e : Exception) {
+                            val err : String = when (e) {
                                 is UnresolvedAddressException -> {
-                                    message.edit(MessageBuilder()
-                                        .appendLine("Incorrect usage '${event.message.content}'")
-                                        .appendLine("Error: IP/URL '$url' is invalid.")
-                                        .appendLine("Correct usage: `${client.config.prefix}ping IP/URL`")
-                                        .build())
-                                        .thenAccept { message -> this.launch { onComplete(message, client, true) } }
-                                    return@launch
+                                    "IP/URL '$url' is invalid."
                                 }
                                 is SocketTimeoutException -> {
                                     message.edit(MessageBuilder()
@@ -81,17 +86,12 @@ class Ping : Command(arrayOf("ping", "latency")) {
                                     return@launch
                                 }
                                 else -> {
-                                    message.edit(MessageBuilder()
-                                        .appendLine("Incorrect usage '${event.message.content}'")
-                                        .appendLine("Error: ${e.message}")
-                                        .appendLine("Correct usage: `${client.config.prefix}ping IP/URL`")
-                                        .build())
-                                        .thenAccept { message -> this.launch { onComplete(message, client, true) } }
-                                    return@launch
+                                    e.message!!
                                 }
                             }
+                            message.edit(error(client, event, err, commandInfo))
+                            return@launch
                         }
-                        val stop = System.currentTimeMillis()
                         val ping = stop - start
                         message.edit(MessageBuilder()
                             .appendLine(":ping_pong: Pong!")

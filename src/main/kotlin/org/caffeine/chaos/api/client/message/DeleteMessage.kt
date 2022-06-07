@@ -6,7 +6,7 @@ import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.discordHTTPClient
 import org.caffeine.chaos.api.token
 
-suspend fun deleteMessage(message: Message) {
+suspend fun deleteMessage(message : Message) {
     try {
         discordHTTPClient.request("$BASE_URL/channels/${message.channel_id}/messages/${message.id}") {
             method = HttpMethod.Delete
@@ -15,7 +15,7 @@ suspend fun deleteMessage(message: Message) {
                 append(HttpHeaders.ContentType, "application/json")
             }
         }
-    } catch (e: Exception) {
+    } catch (e : Exception) {
         println(e)
         println("deletemessage")
     }

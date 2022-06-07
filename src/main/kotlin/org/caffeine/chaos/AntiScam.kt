@@ -8,10 +8,10 @@ import kotlin.math.absoluteValue
 
 @kotlinx.serialization.Serializable
 data class AntiScamResponse(
-    val domains: List<String>,
+    val domains : List<String>,
 )
 
-suspend fun antiScam(client: Client, event: MessageCreateEvent) {
+suspend fun antiScam(client : Client, event : MessageCreateEvent) {
     if (event.message.author.id == client.user.id) return
     val start = System.currentTimeMillis()
     val url = event.message.content.split(" ").find { link -> link.matches("http://.*..*|https://.*..*".toRegex()) }

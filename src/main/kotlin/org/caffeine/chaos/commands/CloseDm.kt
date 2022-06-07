@@ -1,17 +1,30 @@
 package org.caffeine.chaos.commands
 
 import org.caffeine.chaos.Command
+import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.DiscordChannelType
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.log
 
-class CloseDm : Command(arrayOf("closedm")) {
-    override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) {
-        if (event.channel.type() == 1) {
-            event.channel.delete()
-            log("Channel ${event.channel.id} closed!", "RESPONSE:")
-            return
+class CloseDm : Command(arrayOf("closedm"), CommandInfo("CloseDM", "closedm", "Closes a dm channel.")) {
+    override suspend fun onCalled(
+        client : Client,
+        event : MessageCreateEvent,
+        args : MutableList<String>,
+        cmd : String,
+    ) {
+        val message : String = when (event.channel.type()) {
+            DiscordChannelType.DM,
+            DiscordChannelType.GROUP,
+            -> {
+                event.channel.delete()
+                "closed!"
+            }
+            else -> {
+                "is not a DM Channel!"
+            }
         }
-        log("Channel ${event.channel.id} is not a DM Channel!", "RESPONSE:")
+        log("Channel ${event.channel.id} $message", "RESPONSE:")
     }
 }

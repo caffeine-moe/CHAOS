@@ -5,27 +5,35 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.caffeine.chaos.Command
+import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientChannel
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.log
 
-class LeaveGroupDms : Command(arrayOf("lgdm", "leavegroups")) {
-    override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
+class LeaveGroupDms :
+    Command(arrayOf("leavegroupdms", "lgdm", "leavegroups"),
+        CommandInfo("LeaveGroupDms", "lgdm", "Leaves all group DMs.")) {
+    override suspend fun onCalled(
+        client : Client,
+        event : MessageCreateEvent,
+        args : MutableList<String>,
+        cmd : String,
+    ) =
         coroutineScope {
             var done = 0
             val channels = StringBuilder()
             try {
-                val amount = client.user.channels.groupChannels.getList().size
-                if (amount <= 0) {
+                val list = client.user.channels.groupChannels.getList()
+                if (list.isEmpty()) {
                     event.channel.sendMessage(MessageBuilder()
                         .appendLine("There are no channels to delete!")
                         .build())
                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                     return@coroutineScope
                 }
-                for (channel: ClientChannel in client.user.channels.groupChannels.getList()) {
+                for (channel : ClientChannel in list) {
                     channel.delete()
                     channels.append("${channel.name}, ")
                     done++
@@ -49,7 +57,7 @@ class LeaveGroupDms : Command(arrayOf("lgdm", "leavegroups")) {
                         .build())
                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 }
-            } catch (e: Exception) {
+            } catch (e : Exception) {
                 println(e.printStackTrace())
             }
         }

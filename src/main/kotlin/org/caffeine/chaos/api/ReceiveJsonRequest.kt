@@ -9,14 +9,14 @@ import org.caffeine.chaos.log
 
 @Serializable
 private data class DefaultResponse(
-    val op: Int?,
-    val s: Int?,
-    val t: String?,
+    val op : Int?,
+    val s : Int?,
+    val t : String?,
 )
 
 var ready = false
 
-suspend fun receiveJsonRequest(payload: String, connection: Connection, client: Client) {
+suspend fun receiveJsonRequest(payload : String, connection : Connection, client : Client) {
     val event = json.decodeFromString<DefaultResponse>(payload)
     if (event.s != null && event.s > 0) {
         seq = event.s
@@ -34,9 +34,12 @@ suspend fun receiveJsonRequest(payload: String, connection: Connection, client: 
                 }
             }
         }
+        1 -> {
+            connection.sendHeartBeat()
+        }
         7 -> {
             log("Gateway sent opcode 7 RECONNECT, reconnecting...", "API:")
-            connection.recRes(sid, seq, client)
+            connection.reconnect()
         }
         9 -> {
             log("Client received OPCODE 9 INVALID SESSION, reconnecting...", "API:")

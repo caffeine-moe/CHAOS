@@ -16,27 +16,29 @@ import java.io.File
 import kotlin.system.exitProcess
 
 //version lmao
-const val version: Float = 2.1F
+const val versionString : String = "2.2.0"
+const val versionDouble : Double = 2.20
 
 //gets unix time in ms when program starts
 val programStartedTime = System.currentTimeMillis()
 
 //main function
-suspend fun main(): Unit = coroutineScope {
+suspend fun main() : Unit = coroutineScope {
     //init
     clear()
     printLogo()
     printSeparator()
     log("\u001B[38;5;33mCHAOS is starting...")
     //checks if config exists, if not, create one and exit
-    if (!File("config.json").exists()) {
+    val cfgName = "config.json"
+    if (!File(cfgName).exists()) {
         val default = javaClass.classLoader.getResource("defaultconfig.json")
         withContext(Dispatchers.IO) {
-            File("config.json").createNewFile()
+            File(cfgName).createNewFile()
         }
-        File("config.json").writeText(default!!.readText())
+        File(cfgName).writeText(default!!.readText())
         log(
-            "Config not found, we have generated one for you at ${File("config.json").absolutePath}",
+            "Config not found, we have generated one for you at ${File(cfgName).absolutePath}",
             "\u001B[38;5;197mERROR:"
         )
         log("\u001B[38;5;33mPlease change the file accordingly. Documentation: https://caffeine.moe/CHAOS/")
@@ -44,7 +46,7 @@ suspend fun main(): Unit = coroutineScope {
     }
     try {
         //tries to read config
-        val config = Json.decodeFromString<Config>(File("config.json").readText())
+        val config : Config = Json.decodeFromString(File(cfgName).readText())
         //gets antiscam links
         if (config.anti_scam.enabled) {
             scamLinks =
@@ -56,8 +58,12 @@ suspend fun main(): Unit = coroutineScope {
         //web ui benched for now
         /* val ui = WebUI()
         launch { ui.init(client) } */
+        //checks if client is up to date
+        if (client.config.updater.enabled) {
+            update(client)
+        }
         client.login(config)
-    } catch (e: Exception) {
+    } catch (e : Exception) {
         //if it cant read the config then it logs that its invalid
         if (e.toString().contains("JsonDecodingException")) {
             log(

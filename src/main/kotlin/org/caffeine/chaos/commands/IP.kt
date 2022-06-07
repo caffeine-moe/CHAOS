@@ -13,6 +13,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.Command
+import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
@@ -21,85 +22,86 @@ import org.caffeine.chaos.api.normalHTTPClient
 import java.net.InetAddress
 import java.net.URL
 
-class IP : Command(arrayOf("ip")) {
+class IP : Command(arrayOf("ip"), CommandInfo("IP", "ip <IP/URL>", "Looks up information about a specified IP/URL.")) {
     @Serializable
     private data class IpApiResponse(
-        val borders: String = "",
-        val callingCode: String = "",
-        val capital: String = "",
-        val city: String = "",
-        val connection: Connection = Connection(),
-        val continent: String = "",
-        val continentCode: String = "",
-        val country: String = "",
-        val countryCode: String = "",
-        val currency: Currency = Currency(),
-        val flag: Flag = Flag(),
-        val ip: String = "",
-        val isEu: Boolean = false,
-        val latitude: Double = 0.0,
-        val longitude: Double = 0.0,
-        val postal: String = "",
-        val region: String = "",
-        val regionCode: String = "",
-        val security: Security = Security(),
-        val success: Boolean = false,
-        val message: String = "",
-        val timezone: Timezone = Timezone(),
-        val type: String = "",
+        val borders : String = "",
+        val callingCode : String = "",
+        val capital : String = "",
+        val city : String = "",
+        val connection : Connection = Connection(),
+        val continent : String = "",
+        val continentCode : String = "",
+        val country : String = "",
+        val countryCode : String = "",
+        val currency : Currency = Currency(),
+        val flag : Flag = Flag(),
+        val ip : String = "",
+        val isEu : Boolean = false,
+        val latitude : Double = 0.0,
+        val longitude : Double = 0.0,
+        val postal : String = "",
+        val region : String = "",
+        val regionCode : String = "",
+        val security : Security = Security(),
+        val success : Boolean = false,
+        val message : String = "",
+        val timezone : Timezone = Timezone(),
+        val type : String = "",
     )
 
     @Serializable
     private data class Connection(
-        val asn: Int = 0,
-        val domain: String = "",
-        val isp: String = "",
-        val org: String = "",
+        val asn : Int = 0,
+        val domain : String = "",
+        val isp : String = "",
+        val org : String = "",
     )
 
     @Serializable
     private data class Currency(
-        val code: String = "",
-        val exchangeRate: Int = 0,
-        val name: String = "",
-        val plural: String = "",
-        val symbol: String = "",
+        val code : String = "",
+        val exchangeRate : Int = 0,
+        val name : String = "",
+        val plural : String = "",
+        val symbol : String = "",
     )
 
     @Serializable
     private data class Flag(
-        val emoji: String = "",
-        val emojiUnicode: String = "",
-        val img: String = "",
+        val emoji : String = "",
+        val emojiUnicode : String = "",
+        val img : String = "",
     )
 
     @Serializable
     private data class Security(
-        val anonymous: Boolean = false,
-        val hosting: Boolean = false,
-        val proxy: Boolean = false,
-        val tor: Boolean = false,
-        val vpn: Boolean = false,
+        val anonymous : Boolean = false,
+        val hosting : Boolean = false,
+        val proxy : Boolean = false,
+        val tor : Boolean = false,
+        val vpn : Boolean = false,
     )
 
     @Serializable
     private data class Timezone(
-        val abbr: String = "",
-        val currentTime: String = "",
-        val id: String = "",
-        val isDst: Boolean = false,
-        val offset: Int = 0,
-        val utc: String = "",
+        val abbr : String = "",
+        val currentTime : String = "",
+        val id : String = "",
+        val isDst : Boolean = false,
+        val offset : Int = 0,
+        val utc : String = "",
     )
 
-    override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
+    override suspend fun onCalled(
+        client : Client,
+        event : MessageCreateEvent,
+        args : MutableList<String>,
+        cmd : String,
+    ) =
         coroutineScope {
             if (args.isEmpty()) {
-                event.channel.sendMessage(MessageBuilder()
-                    .appendLine("**Incorrect usage** '${event.message.content}'")
-                    .appendLine("**Error:** No IP/URL specified")
-                    .appendLine("**Correct usage:** `${client.config.prefix}ip IP/URL`")
-                    .build())
+                event.channel.sendMessage(error(client, event, "No IP/URL specified.", commandInfo))
                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 return@coroutineScope
             }
@@ -148,22 +150,14 @@ class IP : Command(arrayOf("ip")) {
                                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                                 }
                                 false -> {
-                                    message.edit(MessageBuilder()
-                                        .appendLine("Incorrect usage '${event.message.content}'")
-                                        .appendLine("**Error:** ${parsedResponse.message}")
-                                        .appendLine("**Correct usage:** `${client.config.prefix}ip IP/URL`")
-                                        .build())
+                                    message.edit(error(client, event, parsedResponse.message, commandInfo))
                                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                                 }
                             }
-                        } catch (e: Exception) {
+                        } catch (e : Exception) {
                             when (e) {
                                 is UnresolvedAddressException -> {
-                                    message.edit(MessageBuilder()
-                                        .appendLine("Incorrect usage '${event.message.content}'")
-                                        .appendLine("Error: IP/URL '$url' is invalid.")
-                                        .appendLine("Correct usage: `${client.config.prefix}ip IP/URL`")
-                                        .build())
+                                    message.edit(error(client, event, "IP/URL is invalid.", commandInfo))
                                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                                     return@launch
                                 }
@@ -176,11 +170,7 @@ class IP : Command(arrayOf("ip")) {
                                     return@launch
                                 }
                                 else -> {
-                                    message.edit(MessageBuilder()
-                                        .appendLine("Incorrect usage '${event.message.content}'")
-                                        .appendLine("Error: ${e.message}")
-                                        .appendLine("Correct usage: `${client.config.prefix}ip IP/URL`")
-                                        .build())
+                                    message.edit(error(client, event, e.message.toString(), commandInfo))
                                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                                     return@launch
                                 }

@@ -13,14 +13,14 @@ import org.caffeine.chaos.api.token
 
 @Serializable
 open class DiscordUser(
-    @Transient open val username: String = "",
-    @Transient open val discriminator: String = "",
-    @Transient open val id: String = "",
-    @Transient open val avatar: String? = "",
+    @Transient open val username : String = "",
+    @Transient open val discriminator : String = "",
+    @Transient open val id : String = "",
+    @Transient open val avatar : String? = "",
 ) {
     @Transient
     open val discriminatedName = ""
-    fun avatarUrl(): String {
+    fun avatarUrl() : String {
         var av = "null"
         if (!avatar.isNullOrBlank()) {
             av = "https://cdn.discordapp.com/avatars/$id/$avatar?size=4096"
@@ -31,7 +31,7 @@ open class DiscordUser(
         return av
     }
 
-    suspend fun userInfo(): DiscordUserInfo {
+    suspend fun userInfo() : DiscordUserInfo {
         val re = discordHTTPClient.get("$BASE_URL/users/$id") {
             headers {
                 append(HttpHeaders.Authorization, token)
@@ -59,7 +59,7 @@ open class DiscordUser(
         )
     }
 
-    suspend fun isBlocked(client: Client): Boolean {
+    suspend fun isBlocked(client : Client) : Boolean {
         var torf = false
         if (client.user.relationships.blockedUsers.getList().contains(this)) {
             torf = true

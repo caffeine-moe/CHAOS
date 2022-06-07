@@ -7,7 +7,7 @@ import org.caffeine.chaos.api.client.message.Message
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
 
-suspend fun user(event: MessageCreateEvent, client: Client) {
+suspend fun user(event : MessageCreateEvent, client : Client) {
     if (client.config.auto_delete.user.enabled) {
         withContext(Dispatchers.IO) {
             Thread.sleep(client.config.auto_delete.user.delay * 1000)
@@ -16,7 +16,7 @@ suspend fun user(event: MessageCreateEvent, client: Client) {
     }
 }
 
-suspend fun bot(msg: Message, client: Client) {
+suspend fun bot(msg : Message, client : Client) {
     if (client.config.auto_delete.bot.enabled) {
         withContext(Dispatchers.IO) {
             Thread.sleep(client.config.auto_delete.bot.delay * 1000)

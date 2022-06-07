@@ -3,18 +3,20 @@ package org.caffeine.chaos.commands
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.caffeine.chaos.Command
+import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import oshi.SystemInfo
 
-class SysFetch : Command(arrayOf("sysfetch", "sysinfo", "fetch")) {
+class SysFetch : Command(arrayOf("sysfetch", "sysinfo", "fetch"),
+    CommandInfo("SysFetch", "sysfetch", "Sends your system information (specs).")) {
     override suspend fun onCalled(
-        client: Client,
-        event: MessageCreateEvent,
-        args: MutableList<String>,
-        cmd: String,
-    ): Unit = coroutineScope {
+        client : Client,
+        event : MessageCreateEvent,
+        args : MutableList<String>,
+        cmd : String,
+    ) : Unit = coroutineScope {
         val sysInfo = SystemInfo()
         val proc = sysInfo.hardware.processor
         val gpu = sysInfo.hardware.graphicsCards.first()

@@ -12,8 +12,8 @@ import org.caffeine.chaos.api.discordHTTPClient
 import org.caffeine.chaos.api.json
 
 @kotlinx.serialization.Serializable
-data class ClientFriends(val client: Client) {
-    suspend fun getAmount(): Int {
+data class ClientFriends(val client : Client) {
+    suspend fun getAmount() : Int {
         var number = 0
         val response = discordHTTPClient.request("$BASE_URL/users/@me/relationships") {
             method = HttpMethod.Get
@@ -30,7 +30,7 @@ data class ClientFriends(val client: Client) {
         return number
     }
 
-    suspend fun getList(): List<ClientFriend> {
+    suspend fun getList() : List<ClientFriend> {
         val friends = mutableListOf<ClientFriend>()
         val response = discordHTTPClient.request("$BASE_URL/users/@me/relationships") {
             method = HttpMethod.Get

@@ -3,19 +3,23 @@ package org.caffeine.chaos.commands
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.caffeine.chaos.Command
+import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.programStartedTime
 import kotlin.math.absoluteValue
 
-class Uptime : Command(arrayOf("uptime")) {
+class Uptime : Command(arrayOf("uptime"),
+    CommandInfo("Uptime",
+        "uptime",
+        "Displays how long CHAOS has been running for in Days, Hours, Minutes and Seconds.")) {
     override suspend fun onCalled(
-        client: Client,
-        event: MessageCreateEvent,
-        args: MutableList<String>,
-        cmd: String,
-    ): Unit = coroutineScope {
+        client : Client,
+        event : MessageCreateEvent,
+        args : MutableList<String>,
+        cmd : String,
+    ) : Unit = coroutineScope {
         val milliseconds = (programStartedTime - System.currentTimeMillis())
         val seconds = ((milliseconds / 1000).toInt() % 60).absoluteValue
         val minutes = (milliseconds / (1000 * 60) % 60).toInt().absoluteValue

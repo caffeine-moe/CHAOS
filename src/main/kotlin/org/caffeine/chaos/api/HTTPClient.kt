@@ -8,8 +8,10 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.cookies.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
+import org.caffeine.chaos.log
+import kotlin.system.exitProcess
 
-val discordHTTPClient: HttpClient = HttpClient(CIO) {
+val discordHTTPClient : HttpClient = HttpClient(CIO) {
     install(WebSockets)
     install(HttpCookies)
     install(HttpCache)
@@ -49,4 +51,14 @@ val discordHTTPClient: HttpClient = HttpClient(CIO) {
         pipelining = true
     }
     expectSuccess = true
+
+    HttpResponseValidator {
+        handleResponseExceptionWithRequest { cause, _ ->
+            if (cause.localizedMessage.contains("401 Unauthorized.")) {
+                log("Invalid token, please update your config with a valid token.", "API:")
+                exitProcess(69)
+            }
+            log("Error: ${cause.message}", "API:")
+        }
+    }
 }
