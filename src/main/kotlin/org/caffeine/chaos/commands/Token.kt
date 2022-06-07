@@ -19,10 +19,10 @@ class Token : Command(arrayOf("token"), CommandInfo("Token", "token", "Logs your
         coroutineScope {
             if (event.message.content.lowercase() == "${client.config.prefix}token") {
                 log(client.config.token, "TOKEN:\u001B[38;5;33m")
-                    event.channel.sendMessage(MessageBuilder().append("Token logged to console.").build())
-                        .thenAccept { message ->
-                            this.launch { onComplete(message, client, true) }
-                        }
+                event.channel.sendMessage(MessageBuilder().append("Token logged to console.").build())
+                    .thenAccept { message ->
+                        this.launch { onComplete(message, client, true) }
+                    }
             }
         }
 }
