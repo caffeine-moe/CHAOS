@@ -25,75 +25,80 @@ import java.net.URL
 class IP : Command(arrayOf("ip"), CommandInfo("IP", "ip <IP/URL>", "Looks up information about a specified IP/URL.")) {
     @Serializable
     private data class IpApiResponse(
-        val borders: String = "",
-        val callingCode: String = "",
-        val capital: String = "",
-        val city: String = "",
-        val connection: Connection = Connection(),
-        val continent: String = "",
-        val continentCode: String = "",
-        val country: String = "",
-        val countryCode: String = "",
-        val currency: Currency = Currency(),
-        val flag: Flag = Flag(),
-        val ip: String = "",
-        val isEu: Boolean = false,
-        val latitude: Double = 0.0,
-        val longitude: Double = 0.0,
-        val postal: String = "",
-        val region: String = "",
-        val regionCode: String = "",
-        val security: Security = Security(),
-        val success: Boolean = false,
-        val message: String = "",
-        val timezone: Timezone = Timezone(),
-        val type: String = "",
+        val borders : String = "",
+        val callingCode : String = "",
+        val capital : String = "",
+        val city : String = "",
+        val connection : Connection = Connection(),
+        val continent : String = "",
+        val continentCode : String = "",
+        val country : String = "",
+        val countryCode : String = "",
+        val currency : Currency = Currency(),
+        val flag : Flag = Flag(),
+        val ip : String = "",
+        val isEu : Boolean = false,
+        val latitude : Double = 0.0,
+        val longitude : Double = 0.0,
+        val postal : String = "",
+        val region : String = "",
+        val regionCode : String = "",
+        val security : Security = Security(),
+        val success : Boolean = false,
+        val message : String = "",
+        val timezone : Timezone = Timezone(),
+        val type : String = "",
     )
 
     @Serializable
     private data class Connection(
-        val asn: Int = 0,
-        val domain: String = "",
-        val isp: String = "",
-        val org: String = "",
+        val asn : Int = 0,
+        val domain : String = "",
+        val isp : String = "",
+        val org : String = "",
     )
 
     @Serializable
     private data class Currency(
-        val code: String = "",
-        val exchangeRate: Int = 0,
-        val name: String = "",
-        val plural: String = "",
-        val symbol: String = "",
+        val code : String = "",
+        val exchangeRate : Int = 0,
+        val name : String = "",
+        val plural : String = "",
+        val symbol : String = "",
     )
 
     @Serializable
     private data class Flag(
-        val emoji: String = "",
-        val emojiUnicode: String = "",
-        val img: String = "",
+        val emoji : String = "",
+        val emojiUnicode : String = "",
+        val img : String = "",
     )
 
     @Serializable
     private data class Security(
-        val anonymous: Boolean = false,
-        val hosting: Boolean = false,
-        val proxy: Boolean = false,
-        val tor: Boolean = false,
-        val vpn: Boolean = false,
+        val anonymous : Boolean = false,
+        val hosting : Boolean = false,
+        val proxy : Boolean = false,
+        val tor : Boolean = false,
+        val vpn : Boolean = false,
     )
 
     @Serializable
     private data class Timezone(
-        val abbr: String = "",
-        val currentTime: String = "",
-        val id: String = "",
-        val isDst: Boolean = false,
-        val offset: Int = 0,
-        val utc: String = "",
+        val abbr : String = "",
+        val currentTime : String = "",
+        val id : String = "",
+        val isDst : Boolean = false,
+        val offset : Int = 0,
+        val utc : String = "",
     )
 
-    override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
+    override suspend fun onCalled(
+        client : Client,
+        event : MessageCreateEvent,
+        args : MutableList<String>,
+        cmd : String,
+    ) =
         coroutineScope {
             if (args.isEmpty()) {
                 event.channel.sendMessage(error(client, event, "No IP/URL specified.", commandInfo))
@@ -149,7 +154,7 @@ class IP : Command(arrayOf("ip"), CommandInfo("IP", "ip <IP/URL>", "Looks up inf
                                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                                 }
                             }
-                        } catch (e: Exception) {
+                        } catch (e : Exception) {
                             when (e) {
                                 is UnresolvedAddressException -> {
                                     message.edit(error(client, event, "IP/URL is invalid.", commandInfo))

@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class User(
-    val enabled: Boolean,
-    val delay: Long,
+    val enabled : Boolean,
+    val delay : Long,
 )

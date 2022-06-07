@@ -9,7 +9,12 @@ import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import kotlin.math.absoluteValue
 
 class AutoBump : Command(arrayOf("bump", "autobump", "sbump"), CommandInfo("AutoBump", "bump", "Autobumps.")) {
-    override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
+    override suspend fun onCalled(
+        client : Client,
+        event : MessageCreateEvent,
+        args : MutableList<String>,
+        cmd : String,
+    ) =
         coroutineScope {
             var err = ""
             val logging = client.config.logger.auto_bump

@@ -9,32 +9,32 @@ import org.caffeine.chaos.handleMessage
 
 @Serializable
 private data class MessageCreate(
-    val d: MessageCreateD,
-    val op: Int?,
-    val s: Int?,
-    val t: String?,
+    val d : MessageCreateD,
+    val op : Int?,
+    val s : Int?,
+    val t : String?,
 )
 
 @Serializable
 private data class MessageCreateD(
-    val attachments: List<MessageAttachment> = mutableListOf(),
-    val author: MessageAuthor,
-    val channel_id: String,
-    val content: String,
-    val edited_timestamp: String?,
-    val flags: Int?,
-    val id: String,
-    val mention_everyone: Boolean = false,
-    val mention_roles: List<String> = mutableListOf(),
-    val mentions: List<MessageMention> = mutableListOf(),
-    val pinned: Boolean,
-    val referenced_message: MessageCreateD? = null,
-    val timestamp: String?,
-    val tts: Boolean?,
-    val type: Int,
+    val attachments : List<MessageAttachment> = mutableListOf(),
+    val author : MessageAuthor,
+    val channel_id : String,
+    val content : String,
+    val edited_timestamp : String?,
+    val flags : Int?,
+    val id : String,
+    val mention_everyone : Boolean = false,
+    val mention_roles : List<String> = mutableListOf(),
+    val mentions : List<MessageMention> = mutableListOf(),
+    val pinned : Boolean,
+    val referenced_message : MessageCreateD? = null,
+    val timestamp : String?,
+    val tts : Boolean?,
+    val type : Int,
 )
 
-suspend fun messageCreate(payload: String, client: Client) {
+suspend fun messageCreate(payload : String, client : Client) {
     val d = json.decodeFromString<MessageCreate>(payload).d
     val messageAuthor = MessageAuthor(
         d.author.username,
@@ -58,7 +58,7 @@ suspend fun messageCreate(payload: String, client: Client) {
     handleMessage(event, client)
 }
 
-private fun createReferencedMessage(ref: MessageCreateD): Message {
+private fun createReferencedMessage(ref : MessageCreateD) : Message {
     val refAuthor = MessageAuthor(
         ref.author.username,
         ref.author.discriminator,

@@ -1,11 +1,10 @@
 package org.caffeine.chaos
 
-import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.api.client.Client
 
 
 //executed whenever the client is logged in successfully
-suspend fun loginPrompt(client: Client) = coroutineScope {
+suspend fun loginPrompt(client : Client) {
     //gets friend and guild count
     val friends = client.user.relationships.friends.getAmount()
     val guilds = client.user.guilds.getAmount()

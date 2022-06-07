@@ -15,14 +15,14 @@ class UserInfo :
     Command(arrayOf("userinfo", "info"),
         CommandInfo("UserInfo", "info <@user>", "Displays information about a mentioned user.")) {
     override suspend fun onCalled(
-        client: Client,
-        event: MessageCreateEvent,
-        args: MutableList<String>,
-        cmd: String,
-    ): Unit =
+        client : Client,
+        event : MessageCreateEvent,
+        args : MutableList<String>,
+        cmd : String,
+    ) : Unit =
         coroutineScope {
             var error = ""
-            var usr: DiscordUser = client.user
+            var usr : DiscordUser = client.user
             if (event.message.mentions.isNotEmpty()) {
                 usr = event.message.mentions.first()
             } else if (event.message.mentions.isEmpty() && args.isNotEmpty()) {

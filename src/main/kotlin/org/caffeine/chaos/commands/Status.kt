@@ -10,11 +10,11 @@ import org.caffeine.chaos.api.client.message.MessageCreateEvent
 class Status :
     Command(arrayOf("status", "st"), CommandInfo("Status", "status <Status>", "Changes your current status.")) {
     override suspend fun onCalled(
-        client: Client,
-        event: MessageCreateEvent,
-        args: MutableList<String>,
-        cmd: String,
-    ): Unit = coroutineScope {
+        client : Client,
+        event : MessageCreateEvent,
+        args : MutableList<String>,
+        cmd : String,
+    ) : Unit = coroutineScope {
         var err = if (args.isEmpty()) "No status specified." else ""
         if (args.isNotEmpty()) {
             when (args.first()) {

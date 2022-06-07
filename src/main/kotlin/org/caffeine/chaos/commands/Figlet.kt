@@ -11,7 +11,12 @@ import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
 class Figlet :
     Command(arrayOf("figlet", "fig"), CommandInfo("Figlet", "fig <Text>", "Turns your text into an ascii figlet.")) {
-    override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
+    override suspend fun onCalled(
+        client : Client,
+        event : MessageCreateEvent,
+        args : MutableList<String>,
+        cmd : String,
+    ) =
         coroutineScope {
             if (args.isEmpty()) {
                 event.channel.sendMessage(error(client, event, "No specified text to figletize.", commandInfo))
@@ -27,7 +32,7 @@ class Figlet :
                     .thenAccept { message ->
                         this.launch { onComplete(message, client, client.config.auto_delete.bot.content_generation) }
                     }
-            } catch (e: ArrayIndexOutOfBoundsException) {
+            } catch (e : ArrayIndexOutOfBoundsException) {
                 event.channel.sendMessage(error(client, event, "Text contains non ASCII characters.", commandInfo))
                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 return@coroutineScope

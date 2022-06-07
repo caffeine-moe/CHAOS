@@ -15,11 +15,11 @@ class Uptime : Command(arrayOf("uptime"),
         "uptime",
         "Displays how long CHAOS has been running for in Days, Hours, Minutes and Seconds.")) {
     override suspend fun onCalled(
-        client: Client,
-        event: MessageCreateEvent,
-        args: MutableList<String>,
-        cmd: String,
-    ): Unit = coroutineScope {
+        client : Client,
+        event : MessageCreateEvent,
+        args : MutableList<String>,
+        cmd : String,
+    ) : Unit = coroutineScope {
         val milliseconds = (programStartedTime - System.currentTimeMillis())
         val seconds = ((milliseconds / 1000).toInt() % 60).absoluteValue
         val minutes = (milliseconds / (1000 * 60) % 60).toInt().absoluteValue

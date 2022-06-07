@@ -9,8 +9,8 @@ import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import org.caffeine.chaos.log
 
-data class ConnectionHTTPClient(val connection: Connection) {
-    val httpclient: HttpClient = HttpClient(CIO) {
+data class ConnectionHTTPClient(val connection : Connection) {
+    val httpclient : HttpClient = HttpClient(CIO) {
         install(WebSockets)
         install(HttpCookies)
         install(HttpCache)

@@ -9,8 +9,8 @@ import org.caffeine.chaos.api.discordHTTPClient
 import org.caffeine.chaos.api.json
 
 @kotlinx.serialization.Serializable
-data class ClientGroupChannels(val client: Client) {
-    suspend fun getList(): MutableList<ClientChannel> {
+data class ClientGroupChannels(val client : Client) {
+    suspend fun getList() : MutableList<ClientChannel> {
         val list = mutableListOf<ClientChannel>()
         val response = discordHTTPClient.request("$BASE_URL/users/@me/channels") {
             method = HttpMethod.Get

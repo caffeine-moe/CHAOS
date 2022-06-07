@@ -11,7 +11,7 @@ import io.ktor.client.request.*
 import org.caffeine.chaos.log
 import kotlin.system.exitProcess
 
-val discordHTTPClient: HttpClient = HttpClient(CIO) {
+val discordHTTPClient : HttpClient = HttpClient(CIO) {
     install(WebSockets)
     install(HttpCookies)
     install(HttpCache)

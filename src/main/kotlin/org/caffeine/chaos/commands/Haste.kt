@@ -19,15 +19,15 @@ class Haste : Command(arrayOf("haste"),
 
     @kotlinx.serialization.Serializable
     private data class HasteResponse(
-        val key: String,
+        val key : String,
     )
 
     override suspend fun onCalled(
-        client: Client,
-        event: MessageCreateEvent,
-        args: MutableList<String>,
-        cmd: String,
-    ): Unit = coroutineScope {
+        client : Client,
+        event : MessageCreateEvent,
+        args : MutableList<String>,
+        cmd : String,
+    ) : Unit = coroutineScope {
         event.channel.sendMessage(MessageBuilder().appendLine("Creating haste...").build()).thenAccept { message ->
             launch {
                 var body = ""
@@ -37,7 +37,7 @@ class Haste : Command(arrayOf("haste"),
                 if (event.message.attachments.isNotEmpty()) {
                     try {
                         body = normalHTTPClient.get(event.message.attachments.first().url).bodyAsText()
-                    } catch (e: MalformedInputException) {
+                    } catch (e : MalformedInputException) {
                         message.edit(error(client,
                             event,
                             "Unable to parse text from attached file. You must only upload text documents.",

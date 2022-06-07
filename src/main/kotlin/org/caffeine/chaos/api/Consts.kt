@@ -22,7 +22,7 @@ var cbn = 127019
 var seq = 0
 var sid = ""
 var sp = ""
-var encsp: String = ""
+var encsp : String = ""
 var spo = Connection.SuperProperties()
 
 val json = Json { ignoreUnknownKeys = true }
@@ -32,7 +32,7 @@ val jsonc = Json {
 }
 val jsonp = Json { prettyPrint = true }
 
-val normalHTTPClient: HttpClient = HttpClient(CIO) {
+val normalHTTPClient : HttpClient = HttpClient(CIO) {
     install(WebSockets)
     install(HttpCookies)
     install(HttpCache)

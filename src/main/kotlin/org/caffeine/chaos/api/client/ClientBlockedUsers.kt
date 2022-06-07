@@ -9,8 +9,8 @@ import org.caffeine.chaos.api.discordHTTPClient
 import org.caffeine.chaos.api.json
 
 @kotlinx.serialization.Serializable
-class ClientBlockedUsers(val client: Client) {
-    suspend fun getList(): List<ClientBlockedUser> {
+class ClientBlockedUsers(val client : Client) {
+    suspend fun getList() : List<ClientBlockedUser> {
         val blocked = mutableListOf<ClientBlockedUser>()
         val response = discordHTTPClient.request("$BASE_URL/users/@me/relationships") {
             method = HttpMethod.Get

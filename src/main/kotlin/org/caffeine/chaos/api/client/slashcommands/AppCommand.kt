@@ -6,21 +6,21 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AppCommand(
     @SerialName("id")
-    val id: String = "",
+    val id : String = "",
     @SerialName("application_id")
-    val applicationId: String = "",
+    val applicationId : String = "",
     @SerialName("version")
-    val version: String = "",
+    val version : String = "",
     @SerialName("default_permission")
-    val defaultPermission: Boolean = false,
+    val defaultPermission : Boolean = false,
     @SerialName("default_member_permissions")
-    val defaultMemberPermissions: String? = null,
+    val defaultMemberPermissions : String? = null,
     @SerialName("type")
-    val type: Int = 0,
+    val type : Int = 0,
     @SerialName("name")
-    val name: String = "",
+    val name : String = "",
     @SerialName("description")
-    val description: String = "",
+    val description : String = "",
     @SerialName("dm_permission")
-    val dmPermission: Boolean = false,
+    val dmPermission : Boolean = false,
 )

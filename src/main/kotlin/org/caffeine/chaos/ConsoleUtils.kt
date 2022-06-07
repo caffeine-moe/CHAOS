@@ -9,9 +9,9 @@ fun clear() {
 }
 
 //logger utility
-fun log(text: String, prefix: String = "") {
+fun log(text : String, prefix : String = "") {
     //gets current date and time
-    var message: String
+    var message : String
     val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss"))
 
     //if the prefix is blank set the message with the default prefix

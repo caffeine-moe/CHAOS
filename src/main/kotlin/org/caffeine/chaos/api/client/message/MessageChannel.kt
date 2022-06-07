@@ -22,50 +22,50 @@ import java.util.concurrent.CompletableFuture
 
 
 class MessageChannel(
-    var id: String,
+    var id : String,
 ) {
 
     @Serializable
     private data class GetGuildResponse(
         @SerialName("flags")
-        val flags: Int = 0,
+        val flags : Int = 0,
         @SerialName("guild_id")
-        val guildId: String = "",
+        val guildId : String = "",
         @SerialName("id")
-        val id: String = "",
+        val id : String = "",
         @SerialName("last_message_id")
-        val lastMessageId: String = "",
+        val lastMessageId : String = "",
         @SerialName("name")
-        val name: String = "",
+        val name : String = "",
         @SerialName("nsfw")
-        val nsfw: Boolean = false,
+        val nsfw : Boolean = false,
         @SerialName("parent_id")
-        val parentId: String = "",
+        val parentId : String = "",
         @SerialName("permission_overwrites")
-        val permissionOverwrites: List<PermissionOverwrite> = listOf(),
+        val permissionOverwrites : List<PermissionOverwrite> = listOf(),
         @SerialName("position")
-        val position: Int = 0,
+        val position : Int = 0,
         @SerialName("rate_limit_per_user")
-        val rateLimitPerUser: Int = 0,
+        val rateLimitPerUser : Int = 0,
         @SerialName("topic")
-        val topic: String? = null,
+        val topic : String? = null,
         @SerialName("type")
-        val type: Int = 0,
+        val type : Int = 0,
     )
 
     @Serializable
     private data class PermissionOverwrite(
         @SerialName("allow")
-        val allow: String = "",
+        val allow : String = "",
         @SerialName("deny")
-        val deny: String = "",
+        val deny : String = "",
         @SerialName("id")
-        val id: String = "",
+        val id : String = "",
         @SerialName("type")
-        val type: Int = 0,
+        val type : Int = 0,
     )
 
-    suspend fun getGuild(): ClientGuild? {
+    suspend fun getGuild() : ClientGuild? {
         val re = discordHTTPClient.get(
             "$BASE_URL/channels/${id}"
         ) {
@@ -73,7 +73,7 @@ class MessageChannel(
                 append(HttpHeaders.Authorization, token)
             }
         }
-        var thing: ClientGuild?
+        var thing : ClientGuild?
         val guildId = json.decodeFromString<GetGuildResponse>(re.bodyAsText()).guildId
         thing = ClientGuild("", guildId)
         if (guildId.isBlank()) thing = null
@@ -82,15 +82,15 @@ class MessageChannel(
 
     @Serializable
     data class TypeResponse(
-        val type: Int,
+        val type : Int,
     )
 
     @Serializable
     data class CommandSearchResponse(
-        val application_commands: List<AppCommand>,
+        val application_commands : List<AppCommand>,
     )
 
-    private suspend fun getCommand(name: String): AppCommand {
+    private suspend fun getCommand(name : String) : AppCommand {
         val re = discordHTTPClient.get(
             "$BASE_URL/channels/${id}/application-commands/search?type=1&query=$name&limit=7&include_applications=false"
         ) {
@@ -101,7 +101,7 @@ class MessageChannel(
         return json.decodeFromString<CommandSearchResponse>(re.bodyAsText()).application_commands.first()
     }
 
-    suspend fun sendInteraction(name: String, guildId: String): CompletableFuture<String> {
+    suspend fun sendInteraction(name : String, guildId : String) : CompletableFuture<String> {
         val command = getCommand(name)
         val data = Data(
             command.version,
@@ -134,8 +134,8 @@ class MessageChannel(
         return CompletableFuture.completedFuture("done")
     }
 
-    suspend fun messagesAsCollection(filters: MessageFilters): Collection<Message> {
-        val collection: MutableList<Message> = mutableListOf()
+    suspend fun messagesAsCollection(filters : MessageFilters) : Collection<Message> {
+        val collection : MutableList<Message> = mutableListOf()
         val messagesPerRequest = 100
         while (true) {
             var parameters = ""
@@ -170,11 +170,11 @@ class MessageChannel(
         return collection
     }
 
-    suspend fun sendMessage(message: Message): CompletableFuture<Message> {
+    suspend fun sendMessage(message : Message) : CompletableFuture<Message> {
         return sendMessage(this, message)
     }
 
-    suspend fun type(): DiscordChannelType {
+    suspend fun type() : DiscordChannelType {
         val response = discordHTTPClient.request("$BASE_URL/channels/${this.id}") {
             method = HttpMethod.Get
             headers {

@@ -6,17 +6,17 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SendAppCommand(
     @SerialName("type")
-    val type: Int = 0,
+    val type : Int = 0,
     @SerialName("application_id")
-    val applicationId: String = "",
+    val applicationId : String = "",
     @SerialName("guild_id")
-    val guildId: String = "",
+    val guildId : String = "",
     @SerialName("channel_id")
-    val channelId: String = "",
+    val channelId : String = "",
     @SerialName("session_id")
-    val sessionId: String = "",
+    val sessionId : String = "",
     @SerialName("data")
-    val `data`: Data = Data(),
+    val `data` : Data = Data(),
     @SerialName("nonce")
-    val nonce: String = "",
+    val nonce : String = "",
 )

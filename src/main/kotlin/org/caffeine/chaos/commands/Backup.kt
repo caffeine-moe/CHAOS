@@ -25,17 +25,17 @@ class Backup :
 
     @kotlinx.serialization.Serializable
     data class BackupStructure(
-        val blockList: List<ClientBlockedUser>,
-        val friends: List<ClientFriend>,
-        val guilds: List<ClientGuild>,
+        val blockList : List<ClientBlockedUser>,
+        val friends : List<ClientFriend>,
+        val guilds : List<ClientGuild>,
     )
 
     override suspend fun onCalled(
-        client: Client,
-        event: MessageCreateEvent,
-        args: MutableList<String>,
-        cmd: String,
-    ): Unit = coroutineScope {
+        client : Client,
+        event : MessageCreateEvent,
+        args : MutableList<String>,
+        cmd : String,
+    ) : Unit = coroutineScope {
         val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yy_HH:mm:ss"))
         event.channel.sendMessage(MessageBuilder().append("Performing backup...").build())
             .thenAccept { message ->
@@ -48,7 +48,7 @@ class Backup :
                     if (!p.exists()) {
                         p.mkdir()
                     }
-                    var f: File
+                    var f : File
                     f = File("${p.absolutePath}\\$time.json")
                     if (p.absolutePath.startsWith("/")) {
                         f = File("${p.absolutePath}/$time.json")
@@ -67,7 +67,7 @@ class Backup :
                             }
                         }
                         return@launch
-                    } catch (e: Exception) {
+                    } catch (e : Exception) {
                         e.printStackTrace()
                     }
                 }

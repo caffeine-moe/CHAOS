@@ -11,7 +11,12 @@ import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
 class Avatar : Command(arrayOf("avatar", "pfp", "av"),
     CommandInfo("Avatar", "av [@user]", "Sends your avatar or a mentioned users avatar.")) {
-    override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
+    override suspend fun onCalled(
+        client : Client,
+        event : MessageCreateEvent,
+        args : MutableList<String>,
+        cmd : String,
+    ) =
         coroutineScope {
             if (args.isNotEmpty() && event.message.mentions.isEmpty()) {
                 event.channel.sendMessage(error(client,
@@ -23,8 +28,8 @@ class Avatar : Command(arrayOf("avatar", "pfp", "av"),
                 return@coroutineScope
             }
 
-            val user: DiscordUser
-            val avatarURL: String
+            val user : DiscordUser
+            val avatarURL : String
 
             if (args.isEmpty()) {
                 user = client.user

@@ -8,13 +8,13 @@ import org.caffeine.chaos.api.token
 
 @kotlinx.serialization.Serializable
 data class ClientChannel(
-    val id: String,
-    val type: Int,
-    val last_message_id: String?,
-    var recipients: List<ClientChannelRecipient>,
-    var name: String? = null,
-    var icon: String? = null,
-    var owner_id: String? = null,
+    val id : String,
+    val type : Int,
+    val last_message_id : String?,
+    var recipients : List<ClientChannelRecipient>,
+    var name : String? = null,
+    var icon : String? = null,
+    var owner_id : String? = null,
 ) {
     suspend fun delete() {
         discordHTTPClient.request("$BASE_URL/channels/${this.id}") {

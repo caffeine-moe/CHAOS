@@ -18,7 +18,12 @@ class Ping : Command(arrayOf("ping", "latency"),
     CommandInfo("Ping",
         "ping [IP/URL]",
         "Checks how long it takes to connect to the discord gateway OR a specified IP or URL in milliseconds.")) {
-    override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
+    override suspend fun onCalled(
+        client : Client,
+        event : MessageCreateEvent,
+        args : MutableList<String>,
+        cmd : String,
+    ) =
         coroutineScope {
             if (args.isEmpty()) {
                 event.channel.sendMessage(MessageBuilder()
@@ -49,8 +54,8 @@ class Ping : Command(arrayOf("ping", "latency"),
                 .build())
                 .thenAccept { message ->
                     this.launch {
-                        val start: Long
-                        val stop: Long
+                        val start : Long
+                        val stop : Long
                         val url = args.joinToString(" ")
                         try {
                             val host = if (url.contains("://")) {
@@ -67,8 +72,8 @@ class Ping : Command(arrayOf("ping", "latency"),
                             aSocket(selectorManager).tcp().connect(host, 80)
                             stop = System.currentTimeMillis()
                             selectorManager.close()
-                        } catch (e: Exception) {
-                            val err: String = when (e) {
+                        } catch (e : Exception) {
+                            val err : String = when (e) {
                                 is UnresolvedAddressException -> {
                                     "IP/URL '$url' is invalid."
                                 }

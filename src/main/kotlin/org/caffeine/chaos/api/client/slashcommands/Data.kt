@@ -6,17 +6,17 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Data(
     @SerialName("version")
-    val version: String = "",
+    val version : String = "",
     @SerialName("id")
-    val id: String = "",
+    val id : String = "",
     @SerialName("name")
-    val name: String = "",
+    val name : String = "",
     @SerialName("type")
-    val type: Int = 0,
+    val type : Int = 0,
     @SerialName("options")
-    val options: Array<String> = emptyArray(),
+    val options : Array<String> = emptyArray(),
     @SerialName("application_command")
-    val applicationCommand: AppCommand = AppCommand(),
+    val applicationCommand : AppCommand = AppCommand(),
     @SerialName("attachments")
-    val attachments: Array<String> = emptyArray(),
+    val attachments : Array<String> = emptyArray(),
 )

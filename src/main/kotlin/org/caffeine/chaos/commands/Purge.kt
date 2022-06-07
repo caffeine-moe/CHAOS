@@ -15,7 +15,12 @@ import org.caffeine.chaos.purgeCock
 
 class Purge : Command(arrayOf("purge", "sclear"),
     CommandInfo("Purge", "purge <Amount>", "Deletes a specified amount of YOUR messages from a channel.")) {
-    override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
+    override suspend fun onCalled(
+        client : Client,
+        event : MessageCreateEvent,
+        args : MutableList<String>,
+        cmd : String,
+    ) =
         coroutineScope {
             if (args.isEmpty()) {
                 event.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))
@@ -46,7 +51,7 @@ class Purge : Command(arrayOf("purge", "sclear"),
                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                     return@coroutineScope
                 }
-                for (message: Message in messages.filter { message -> message.author.id == client.user.id }) {
+                for (message : Message in messages.filter { message -> message.author.id == client.user.id }) {
                     if (message.type != 3) {
                         if (done % 10 == 0 && done != 0) {
                             withContext(Dispatchers.IO) {
@@ -82,7 +87,7 @@ class Purge : Command(arrayOf("purge", "sclear"),
                         .build())
                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 }
-            } catch (e: Exception) {
+            } catch (e : Exception) {
                 e.printStackTrace()
             }
 

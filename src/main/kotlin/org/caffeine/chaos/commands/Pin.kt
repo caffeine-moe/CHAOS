@@ -14,11 +14,11 @@ class Pin : Command(arrayOf("pin", "p"),
         "pin <Message OR Reply>",
         "Pins text that you put after the command OR a message that you reply to.")) {
     override suspend fun onCalled(
-        client: Client,
-        event: MessageCreateEvent,
-        args: MutableList<String>,
-        cmd: String,
-    ): Unit = coroutineScope {
+        client : Client,
+        event : MessageCreateEvent,
+        args : MutableList<String>,
+        cmd : String,
+    ) : Unit = coroutineScope {
         if (event.message.referenced_message != null) {
             val refmes = event.message.referenced_message!!
             when (refmes.pinned) {

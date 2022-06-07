@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AntiScam(
-    val enabled: Boolean,
-    val block: Boolean,
+    val enabled : Boolean,
+    val block : Boolean,
 )

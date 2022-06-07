@@ -23,47 +23,47 @@ import kotlin.system.exitProcess
 @Serializable
 private data class GitHubResponse(
     @SerialName("assets")
-    val assets: List<Asset> = listOf(),
+    val assets : List<Asset> = listOf(),
     @SerialName("published_at")
-    val publishedAt: String = "",
+    val publishedAt : String = "",
     @SerialName("tag_name")
-    val tagName: String = "",
+    val tagName : String = "",
 )
 
 @Serializable
 private data class Asset(
     @SerialName("browser_download_url")
-    val browserDownloadUrl: String = "",
+    val browserDownloadUrl : String = "",
     @SerialName("content_type")
-    val contentType: String = "",
+    val contentType : String = "",
     @SerialName("created_at")
-    val createdAt: String = "",
+    val createdAt : String = "",
     @SerialName("download_count")
-    val downloadCount: Int = 0,
+    val downloadCount : Int = 0,
     @SerialName("id")
-    val id: Int = 0,
+    val id : Int = 0,
     @SerialName("name")
-    val name: String = "",
+    val name : String = "",
     @SerialName("node_id")
-    val nodeId: String = "",
+    val nodeId : String = "",
     @SerialName("size")
-    val size: Int = 0,
+    val size : Int = 0,
     @SerialName("state")
-    val state: String = "",
+    val state : String = "",
     @SerialName("updated_at")
-    val updatedAt: String = "",
+    val updatedAt : String = "",
     @SerialName("url")
-    val url: String = "",
+    val url : String = "",
 )
 
 private data class Updoot(
-    val clientIsOutOfDate: Boolean,
-    val downUrl: String,
-    val latestVerString: String,
-    val latestVer: Double,
+    val clientIsOutOfDate : Boolean,
+    val downUrl : String,
+    val latestVerString : String,
+    val latestVer : Double,
 )
 
-suspend fun update(client: Client) = coroutineScope{
+suspend fun update(client : Client) = coroutineScope {
     val updateStatus = updateStatus()
     if (updateStatus.clientIsOutOfDate) {
         if (client.config.updater.notify) {
@@ -90,7 +90,7 @@ suspend fun update(client: Client) = coroutineScope{
     log("\u001B[38;5;47mClient is up to date!", "UPDATER:")
 }
 
-private suspend fun updateStatus(): Updoot {
+private suspend fun updateStatus() : Updoot {
 
     //semver fucking rocks
     val git = git()
@@ -113,7 +113,7 @@ private suspend fun updateStatus(): Updoot {
     return Updoot(clientIsOutOfDate, downUrl, gnum.joinToString("."), gver)
 }
 
-private suspend fun downloadUpdate(url: String): CompletableFuture<String> {
+private suspend fun downloadUpdate(url : String) : CompletableFuture<String> {
     val filename = "CHAOS-${versionString}.jar"
     withContext(Dispatchers.IO) {
         val inputStream = URL(url).openStream()
@@ -125,7 +125,7 @@ private suspend fun downloadUpdate(url: String): CompletableFuture<String> {
     return CompletableFuture.completedFuture(filepath)
 }
 
-private suspend fun git(): GitHubResponse {
+private suspend fun git() : GitHubResponse {
     val response =
         normalHTTPClient.get("https://api.github.com/repos/caffeine-moe/CHAOS/releases/latest")
     return json.decodeFromString(response.bodyAsText())

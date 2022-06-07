@@ -13,11 +13,11 @@ import org.caffeine.chaos.api.client.message.MessageCreateEvent
 class MuteAllServers : Command(arrayOf("muteallservers", "mas", "muteservers", "muteguilds", "muteallguilds", "mag"),
     CommandInfo("MuteAllServers", "mas", "Mutes all servers indefinitely.")) {
     override suspend fun onCalled(
-        client: Client,
-        event: MessageCreateEvent,
-        args: MutableList<String>,
-        cmd: String,
-    ): Unit = coroutineScope {
+        client : Client,
+        event : MessageCreateEvent,
+        args : MutableList<String>,
+        cmd : String,
+    ) : Unit = coroutineScope {
         val mas = "Muting all servers..."
         event.channel.sendMessage(MessageBuilder()
             .appendLine(mas)

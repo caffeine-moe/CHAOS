@@ -10,11 +10,11 @@ import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
 class Coin : Command(arrayOf("coin"), CommandInfo("Coin", "coin", "Flips a coin (Sends heads or tails).")) {
     override suspend fun onCalled(
-        client: Client,
-        event: MessageCreateEvent,
-        args: MutableList<String>,
-        cmd: String,
-    ): Unit =
+        client : Client,
+        event : MessageCreateEvent,
+        args : MutableList<String>,
+        cmd : String,
+    ) : Unit =
         coroutineScope {
             val face = arrayOf("Heads", "Tails").random()
             event.channel.sendMessage(MessageBuilder()

@@ -15,25 +15,25 @@ import java.util.concurrent.CompletableFuture
 
 @kotlinx.serialization.Serializable
 private data class SendMessageResponse(
-    val attachments: List<MessageAttachment>?,
-    val author: MessageAuthor,
-    val channel_id: String,
-    val content: String,
-    val edited_timestamp: String?,
-    val flags: Int?,
-    val id: String,
-    val mention_everyone: Boolean?,
-    val mention_roles: List<String>?,
-    val mentions: List<MessageMention>?,
-    val nonce: String? = null,
-    val pinned: Boolean?,
-    val referenced_message: SendMessageResponse? = null,
-    val timestamp: String?,
-    val tts: Boolean?,
-    val type: Int?,
+    val attachments : List<MessageAttachment>?,
+    val author : MessageAuthor,
+    val channel_id : String,
+    val content : String,
+    val edited_timestamp : String?,
+    val flags : Int?,
+    val id : String,
+    val mention_everyone : Boolean?,
+    val mention_roles : List<String>?,
+    val mentions : List<MessageMention>?,
+    val nonce : String? = null,
+    val pinned : Boolean?,
+    val referenced_message : SendMessageResponse? = null,
+    val timestamp : String?,
+    val tts : Boolean?,
+    val type : Int?,
 )
 
-suspend fun sendMessage(channel: MessageChannel, message: Message): CompletableFuture<Message> {
+suspend fun sendMessage(channel : MessageChannel, message : Message) : CompletableFuture<Message> {
     if (message.content.length > 2000) {
         log("Unable to send message as it is over 2000 characters in length.", "API:")
         return CompletableFuture.failedFuture(Throwable("CONTENT_TOO_LONG"))

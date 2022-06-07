@@ -9,9 +9,14 @@ import org.caffeine.chaos.api.client.DiscordTheme
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
 class Theme : Command(arrayOf("theme", "dth"), CommandInfo("Theme", "theme <Theme>", "Changes your discord theme.")) {
-    override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
+    override suspend fun onCalled(
+        client : Client,
+        event : MessageCreateEvent,
+        args : MutableList<String>,
+        cmd : String,
+    ) =
         coroutineScope {
-            val err: String = if (args.isNotEmpty()) {
+            val err : String = if (args.isNotEmpty()) {
                 val theme = when (args.first()) {
                     "d", "dark" -> DiscordTheme.DARK
                     "l", "light" -> DiscordTheme.LIGHT

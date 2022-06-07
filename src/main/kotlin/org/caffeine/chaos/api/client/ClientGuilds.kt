@@ -9,8 +9,8 @@ import org.caffeine.chaos.api.discordHTTPClient
 import org.caffeine.chaos.api.json
 
 @kotlinx.serialization.Serializable
-class ClientGuilds(val client: Client) {
-    suspend fun getAmount(): Int {
+class ClientGuilds(val client : Client) {
+    suspend fun getAmount() : Int {
         var number = 0
         val response = discordHTTPClient.request("$BASE_URL/users/@me/guilds") {
             method = HttpMethod.Get
@@ -25,7 +25,7 @@ class ClientGuilds(val client: Client) {
         return number
     }
 
-    suspend fun getList(): List<ClientGuild> {
+    suspend fun getList() : List<ClientGuild> {
         val response = discordHTTPClient.request("$BASE_URL/users/@me/guilds") {
             method = HttpMethod.Get
             headers {
@@ -35,7 +35,7 @@ class ClientGuilds(val client: Client) {
         return json.decodeFromString(response.body())
     }
 
-    suspend fun getListAsString(): String {
+    suspend fun getListAsString() : String {
         val sb = StringBuilder()
         val response = discordHTTPClient.request("$BASE_URL/users/@me/guilds") {
             method = HttpMethod.Get

@@ -14,8 +14,8 @@ import org.caffeine.chaos.api.token
 
 @Serializable
 data class ClientGuild(
-    val name: String,
-    val id: String,
+    val name : String,
+    val id : String,
 ) {
     suspend fun muteForever() {
         discordHTTPClient.patch("https://discord.com/api/v9/users/@me/guilds/$id/settings") {
@@ -27,7 +27,7 @@ data class ClientGuild(
         }
     }
 
-    suspend fun getChannels(): List<MessageChannel> {
+    suspend fun getChannels() : List<MessageChannel> {
         val re = discordHTTPClient.get("https://discord.com/api/v9/guilds/$id/channels") {
             headers {
                 append(HttpHeaders.Authorization, token)

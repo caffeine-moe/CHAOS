@@ -15,7 +15,12 @@ import org.caffeine.chaos.log
 class LeaveGroupDms :
     Command(arrayOf("leavegroupdms", "lgdm", "leavegroups"),
         CommandInfo("LeaveGroupDms", "lgdm", "Leaves all group DMs.")) {
-    override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
+    override suspend fun onCalled(
+        client : Client,
+        event : MessageCreateEvent,
+        args : MutableList<String>,
+        cmd : String,
+    ) =
         coroutineScope {
             var done = 0
             val channels = StringBuilder()
@@ -28,7 +33,7 @@ class LeaveGroupDms :
                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                     return@coroutineScope
                 }
-                for (channel: ClientChannel in list) {
+                for (channel : ClientChannel in list) {
                     channel.delete()
                     channels.append("${channel.name}, ")
                     done++
@@ -52,7 +57,7 @@ class LeaveGroupDms :
                         .build())
                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 }
-            } catch (e: Exception) {
+            } catch (e : Exception) {
                 println(e.printStackTrace())
             }
         }

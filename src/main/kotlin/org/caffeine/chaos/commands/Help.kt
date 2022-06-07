@@ -13,11 +13,11 @@ import org.caffeine.chaos.versionString
 class Help : Command(arrayOf("help", "cmds", "commands"),
     CommandInfo("Help", "help [command]", "Sends the command list URL OR Displays info about a specified command.")) {
     override suspend fun onCalled(
-        client: Client,
-        event: MessageCreateEvent,
-        args: MutableList<String>,
-        cmd: String,
-    ): Unit = coroutineScope {
+        client : Client,
+        event : MessageCreateEvent,
+        args : MutableList<String>,
+        cmd : String,
+    ) : Unit = coroutineScope {
         if (args.isEmpty()) {
             event.channel.sendMessage(MessageBuilder()
                 .appendLine("**CHAOS v$versionString**")
@@ -30,13 +30,13 @@ class Help : Command(arrayOf("help", "cmds", "commands"),
             }
             return@coroutineScope
         }
-        val command: Command? = commandList[args.first().replace(client.config.prefix, "")]
+        val command : Command? = commandList[args.first().replace(client.config.prefix, "")]
         if (command != null) {
             val msg = MessageBuilder()
                 .appendLine("__**${command.commandInfo.name}**__")
             val sb = StringBuilder()
             if (command.commandNames.size > 1) {
-                for (i: String in command.commandNames) {
+                for (i : String in command.commandNames) {
                     sb.append("$i ")
                 }
                 if (sb.isNotBlank()) {

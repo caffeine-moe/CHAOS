@@ -16,14 +16,14 @@ import java.io.File
 import kotlin.system.exitProcess
 
 //version lmao
-const val versionString: String = "2.2.0"
-const val versionDouble: Double = 2.20
+const val versionString : String = "2.2.0"
+const val versionDouble : Double = 2.20
 
 //gets unix time in ms when program starts
 val programStartedTime = System.currentTimeMillis()
 
 //main function
-suspend fun main(): Unit = coroutineScope {
+suspend fun main() : Unit = coroutineScope {
     //init
     clear()
     printLogo()
@@ -45,7 +45,7 @@ suspend fun main(): Unit = coroutineScope {
     }
     try {
         //tries to read config
-        val config: Config = Json.decodeFromString(File("config.json").readText())
+        val config : Config = Json.decodeFromString(File("config.json").readText())
         //gets antiscam links
         if (config.anti_scam.enabled) {
             scamLinks =
@@ -62,7 +62,7 @@ suspend fun main(): Unit = coroutineScope {
             update(client)
         }
         client.login(config)
-    } catch (e: Exception) {
+    } catch (e : Exception) {
         //if it cant read the config then it logs that its invalid
         if (e.toString().contains("JsonDecodingException")) {
             log(

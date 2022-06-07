@@ -18,15 +18,15 @@ class Cat : Command(arrayOf("cat", "meow"), CommandInfo("Cat", "cat", "Sends a r
 
     @kotlinx.serialization.Serializable
     private data class CatResponse(
-        val url: String,
+        val url : String,
     )
 
     override suspend fun onCalled(
-        client: Client,
-        event: MessageCreateEvent,
-        args: MutableList<String>,
-        cmd: String,
-    ): Unit = coroutineScope {
+        client : Client,
+        event : MessageCreateEvent,
+        args : MutableList<String>,
+        cmd : String,
+    ) : Unit = coroutineScope {
         val response = normalHTTPClient.get("https://cataas.com/cat?json=true") {
             headers {
                 append("Host", "cataas.com")

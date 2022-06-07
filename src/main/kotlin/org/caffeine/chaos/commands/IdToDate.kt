@@ -15,9 +15,9 @@ class IdToDate : Command(arrayOf("idtodate", "idtod", "idtd"),
         client : Client,
         event : MessageCreateEvent,
         args : MutableList<String>,
-        cmd : String
+        cmd : String,
     ) = coroutineScope {
-        var id: Long = 0
+        var id : Long = 0
         val err = if (args.isEmpty()) {
             "Not enough arguments."
         } else {

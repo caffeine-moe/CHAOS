@@ -12,7 +12,12 @@ import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.spamCock
 
 class Spam : Command(arrayOf("spam"), CommandInfo("Spam", "spam <Message> <Amount>", "Spams messages in a channel.")) {
-    override suspend fun onCalled(client: Client, event: MessageCreateEvent, args: MutableList<String>, cmd: String) =
+    override suspend fun onCalled(
+        client : Client,
+        event : MessageCreateEvent,
+        args : MutableList<String>,
+        cmd : String,
+    ) =
         coroutineScope {
             spamCock = false
             if (args.isEmpty()) {
@@ -50,7 +55,7 @@ class Spam : Command(arrayOf("spam"), CommandInfo("Spam", "spam <Message> <Amoun
                     event.channel.sendMessage(MessageBuilder().appendLine("Done spamming '$msg' once.").build())
                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 }
-            } catch (e: Exception) {
+            } catch (e : Exception) {
                 when (e) {
                     is NumberFormatException -> {
                         event.channel.sendMessage(error(client,

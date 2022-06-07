@@ -8,27 +8,27 @@ import java.util.concurrent.CompletableFuture
 
 @kotlinx.serialization.Serializable
 data class Message(
-    var id: String = "",
-    var content: String = "",
-    var channel_id: String = "",
-    var author: MessageAuthor = MessageAuthor("", "", "", ""),
-    var attachments: List<MessageAttachment> = mutableListOf(),
-    var embeds: List<MessageEmbed> = mutableListOf(),
-    var mention_everyone: Boolean = false,
-    var mention_roles: List<String> = mutableListOf(),
-    var mentions: List<MessageMention> = mutableListOf(),
-    var pinned: Boolean = false,
-    var referenced_message: Message? = null,
-    var type: Int = 0,
+    var id : String = "",
+    var content : String = "",
+    var channel_id : String = "",
+    var author : MessageAuthor = MessageAuthor("", "", "", ""),
+    var attachments : List<MessageAttachment> = mutableListOf(),
+    var embeds : List<MessageEmbed> = mutableListOf(),
+    var mention_everyone : Boolean = false,
+    var mention_roles : List<String> = mutableListOf(),
+    var mentions : List<MessageMention> = mutableListOf(),
+    var pinned : Boolean = false,
+    var referenced_message : Message? = null,
+    var type : Int = 0,
 ) {
-    suspend fun edit(message: Message): CompletableFuture<Message> {
+    suspend fun edit(message : Message) : CompletableFuture<Message> {
         return editMessage(this, message)
     }
 
     suspend fun delete() {
         try {
             deleteMessage(this)
-        } catch (e: Exception) {
+        } catch (e : Exception) {
             e.printStackTrace()
         }
     }
