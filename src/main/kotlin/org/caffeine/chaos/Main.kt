@@ -70,6 +70,8 @@ suspend fun main() : Unit = coroutineScope {
                 "Unable to interpret config, please make sure that the one you have is structured the same as the one here: https://caffeine.moe/CHAOS/config.json",
                 "\u001B[38;5;197mERROR:"
             )
+            log("Full stacktrace here:")
+            e.printStackTrace()
             exitProcess(69)
         }
     }

@@ -23,7 +23,7 @@ class HypeSquad :
             if (args.isEmpty()) {
                 err = "No house specified."
             } else {
-                when (args.first()) {
+                when (args.first().lowercase()) {
                     "none", "0" -> house = DiscordHypeSquadHouse.NONE
                     "bravery", "1" -> house = DiscordHypeSquadHouse.BRAVERY
                     "brilliance", "2" -> house = DiscordHypeSquadHouse.BRILLIANCE

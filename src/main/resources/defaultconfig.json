@@ -7,7 +7,6 @@
     "auto_download": true,
     "exit": true
   },
-  "auto_reconnect": true,
   "logger": {
     "commands": true,
     "responses": true,
