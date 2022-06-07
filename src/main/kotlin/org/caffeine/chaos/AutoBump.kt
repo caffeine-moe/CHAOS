@@ -16,6 +16,7 @@ class AutoBump : Command(arrayOf("bump", "autobump", "sbump"), CommandInfo("Auto
         cmd : String,
     ) =
         coroutineScope {
+            val pre = "AUTO BUMP:"
             var err = ""
             val logging = client.config.logger.auto_bump
             if (cmd != "sbump") {
@@ -45,13 +46,13 @@ class AutoBump : Command(arrayOf("bump", "autobump", "sbump"), CommandInfo("Auto
 
                 if (err.isNotBlank()) {
                     if (logging) {
-                        log(err, "AUTO BUMP:")
+                        log(err, pre)
                     }
                     return@coroutineScope
                 }
                 bumping.add(channel)
                 if (logging) {
-                    log("Started bumping in channel ${channel.id}", "AUTO BUMP:")
+                    log("Started bumping in channel ${channel.id}", pre)
                 }
                 while (!autoBumpCock) {
                     val nonce = ((f..l).random()) * 60000
@@ -61,7 +62,7 @@ class AutoBump : Command(arrayOf("bump", "autobump", "sbump"), CommandInfo("Auto
                     channel.sendInteraction("bump", guildId).thenAccept {
                         if (logging) {
                             this.launch {
-                                log("Bump! in channel ${channel.id}", "AUTO BUMP:")
+                                log("Bump! in channel ${channel.id}", pre)
                             }
                         }
                     }
@@ -69,7 +70,7 @@ class AutoBump : Command(arrayOf("bump", "autobump", "sbump"), CommandInfo("Auto
                 return@coroutineScope
             }
             if (logging) {
-                log("Stopped bumping.", "AUTO BUMP:")
+                log("Stopped bumping.", pre)
             }
             autoBumpCock = true
             bumping = mutableListOf()

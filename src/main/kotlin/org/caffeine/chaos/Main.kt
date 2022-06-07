@@ -30,14 +30,15 @@ suspend fun main() : Unit = coroutineScope {
     printSeparator()
     log("\u001B[38;5;33mCHAOS is starting...")
     //checks if config exists, if not, create one and exit
-    if (!File("config.json").exists()) {
+    val cfgName = "config.json"
+    if (!File(cfgName).exists()) {
         val default = javaClass.classLoader.getResource("defaultconfig.json")
         withContext(Dispatchers.IO) {
-            File("config.json").createNewFile()
+            File(cfgName).createNewFile()
         }
-        File("config.json").writeText(default!!.readText())
+        File(cfgName).writeText(default!!.readText())
         log(
-            "Config not found, we have generated one for you at ${File("config.json").absolutePath}",
+            "Config not found, we have generated one for you at ${File(cfgName).absolutePath}",
             "\u001B[38;5;197mERROR:"
         )
         log("\u001B[38;5;33mPlease change the file accordingly. Documentation: https://caffeine.moe/CHAOS/")
@@ -45,7 +46,7 @@ suspend fun main() : Unit = coroutineScope {
     }
     try {
         //tries to read config
-        val config : Config = Json.decodeFromString(File("config.json").readText())
+        val config : Config = Json.decodeFromString(File(cfgName).readText())
         //gets antiscam links
         if (config.anti_scam.enabled) {
             scamLinks =

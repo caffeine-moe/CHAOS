@@ -33,7 +33,6 @@ class Purge : Command(arrayOf("purge", "sclear"),
                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 return@coroutineScope
             }
-            try {
                 val num = args.last().toInt()
                 if (num <= 0) {
                     event.channel.sendMessage(error(client, event, "Amount must be higher than 0.", commandInfo))
@@ -87,9 +86,6 @@ class Purge : Command(arrayOf("purge", "sclear"),
                         .build())
                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 }
-            } catch (e : Exception) {
-                e.printStackTrace()
-            }
 
         }
 }

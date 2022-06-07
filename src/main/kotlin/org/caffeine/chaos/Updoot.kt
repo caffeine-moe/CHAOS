@@ -65,19 +65,20 @@ private data class Updoot(
 
 suspend fun update(client : Client) = coroutineScope {
     val updateStatus = updateStatus()
+    val pre = "UPDATER:"
     if (updateStatus.clientIsOutOfDate) {
         if (client.config.updater.notify) {
-            log("Client is out of date!", "UPDATER:")
-            log("You are on version $versionString", "UPDATER:")
-            log("Latest version is ${updateStatus.latestVerString}", "UPDATER:")
+            log("Client is out of date!", pre)
+            log("You are on version $versionString", pre)
+            log("Latest version is ${updateStatus.latestVerString}", pre)
             if (!client.config.updater.auto_download) {
-                log("Please update here: ${updateStatus.downUrl}", "UPDATER:")
+                log("Please update here: ${updateStatus.downUrl}", pre)
             }
         }
         if (client.config.updater.auto_download) {
             downloadUpdate(updateStatus.downUrl).thenAccept {
                 this.launch {
-                    log("Downloaded latest update to ${it}!", "UPDATER:")
+                    log("Downloaded latest update to ${it}!", pre)
                     if (client.config.updater.exit) {
                         client.logout()
                         exitProcess(69)
