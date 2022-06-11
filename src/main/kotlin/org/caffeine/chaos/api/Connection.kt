@@ -153,7 +153,7 @@ class Connection {
                     hb.start()
                     val id = json.encodeToString(Identify(2,
                         IdentifyD(client.config.token, spo)))
-                    sendJsonRequest(this@Connection, id)
+                    sendJsonRequest(this@Connection, id, client)
                     log("Identification sent.", "API:")
                     for (frame in incoming) {
                         frame as? Frame.Text ?: continue
@@ -172,7 +172,7 @@ class Connection {
         if (seq > 0) {
             heartbeat = json.encodeToString(Heartbeat(1, "$seq"))
         }
-        sendJsonRequest(this, heartbeat)
+        sendJsonRequest(this, heartbeat, client)
     }
 
     private suspend fun startHeartBeat(interval : Long) {
