@@ -55,6 +55,7 @@ fun registerCommands() {
     Dice()
     IdToDate()
     Update()
+    YTDL()
 }
 
 //executed whenever a message event is received by the client
