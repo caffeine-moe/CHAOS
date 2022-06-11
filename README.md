@@ -1,7 +1,7 @@
 [![Logo](https://caffeine.moe/CHAOS/logo-min.jpg)](https://caffeine.moe/CHAOS/)
 # CHAOS - Like a utility knife for discord.
 
-[![Build](https://github.com/caffeine-moe/CHAOS/workflows/Build/badge.svg)](https://github.com/caffeine-moe/CHAOS/actions/workflows/ci.yml) [![Issues](https://img.shields.io/github/issues/caffeine-moe/CHAOS)](https://github.com/caffeine-moe/CHAOS/issues) [![Pull Requests](https://img.shields.io/github/issues-pr/caffeine-moe/CHAOS)](https://github.com/caffeine-moe/CHAOS/pulls) [![Languages](https://img.shields.io/github/languages/top/caffeine-moe/CHAOS)](https://github.com/caffeine-moe/CHAOS/search?l=kotlin&type=code) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/20fac2c6452940e592ffc9e06f21972a)](https://www.codacy.com/gh/caffeine-moe/CHAOS/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=caffeine-moe/CHAOS&amp;utm_campaign=Badge_Grade) [![License: MIT](https://img.shields.io/github/license/caffeine-moe/CHAOS)](https://mit-license.org/) [![Lines](https://img.shields.io/tokei/lines/github/caffeine-moe/CHAOS)]() [![Downloads](https://img.shields.io/github/downloads/caffeine-moe/CHAOS/total)]() [![Fuck Discord](https://img.shields.io/badge/Fuck-Discord-critical)](https://discord.com/developers/docs/topics/oauth2#bot-vs-user-accounts) [![Latest Version](https://img.shields.io/github/v/release/caffeine-moe/CHAOS?include_prereleases)]()
+[![Build](https://github.com/caffeine-moe/CHAOS/workflows/Build/badge.svg)](https://github.com/caffeine-moe/CHAOS/actions/workflows/ci.yml) [![Issues](https://img.shields.io/github/issues/caffeine-moe/CHAOS)](https://github.com/caffeine-moe/CHAOS/issues) [![Pull Requests](https://img.shields.io/github/issues-pr/caffeine-moe/CHAOS)](https://github.com/caffeine-moe/CHAOS/pulls) [![Languages](https://img.shields.io/github/languages/top/caffeine-moe/CHAOS)](https://github.com/caffeine-moe/CHAOS/search?l=kotlin&type=code) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/20fac2c6452940e592ffc9e06f21972a)](https://www.codacy.com/gh/caffeine-moe/CHAOS/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=caffeine-moe/CHAOS&amp;utm_campaign=Badge_Grade) [![License: MIT](https://img.shields.io/github/license/caffeine-moe/CHAOS)](https://mit-license.org/) [![Lines](https://img.shields.io/tokei/lines/github/caffeine-moe/CHAOS)]() [![Downloads](https://img.shields.io/github/downloads/caffeine-moe/CHAOS/total)]() [![Fuck Discord](https://img.shields.io/badge/Fuck-Discord-critical)](https://discord.com/developers/docs/topics/oauth2#bot-vs-user-accounts) [![Latest Version](https://img.shields.io/github/v/release/caffeine-moe/CHAOS?include_prereleases)](https://github.com/caffeine-moe/CHAOS/releases)
 
 
 Currently under development.
@@ -11,7 +11,7 @@ If you feel inclined, please support me by contributing to this project.
 Or alternatively, by buying me a coffee : https://ko-fi.com/caffeine727
 
 Join our discord! : https://discord.gg/ASukH9Jux  
-[![Chat](https://img.shields.io/discord/614568502573137920?label=discord)]()
+[![Chat](https://img.shields.io/discord/614568502573137920?label=discord)](https://discord.gg/ASukH9Jux )
 
 ## Features (Still under construction)
 - Fully custom discord API/Gateway interaction.
