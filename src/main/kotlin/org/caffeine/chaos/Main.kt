@@ -16,8 +16,8 @@ import java.io.File
 import kotlin.system.exitProcess
 
 //version lmao
-const val versionString : String = "2.2.0"
-const val versionDouble : Double = 2.20
+const val versionString : String = "2.2.1"
+const val versionDouble : Double = 2.21
 
 //gets unix time in ms when program starts
 val programStartedTime = System.currentTimeMillis()
@@ -70,6 +70,8 @@ suspend fun main() : Unit = coroutineScope {
                 "Unable to interpret config, please make sure that the one you have is structured the same as the one here: https://caffeine.moe/CHAOS/config.json",
                 "\u001B[38;5;197mERROR:"
             )
+            log("Full stacktrace here:")
+            e.printStackTrace()
             exitProcess(69)
         }
     }

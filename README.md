@@ -41,3 +41,5 @@ And many more!
 - The config for CHAOS will be in the same directory from where you run it so I would recommend putting `CHAOS-all.jar` into its own directory somewhere easily accessible.
 - Run CHAOS by opening a command prompt/terminal window in the folder and running `java -jar "CHAOS-all.jar"`
 - Join the [Discord server](https://discord.gg/ASukH9Juxz) if you run into any problems :)
+
+NOTE: If you're on windows and the colors in the terminal do not work, your most likely running it in command prompt which doesn't support the colors.  Please run CHAOS using another terminal such as [Windows Terminal](https://apps.microsoft.com/store/detail/windows-terminal/9N0DX20HK701).  It should already be installed on your computer but if not, you can download it from the link provided.
