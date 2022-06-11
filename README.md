@@ -11,6 +11,7 @@ If you feel inclined, please support me by contributing to this project.
 Or alternatively, by buying me a coffee : https://ko-fi.com/caffeine727
 
 Join our discord! : https://discord.gg/ASukH9Juxz
+[![Chat](https://img.shields.io/discord/614568502573137920?label=discord)]()
 
 ## Features (Still under construction)
 - Fully custom discord API/Gateway interaction.
