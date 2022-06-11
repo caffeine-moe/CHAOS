@@ -178,8 +178,8 @@ class Connection {
     private suspend fun startHeartBeat(interval : Long) {
         log("Heartbeat started.", "API:")
         while (true) {
-            delay(interval)
             sendHeartBeat()
+            delay(interval)
         }
     }
 
