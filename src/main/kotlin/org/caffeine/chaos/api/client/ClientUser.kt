@@ -22,8 +22,8 @@ data class ClientUser(
     override val id : String,
     val email : String?,
     val bio : String?,
-    val customStatus: CustomStatus,
-    val status: String,
+    val customStatus : CustomStatus,
+    val status : String,
     override val avatar : String?,
     val relationships : ClientRelationships,
     val guilds : ClientGuilds,
@@ -135,7 +135,7 @@ data class ClientUser(
     }
 
     suspend fun validateChannelId(id : String) : Boolean {
-        var stat: Boolean
+        var stat : Boolean
         try {
             val response = discordHTTPClient.request("$BASE_URL/channels/${id}/messages?limit=1") {
                 method = HttpMethod.Get
@@ -145,7 +145,7 @@ data class ClientUser(
                 }
             }
             stat = response.status.isSuccess()
-        } catch (e: ClientRequestException) {
+        } catch (e : ClientRequestException) {
             stat = false
         }
         return stat

@@ -9,7 +9,7 @@ data class Config(
     val updater : Updater,
     val logger : Logger,
     val web_ui : WebUI,
-    val afk: AFK,
+    val afk : AFK,
     val auto_delete : AutoDelete,
     val anti_scam : AntiScam,
     val exchange : Exchange,
