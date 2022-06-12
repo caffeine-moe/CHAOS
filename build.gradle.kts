@@ -18,6 +18,7 @@ tasks.jar {
 
 repositories {
     mavenCentral()
+    maven(url = "https://jitpack.io")
 }
 
 dependencies {
@@ -29,4 +30,5 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:2.0.1")
     implementation("com.github.lalyos:jfiglet:0.0.9")
     implementation("com.github.oshi:oshi-core:6.1.6")
+    implementation("com.github.sealedtx:java-youtube-downloader:3.1.0")
 }
