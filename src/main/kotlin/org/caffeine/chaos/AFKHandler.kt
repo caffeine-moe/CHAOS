@@ -37,11 +37,10 @@ suspend fun AFKHandler(event : MessageCreateEvent, client : Client) {
         return
     }
     var doit = false
-    for (mention in event.message.mentions) {
-        if (mention.id == client.user.id) {
-            doit = true
-            break
-        }
+    if (event.message.mentions.any {
+            it.id == client.user.id
+        }) {
+        doit = true
     }
     if (event.channel.type() == DiscordChannelType.DM) {
         doit = true
