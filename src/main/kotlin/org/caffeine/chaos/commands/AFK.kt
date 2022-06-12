@@ -38,8 +38,10 @@ class AFK :
                 "dnd", "donotdisturb" -> client.user.setStatus(ClientStatusType.DND)
                 "offline", "invis", "invisible" -> client.user.setStatus(ClientStatusType.INVISIBLE)
                 else -> {
-                    log("Invalid status '${client.config.afk.status}'. Defaulting to DND.", prefix)
-                    client.user.setStatus(ClientStatusType.DND)
+                    if (client.config.afk.status.isNotBlank()) {
+                        log("Invalid status '${client.config.afk.status}'. Defaulting to DND.", prefix)
+                        client.user.setStatus(ClientStatusType.DND)
+                    }
                 }
             }
             client.user.setCustomStatus(afkMessage)
