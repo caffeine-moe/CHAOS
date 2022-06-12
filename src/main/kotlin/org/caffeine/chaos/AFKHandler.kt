@@ -58,8 +58,13 @@ suspend fun AFKHandler(event : MessageCreateEvent, client : Client) {
         if (!todm.contains(author)) {
             todm.add(author)
         }
+        val message = if (event.channel.type() == DiscordChannelType.DM) {
+            afkMessage
+        } else {
+            "$afkMessage <@${author.id}>"
+        }
         event.channel.sendMessage(MessageBuilder()
-            .appendLine("$afkMessage <@${author.id}>")
+            .appendLine(message)
             .build()
         )
     }
