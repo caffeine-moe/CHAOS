@@ -56,6 +56,7 @@ fun registerCommands() {
     IdToDate()
     Update()
     YTDL()
+    AFK()
 }
 
 //executed whenever a message event is received by the client
@@ -63,6 +64,10 @@ suspend fun handleMessage(event : MessageCreateEvent, client : Client) {
     //if nitro sniper is enabled and email is verified, pass the message to the nitro sniper
     if (client.config.nitro_sniper.enabled && client.user.verified) {
         nitroSniper(event, client)
+    }
+
+    if (afk) {
+        AFKHandler(event, client)
     }
 
     //if the message is sent by the user the selfbot is logged into then do stuff

@@ -9,6 +9,7 @@ import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.client.message.Message
 import org.caffeine.chaos.api.client.message.MessageChannel
 import org.caffeine.chaos.api.discordHTTPClient
+import org.caffeine.chaos.api.handlers.CustomStatus
 import org.caffeine.chaos.api.json
 import java.util.concurrent.CompletableFuture
 import kotlin.math.absoluteValue
@@ -21,6 +22,8 @@ data class ClientUser(
     override val id : String,
     val email : String?,
     val bio : String?,
+    val customStatus: CustomStatus,
+    val status: String,
     override val avatar : String?,
     val relationships : ClientRelationships,
     val guilds : ClientGuilds,
@@ -54,6 +57,17 @@ data class ClientUser(
             setBody(json.encodeToString(json.parseToJsonElement("{\"house_id\":$houseid}")))
         }
         println(req.request.content.toString())
+    }
+
+    suspend fun setCustomStatus(status : String) {
+        discordHTTPClient.request("$BASE_URL/users/@me/settings") {
+            method = HttpMethod.Patch
+            headers {
+                append(HttpHeaders.Authorization, client.config.token)
+                append("Content-Type", "application/json")
+            }
+            setBody(json.parseToJsonElement("{\"custom_status\":{\"text\":\"$status\"}}").toString())
+        }
     }
 
     suspend fun setTheme(theme : DiscordTheme) {
