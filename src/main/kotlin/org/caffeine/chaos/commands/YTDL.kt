@@ -38,7 +38,6 @@ class YTDL : Command(arrayOf("ytdl", "youtubedl"),
             val regex =
                 "^((?:https?:)?//)?((?:www|m)\\.)?(youtube(-nocookie)?\\.com|youtu.be)(/(?:[\\w\\-]+\\?v=|embed/|v/)?)([\\w\\-]+)(\\S+)?\$".toRegex()
             if (regex.matches(args.first())) {
-                println("lol")
                 val id = regex.matchEntire(args.first())!!.groups[6]!!.value
                 val config = Config.Builder()
                     .executorService(Executors.newCachedThreadPool()) // for async requests, default Executors.newCachedThreadPool()
@@ -82,7 +81,6 @@ class YTDL : Command(arrayOf("ytdl", "youtubedl"),
                         re.headers[HttpHeaders.ContentLength]!!.toLong()
                     })
                     if (vsize / (1024 * 1024) <= 512) {
-                        println("lolyyyyy")
                         val rsp = HttpClient().request("https://0x0.st") {
                             method = HttpMethod.Post
                             setBody(MultiPartFormDataContent(
