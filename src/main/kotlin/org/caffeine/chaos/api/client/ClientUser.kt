@@ -121,15 +121,20 @@ data class ClientUser(
     }
 
     suspend fun validateChannelId(id : String) : Boolean {
-        val response = discordHTTPClient.request("$BASE_URL/channels/${id}/messages?limit=1") {
-            method = HttpMethod.Get
-            headers {
-                append(HttpHeaders.Authorization, client.config.token)
-                append("Content-Type", "application/json")
+        var stat: Boolean
+        try {
+            val response = discordHTTPClient.request("$BASE_URL/channels/${id}/messages?limit=1") {
+                method = HttpMethod.Get
+                headers {
+                    append(HttpHeaders.Authorization, client.config.token)
+                    append("Content-Type", "application/json")
+                }
             }
+            stat = response.status.isSuccess()
+        } catch (e: ClientRequestException) {
+            stat = false
         }
-        println(response)
-        return true
+        return stat
     }
 
     @kotlinx.serialization.Serializable

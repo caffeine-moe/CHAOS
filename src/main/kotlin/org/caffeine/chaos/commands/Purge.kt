@@ -7,14 +7,11 @@ import kotlinx.coroutines.withContext
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.Message
-import org.caffeine.chaos.api.client.message.MessageBuilder
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.api.client.message.MessageFilters
+import org.caffeine.chaos.api.client.message.*
 import org.caffeine.chaos.purgeCock
 
 class Purge : Command(arrayOf("purge", "sclear"),
-    CommandInfo("Purge", "purge <Amount>", "Deletes a specified amount of YOUR messages from a channel.")) {
+    CommandInfo("Purge", "purge [Channel] <Amount>", "Deletes a specified amount of YOUR messages from a channel.")) {
     override suspend fun onCalled(
         client : Client,
         event : MessageCreateEvent,
@@ -22,26 +19,51 @@ class Purge : Command(arrayOf("purge", "sclear"),
         cmd : String,
     ) =
         coroutineScope {
-            if (args.isEmpty()) {
-                event.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))
-                    .thenAccept { message -> this.launch { onComplete(message, client, true) } }
-                return@coroutineScope
-            }
             purgeCock = false
-            if (args.last().toString().contains("[^0-9]".toRegex())) {
-                event.channel.sendMessage(error(client, event, "${args.last()} is not an integer.", commandInfo))
-                    .thenAccept { message -> this.launch { onComplete(message, client, true) } }
-                return@coroutineScope
+            val channel = when {
+                args.size < 1 -> {
+                    event.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))
+                        .thenAccept { message -> this.launch { onComplete(message, client, true) } }
+                    return@coroutineScope
+                }
+                args.size == 1 -> {
+                    event.channel
+                }
+                args.size == 2 -> {
+                    if (!client.user.validateChannelId(args.first())) {
+                        event.channel.sendMessage(error(client,
+                            event,
+                            "${args.first()} is not a valid channel.",
+                            commandInfo))
+                            .thenAccept { message -> this.launch { onComplete(message, client, true) } }
+                        return@coroutineScope
+                    }
+                    MessageChannel(args.first())
+                }
+                else -> {
+                    event.channel.sendMessage(error(client, event, "Too many arguments.", commandInfo))
+                        .thenAccept { message -> this.launch { onComplete(message, client, true) } }
+                    return@coroutineScope
+                }
             }
-            val num = args.last().toInt()
-            if (num <= 0) {
-                event.channel.sendMessage(error(client, event, "Amount must be higher than 0.", commandInfo))
+            val num = if (!args.last().toString().contains("[^0-9]".toRegex())) {
+                if (args.last().toInt() <= 0) {
+                    event.channel.sendMessage(error(client, event, "Amount must be higher than 0.", commandInfo))
+                        .thenAccept { message -> this.launch { onComplete(message, client, true) } }
+                    return@coroutineScope
+                }
+                args.last().toInt()
+            } else {
+                event.channel.sendMessage(error(client,
+                    event,
+                    "${args.last()} is not an integer.",
+                    commandInfo))
                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 return@coroutineScope
             }
             var done = 0
             val messages =
-                event.channel.messagesAsCollection(MessageFilters(author_id = client.user.id, needed = num))
+                channel.messagesAsCollection(MessageFilters(author_id = client.user.id, needed = num))
             if (messages.isEmpty()) {
                 event.channel.sendMessage(
                     MessageBuilder()
