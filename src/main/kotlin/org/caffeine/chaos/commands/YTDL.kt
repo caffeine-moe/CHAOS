@@ -17,6 +17,7 @@ import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.normalHTTPClient
 import java.io.File
 import java.net.URL
 import java.nio.file.Files
@@ -52,43 +53,62 @@ class YTDL : Command(arrayOf("ytdl", "youtubedl"),
 
                 val regexVideoName = videoData.details().title().replace("[^A-z ]".toRegex(), "").replace(" ", "_")
 
-                val filename = "${regexVideoName}.mp4"
-                withContext(Dispatchers.IO) {
-                    val inputStream = URL(videoData.bestVideoWithAudioFormat().url()).openStream()
-                    Files.copy(inputStream,
-                        Paths.get(filename),
-                        StandardCopyOption.REPLACE_EXISTING)
-                }
-
-                val file = (File(filename).absoluteFile)
-
-                val filepath = file.absolutePath
-
-                event.channel.sendMessage(MessageBuilder()
-                    .appendLine("downloaded ${args.first()} to $filepath")
-                    .build()
-                ).thenAccept {
-                    launch {
-                        onComplete(it, client, true)
+                if (client.config.ytdl.download) {
+                    val filename = "${regexVideoName}.mp4"
+                    withContext(Dispatchers.IO) {
+                        val inputStream = URL(videoData.bestVideoWithAudioFormat().url()).openStream()
+                        Files.copy(inputStream,
+                            Paths.get(filename),
+                            StandardCopyOption.REPLACE_EXISTING)
                     }
-                }
 
-                if (file.length() / (1024 * 1024) <= 512) {
-                    val rsp = HttpClient().request("https://0x0.st") {
-                        method = HttpMethod.Post
-                        setBody(MultiPartFormDataContent(
-                            formData {
-                                append("url", videoData.bestVideoWithAudioFormat().url())
-                            }
-                        ))
-                    }
+                    val file = (File(filename).absoluteFile)
+
+                    val filepath = file.absolutePath
+
                     event.channel.sendMessage(MessageBuilder()
-                        .appendLine("uploaded <${args.first()}> to ${rsp.bodyAsText()}")
+                        .appendLine("downloaded ${args.first()} to `$filepath`")
                         .build()
                     ).thenAccept {
                         launch {
-                            onComplete(it, client, client.config.auto_delete.bot.content_generation)
+                            onComplete(it, client, true)
                         }
+                    }
+                }
+
+                if (client.config.ytdl.upload) {
+                    val vsize = (withContext(Dispatchers.IO) {
+                        val re = normalHTTPClient.head(videoData.bestVideoWithAudioFormat().url())
+                        re.headers[HttpHeaders.ContentLength]!!.toLong()
+                    })
+                    if (vsize / (1024 * 1024) <= 512) {
+                        println("lolyyyyy")
+                        val rsp = HttpClient().request("https://0x0.st") {
+                            method = HttpMethod.Post
+                            setBody(MultiPartFormDataContent(
+                                formData {
+                                    append("url", videoData.bestVideoWithAudioFormat().url())
+                                }
+                            ))
+                        }
+                        event.channel.sendMessage(MessageBuilder()
+                            .appendLine("uploaded <${args.first()}> to ${rsp.bodyAsText()}")
+                            .build()
+                        ).thenAccept {
+                            launch {
+                                onComplete(it, client, client.config.auto_delete.bot.content_generation)
+                            }
+                        }
+                    } else {
+                        event.channel.sendMessage(error(client,
+                            event,
+                            "Video is too big to be uploaded. (${vsize / (1024 * 1024)}MB)",
+                            commandInfo))
+                            .thenAccept {
+                                launch {
+                                    onComplete(it, client, true)
+                                }
+                            }
                     }
                 }
 
