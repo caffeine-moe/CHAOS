@@ -57,9 +57,10 @@
   },
   "auto_bump": {
     "interval": 2,
-    "error": [
-      5,
-      15
-    ]
+    "error": [5, 15]
+  },
+  "ytdl": {
+    "download": false,
+    "upload": true
   }
 }
