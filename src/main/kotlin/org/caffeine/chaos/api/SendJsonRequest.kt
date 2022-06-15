@@ -10,7 +10,7 @@ suspend fun sendJsonRequest(connection : Connection, request : String, client : 
         connection.ws.send(request)
     } catch (e : CancellationException) {
         log("Websocket disconnected, reconnecting...", "API:")
-        connection.disconnect()
-        Connection().connect(client)
+        client.logout()
+        connection.reconnect()
     }
 }
