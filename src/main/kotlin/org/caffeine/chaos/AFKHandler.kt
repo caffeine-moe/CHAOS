@@ -8,8 +8,9 @@ import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.commands.oldCustomStatus
 import org.caffeine.chaos.commands.oldStatus
 
-val cooldown : HashMap<DiscordUser, Long> = HashMap()
-val todm : MutableList<DiscordUser> = mutableListOf()
+private val cooldown : HashMap<DiscordUser, Long> = HashMap()
+private val todm : MutableList<DiscordUser> = mutableListOf()
+private val sb = StringBuilder()
 
 var afk = false
 
@@ -22,13 +23,13 @@ suspend fun AFKHandler(event : MessageCreateEvent, client : Client) {
         if (event.message.content.startsWith(afkMessage)) {
             return
         }
+        sb.clear()
         cooldown.clear()
         afk = false
         log("Set AFK to $afk", prefix)
         client.user.setCustomStatus(oldCustomStatus)
         client.user.setStatus(oldStatus)
         if (todm.isNotEmpty()) {
-            val sb = StringBuilder()
             for (i in todm) {
                 sb.appendLine("${i.discriminatedName} : ${i.id}")
             }
