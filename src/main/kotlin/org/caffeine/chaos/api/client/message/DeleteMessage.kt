@@ -16,7 +16,6 @@ suspend fun deleteMessage(message : Message) {
             }
         }
     } catch (e : Exception) {
-        println(e)
-        println("deletemessage")
+        return
     }
 }
