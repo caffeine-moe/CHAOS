@@ -23,7 +23,6 @@ suspend fun AFKHandler(event : MessageCreateEvent, client : Client) {
         if (event.message.content.startsWith(afkMessage)) {
             return
         }
-        sb.clear()
         cooldown.clear()
         afk = false
         log("Set AFK to $afk", prefix)
@@ -33,7 +32,8 @@ suspend fun AFKHandler(event : MessageCreateEvent, client : Client) {
             for (i in todm) {
                 sb.appendLine("${i.discriminatedName} : ${i.id}")
             }
-            log("Users who talked to you while you were away:\n$sb", prefix)
+            log("Users who talked to you while you were away:\n${sb.trimEnd()}", prefix)
+            sb.clear()
         }
         return
     }
