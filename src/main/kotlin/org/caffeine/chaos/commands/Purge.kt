@@ -96,18 +96,17 @@ class Purge : Command(arrayOf("purge", "sclear"),
                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 return@coroutineScope
             }
-            if (done > 1) {
-                event.channel.sendMessage(MessageBuilder()
-                    .appendLine("Removed $done messages!")
-                    .build())
-                    .thenAccept { message -> this.launch { onComplete(message, client, true) } }
-            }
-            if (done == 1) {
-                event.channel.sendMessage(MessageBuilder()
-                    .appendLine("Removed $done message!")
-                    .build())
-                    .thenAccept { message -> this.launch { onComplete(message, client, true) } }
-            }
-
+            event.channel.sendMessage(MessageBuilder()
+                .appendLine("Removed $done message ${
+                    if (done > 1) {
+                        "s"
+                    } else {
+                        "1"
+                    }
+                }")
+                .build())
+                .thenAccept { message -> this.launch { onComplete(message, client, true) } }
         }
+
+
 }
