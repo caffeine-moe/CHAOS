@@ -59,6 +59,7 @@ class AutoBump : Command(arrayOf("bump", "autobump", "sbump"), CommandInfo("Auto
                     withContext(Dispatchers.IO) {
                         Thread.sleep(interval + nonce)
                     }
+                    if (autoBumpCock) break
                     channel.sendInteraction("bump", guildId).thenAccept {
                         if (logging) {
                             this.launch {
