@@ -88,14 +88,6 @@ class Purge : Command(arrayOf("purge", "sclear"),
                     if (done == num) break
                 }
             }
-            if (done < 1) {
-                event.channel.sendMessage(
-                    MessageBuilder()
-                        .appendLine("There is nothing to delete!")
-                        .build())
-                    .thenAccept { message -> this.launch { onComplete(message, client, true) } }
-                return@coroutineScope
-            }
             event.channel.sendMessage(MessageBuilder()
                 .appendLine("Removed $done message${if (done > 1) "s" else ""}!")
                 .build())
