@@ -97,13 +97,7 @@ class Purge : Command(arrayOf("purge", "sclear"),
                 return@coroutineScope
             }
             event.channel.sendMessage(MessageBuilder()
-                .appendLine("Removed $done message ${
-                    if (done > 1) {
-                        "s"
-                    } else {
-                        "1"
-                    }
-                }")
+                .appendLine("Removed $done message${if (done > 1) "s" else ""}!")
                 .build())
                 .thenAccept { message -> this.launch { onComplete(message, client, true) } }
         }
