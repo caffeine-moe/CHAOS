@@ -59,6 +59,7 @@ val discordHTTPClient : HttpClient = HttpClient(CIO) {
                 exitProcess(69)
             }
             log("Error: ${cause.message}", "API:")
+            return@handleResponseExceptionWithRequest
         }
     }
 }

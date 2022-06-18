@@ -52,6 +52,7 @@ data class ConnectionHTTPClient(val connection : Connection) {
         HttpResponseValidator {
             handleResponseExceptionWithRequest { cause, request ->
                 log("Error: ${cause.message}", "API:")
+                return@handleResponseExceptionWithRequest
             }
         }
     }
