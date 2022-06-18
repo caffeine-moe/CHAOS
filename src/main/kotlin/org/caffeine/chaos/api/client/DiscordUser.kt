@@ -12,14 +12,13 @@ import org.caffeine.chaos.api.jsonc
 import org.caffeine.chaos.api.token
 
 @Serializable
-open class DiscordUser(
+abstract class DiscordUser(
     @Transient open val username : String = "",
     @Transient open val discriminator : String = "",
     @Transient open val id : String = "",
     @Transient open val avatar : String? = "",
 ) {
-    @Transient
-    open val discriminatedName = ""
+    @Transient open val discriminatedName = ""
     fun avatarUrl() : String {
         var av = "null"
         if (!avatar.isNullOrBlank()) {
