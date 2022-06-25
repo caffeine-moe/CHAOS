@@ -7,5 +7,5 @@ import org.caffeine.chaos.api.payloads.client.data.resume.ResumeD
 @Serializable
 data class Resume(
     override val op : Int = OPCODE.RESUME.value,
-    override val d : ResumeD = ResumeD(),
+    val d : ResumeD = ResumeD(),
 ) : BasePayload()

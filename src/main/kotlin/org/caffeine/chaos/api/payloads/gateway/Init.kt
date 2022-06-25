@@ -7,5 +7,5 @@ import org.caffeine.chaos.api.payloads.gateway.data.init.InitData
 data class Init(
     override val t : String?,
     override val op : Int,
-    override val d : InitData,
+    val d : InitData,
 ) : BasePayload()

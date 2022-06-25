@@ -21,7 +21,7 @@ import org.caffeine.chaos.log
 
 class Connection {
 
-    var httpClient = ConnectionHTTPClient().httpClient
+    private var httpClient = ConnectionHTTPClient().httpClient
 
     lateinit var ws : DefaultClientWebSocketSession
 
@@ -105,15 +105,15 @@ class Connection {
 
     suspend fun sendHeartBeat() {
         val heartbeat = json.encodeToString(HeartBeat(OPCODE.HEARTBEAT.value,
-            if (gatewaySequence > 0) "$gatewaySequence" else "null"))
+            if (gatewaySequence > 0) gatewaySequence else null))
         ws.send(heartbeat)
     }
 
     private suspend fun startHeartBeat(interval : Long) {
         log("Heartbeat started.", "API:")
         while (true) {
-            delay(interval)
             sendHeartBeat()
+            delay(interval)
         }
     }
 

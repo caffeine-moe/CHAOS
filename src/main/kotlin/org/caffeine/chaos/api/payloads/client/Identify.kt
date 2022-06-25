@@ -7,5 +7,5 @@ import org.caffeine.chaos.api.payloads.client.data.identify.IdentifyD
 @Serializable
 class Identify(
     override val op : Int = OPCODE.IDENTIFY.value,
-    override val d : IdentifyD,
+    val d : IdentifyD,
 ) : BasePayload()
