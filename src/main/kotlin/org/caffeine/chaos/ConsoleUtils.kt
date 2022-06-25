@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter
 enum class ConsoleColours(val value : String) {
     WHITE("\u001B[38;5;255m"),
     BLUE("\u001B[38;5;33m"),
-    GREEN(""),
+    GREEN("\u001B[38;5;47m"),
     RED("")
 }
 

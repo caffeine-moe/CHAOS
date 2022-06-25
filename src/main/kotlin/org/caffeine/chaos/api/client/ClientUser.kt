@@ -19,7 +19,6 @@ import org.caffeine.chaos.api.json
 import java.util.concurrent.CompletableFuture
 import kotlin.math.absoluteValue
 
-@kotlinx.serialization.Serializable
 data class ClientUser(
     val verified : Boolean,
     override val username : String,
@@ -35,13 +34,14 @@ data class ClientUser(
     val channels : ClientChannels,
     val client : Client,
 ) : DiscordUser() {
+
     override val discriminatedName = "$username#$discriminator"
 
     fun getGuild(channel : MessageChannel) : ClientGuild? {
         var guild : ClientGuild? = null
         for (g in client.user.guilds) {
             for (c in g.channels) {
-                if (c.id == this.id) {
+                if (c.id == channel.id) {
                     guild = g
                 }
             }
@@ -201,7 +201,7 @@ data class ClientUser(
         return stat
     }
 
-    @kotlinx.serialization.Serializable
+    @Serializable
     private data class Type(
         val type : Int,
     )

@@ -11,7 +11,7 @@ data class CommandInfo(
     val description : String,
 )
 
-abstract class Command(val commandNames : Array<String>, val commandInfo : CommandInfo) {
+open class Command(val commandNames : Array<String>, val commandInfo : CommandInfo) {
     init {
         for (name in commandNames) {
             this.also { commandList[name] = it }

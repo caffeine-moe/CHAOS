@@ -2,7 +2,6 @@ package org.caffeine.chaos
 
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import org.caffeine.chaos.api.ConnectionType
 import org.caffeine.chaos.api.client.Client
 
 suspend fun ready(client : Client) = coroutineScope {
@@ -13,5 +12,4 @@ suspend fun ready(client : Client) = coroutineScope {
     launch {
         configWatcher(client)
     }
-    client.socket.execute(ConnectionType.RECONNECT_AND_RESUME, client)
 }

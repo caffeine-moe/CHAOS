@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class HeartBeat(
-    val op : Int,
+    override val op : Int,
     val seq : String,
-)
+) : BasePayload()

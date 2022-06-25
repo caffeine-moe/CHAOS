@@ -12,7 +12,7 @@ import org.caffeine.chaos.api.jsonc
 import org.caffeine.chaos.api.token
 
 @Serializable
-abstract class DiscordUser(
+open class DiscordUser(
     @Transient open val username : String = "",
     @Transient open val discriminator : String = "",
     @Transient open val id : String = "",

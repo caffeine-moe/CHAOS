@@ -4,7 +4,6 @@ import org.caffeine.chaos.api.Connection
 import org.caffeine.chaos.api.ConnectionType
 import org.caffeine.chaos.config.Config
 
-@kotlinx.serialization.Serializable
 class Client(
     var config : Config,
     val socket : Connection = Connection(),
