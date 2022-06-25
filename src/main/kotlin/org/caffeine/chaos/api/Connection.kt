@@ -52,6 +52,7 @@ class Connection {
                 return
             }
             ConnectionType.RECONNECT_AND_RESUME -> {
+                disconnect()
                 val resume = json.encodeToString(Resume(
                     OPCODE.RESUME.value,
                     ResumeD(
@@ -130,7 +131,7 @@ class Connection {
 
     private suspend fun reconnect() {
         this.disconnect()
-        execute(ConnectionType.RECONNECT_AND_RESUME, client)
+        execute(ConnectionType.CONNECT, client)
     }
 
 }
