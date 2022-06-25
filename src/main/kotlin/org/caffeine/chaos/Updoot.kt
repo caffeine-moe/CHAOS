@@ -11,6 +11,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.json
+import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.normalHTTPClient
 import org.caffeine.chaos.api.utils.log
 import java.io.File
@@ -89,7 +90,7 @@ suspend fun update(client : Client) = coroutineScope {
         }
         return@coroutineScope
     }
-    log("\u001B[38;5;47mClient is up to date!", "UPDATER:")
+    log("${ConsoleColours.GREEN.value}Client is up to date!", "UPDATER:")
 }
 
 private suspend fun updateStatus() : Updoot {

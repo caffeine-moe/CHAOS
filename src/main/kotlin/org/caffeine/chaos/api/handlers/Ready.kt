@@ -5,6 +5,7 @@ import org.caffeine.chaos.api.client.*
 import org.caffeine.chaos.api.jsonc
 import org.caffeine.chaos.api.ready
 import org.caffeine.chaos.api.token
+import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.sessionId
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.ready
@@ -109,7 +110,7 @@ suspend fun ready(client : Client, payload : String) {
     )
     ready = true
     sessionId = d.session_id
-    log("\u001B[38;5;47mClient logged in!", "API:")
+    log("${ConsoleColours.GREEN.value}Client logged in!", "API:")
     ready(client)
 }
 

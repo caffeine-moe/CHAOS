@@ -1,6 +1,7 @@
 package org.caffeine.chaos
 
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.clear
 import org.caffeine.chaos.api.utils.printLogo
 import org.caffeine.chaos.api.utils.printSeparator
@@ -15,14 +16,14 @@ fun loginPrompt(client : Client) {
     clear()
     printLogo()
     //prints version number
-    println("\u001B[38;5;255mVersion: \u001B[38;5;33m${versionString}")
+    println("${ConsoleColours.WHITE.value}Version: ${ConsoleColours.BLUE.value}${versionString}")
     //prints the prefix
-    println("\u001B[38;5;255mPrefix: \u001B[38;5;33m${client.config.prefix}")
+    println("${ConsoleColours.WHITE.value}Prefix: ${ConsoleColours.BLUE.value}${client.config.prefix}")
     //prints the name and discriminator of the currently logged-in user
-    println("\u001B[38;5;255mLogged in as: ${client.user.username}\u001B[38;5;33m#${client.user.discriminator}")
+    println("${ConsoleColours.WHITE.value}Logged in as: ${client.user.username}${ConsoleColours.BLUE.value}#${client.user.discriminator}")
     //prints friend and guild count
-    println("\u001B[38;5;255mFriends: \u001B[38;5;33m$friends")
-    println("\u001B[38;5;255mGuilds: \u001B[38;5;33m$guilds")
+    println("${ConsoleColours.WHITE.value}Friends: ${ConsoleColours.BLUE.value}$friends")
+    println("${ConsoleColours.WHITE.value}Guilds: ${ConsoleColours.BLUE.value}$guilds")
     //prints line separator lol
     printSeparator()
 }

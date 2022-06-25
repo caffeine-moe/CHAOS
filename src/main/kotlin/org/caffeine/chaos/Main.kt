@@ -8,11 +8,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.utils.normalHTTPClient
-import org.caffeine.chaos.api.utils.clear
-import org.caffeine.chaos.api.utils.log
-import org.caffeine.chaos.api.utils.printLogo
-import org.caffeine.chaos.api.utils.printSeparator
+import org.caffeine.chaos.api.utils.*
 import org.caffeine.chaos.config.Config
 import java.io.File
 import kotlin.system.exitProcess
@@ -33,7 +29,7 @@ suspend fun main() : Unit = coroutineScope {
     clear()
     printLogo()
     printSeparator()
-    log("\u001B[38;5;33mCHAOS is starting...")
+    log("${ConsoleColours.BLUE.value}CHAOS is starting...")
     //checks if config exists, if not, create one and exit
     val cfgName = "config.json"
     if (!File(cfgName).exists()) {
@@ -44,9 +40,9 @@ suspend fun main() : Unit = coroutineScope {
         File(cfgName).writeText(default!!.readText())
         log(
             "Config not found, we have generated one for you at ${File(cfgName).absolutePath}",
-            "\u001B[38;5;197mERROR:"
+            "${ConsoleColours.RED.value}ERROR:"
         )
-        log("\u001B[38;5;33mPlease change the file accordingly. Documentation: https://caffeine.moe/CHAOS/")
+        log("${ConsoleColours.BLUE.value}Please change the file accordingly. Documentation: https://caffeine.moe/CHAOS/")
         exitProcess(0)
     }
     try {
@@ -73,7 +69,7 @@ suspend fun main() : Unit = coroutineScope {
         if (e.toString().contains("JsonDecodingException")) {
             log(
                 "Unable to interpret config, please make sure that the one you have is structured the same as the one here: https://caffeine.moe/CHAOS/config.json",
-                "\u001B[38;5;197mERROR:"
+                "${ConsoleColours.RED.value}ERROR:"
             )
             log("Full stacktrace here:")
             e.printStackTrace()

@@ -4,6 +4,7 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientGuild
 import org.caffeine.chaos.api.client.message.MessageChannel
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.commands.*
 
@@ -101,7 +102,7 @@ suspend fun handleMessage(event : MessageCreateEvent, client : Client) {
 
             //if the command logger is enabled then log the command
             if (client.config.logger.commands) {
-                log(event.message.content, "COMMAND:\u001B[38;5;33m")
+                log(event.message.content, "COMMAND:${ConsoleColours.BLUE.value}")
             }
 
             //if autodelete on the user is enabled then delete the command message
