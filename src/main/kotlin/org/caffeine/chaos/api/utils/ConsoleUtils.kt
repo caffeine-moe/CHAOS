@@ -1,4 +1,4 @@
-package org.caffeine.chaos
+package org.caffeine.chaos.api.utils
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -7,7 +7,7 @@ enum class ConsoleColours(val value : String) {
     WHITE("\u001B[38;5;255m"),
     BLUE("\u001B[38;5;33m"),
     GREEN("\u001B[38;5;47m"),
-    RED("")
+    RED("\u001B[38;5;197m")
 }
 
 //clears console and sets colour to white

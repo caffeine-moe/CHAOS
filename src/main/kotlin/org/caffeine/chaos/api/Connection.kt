@@ -13,7 +13,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
-import org.caffeine.chaos.ConsoleColours
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.payloads.client.HeartBeat
 import org.caffeine.chaos.api.payloads.client.Identify
@@ -22,8 +21,6 @@ import org.caffeine.chaos.api.payloads.client.data.identify.IdentifyD
 import org.caffeine.chaos.api.payloads.client.data.resume.ResumeD
 import org.caffeine.chaos.api.payloads.gateway.Init
 import org.caffeine.chaos.api.utils.*
-import org.caffeine.chaos.log
-
 
 class Connection {
 

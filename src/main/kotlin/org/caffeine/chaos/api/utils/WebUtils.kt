@@ -1,11 +1,27 @@
 package org.caffeine.chaos.api.utils
 
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.cache.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.cookies.*
+import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.normalHTTPClient
+
+val normalHTTPClient : HttpClient = HttpClient(CIO) {
+    install(WebSockets)
+    install(HttpCookies)
+    install(HttpCache)
+    install(ContentNegotiation)
+    engine {
+        pipelining = true
+    }
+    expectSuccess = true
+}
 
 @Serializable
 data class DUAProp(

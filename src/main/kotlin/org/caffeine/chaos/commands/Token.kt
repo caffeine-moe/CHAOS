@@ -7,7 +7,7 @@ import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.log
+import org.caffeine.chaos.api.utils.log
 
 class Token : Command(arrayOf("token"), CommandInfo("Token", "token", "Logs your token into the console.")) {
     override suspend fun onCalled(

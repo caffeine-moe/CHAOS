@@ -8,6 +8,7 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientGuildChannel
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.api.client.slashcommands.AppCommand
+import org.caffeine.chaos.api.utils.log
 import kotlin.math.absoluteValue
 
 class AutoBump : Command(arrayOf("bump", "autobump", "sbump"), CommandInfo("AutoBump", "bump", "Autobumps.")) {

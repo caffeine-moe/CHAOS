@@ -11,7 +11,8 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.normalHTTPClient
+import org.caffeine.chaos.api.utils.normalHTTPClient
+import org.caffeine.chaos.api.utils.log
 import java.io.File
 import java.net.URL
 import java.nio.file.Files

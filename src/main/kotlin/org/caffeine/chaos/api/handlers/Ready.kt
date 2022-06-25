@@ -6,7 +6,7 @@ import org.caffeine.chaos.api.jsonc
 import org.caffeine.chaos.api.ready
 import org.caffeine.chaos.api.token
 import org.caffeine.chaos.api.utils.sessionId
-import org.caffeine.chaos.log
+import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.ready
 
 @kotlinx.serialization.Serializable

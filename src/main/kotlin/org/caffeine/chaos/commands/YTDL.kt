@@ -17,7 +17,7 @@ import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.api.normalHTTPClient
+import org.caffeine.chaos.api.utils.normalHTTPClient
 import java.io.File
 import java.net.URL
 import java.nio.file.Files

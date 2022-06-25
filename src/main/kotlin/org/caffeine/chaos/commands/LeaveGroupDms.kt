@@ -10,7 +10,7 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientChannel
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.log
+import org.caffeine.chaos.api.utils.log
 
 class LeaveGroupDms :
     Command(arrayOf("leavegroupdms", "lgdm", "leavegroups"),

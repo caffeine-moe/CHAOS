@@ -11,7 +11,7 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.normalHTTPClient
+import org.caffeine.chaos.api.utils.normalHTTPClient
 import java.nio.charset.MalformedInputException
 
 class Haste : Command(arrayOf("haste"),

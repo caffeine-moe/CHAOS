@@ -5,7 +5,7 @@ import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.DiscordChannelType
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.log
+import org.caffeine.chaos.api.utils.log
 
 class CloseDm : Command(arrayOf("closedm"), CommandInfo("CloseDM", "closedm", "Closes a dm channel.")) {
     override suspend fun onCalled(

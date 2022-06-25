@@ -5,7 +5,7 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.handlers.*
 import org.caffeine.chaos.api.payloads.gateway.Default
 import org.caffeine.chaos.api.utils.gatewaySequence
-import org.caffeine.chaos.log
+import org.caffeine.chaos.api.utils.log
 
 var ready = false
 

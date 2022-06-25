@@ -7,7 +7,7 @@ import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.log
+import org.caffeine.chaos.api.utils.log
 
 class Pin : Command(arrayOf("pin", "p"),
     CommandInfo("Pin",

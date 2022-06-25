@@ -11,7 +11,7 @@ import io.ktor.client.request.*
 import org.caffeine.chaos.api.utils.clientVersion
 import org.caffeine.chaos.api.utils.superPropertiesB64
 import org.caffeine.chaos.api.utils.userAgent
-import org.caffeine.chaos.log
+import org.caffeine.chaos.api.utils.log
 import kotlin.system.exitProcess
 
 val discordHTTPClient : HttpClient = HttpClient(CIO) {

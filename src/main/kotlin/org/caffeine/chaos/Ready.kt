@@ -3,6 +3,8 @@ package org.caffeine.chaos
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.utils.clear
+import org.caffeine.chaos.api.utils.log
 
 suspend fun ready(client : Client) = coroutineScope {
     log("\u001B[38;5;33mWelcome to CHAOS!")

@@ -6,6 +6,7 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientUserRedeemedCodeError
 import org.caffeine.chaos.api.client.ClientUserRedeemedCodeStatus
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.utils.log
 
 //executed whenever a message is received
 suspend fun nitroSniper(event : MessageCreateEvent, client : Client) = coroutineScope {

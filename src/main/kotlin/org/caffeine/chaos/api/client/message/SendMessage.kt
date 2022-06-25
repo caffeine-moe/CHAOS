@@ -10,7 +10,7 @@ import org.caffeine.chaos.api.discordHTTPClient
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.token
 import org.caffeine.chaos.api.utils.calcNonce
-import org.caffeine.chaos.log
+import org.caffeine.chaos.api.utils.log
 import java.util.concurrent.CompletableFuture
 
 @kotlinx.serialization.Serializable

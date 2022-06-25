@@ -5,6 +5,7 @@ import org.caffeine.chaos.api.client.DiscordChannelType
 import org.caffeine.chaos.api.client.DiscordUser
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.commands.oldCustomStatus
 import org.caffeine.chaos.commands.oldStatus
 

@@ -4,7 +4,7 @@ import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.clear
+import org.caffeine.chaos.api.utils.clear
 import org.caffeine.chaos.loginPrompt
 
 class Clear : Command(arrayOf("clear"), CommandInfo("Clear", "clear", "Clears the CHAOS console.")) {

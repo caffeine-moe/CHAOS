@@ -8,7 +8,11 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.normalHTTPClient
+import org.caffeine.chaos.api.utils.normalHTTPClient
+import org.caffeine.chaos.api.utils.clear
+import org.caffeine.chaos.api.utils.log
+import org.caffeine.chaos.api.utils.printLogo
+import org.caffeine.chaos.api.utils.printSeparator
 import org.caffeine.chaos.config.Config
 import java.io.File
 import kotlin.system.exitProcess
