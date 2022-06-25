@@ -13,7 +13,7 @@ import kotlinx.serialization.json.JsonPrimitive
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.client.message.Message
 import org.caffeine.chaos.api.client.message.MessageChannel
-import org.caffeine.chaos.api.discordHTTPClient
+import org.caffeine.chaos.api.utils.discordHTTPClient
 import org.caffeine.chaos.api.handlers.CustomStatus
 import org.caffeine.chaos.api.json
 import java.util.concurrent.CompletableFuture

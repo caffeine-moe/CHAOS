@@ -15,7 +15,7 @@ import org.caffeine.chaos.api.client.DiscordChannelType
 import org.caffeine.chaos.api.client.slashcommands.AppCommand
 import org.caffeine.chaos.api.client.slashcommands.Data
 import org.caffeine.chaos.api.client.slashcommands.SendAppCommand
-import org.caffeine.chaos.api.discordHTTPClient
+import org.caffeine.chaos.api.utils.discordHTTPClient
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.token
 import org.caffeine.chaos.api.utils.calcNonce

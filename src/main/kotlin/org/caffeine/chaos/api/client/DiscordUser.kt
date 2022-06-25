@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.BASE_URL
-import org.caffeine.chaos.api.discordHTTPClient
+import org.caffeine.chaos.api.utils.discordHTTPClient
 import org.caffeine.chaos.api.jsonc
 import org.caffeine.chaos.api.token
 

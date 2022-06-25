@@ -2,7 +2,7 @@ package org.caffeine.chaos.api.client.message
 
 import io.ktor.client.request.*
 import io.ktor.http.*
-import org.caffeine.chaos.api.discordHTTPClient
+import org.caffeine.chaos.api.utils.discordHTTPClient
 import org.caffeine.chaos.api.token
 import java.util.concurrent.CompletableFuture
 
