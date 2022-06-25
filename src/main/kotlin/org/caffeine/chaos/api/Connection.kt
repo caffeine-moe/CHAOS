@@ -145,7 +145,7 @@ class Connection {
                         frame as? Frame.Text ?: continue
                         val receivedText = frame.readText()
                         launch {
-                            receiveJsonRequest(receivedText, this@Connection, client)
+                            handleJsonRequest(receivedText, this@Connection, client)
                         }
                     }
                 }

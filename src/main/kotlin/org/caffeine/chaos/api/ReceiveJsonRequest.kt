@@ -9,7 +9,7 @@ import org.caffeine.chaos.log
 
 var ready = false
 
-suspend fun receiveJsonRequest(payload : String, connection : Connection, client : Client) {
+suspend fun handleJsonRequest(payload : String, connection : Connection, client : Client) {
     val event = json.decodeFromString<Default>(payload)
     if (event.s != null && event.s > 0) {
         gatewaySequence = event.s
