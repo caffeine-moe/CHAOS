@@ -2,7 +2,6 @@ package org.caffeine.chaos
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.api.scamLinks
 import java.net.URL
 import kotlin.math.absoluteValue
 

@@ -6,10 +6,10 @@ import io.ktor.http.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.BASE_URL
-import org.caffeine.chaos.api.client.utils.calcNonce
 import org.caffeine.chaos.api.discordHTTPClient
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.token
+import org.caffeine.chaos.api.utils.calcNonce
 import org.caffeine.chaos.log
 import java.util.concurrent.CompletableFuture
 

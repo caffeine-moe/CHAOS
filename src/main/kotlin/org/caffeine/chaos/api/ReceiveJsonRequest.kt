@@ -1,51 +1,63 @@
 package org.caffeine.chaos.api
 
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.handlers.messageCreate
-import org.caffeine.chaos.api.handlers.ready
+import org.caffeine.chaos.api.handlers.*
+import org.caffeine.chaos.api.payloads.gateway.BasePayload
+import org.caffeine.chaos.api.utils.gatewaySequence
 import org.caffeine.chaos.log
-
-@Serializable
-private data class DefaultResponse(
-    val op : Int?,
-    val s : Int?,
-    val t : String?,
-)
 
 var ready = false
 
 suspend fun receiveJsonRequest(payload : String, connection : Connection, client : Client) {
-    val event = json.decodeFromString<DefaultResponse>(payload)
-    if (event.s != null && event.s > 0) {
-        seq = event.s
+    val event = json.decodeFromString<BasePayload>(payload)
+    if (event.s != null && event.s!! > 0) {
+        gatewaySequence = event.s!!
     }
     when (event.op) {
-        0 -> {
+        OPCODE.DISPATCH.value -> {
             when (event.t) {
-                "READY" -> {
+                Event.READY.value -> {
                     ready(client, payload)
                 }
-                "MESSAGE_CREATE" -> {
+                Event.MESSAGE_CREATE.value -> {
                     if (ready) {
                         messageCreate(payload, client)
                     }
                 }
+                Event.GUILD_DELETE.value -> {
+                    if (ready) {
+                        guildDelete(payload, client)
+                    }
+                }
+                Event.GUILD_CREATE.value -> {
+                    if (ready) {
+                        guildCreate(payload, client)
+                    }
+                }
+                Event.GUILD_MEMBER_LIST_UPDATE.value -> {
+                    if (ready) {
+                        guildMemberListUpdate(payload, client)
+                    }
+                }
+            }
+            if (payload.contains("614568502573137920")) {
+                println(payload)
             }
         }
-        1 -> {
+        OPCODE.HEARTBEAT.value -> {
             connection.sendHeartBeat()
         }
-        7 -> {
+        OPCODE.RECONNECT.value -> {
             log("Gateway sent opcode 7 RECONNECT, reconnecting...", "API:")
-            connection.reconnect()
+            connection.execute(ConnectionType.RECONNECT_AND_RESUME, client)
         }
-        9 -> {
+        OPCODE.INVALID_SESSION.value -> {
             log("Client received OPCODE 9 INVALID SESSION, reconnecting...", "API:")
-            connection.reconnect()
+            connection.execute(ConnectionType.RECONNECT, client)
         }
-        11 -> {
+        OPCODE.HEARTBEAT_ACK.value -> {
+
         }
         else -> {
             println(payload)

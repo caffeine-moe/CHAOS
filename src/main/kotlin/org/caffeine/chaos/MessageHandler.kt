@@ -1,6 +1,7 @@
 package org.caffeine.chaos
 
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.ClientGuild
 import org.caffeine.chaos.api.client.message.MessageChannel
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.commands.*
@@ -19,6 +20,9 @@ var autoBumpCock = false
 
 //list of channels that autobump is currently bumping
 var bumping = mutableListOf<MessageChannel>()
+
+//list of all guilds that the client is lazy loading
+private val guilds = HashMap<String, ClientGuild>()
 
 //loads all the commands into the hashmap commandList
 fun registerCommands() {
@@ -58,6 +62,7 @@ fun registerCommands() {
     YTDL()
     AFK()
     RandomChoice()
+    GayPFP()
 }
 
 //executed whenever a message event is received by the client
@@ -73,6 +78,16 @@ suspend fun handleMessage(event : MessageCreateEvent, client : Client) {
 
     //if the message is sent by the user the selfbot is logged into then do stuff
     if (event.message.author.id == client.user.id) {
+
+        val guild = client.user.getGuild(event.channel)
+
+        if (guild != null) {
+            if (!guilds.contains(guild.id)) {
+                client.user.fetchGuildMembers(guild)
+                guilds[guild.id] = guild
+            }
+        }
+
         //if the message starts with the configured prefix and isn't just the prefix
         //then remove the prefix and set the first item in the message (the command) as a value
         if (event.message.content.startsWith(client.config.prefix) && event.message.content != client.config.prefix) {

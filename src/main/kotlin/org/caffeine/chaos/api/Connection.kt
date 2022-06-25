@@ -1,8 +1,7 @@
 package org.caffeine.chaos.api
 
+import io.ktor.client.*
 import io.ktor.client.plugins.websocket.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -11,168 +10,119 @@ import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.utils.tokenValidator
+import org.caffeine.chaos.api.payloads.client.HeartBeat
+import org.caffeine.chaos.api.payloads.client.Identify
+import org.caffeine.chaos.api.payloads.client.Resume
+import org.caffeine.chaos.api.payloads.client.data.identify.IdentifyD
+import org.caffeine.chaos.api.payloads.client.data.resume.ResumeD
+import org.caffeine.chaos.api.payloads.gateway.Init
+import org.caffeine.chaos.api.utils.*
 import org.caffeine.chaos.log
-import java.util.*
 
 @Serializable
 class Connection {
 
-    @Serializable
-    data class Rpayload(
-        val t : String?,
-        val s : String?,
-        val op : Int,
-        val d : Rd,
-    )
-
-    @Serializable
-    data class Rd(
-        val heartbeat_interval : Long,
-        val _trace : List<String>,
-    )
-
-    @Serializable
-    data class Identify(
-        val op : Int,
-        val d : IdentifyD,
-    )
-
-
-    @Serializable
-    data class IdentifyD(
-        val token : String,
-        val properties : SuperProperties,
-        val presence : IdentifyDPresence = IdentifyDPresence(),
-        val compress : Boolean = false,
-        val client_state : IdentifyDClientState = IdentifyDClientState(),
-    )
-
-    @Serializable
-    data class IdentifyDPresence(
-        val status : String = "online",
-        val since : Int = 0,
-        val activities : Array<String> = emptyArray(),
-        val afk : Boolean = false,
-    )
-
-    @Serializable
-    data class IdentifyDClientState(
-        @Contextual
-        val guild_hashes : Empty = Json.decodeFromString("{}"),
-        val highest_last_message_id : String = "0",
-        val read_state_version : Int = 0,
-        val user_guild_settings_version : Int = -1,
-    )
-
-    @Serializable
-    class Empty
-
-    @Serializable
-    data class DUAProp(
-        val chrome_user_agent : String,
-        val chrome_version : String,
-        val client_build_number : Int,
-    )
-
     @Contextual
-    var httpClient = ConnectionHTTPClient(this).httpclient
+    lateinit var httpClient : HttpClient
 
     @Contextual
     lateinit var ws : DefaultClientWebSocketSession
+
+    @Contextual
     lateinit var client : Client
-
-    @Serializable
-    data class SuperProperties(
-        var os : String = "",
-        var browser : String = "",
-        var device : String = "",
-        var browser_user_agent : String = "",
-        var browser_version : String = "",
-        var os_version : String = "",
-        var referrer : String = "",
-        var referring_domain : String = "",
-        var referrer_current : String = "",
-        var referring_domain_current : String = "",
-        var release_channel : String = "",
-        var system_locale : String = "",
-        var client_build_number : Int = 0,
-        var client_event_source : Empty = Empty(),
-    )
-
-    @Serializable
-    private data class Heartbeat(
-        val op : Int,
-        val d : String,
-    )
 
     private var hb = Job() as Job
 
-    suspend fun connect(client : Client) {
+    private data class PayloadDef(
+        val name : String,
+        val payload : String,
+    )
+
+    suspend fun execute(type : ConnectionType, client : Client) {
+        this.client = client
+        fetchWebClientValues()
+        createSuperProperties()
+        val payload = when (type) {
+            ConnectionType.CONNECT -> {
+                val identify = json.encodeToString(Identify(OPCODE.IDENTIFY.value,
+                    IdentifyD(client.config.token, superProperties)))
+                println(identify)
+                PayloadDef("Identify", identify)
+            }
+            ConnectionType.DISCONNECT -> {
+                disconnect()
+                return
+            }
+            ConnectionType.RECONNECT -> {
+                reconnect()
+                return
+            }
+            ConnectionType.RECONNECT_AND_RESUME -> {
+                val resume = json.encodeToString(Resume(
+                    OPCODE.RESUME.value,
+                    ResumeD(
+                        gatewaySequence,
+                        sessionId,
+                        client.config.token
+                    )
+                ))
+                PayloadDef("Resume", resume)
+            }
+        }
         log("\u001B[38;5;33mInitialising gateway connection...", "API:")
-        val prop =
-            json.decodeFromString<DUAProp>(normalHTTPClient.get("https://discord-user-api.cf/api/v1/properties/web")
-                .bodyAsText())
-        ua = prop.chrome_user_agent
-        cv = prop.chrome_version
-        cbn = prop.client_build_number
-        spo = SuperProperties("Windows",
-            "Chrome",
-            "",
-            ua,
-            cv,
-            "10",
-            "",
-            "",
-            "",
-            "",
-            "stable",
-            "en-US",
-            cbn)
-        sp = json.encodeToString(spo)
-        encsp = Base64.getEncoder().encodeToString(sp.toByteArray())
-        httpClient = ConnectionHTTPClient(this).httpclient
+        httpClient = ConnectionHTTPClient().httpClient
         httpClient.wss(
             host = GATEWAY,
             path = "/?v=9&encoding=json",
             port = 443
         ) {
             ws = this@wss
-            this@Connection.client = client
             log("\u001B[38;5;47mConnected to the Discord gateway!", "API:")
             val event = this.incoming.receive().data
-            val pl = json.decodeFromString<Rpayload>(event.decodeToString())
-            when (pl.op) {
-                10 -> {
-                    log("Client received OPCODE 10 HELLO, sending identification payload and starting heartbeat.",
-                        "API:")
-                    tokenValidator(client.config.token)
-                    hb = launch { startHeartBeat(pl.d.heartbeat_interval) }
-                    hb.start()
-                    val id = json.encodeToString(Identify(2,
-                        IdentifyD(client.config.token, spo)))
-                    sendJsonRequest(this@Connection, id, client)
-                    log("Identification sent.", "API:")
-                    for (frame in incoming) {
-                        frame as? Frame.Text ?: continue
-                        val receivedText = frame.readText()
-                        launch {
-                            receiveJsonRequest(receivedText, this@Connection, client)
+            println(event.decodeToString())
+            val init = jsonc.decodeFromString<Init>(event.decodeToString())
+            when (init.op) {
+                OPCODE.HELLO.value -> {
+                    try {
+                        log("Client received OPCODE 10 HELLO, sending ${payload.name} payload and starting heartbeat.",
+                            "API:")
+                        tokenValidator(client.config.token)
+                        hb = launch { startHeartBeat(init.d.heartbeat_interval) }
+                        hb.start()
+                        ws.send(payload.payload)
+                        log("${payload.name} sent.", "API:")
+                        for (frame in incoming) {
+                            frame as? Frame.Text ?: continue
+                            val receivedText = frame.readText()
+                            launch {
+                                receiveJsonRequest(receivedText, this@Connection, client)
+                            }
                         }
+                    } catch (e : Exception) {
+                        println(e)
+                        e.printStackTrace()
                     }
+                }
+                else -> {
+                    log(event.decodeToString())
+                    return@wss
                 }
             }
         }
     }
 
     suspend fun sendHeartBeat() {
-        var heartbeat = json.encodeToString(Heartbeat(1, "null"))
-        if (seq > 0) {
-            heartbeat = json.encodeToString(Heartbeat(1, "$seq"))
+        try {
+            var heartbeat = json.encodeToString(HeartBeat(1, "null"))
+            if (gatewaySequence > 0) {
+                heartbeat = json.encodeToString(HeartBeat(1, "$gatewaySequence"))
+            }
+            println(heartbeat)
+            ws.send(heartbeat)
+        } catch (e : Exception) {
+            e.printStackTrace()
         }
-        sendJsonRequest(this, heartbeat, client)
     }
 
     private suspend fun startHeartBeat(interval : Long) {
@@ -183,15 +133,14 @@ class Connection {
         }
     }
 
-    suspend fun disconnect() {
+    private suspend fun disconnect() {
         this.hb.cancel()
         this.ws.close()
-        ready = false
         log("Client logged out.", "API:")
     }
 
-    suspend fun reconnect() {
-        this.disconnect()
-        connect(client)
+    private suspend fun reconnect() {
+        disconnect()
+        execute(ConnectionType.CONNECT, client)
     }
 }

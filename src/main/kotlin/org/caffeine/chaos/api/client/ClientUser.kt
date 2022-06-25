@@ -4,7 +4,12 @@ import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.websocket.*
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.client.message.Message
 import org.caffeine.chaos.api.client.message.MessageChannel
@@ -26,11 +31,56 @@ data class ClientUser(
     val status : String,
     override val avatar : String?,
     val relationships : ClientRelationships,
-    val guilds : ClientGuilds,
+    var guilds : MutableList<ClientGuild>,
     val channels : ClientChannels,
     val client : Client,
 ) : DiscordUser() {
     override val discriminatedName = "$username#$discriminator"
+
+    fun getGuild(channel : MessageChannel) : ClientGuild? {
+        var guild : ClientGuild? = null
+        for (g in client.user.guilds) {
+            for (c in g.channels) {
+                if (c.id == this.id) {
+                    guild = g
+                }
+            }
+        }
+        return guild
+    }
+
+    @Serializable
+    data class OP14(
+        val op : Int = 14,
+        val d : OP14D = OP14D(),
+    )
+
+    @Serializable
+    data class OP14D(
+        val guild_id : String = "",
+        val typing : Boolean = true,
+        val threads : Boolean = false,
+        val activities : Boolean = true,
+        val members : Array<String> = arrayOf(),
+        val channels : JsonObject = JsonObject(mutableMapOf(Pair("", JsonPrimitive(1)))),
+    )
+
+    suspend fun fetchGuildMembers(guild : ClientGuild) {
+        if (guild.channels.isNotEmpty()) {
+            val op = Json { encodeDefaults = true }.encodeToString(OP14(
+                14,
+                OP14D(
+                    guild_id = id,
+                    typing = false,
+                    threads = false,
+                    activities = false,
+                    members = arrayOf(),
+                    channels = JsonObject(mutableMapOf(Pair(guild.channels.random().id,
+                        json.parseToJsonElement("[[0, 99]]"))))
+                )))
+            client.socket.ws.send(op)
+        }
+    }
 
     suspend fun setHouse(house : DiscordHypeSquadHouse) {
         val houseid = when (house) {

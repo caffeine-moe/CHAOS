@@ -1,11 +1,11 @@
 package org.caffeine.chaos.api.handlers
 
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
 import kotlinx.serialization.decodeFromString
-import org.caffeine.chaos.api.*
 import org.caffeine.chaos.api.client.*
+import org.caffeine.chaos.api.jsonc
+import org.caffeine.chaos.api.ready
+import org.caffeine.chaos.api.token
+import org.caffeine.chaos.api.utils.sessionId
 import org.caffeine.chaos.log
 import org.caffeine.chaos.ready
 
@@ -21,8 +21,11 @@ private data class ReadyPayload(
 private data class ReadyPayloadD(
     val country_code : String,
     val user : ReadyPayloadDUser,
+    val user_settings : Settings,
     val user_settings_proto : String,
     val v : Int,
+    val relationships : MutableList<ClientRelationship>,
+    val guilds : MutableList<ClientGuild>,
     val session_id : String,
 )
 
@@ -87,13 +90,8 @@ data class CustomStatus(
 )
 
 suspend fun ready(client : Client, payload : String) {
+    token = client.config.token
     val d = jsonc.decodeFromString<ReadyPayload>(payload).d
-    val moreinforesponse = discordHTTPClient.get("$BASE_URL/users/@me/settings") {
-        headers {
-            append(HttpHeaders.Authorization, client.config.token)
-        }
-    }
-    val moreinfo = jsonc.decodeFromString<Settings>(moreinforesponse.bodyAsText())
     client.user = ClientUser(
         d.user.verified,
         d.user.username,
@@ -101,17 +99,48 @@ suspend fun ready(client : Client, payload : String) {
         d.user.id,
         d.user.email,
         d.user.bio,
-        moreinfo.custom_status,
-        moreinfo.status,
+        d.user_settings.custom_status,
+        d.user_settings.status,
         avatar = d.user.avatar,
-        relationships = ClientRelationships(ClientFriends(client), ClientBlockedUsers(client)),
-        guilds = ClientGuilds(client),
+        relationships = ClientRelationships(extractFriends(d.relationships), extractBlockList(d.relationships)),
+        guilds = d.guilds,
         channels = ClientChannels(client),
         client = client
     )
     ready = true
-    sid = d.session_id
-    token = client.config.token
+    sessionId = d.session_id
     log("\u001B[38;5;47mClient logged in!", "API:")
     ready(client)
+}
+
+private fun extractFriends(relationships : MutableList<ClientRelationship>) : MutableList<ClientFriend> {
+    val friends = mutableListOf<ClientFriend>()
+    for (relationship in relationships) {
+        if (relationship.type == 1) {
+            val friend = ClientFriend(
+                relationship.user.username,
+                relationship.user.discriminator,
+                relationship.user.id,
+                relationship.user.avatar
+            )
+            friends.add(friend)
+        }
+    }
+    return friends
+}
+
+private fun extractBlockList(relationships : MutableList<ClientRelationship>) : MutableList<ClientBlockedUser> {
+    val blocked = mutableListOf<ClientBlockedUser>()
+    for (relationship in relationships) {
+        if (relationship.type == 2) {
+            val user = ClientBlockedUser(
+                relationship.user.username,
+                relationship.user.discriminator,
+                relationship.user.avatar,
+                relationship.user.id
+            )
+            blocked.add(user)
+        }
+    }
+    return blocked
 }

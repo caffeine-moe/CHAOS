@@ -6,21 +6,22 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.normalHTTPClient
-import org.caffeine.chaos.api.scamLinks
 import org.caffeine.chaos.config.Config
 import java.io.File
 import kotlin.system.exitProcess
 
 //version lmao
-const val versionString : String = "2.3.0"
-const val versionDouble : Double = 2.30
+const val versionString : String = "3.0.0"
+const val versionDouble : Double = 3.00
 
 //gets unix time in ms when program starts
 val programStartedTime = System.currentTimeMillis()
+
+//scam link list
+var scamLinks = listOf<String>()
 
 //main function
 suspend fun main() : Unit = coroutineScope {
@@ -46,7 +47,7 @@ suspend fun main() : Unit = coroutineScope {
     }
     try {
         //tries to read config
-        val config : Config = Json.decodeFromString(File(cfgName).readText())
+        val config : Config = json.decodeFromString(File(cfgName).readText())
         //gets antiscam links
         if (config.anti_scam.enabled) {
             scamLinks =
@@ -62,7 +63,7 @@ suspend fun main() : Unit = coroutineScope {
         if (client.config.updater.enabled) {
             update(client)
         }
-        client.login(config)
+        client.login()
     } catch (e : Exception) {
         //if it cant read the config then it logs that its invalid
         if (e.toString().contains("JsonDecodingException")) {

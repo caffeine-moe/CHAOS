@@ -18,7 +18,8 @@ abstract class DiscordUser(
     @Transient open val id : String = "",
     @Transient open val avatar : String? = "",
 ) {
-    @Transient open val discriminatedName = ""
+    @Transient
+    open val discriminatedName = ""
     fun avatarUrl() : String {
         var av = "null"
         if (!avatar.isNullOrBlank()) {
@@ -58,9 +59,9 @@ abstract class DiscordUser(
         )
     }
 
-    suspend fun isBlocked(client : Client) : Boolean {
+    fun isBlocked(client : Client) : Boolean {
         var torf = false
-        if (client.user.relationships.blockedUsers.getList().contains(this)) {
+        if (client.user.relationships.blockedUsers.contains(this)) {
             torf = true
         }
         return torf

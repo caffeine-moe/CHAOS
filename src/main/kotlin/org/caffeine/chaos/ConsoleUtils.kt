@@ -3,6 +3,13 @@ package org.caffeine.chaos
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+enum class ConsoleColours(val value : String) {
+    WHITE("\u001B[38;5;255m"),
+    BLUE("\u001B[38;5;33m"),
+    GREEN(""),
+    RED("")
+}
+
 //clears console and sets colour to white
 fun clear() {
     print("\u001b[H\u001b[2J\u001B[38;5;255m")
@@ -15,7 +22,8 @@ fun log(text : String, prefix : String = "") {
     val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss"))
 
     //if the prefix is blank set the message with the default prefix
-    message = "\u001B[38;5;255m[\u001B[38;5;33m${time}\u001B[38;5;255m] CHAOS: \u001B[38;5;33m$text"
+    message =
+        "${ConsoleColours.WHITE.value}[${ConsoleColours.BLUE.value}${time}${ConsoleColours.WHITE.value}] CHAOS: ${ConsoleColours.BLUE.value}$text"
 
     //if the prefix parameter is not blank then set the message with the specified prefix
     if (prefix.isNotBlank()) {

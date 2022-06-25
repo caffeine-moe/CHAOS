@@ -12,7 +12,6 @@ import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.normalHTTPClient
-import org.caffeine.chaos.api.ua
 
 class Cat : Command(arrayOf("cat", "meow"), CommandInfo("Cat", "cat", "Sends a random cat from cataas.com.")) {
 
@@ -35,7 +34,6 @@ class Cat : Command(arrayOf("cat", "meow"), CommandInfo("Cat", "cat", "Sends a r
                 append("Cache-Control", "no-cache")
                 append("DNT", "1")
                 append("Upgrade-Insecure-Requests", "1")
-                append("User-Agent", ua)
                 append("Accept",
                     "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
                 append("Sec-GPC", "1")

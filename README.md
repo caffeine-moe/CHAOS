@@ -1,5 +1,5 @@
 [![Logo](https://caffeine.moe/CHAOS/logo-min.jpg)](https://caffeine.moe/CHAOS/)
-# CHAOS - Like a utility knife for discord.
+# CHAOS - A utility knife for discord.
 
 [![Build](https://github.com/caffeine-moe/CHAOS/workflows/Build/badge.svg)](https://github.com/caffeine-moe/CHAOS/actions/workflows/ci.yml)
 [![Issues](https://img.shields.io/github/issues/caffeine-moe/CHAOS)](https://github.com/caffeine-moe/CHAOS/issues)

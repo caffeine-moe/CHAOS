@@ -6,79 +6,27 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
-import org.caffeine.chaos.api.*
-import org.caffeine.chaos.api.client.ClientGuild
+import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.client.DiscordChannelType
 import org.caffeine.chaos.api.client.slashcommands.AppCommand
 import org.caffeine.chaos.api.client.slashcommands.Data
 import org.caffeine.chaos.api.client.slashcommands.SendAppCommand
-import org.caffeine.chaos.api.client.utils.calcNonce
-import org.caffeine.chaos.api.client.utils.webkitBoundary
+import org.caffeine.chaos.api.discordHTTPClient
+import org.caffeine.chaos.api.json
+import org.caffeine.chaos.api.token
+import org.caffeine.chaos.api.utils.calcNonce
+import org.caffeine.chaos.api.utils.sessionId
+import org.caffeine.chaos.api.utils.webkitBoundary
 import java.util.concurrent.CompletableFuture
 
-
-class MessageChannel(
-    var id : String,
+@Serializable
+open class MessageChannel(
+    @Transient open var id : String = "",
 ) {
-
-    @Serializable
-    private data class GetGuildResponse(
-        @SerialName("flags")
-        val flags : Int = 0,
-        @SerialName("guild_id")
-        val guildId : String = "",
-        @SerialName("id")
-        val id : String = "",
-        @SerialName("last_message_id")
-        val lastMessageId : String = "",
-        @SerialName("name")
-        val name : String = "",
-        @SerialName("nsfw")
-        val nsfw : Boolean = false,
-        @SerialName("parent_id")
-        val parentId : String = "",
-        @SerialName("permission_overwrites")
-        val permissionOverwrites : List<PermissionOverwrite> = listOf(),
-        @SerialName("position")
-        val position : Int = 0,
-        @SerialName("rate_limit_per_user")
-        val rateLimitPerUser : Int = 0,
-        @SerialName("topic")
-        val topic : String? = null,
-        @SerialName("type")
-        val type : Int = 0,
-    )
-
-    @Serializable
-    private data class PermissionOverwrite(
-        @SerialName("allow")
-        val allow : String = "",
-        @SerialName("deny")
-        val deny : String = "",
-        @SerialName("id")
-        val id : String = "",
-        @SerialName("type")
-        val type : Int = 0,
-    )
-
-    suspend fun getGuild() : ClientGuild? {
-        val re = discordHTTPClient.get(
-            "$BASE_URL/channels/${id}"
-        ) {
-            headers {
-                append(HttpHeaders.Authorization, token)
-            }
-        }
-        var thing : ClientGuild?
-        val guildId = json.decodeFromString<GetGuildResponse>(re.bodyAsText()).guildId
-        thing = ClientGuild("", guildId)
-        if (guildId.isBlank()) thing = null
-        return thing
-    }
 
     @Serializable
     data class TypeResponse(
@@ -90,7 +38,7 @@ class MessageChannel(
         val application_commands : List<AppCommand>,
     )
 
-    private suspend fun getCommand(name : String) : AppCommand {
+    suspend fun getAppCommand(name : String) : List<AppCommand> {
         val re = discordHTTPClient.get(
             "$BASE_URL/channels/${id}/application-commands/search?type=1&query=$name&limit=7&include_applications=false"
         ) {
@@ -98,11 +46,10 @@ class MessageChannel(
                 append(HttpHeaders.Authorization, token)
             }
         }
-        return json.decodeFromString<CommandSearchResponse>(re.bodyAsText()).application_commands.first()
+        return json.decodeFromString<CommandSearchResponse>(re.bodyAsText()).application_commands
     }
 
-    suspend fun sendInteraction(name : String, guildId : String) : CompletableFuture<String> {
-        val command = getCommand(name)
+    suspend fun sendInteraction(command : AppCommand, guildId : String) : CompletableFuture<String> {
         val data = Data(
             command.version,
             command.id,
@@ -113,7 +60,7 @@ class MessageChannel(
             emptyArray()
         )
         val toSend = json.encodeToString(
-            SendAppCommand(2, command.applicationId, guildId, id, sid, data, calcNonce())
+            SendAppCommand(2, command.applicationId, guildId, id, sessionId, data, calcNonce())
         )
         discordHTTPClient.post("$BASE_URL/interactions") {
             setBody(MultiPartFormDataContent(

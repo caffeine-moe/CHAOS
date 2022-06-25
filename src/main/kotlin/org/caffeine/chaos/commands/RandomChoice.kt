@@ -16,7 +16,6 @@ class RandomChoice : Command(arrayOf("randomchoice", "rchoice", "rch"),
         args : MutableList<String>,
         cmd : String,
     ) = coroutineScope {
-        try {
         val argj = args.joinToString(" ")
         val regex = "[0-9:]+".toRegex()
         val argspl = argj.split(regex)
@@ -39,24 +38,13 @@ class RandomChoice : Command(arrayOf("randomchoice", "rchoice", "rch"),
             return@coroutineScope
         }
 
-        val choices = arrayListOf<String>()
-
-        for (i in argspl) {
-            println(i)
-            choices.add(i)
-        }
-
         event.channel.sendMessage(MessageBuilder()
-            .appendLine("amogus")
-            .appendLine(choices.first())
+            .appendLine(argspl.random().trim())
             .build()
         ).thenAccept {
             launch {
                 onComplete(it, client, client.config.auto_delete.bot.content_generation)
             }
         }
-    }catch (e: Exception) {
-        e.printStackTrace()
-    }
     }
 }

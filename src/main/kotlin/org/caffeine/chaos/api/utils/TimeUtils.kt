@@ -1,4 +1,4 @@
-package org.caffeine.chaos.api.client.utils
+package org.caffeine.chaos.api.utils
 
 import kotlin.math.absoluteValue
 

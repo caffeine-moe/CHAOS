@@ -8,7 +8,7 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.DiscordUser
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.api.client.utils.convertIdToUnix
+import org.caffeine.chaos.api.utils.convertIdToUnix
 
 
 class UserInfo :

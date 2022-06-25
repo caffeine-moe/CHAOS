@@ -24,7 +24,7 @@ class MuteAllServers : Command(arrayOf("muteallservers", "mas", "muteservers", "
             .build()
         ).thenAccept { message ->
             this.launch {
-                val list = client.user.guilds.getList()
+                val list = client.user.guilds
                 val max = list.size
                 var done = 0
                 suspend fun up() {

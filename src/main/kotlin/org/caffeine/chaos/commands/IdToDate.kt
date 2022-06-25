@@ -7,7 +7,7 @@ import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.api.client.utils.convertIdToUnix
+import org.caffeine.chaos.api.utils.convertIdToUnix
 
 class IdToDate : Command(arrayOf("idtodate", "idtod", "idtd"),
     CommandInfo("IdToDate", "idtodate <Discord ID>", "Converts any discord id to a normal date format.")) {
