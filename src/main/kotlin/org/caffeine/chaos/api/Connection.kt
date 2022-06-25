@@ -1,6 +1,12 @@
 package org.caffeine.chaos.api
 
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.cache.*
+import io.ktor.client.plugins.cookies.*
 import io.ktor.client.plugins.websocket.*
+import io.ktor.client.request.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -21,7 +27,55 @@ import org.caffeine.chaos.log
 
 class Connection {
 
-    private var httpClient = ConnectionHTTPClient().httpClient
+    private val httpClient : HttpClient
+        get() = HttpClient(CIO) {
+            install(WebSockets)
+            install(HttpCookies)
+            install(HttpTimeout)
+            install(HttpCache)
+            install(DefaultRequest)
+            install(HttpRequestRetry) {
+                maxRetries = 5
+                retryIf { _, response ->
+                    response.status.value == 429
+                }
+                delayMillis(respectRetryAfterHeader = true) { delay ->
+                    delay * 1000L
+                }
+            }
+            defaultRequest {
+                headers {
+                    append("Accept-Language", "en-US")
+                    append("Cache-Control", "no-cache")
+                    append("Connection", "keep-alive")
+                    append("Origin", "https://discord.com")
+                    append("Pragma", "no-cache")
+                    append("Referer", "https://discord.com/channels/@me")
+                    append("Sec-CH-UA", "\"(Not(A:Brand\";v=\"8\", \"Chromium\";v=\"$clientVersion\"")
+                    append("Sec-CH-UA-Mobile", "?0")
+                    append("Sec-CH-UA-Platform", "Windows")
+                    append("Sec-Fetch-Dest", "empty")
+                    append("Sec-Fetch-Mode", "cors")
+                    append("Sec-Fetch-Site", "same-origin")
+                    append("User-Agent", userAgent)
+                    append("X-Discord-Locale", "en-US")
+                    append("X-Debug-Options", "bugReporterEnabled")
+                    append("X-Super-Properties", superPropertiesB64)
+                }
+            }
+            engine {
+                pipelining = true
+                requestTimeout = 0
+            }
+            expectSuccess = true
+
+            HttpResponseValidator {
+                handleResponseExceptionWithRequest { cause, request ->
+                    log("Error: ${cause.message}", "API:")
+                    return@handleResponseExceptionWithRequest
+                }
+            }
+        }
 
     lateinit var ws : DefaultClientWebSocketSession
 
@@ -64,7 +118,6 @@ class Connection {
                 PayloadDef("Resume", resume)
             }
         }
-        httpClient = ConnectionHTTPClient().httpClient
         httpClient.wss(
             host = GATEWAY,
             path = "/?v=9&encoding=json",
@@ -88,16 +141,12 @@ class Connection {
                     send(payload.payload)
                     log("${payload.name} sent.", "API:")
 
-                    try {
-                        for (frame in incoming) {
-                            frame as? Frame.Text ?: continue
-                            val receivedText = frame.readText()
-                            launch {
-                                receiveJsonRequest(receivedText, this@Connection, client)
-                            }
+                    for (frame in incoming) {
+                        frame as? Frame.Text ?: continue
+                        val receivedText = frame.readText()
+                        launch {
+                            receiveJsonRequest(receivedText, this@Connection, client)
                         }
-                    } catch (e : Exception) {
-                        e.printStackTrace()
                     }
                 }
             }
@@ -105,13 +154,9 @@ class Connection {
     }
 
     suspend fun sendHeartBeat() {
-        try {
         val heartbeat = json.encodeToString(HeartBeat(OPCODE.HEARTBEAT.value,
             if (gatewaySequence > 0) gatewaySequence else null))
         ws.send(heartbeat)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
     }
 
     private suspend fun startHeartBeat(interval : Long) {
