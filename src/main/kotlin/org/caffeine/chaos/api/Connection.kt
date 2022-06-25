@@ -95,7 +95,7 @@ class Connection {
                                 receiveJsonRequest(receivedText, this@Connection, client)
                             }
                         }
-                    }catch (e: Exception) {
+                    } catch (e : Exception) {
                         e.printStackTrace()
                     }
                 }
@@ -104,9 +104,13 @@ class Connection {
     }
 
     suspend fun sendHeartBeat() {
+        try {
         val heartbeat = json.encodeToString(HeartBeat(OPCODE.HEARTBEAT.value,
             if (gatewaySequence > 0) gatewaySequence else null))
         ws.send(heartbeat)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private suspend fun startHeartBeat(interval : Long) {
@@ -128,4 +132,5 @@ class Connection {
         this.disconnect()
         execute(ConnectionType.RECONNECT_AND_RESUME, client)
     }
+
 }

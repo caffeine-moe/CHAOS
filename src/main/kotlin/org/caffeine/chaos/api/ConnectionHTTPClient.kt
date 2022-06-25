@@ -16,6 +16,7 @@ class ConnectionHTTPClient {
     val httpClient : HttpClient = HttpClient(CIO) {
         install(WebSockets)
         install(HttpCookies)
+        install(HttpTimeout)
         install(HttpCache)
         install(DefaultRequest)
         install(HttpRequestRetry) {
@@ -49,6 +50,7 @@ class ConnectionHTTPClient {
         }
         engine {
             pipelining = true
+            requestTimeout = 0
         }
         expectSuccess = true
 
