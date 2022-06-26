@@ -1,9 +1,9 @@
 package org.caffeine.chaos
 
-import org.caffeine.chaos.api.discord.client.Client
-import org.caffeine.chaos.api.discord.message.Message
-import org.caffeine.chaos.api.discord.message.MessageBuilder
-import org.caffeine.chaos.api.discord.message.MessageCreateEvent
+import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.message.Message
+import org.caffeine.chaos.api.client.message.MessageBuilder
+import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
 data class CommandInfo(
     val name : String,

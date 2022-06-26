@@ -2,8 +2,8 @@ package org.caffeine.chaos.commands
 
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
-import org.caffeine.chaos.api.discord.client.Client
-import org.caffeine.chaos.api.discord.message.MessageCreateEvent
+import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
 class Restore :
     Command(arrayOf("restore"), CommandInfo("Restore", "restore", "Restores your account from a backup json.")) {

@@ -4,10 +4,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.caffeine.chaos.api.discord.client.Client
-import org.caffeine.chaos.api.discord.client.ClientGuildChannel
-import org.caffeine.chaos.api.discord.message.MessageCreateEvent
-import org.caffeine.chaos.api.discord.slashcommands.AppCommand
+import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.ClientGuildChannel
+import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.client.slashcommands.AppCommand
 import org.caffeine.chaos.api.utils.log
 import kotlin.math.absoluteValue
 

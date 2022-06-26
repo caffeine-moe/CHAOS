@@ -1,9 +1,9 @@
 package org.caffeine.chaos
 
-import org.caffeine.chaos.api.discord.client.Client
-import org.caffeine.chaos.api.discord.client.ClientGuild
-import org.caffeine.chaos.api.discord.message.MessageChannel
-import org.caffeine.chaos.api.discord.message.MessageCreateEvent
+import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.ClientGuild
+import org.caffeine.chaos.api.client.message.MessageChannel
+import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.commands.*
@@ -81,14 +81,14 @@ suspend fun handleMessage(event : MessageCreateEvent, client : Client) {
     //if the message is sent by the user the selfbot is logged into then do stuff
     if (event.message.author.id == client.user.id) {
 
-        val guild = client.user.getGuild(event.channel)
+/*        val guild = client.user.getGuild(event.channel)
 
         if (guild != null) {
             if (!guilds.contains(guild.id)) {
                 client.user.fetchGuildMembers(guild)
                 guilds[guild.id] = guild
             }
-        }
+        }*/
 
         //if the message starts with the configured prefix and isn't just the prefix
         //then remove the prefix and set the first item in the message (the command) as a value

@@ -6,7 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
-import org.caffeine.chaos.api.discord.client.Client
+import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.utils.*
 import org.caffeine.chaos.config.Config

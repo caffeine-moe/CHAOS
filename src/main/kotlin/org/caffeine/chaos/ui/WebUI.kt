@@ -1,7 +1,7 @@
 package org.caffeine.chaos.ui
 
 import kotlinx.coroutines.*
-import org.caffeine.chaos.api.discord.client.Client
+import org.caffeine.chaos.api.client.Client
 
 class WebUI {
     suspend fun init(client : Client) = coroutineScope {

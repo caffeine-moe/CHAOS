@@ -5,9 +5,9 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
-import org.caffeine.chaos.api.discord.client.Client
-import org.caffeine.chaos.api.discord.message.MessageBuilder
-import org.caffeine.chaos.api.discord.message.MessageCreateEvent
+import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.message.MessageBuilder
+import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
 class Figlet :
     Command(arrayOf("figlet", "fig"), CommandInfo("Figlet", "fig <Text>", "Turns your text into an ascii figlet.")) {
