@@ -78,7 +78,7 @@ class Connection {
 
     lateinit var client : Client
 
-    private var hb = Job() as Job
+    private var heartBeat = Job() as Job
 
     private data class PayloadDef(
         val name : String,
@@ -86,12 +86,17 @@ class Connection {
     )
 
     suspend fun execute(type : ConnectionType, client : Client) {
-        fetchWebClientValues()
-        createSuperProperties()
         val payload = when (type) {
             ConnectionType.CONNECT -> {
-                val identify = json.encodeToString(Identify(OPCODE.IDENTIFY.value,
-                    IdentifyD(client.config.token, superProperties)))
+                fetchWebClientValues()
+                createSuperProperties()
+                val identify = json.encodeToString(Identify(
+                    OPCODE.IDENTIFY.value,
+                    IdentifyD(
+                        client.config.token,
+                        superProperties
+                    )
+                ))
                 PayloadDef("Identify", identify)
             }
             ConnectionType.DISCONNECT -> {
@@ -104,6 +109,8 @@ class Connection {
             }
             ConnectionType.RECONNECT_AND_RESUME -> {
                 disconnect()
+                fetchWebClientValues()
+                createSuperProperties()
                 val resume = json.encodeToString(Resume(
                     OPCODE.RESUME.value,
                     ResumeD(
@@ -132,8 +139,8 @@ class Connection {
 
                     tokenValidator(client.config.token)
 
-                    hb = launch { startHeartBeat(init.d.heartbeat_interval) }
-                    hb.start()
+                    heartBeat = launch { startHeartBeat(init.d.heartbeat_interval) }
+                    heartBeat.start()
 
                     send(payload.payload)
                     log("${payload.name} sent.", "API:")
@@ -165,7 +172,7 @@ class Connection {
     }
 
     private suspend fun disconnect() {
-        this.hb.cancel()
+        this.heartBeat.cancel()
         this.ws.close()
         ready = false
         log("Client logged out.", "API:")
