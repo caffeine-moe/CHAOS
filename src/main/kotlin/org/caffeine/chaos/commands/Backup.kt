@@ -7,10 +7,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientBlockedUser
-import org.caffeine.chaos.api.client.ClientFriend
-import org.caffeine.chaos.api.client.ClientGuild
+import org.caffeine.chaos.api.client.*
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.api.jsonp
@@ -43,7 +40,13 @@ class Backup :
                     val blockList = client.user.relationships.blockedUsers
                     val friends = client.user.relationships.friends
                     val guilds = client.user.guilds
-                    val textToWrite = jsonp.encodeToString(BackupStructure(blockList, friends, guilds))
+                    val simpleGuilds = mutableListOf<ClientGuild>()
+                    for (i in guilds) {
+                        simpleGuilds.add(
+                            ClientGuild(i.name, i.id)
+                        )
+                    }
+                    val textToWrite = jsonp.encodeToString(BackupStructure(blockList, friends, simpleGuilds))
                     val p = File("Backup")
                     if (!p.exists()) {
                         p.mkdir()
