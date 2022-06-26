@@ -11,9 +11,9 @@ import org.caffeine.chaos.api.utils.log
 //executed whenever a message is received
 suspend fun nitroSniper(event : MessageCreateEvent, client : Client) = coroutineScope {
     //regex for a discord gift (nitro) link
-    val rg = ("https://discord.gift/" + ".{16,24}".toRegex()).toRegex()
+    val regex = ("https://discord.gift/" + ".{16,24}".toRegex()).toRegex()
     //if the message content matches the regex (contains a nitro link) then do stuff
-    if (rg.matches(event.message.content)) {
+    if (regex.matches(event.message.content)) {
         //removes the url prefix to get the code
         val code = event.message.content.removePrefix("https://discord.gift/")
         //redeems the code then on completion does stuff
