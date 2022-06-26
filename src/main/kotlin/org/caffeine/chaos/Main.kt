@@ -57,8 +57,8 @@ suspend fun main() : Unit = coroutineScope {
         //makes new client, and logs in
         val client = Client(config)
         //web ui benched for now
-        /* val ui = WebUI()
-        launch { ui.init(client) } */
+/*         val ui = WebUI()
+        ui.init(client)*/
         //checks if client is up to date
         if (client.config.updater.enabled) {
             update(client)
