@@ -2,10 +2,10 @@ package org.caffeine.chaos
 
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientUserRedeemedCodeError
-import org.caffeine.chaos.api.client.ClientUserRedeemedCodeStatus
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.discord.client.Client
+import org.caffeine.chaos.api.discord.client.ClientUserRedeemedCodeError
+import org.caffeine.chaos.api.discord.client.ClientUserRedeemedCodeStatus
+import org.caffeine.chaos.api.discord.message.MessageCreateEvent
 import org.caffeine.chaos.api.utils.log
 
 //executed whenever a message is received

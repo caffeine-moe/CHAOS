@@ -2,7 +2,7 @@ package org.caffeine.chaos
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.discord.client.Client
 import java.nio.file.FileSystems
 import java.nio.file.Paths
 import java.nio.file.StandardWatchEventKinds

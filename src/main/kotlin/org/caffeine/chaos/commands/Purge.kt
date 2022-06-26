@@ -6,8 +6,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.*
+import org.caffeine.chaos.api.discord.client.Client
+import org.caffeine.chaos.api.discord.message.*
 import org.caffeine.chaos.purgeCock
 
 class Purge : Command(arrayOf("purge", "sclear"),

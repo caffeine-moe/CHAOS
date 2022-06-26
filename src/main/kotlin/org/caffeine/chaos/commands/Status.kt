@@ -3,9 +3,9 @@ package org.caffeine.chaos.commands
 import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientStatusType
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.discord.client.Client
+import org.caffeine.chaos.api.discord.client.ClientStatusType
+import org.caffeine.chaos.api.discord.message.MessageCreateEvent
 
 class Status :
     Command(arrayOf("status", "st"), CommandInfo("Status", "status <Status>", "Changes your current status.")) {

@@ -13,7 +13,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
-import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.discord.client.Client
 import org.caffeine.chaos.api.payloads.client.HeartBeat
 import org.caffeine.chaos.api.payloads.client.Identify
 import org.caffeine.chaos.api.payloads.client.Resume

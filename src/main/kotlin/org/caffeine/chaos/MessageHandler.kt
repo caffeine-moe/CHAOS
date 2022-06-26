@@ -1,9 +1,9 @@
 package org.caffeine.chaos
 
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientGuild
-import org.caffeine.chaos.api.client.message.MessageChannel
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.discord.client.Client
+import org.caffeine.chaos.api.discord.client.ClientGuild
+import org.caffeine.chaos.api.discord.message.MessageChannel
+import org.caffeine.chaos.api.discord.message.MessageCreateEvent
 import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.commands.*

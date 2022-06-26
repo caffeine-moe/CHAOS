@@ -9,7 +9,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
-import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.discord.client.Client
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.normalHTTPClient

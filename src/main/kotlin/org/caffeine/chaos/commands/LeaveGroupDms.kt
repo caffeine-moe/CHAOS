@@ -6,10 +6,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientChannel
-import org.caffeine.chaos.api.client.message.MessageBuilder
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.discord.client.Client
+import org.caffeine.chaos.api.discord.client.ClientChannel
+import org.caffeine.chaos.api.discord.message.MessageBuilder
+import org.caffeine.chaos.api.discord.message.MessageCreateEvent
 import org.caffeine.chaos.api.utils.log
 
 class LeaveGroupDms :

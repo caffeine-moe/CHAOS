@@ -2,8 +2,8 @@ package org.caffeine.chaos.api.handlers
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.*
+import org.caffeine.chaos.api.discord.client.Client
+import org.caffeine.chaos.api.discord.message.*
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.handleMessage
 
