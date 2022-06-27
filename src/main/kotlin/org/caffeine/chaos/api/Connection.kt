@@ -83,7 +83,6 @@ class Connection {
     private data class PayloadDef(
         val name : String,
         val payload : String,
-        val delay : Long,
     )
 
     suspend fun execute(type : ConnectionType, client : Client) {
@@ -98,7 +97,7 @@ class Connection {
                         superProperties
                     )
                 ))
-                PayloadDef("Identify", identify, 0)
+                PayloadDef("Identify", identify)
             }
             ConnectionType.DISCONNECT -> {
                 disconnect()
@@ -120,7 +119,7 @@ class Connection {
                         client.config.token
                     )
                 ))
-                PayloadDef("Resume", resume, 6000)
+                PayloadDef("Resume", resume)
             }
         }
         httpClient.wss(
@@ -142,8 +141,6 @@ class Connection {
 
                     heartBeat = launch { startHeartBeat(init.d.heartbeat_interval) }
                     heartBeat.start()
-
-                    delay(payload.delay)
 
                     send(payload.payload)
                     log("${payload.name} sent.", "API:")
