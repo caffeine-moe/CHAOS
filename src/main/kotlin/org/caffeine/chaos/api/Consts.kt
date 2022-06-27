@@ -1,15 +1,12 @@
 package org.caffeine.chaos.api
 
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import org.caffeine.chaos.api.client.Client
 
-val GATEWAY = "gateway.discord.gg"
-val BASE_URL = "https://discord.com/api/v9"
+const val GATEWAY = "gateway.discord.gg"
+const val BASE_URL = "https://discord.com/api/v9"
 
-@Serializable
-class Empty
-
-var token = ""
+lateinit var client : Client
 
 val json = Json {
     ignoreUnknownKeys = true

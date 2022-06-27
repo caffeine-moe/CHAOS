@@ -7,9 +7,9 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.BASE_URL
+import org.caffeine.chaos.api.client
 import org.caffeine.chaos.api.utils.discordHTTPClient
 import org.caffeine.chaos.api.jsonc
-import org.caffeine.chaos.api.token
 
 @Serializable
 open class DiscordUser(
@@ -34,7 +34,7 @@ open class DiscordUser(
     suspend fun userInfo() : DiscordUserInfo {
         val re = discordHTTPClient.get("$BASE_URL/users/$id") {
             headers {
-                append(HttpHeaders.Authorization, token)
+                append(HttpHeaders.Authorization, client.config.token)
             }
         }
         val de = jsonc.decodeFromString<DiscordUserInfo>(re.bodyAsText())
@@ -59,11 +59,7 @@ open class DiscordUser(
         )
     }
 
-    fun isBlocked(client : Client) : Boolean {
-        var torf = false
-        if (client.user.relationships.blockedUsers.contains(this)) {
-            torf = true
-        }
-        return torf
+    fun isBlocked() : Boolean {
+        return client.user.relationships.blockedUsers.contains(this)
     }
 }

@@ -10,9 +10,10 @@ import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.JsonObject
 import org.caffeine.chaos.api.BASE_URL
-import org.caffeine.chaos.api.Empty
 import org.caffeine.chaos.api.json
 import java.util.*
 import kotlin.system.exitProcess
@@ -32,7 +33,7 @@ data class SuperProperties(
     var release_channel : String = "",
     var system_locale : String = "",
     var client_build_number : Int = 0,
-    var client_event_source : Empty = Empty(),
+    var client_event_source : JsonObject = json.decodeFromString("{}"),
 )
 
 var gatewaySequence = 0
