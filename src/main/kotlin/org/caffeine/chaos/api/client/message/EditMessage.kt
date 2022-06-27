@@ -6,9 +6,9 @@ import io.ktor.http.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.BASE_URL
+import org.caffeine.chaos.api.client
 import org.caffeine.chaos.api.utils.discordHTTPClient
 import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.token
 import java.util.concurrent.CompletableFuture
 
 @kotlinx.serialization.Serializable
@@ -40,7 +40,7 @@ suspend fun editMessage(message : Message, newMessage : Message) : CompletableFu
     val response = discordHTTPClient.request("$BASE_URL/channels/${message.channel_id}/messages/${message.id}") {
         method = HttpMethod.Patch
         headers {
-            append(HttpHeaders.Authorization, token)
+            append(HttpHeaders.Authorization, client.user.token)
             append(HttpHeaders.ContentType, "application/json")
         }
         setBody(json.encodeToString(EditContent(newMessage.content)))

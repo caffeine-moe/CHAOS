@@ -11,13 +11,13 @@ import kotlinx.serialization.Transient
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.BASE_URL
+import org.caffeine.chaos.api.client
 import org.caffeine.chaos.api.client.DiscordChannelType
 import org.caffeine.chaos.api.client.slashcommands.AppCommand
 import org.caffeine.chaos.api.client.slashcommands.Data
 import org.caffeine.chaos.api.client.slashcommands.SendAppCommand
 import org.caffeine.chaos.api.utils.discordHTTPClient
 import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.token
 import org.caffeine.chaos.api.utils.calcNonce
 import org.caffeine.chaos.api.utils.sessionId
 import org.caffeine.chaos.api.utils.webkitBoundary
@@ -43,7 +43,7 @@ open class MessageChannel(
             "$BASE_URL/channels/${id}/application-commands/search?type=1&query=$name&limit=7&include_applications=false"
         ) {
             headers {
-                append(HttpHeaders.Authorization, token)
+                append(HttpHeaders.Authorization, client.user.token)
             }
         }
         return json.decodeFromString<CommandSearchResponse>(re.bodyAsText()).application_commands
@@ -75,7 +75,7 @@ open class MessageChannel(
             )
             )
             headers {
-                append(HttpHeaders.Authorization, token)
+                append(HttpHeaders.Authorization, client.user.token)
             }
         }
         return CompletableFuture.completedFuture("done")
@@ -95,7 +95,7 @@ open class MessageChannel(
             val response = discordHTTPClient.request("$BASE_URL/channels/${this.id}/messages?${parameters}") {
                 method = HttpMethod.Get
                 headers {
-                    append(HttpHeaders.Authorization, token)
+                    append(HttpHeaders.Authorization, client.user.token)
                     append(HttpHeaders.ContentType, "application/json")
                 }
             }
@@ -125,7 +125,7 @@ open class MessageChannel(
         val response = discordHTTPClient.request("$BASE_URL/channels/${this.id}") {
             method = HttpMethod.Get
             headers {
-                append(HttpHeaders.Authorization, token)
+                append(HttpHeaders.Authorization, client.user.token)
             }
         }
         val type = when (json.decodeFromString<TypeResponse>(response.bodyAsText()).type) {
@@ -142,7 +142,7 @@ open class MessageChannel(
         discordHTTPClient.request("$BASE_URL/channels/${this.id}") {
             method = HttpMethod.Delete
             headers {
-                append(HttpHeaders.Authorization, token)
+                append(HttpHeaders.Authorization, client.user.token)
             }
         }
     }

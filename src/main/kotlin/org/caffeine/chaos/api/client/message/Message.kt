@@ -2,8 +2,8 @@ package org.caffeine.chaos.api.client.message
 
 import io.ktor.client.request.*
 import io.ktor.http.*
+import org.caffeine.chaos.api.client
 import org.caffeine.chaos.api.utils.discordHTTPClient
-import org.caffeine.chaos.api.token
 import java.util.concurrent.CompletableFuture
 
 @kotlinx.serialization.Serializable
@@ -37,7 +37,7 @@ data class Message(
         discordHTTPClient.request("https://discord.com/api/v9/channels/$channel_id/pins/$id") {
             this.method = HttpMethod.Put
             headers {
-                append(HttpHeaders.Authorization, token)
+                append(HttpHeaders.Authorization, client.user.token)
             }
         }
     }
@@ -46,7 +46,7 @@ data class Message(
         discordHTTPClient.request("https://discord.com/api/v9/channels/$channel_id/pins/$id") {
             this.method = HttpMethod.Delete
             headers {
-                append(HttpHeaders.Authorization, token)
+                append(HttpHeaders.Authorization, client.user.token)
             }
         }
     }

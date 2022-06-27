@@ -4,10 +4,9 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
+import org.caffeine.chaos.api.client
 import org.caffeine.chaos.api.utils.discordHTTPClient
 import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.token
-
 
 @Serializable
 data class ClientGuild(
@@ -19,7 +18,7 @@ data class ClientGuild(
     suspend fun muteForever() {
         discordHTTPClient.patch("https://discord.com/api/v9/users/@me/guilds/$id/settings") {
             headers {
-                append(HttpHeaders.Authorization, token)
+                append(HttpHeaders.Authorization, client.user.token)
                 append(HttpHeaders.ContentType, "application/json")
             }
             setBody(json.encodeToString(MuteForever(MuteConfig(null, -1), true)))

@@ -5,7 +5,6 @@ import org.caffeine.chaos.api.client.*
 import org.caffeine.chaos.api.client.user.ClientUser
 import org.caffeine.chaos.api.jsonc
 import org.caffeine.chaos.api.ready
-import org.caffeine.chaos.api.token
 import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.sessionId
 import org.caffeine.chaos.api.utils.log
@@ -92,7 +91,6 @@ data class CustomStatus(
 )
 
 suspend fun ready(client : Client, payload : String) {
-    token = client.config.token
     val d = jsonc.decodeFromString<ReadyPayload>(payload).d
     client.user = ClientUser(
         d.user.verified,
@@ -107,6 +105,7 @@ suspend fun ready(client : Client, payload : String) {
         relationships = ClientRelationships(extractFriends(d.relationships), extractBlockList(d.relationships)),
         guilds = d.guilds,
         channels = ClientChannels(client),
+        token = client.config.token,
         client = client
     )
     ready = true

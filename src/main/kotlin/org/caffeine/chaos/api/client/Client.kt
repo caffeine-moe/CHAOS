@@ -2,6 +2,7 @@ package org.caffeine.chaos.api.client
 
 import org.caffeine.chaos.api.Connection
 import org.caffeine.chaos.api.ConnectionType
+import org.caffeine.chaos.api.client
 import org.caffeine.chaos.api.client.user.ClientUser
 import org.caffeine.chaos.config.Config
 
@@ -11,6 +12,7 @@ class Client(
 ) {
     lateinit var user : ClientUser
     suspend fun login() {
+        client = this
         socket.execute(ConnectionType.CONNECT, this)
     }
 

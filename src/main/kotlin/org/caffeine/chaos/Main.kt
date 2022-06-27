@@ -4,6 +4,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
@@ -45,35 +46,36 @@ suspend fun main() : Unit = coroutineScope {
         log("${ConsoleColours.BLUE.value}Please change the file accordingly. Documentation: https://caffeine.moe/CHAOS/")
         exitProcess(0)
     }
+    //tries to read config
+    lateinit var config : Config
     try {
-        //tries to read config
-        val config : Config = json.decodeFromString(File(cfgName).readText())
-        //gets antiscam links
-        if (config.anti_scam.enabled) {
-            scamLinks =
-                json.decodeFromString<AntiScamResponse>(normalHTTPClient.get("https://raw.githubusercontent.com/nikolaischunk/discord-phishing-links/main/domain-list.json")
-                    .bodyAsText()).domains
-        }
-        //makes new client, and logs in
-        val client = Client(config)
-        //web ui benched for now
-/*         val ui = WebUI()
-        ui.init(client)*/
-        //checks if client is up to date
-        if (client.config.updater.enabled) {
-            update(client)
-        }
-        client.login()
+        config = json.decodeFromString(File(cfgName).readText())
     } catch (e : Exception) {
         //if it cant read the config then it logs that its invalid
         if (e.toString().contains("JsonDecodingException")) {
             log(
                 "Unable to interpret config, please make sure that the one you have is structured the same as the one here: https://caffeine.moe/CHAOS/config.json",
-                "${ConsoleColours.RED.value}ERROR:"
+                "\u001B[38;5;197mERROR:"
             )
             log("Full stacktrace here:")
             e.printStackTrace()
             exitProcess(69)
         }
     }
+    //gets antiscam links
+    if (config.anti_scam.enabled) {
+        scamLinks =
+            json.decodeFromString<AntiScamResponse>(normalHTTPClient.get("https://raw.githubusercontent.com/nikolaischunk/discord-phishing-links/main/domain-list.json")
+                .bodyAsText()).domains
+    }
+    //makes new client, and logs in
+    val client = Client(config)
+    //web ui benched for now
+/*         val ui = WebUI()
+        ui.init(client)*/
+    //checks if client is up to date
+    if (client.config.updater.enabled) {
+        update(client)
+    }
+    launch { client.login() }
 }
