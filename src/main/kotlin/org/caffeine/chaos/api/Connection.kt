@@ -68,7 +68,7 @@ class Connection {
 
             HttpResponseValidator {
                 handleResponseExceptionWithRequest { cause, request ->
-                    log("Error: ${cause.message}", "API:")
+                    log("Error: ${cause.message} Request: ${request.content}", "API:")
                     return@handleResponseExceptionWithRequest
                 }
             }

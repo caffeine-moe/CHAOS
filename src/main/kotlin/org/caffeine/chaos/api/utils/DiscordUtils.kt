@@ -85,12 +85,12 @@ val discordHTTPClient : HttpClient = HttpClient(CIO) {
     expectSuccess = true
 
     HttpResponseValidator {
-        handleResponseExceptionWithRequest { cause, _ ->
+        handleResponseExceptionWithRequest { cause, request ->
             if (cause.localizedMessage.contains("401 Unauthorized.")) {
                 log("Invalid token, please update your config with a valid token.", "API:")
                 exitProcess(69)
             }
-            log("Error: ${cause.message}", "API:")
+            log("Error: ${cause.message} Request: ${request.content}", "API:")
             return@handleResponseExceptionWithRequest
         }
     }
