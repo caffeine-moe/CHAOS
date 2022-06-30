@@ -54,12 +54,18 @@ class Purge : Command(arrayOf("purge", "sclear"),
                 }
                 args.last().toInt()
             } else {
-                event.channel.sendMessage(error(client,
-                    event,
-                    "${args.last()} is not an integer.",
-                    commandInfo))
-                    .thenAccept { message -> this.launch { onComplete(message, client, true) } }
-                return@coroutineScope
+                when (args.last()) {
+                    "max" -> { Int.MAX_VALUE }
+                    "all" -> { Int.MAX_VALUE }
+                    else -> {
+                        event.channel.sendMessage(error(client,
+                            event,
+                            "${args.last()} is not an integer.",
+                            commandInfo))
+                            .thenAccept { message -> this.launch { onComplete(message, client, true) } }
+                        return@coroutineScope
+                    }
+                }
             }
             var done = 0
             val messages =
