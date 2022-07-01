@@ -6,7 +6,6 @@ import org.caffeine.chaos.api.client.user.ClientUser
 import org.caffeine.chaos.api.jsonc
 import org.caffeine.chaos.api.ready
 import org.caffeine.chaos.api.utils.ConsoleColours
-import org.caffeine.chaos.api.utils.sessionId
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.ready
 
@@ -105,11 +104,11 @@ suspend fun ready(client : Client, payload : String) {
         relationships = ClientRelationships(extractFriends(d.relationships), extractBlockList(d.relationships)),
         guilds = d.guilds,
         channels = ClientChannels(client),
-        token = client.config.token,
+        token = client.rest.token,
         client = client
     )
     ready = true
-    sessionId = d.session_id
+    client.rest.sessionId = d.session_id
     log("${ConsoleColours.GREEN.value}Client logged in!", "API:")
     ready(client)
 }
