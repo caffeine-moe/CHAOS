@@ -26,7 +26,7 @@ class Cat : Command(arrayOf("cat", "meow"), CommandInfo("Cat", "cat", "Sends a r
         args : MutableList<String>,
         cmd : String,
     ) : Unit = coroutineScope {
-        val response = normalHTTPClient.get("https://cataas.com/cat?json=true") {
+/*        val response = normalHTTPClient.get("https://cataas.com/cat?json=true") {
             headers {
                 append("Host", "cataas.com")
                 append("Connection", "keep-alive")
@@ -34,8 +34,6 @@ class Cat : Command(arrayOf("cat", "meow"), CommandInfo("Cat", "cat", "Sends a r
                 append("Cache-Control", "no-cache")
                 append("DNT", "1")
                 append("Upgrade-Insecure-Requests", "1")
-                append("Accept",
-                    "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
                 append("Sec-GPC", "1")
                 append("Sec-Fetch-Site", "same-origin")
                 append("Sec-Fetch-Mode", "navigate")
@@ -53,6 +51,6 @@ class Cat : Command(arrayOf("cat", "meow"), CommandInfo("Cat", "cat", "Sends a r
                 .build()
         ).thenAccept { message ->
             this.launch { onComplete(message, client, client.config.auto_delete.bot.content_generation) }
-        }
+        }*/
     }
 }

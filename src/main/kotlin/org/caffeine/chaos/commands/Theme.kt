@@ -16,7 +16,7 @@ class Theme : Command(arrayOf("theme", "dth"), CommandInfo("Theme", "theme <Them
         cmd : String,
     ) =
         coroutineScope {
-            val err : String = if (args.isNotEmpty()) {
+/*            val err : String = if (args.isNotEmpty()) {
                 val theme = when (args.first().lowercase()) {
                     "d", "dark" -> DiscordTheme.DARK
                     "l", "light" -> DiscordTheme.LIGHT
@@ -34,6 +34,6 @@ class Theme : Command(arrayOf("theme", "dth"), CommandInfo("Theme", "theme <Them
                 this.launch {
                     onComplete(it, client, true)
                 }
-            }
+            }*/
         }
 }

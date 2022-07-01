@@ -11,15 +11,12 @@ import kotlinx.serialization.Transient
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.BASE_URL
-import org.caffeine.chaos.api.client
 import org.caffeine.chaos.api.client.DiscordChannelType
 import org.caffeine.chaos.api.client.slashcommands.AppCommand
 import org.caffeine.chaos.api.client.slashcommands.Data
 import org.caffeine.chaos.api.client.slashcommands.SendAppCommand
-import org.caffeine.chaos.api.utils.discordHTTPClient
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.utils.calcNonce
-import org.caffeine.chaos.api.utils.sessionId
 import org.caffeine.chaos.api.utils.webkitBoundary
 import java.util.concurrent.CompletableFuture
 
@@ -38,7 +35,7 @@ open class MessageChannel(
         val application_commands : List<AppCommand>,
     )
 
-    suspend fun getAppCommand(name : String) : List<AppCommand> {
+/*    suspend fun getAppCommand(name : String) : List<AppCommand> {
         val re = discordHTTPClient.get(
             "$BASE_URL/channels/${id}/application-commands/search?type=1&query=$name&limit=7&include_applications=false"
         ) {
@@ -145,5 +142,5 @@ open class MessageChannel(
                 append(HttpHeaders.Authorization, client.user.token)
             }
         }
-    }
+    }*/
 }

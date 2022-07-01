@@ -17,7 +17,7 @@ class IdToDate : Command(arrayOf("idtodate", "idtod", "idtd"),
         args : MutableList<String>,
         cmd : String,
     ) = coroutineScope {
-        var id : Long = 0
+/*        var id : Long = 0
         val err = if (args.isEmpty()) {
             "Not enough arguments."
         } else {
@@ -49,6 +49,6 @@ class IdToDate : Command(arrayOf("idtodate", "idtod", "idtd"),
             launch {
                 onComplete(it, client, true)
             }
-        }
+        }*/
     }
 }

@@ -6,7 +6,7 @@ data class ClientBlockedUser(
     override val discriminator : String,
     override val avatar : String?,
     override val id : String,
-) : DiscordUser() {
+) : DiscordUser {
     override val discriminatedName = "$username#$avatar"
     fun unblock() {
         return

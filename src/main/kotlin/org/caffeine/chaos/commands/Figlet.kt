@@ -18,7 +18,7 @@ class Figlet :
         cmd : String,
     ) =
         coroutineScope {
-            if (args.isEmpty()) {
+/*            if (args.isEmpty()) {
                 event.channel.sendMessage(error(client, event, "No specified text to figletize.", commandInfo))
                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 return@coroutineScope
@@ -36,6 +36,6 @@ class Figlet :
                 event.channel.sendMessage(error(client, event, "Text contains non ASCII characters.", commandInfo))
                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 return@coroutineScope
-            }
+            }*/
         }
 }

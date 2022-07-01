@@ -17,7 +17,7 @@ class SysFetch : Command(arrayOf("sysfetch", "sysinfo", "fetch"),
         args : MutableList<String>,
         cmd : String,
     ) : Unit = coroutineScope {
-        val sysInfo = SystemInfo()
+/*        val sysInfo = SystemInfo()
         val proc = sysInfo.hardware.processor
         val gpu = sysInfo.hardware.graphicsCards.first()
         val ram = sysInfo.hardware.memory
@@ -40,6 +40,6 @@ class SysFetch : Command(arrayOf("sysfetch", "sysinfo", "fetch"),
                     this.launch { onComplete(it, client, client.config.auto_delete.bot.content_generation) }
                 }
             }
-        }
+        }*/
     }
 }

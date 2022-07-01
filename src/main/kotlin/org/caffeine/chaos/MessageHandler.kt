@@ -7,6 +7,7 @@ import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.commands.*
+import org.caffeine.chaos.config.Config
 
 //HashMap of commands
 var commandList : HashMap<String, Command> = HashMap()
@@ -70,7 +71,7 @@ fun registerCommands() {
 //executed whenever a message event is received by the client
 suspend fun handleMessage(event : MessageCreateEvent, client : Client) {
     //if nitro sniper is enabled and email is verified, pass the message to the nitro sniper
-    if (client.config.nitro_sniper.enabled && client.user.verified) {
+    if (config.nitro_sniper.enabled && client.user.verified) {
         nitroSniper(event, client)
     }
 
@@ -92,23 +93,23 @@ suspend fun handleMessage(event : MessageCreateEvent, client : Client) {
 
         //if the message starts with the configured prefix and isn't just the prefix
         //then remove the prefix and set the first item in the message (the command) as a value
-        if (event.message.content.startsWith(client.config.prefix) && event.message.content != client.config.prefix) {
+        if (event.message.content.startsWith(config.prefix) && event.message.content != config.prefix) {
             val commandName : String =
-                event.message.content.lowercase().replaceFirst(client.config.prefix, "").split(" ").first()
+                event.message.content.lowercase().replaceFirst(config.prefix, "").split(" ").first()
             //creates a new command object and
             //checks if the first item in the message (commandName) is a command and matches it to the command in the HashMap commandList.
             //if it can't, return
             val command : Command = commandList[commandName] ?: return
 
             //if the command logger is enabled then log the command
-            if (client.config.logger.commands) {
+            if (config.logger.commands) {
                 log(event.message.content, "COMMAND:${ConsoleColours.BLUE.value}")
             }
 
             //if autodelete on the user is enabled then delete the command message
-            if (client.config.auto_delete.user.enabled) {
+/*            if (config.auto_delete.user.enabled) {
                 user(event, client)
-            }
+            }*/
 
             //set args value as the message content split by spaces into a list
             //and removes the first element (the actual command)
@@ -123,7 +124,7 @@ suspend fun handleMessage(event : MessageCreateEvent, client : Client) {
 
     //if all else fails
     //if anti scam is enabled in config then pass the message through the anti scam checker
-    if (client.config.anti_scam.enabled) {
+    if (config.anti_scam.enabled) {
         antiScam(client, event)
     }
 

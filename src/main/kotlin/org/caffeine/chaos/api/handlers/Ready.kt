@@ -2,12 +2,10 @@ package org.caffeine.chaos.api.handlers
 
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.*
-import org.caffeine.chaos.api.client.user.ClientUser
+import org.caffeine.chaos.api.client.ClientUser
 import org.caffeine.chaos.api.jsonc
-import org.caffeine.chaos.api.ready
 import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.log
-import org.caffeine.chaos.ready
 
 @kotlinx.serialization.Serializable
 private data class ReadyPayload(
@@ -24,8 +22,8 @@ private data class ReadyPayloadD(
     val user_settings : Settings,
     val user_settings_proto : String,
     val v : Int,
-    val relationships : MutableList<ClientRelationship>,
-    val guilds : MutableList<ClientGuild>,
+    //val relationships : MutableList<ClientRelationship>,
+    //val guilds : MutableList<ClientGuild>,
     val session_id : String,
 )
 
@@ -89,7 +87,7 @@ data class CustomStatus(
     val text : String = "",
 )
 
-suspend fun ready(client : Client, payload : String) {
+suspend fun ready(client : Client, payload : String, eventBus : EventBus) {
     val d = jsonc.decodeFromString<ReadyPayload>(payload).d
     client.user = ClientUser(
         d.user.verified,
@@ -101,21 +99,21 @@ suspend fun ready(client : Client, payload : String) {
         d.user_settings.custom_status,
         d.user_settings.status,
         avatar = d.user.avatar,
-        relationships = ClientRelationships(extractFriends(d.relationships), extractBlockList(d.relationships)),
-        guilds = d.guilds,
+        //relationships = ClientRelationships(extractFriends(d.relationships), extractBlockList(d.relationships)),
+        //guilds = d.guilds,
         channels = ClientChannels(client),
         token = client.rest.token,
         client = client
     )
-    ready = true
+    client.socket.ready = true
     client.rest.sessionId = d.session_id
     log("${ConsoleColours.GREEN.value}Client logged in!", "API:")
-    ready(client)
+    eventBus.produceEvent(ClientEvents.Ready)
 }
 
 private fun extractFriends(relationships : MutableList<ClientRelationship>) : MutableList<ClientFriend> {
     val friends = mutableListOf<ClientFriend>()
-    for (relationship in relationships) {
+/*    for (relationship in relationships) {
         if (relationship.type == 1) {
             val friend = ClientFriend(
                 relationship.user.username,
@@ -125,7 +123,7 @@ private fun extractFriends(relationships : MutableList<ClientRelationship>) : Mu
             )
             friends.add(friend)
         }
-    }
+    }*/
     return friends
 }
 

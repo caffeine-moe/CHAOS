@@ -100,7 +100,7 @@ class IP : Command(arrayOf("ip"), CommandInfo("IP", "ip <IP/URL>", "Looks up inf
         cmd : String,
     ) =
         coroutineScope {
-            if (args.isEmpty()) {
+/*            if (args.isEmpty()) {
                 event.channel.sendMessage(error(client, event, "No IP/URL specified.", commandInfo))
                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 return@coroutineScope
@@ -177,6 +177,6 @@ class IP : Command(arrayOf("ip"), CommandInfo("IP", "ip <IP/URL>", "Looks up inf
                             }
                         }
                     }
-                }
+                }*/
         }
 }

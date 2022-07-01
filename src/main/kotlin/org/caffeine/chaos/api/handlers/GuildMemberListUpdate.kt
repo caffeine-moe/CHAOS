@@ -41,7 +41,7 @@ private data class Op(
 @kotlinx.serialization.Serializable
 private data class Item(
     val group : Group = Group(),
-    val member : ClientGuildMember = ClientGuildMember(),
+    val member : ClientGuildMember,
 )
 
 @kotlinx.serialization.Serializable
@@ -50,7 +50,7 @@ private data class Presence(
     val client_status : ClientStatus = ClientStatus(),
     val game : String? = "",
     val status : String = "",
-    val user : ClientGuildMemberUser = ClientGuildMemberUser(),
+    val user : ClientGuildMemberUser,
 )
 
 @kotlinx.serialization.Serializable
@@ -86,7 +86,7 @@ private data class Timestamps(
 )
 
 fun guildMemberListUpdate(payload : String, client : Client) {
-    val decoded = jsonc.decodeFromString<GuildMemberListUpdate>(payload)
+/*    val decoded = jsonc.decodeFromString<GuildMemberListUpdate>(payload)
     val guild = client.user.guilds.find { it.id == decoded.d.guild_id } ?: return
     for (op in decoded.d.ops) {
         when (op.op) {
@@ -112,5 +112,5 @@ fun guildMemberListUpdate(payload : String, client : Client) {
                 }
             }
         }
-    }
+    }*/
 }

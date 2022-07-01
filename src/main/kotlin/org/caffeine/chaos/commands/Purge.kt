@@ -19,7 +19,8 @@ class Purge : Command(arrayOf("purge", "sclear"),
         cmd : String,
     ) =
         coroutineScope {
-            purgeCock = false
+           purgeCock = false
+            /*
             val channel = when {
                 args.size < 1 -> {
                     event.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))
@@ -97,7 +98,7 @@ class Purge : Command(arrayOf("purge", "sclear"),
             event.channel.sendMessage(MessageBuilder()
                 .appendLine("Removed $done message${if (done > 1) "s" else ""}!")
                 .build())
-                .thenAccept { message -> this.launch { onComplete(message, client, true) } }
+                .thenAccept { message -> this.launch { onComplete(message, client, true) } }*/
         }
 
 

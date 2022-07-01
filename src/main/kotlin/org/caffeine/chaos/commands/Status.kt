@@ -15,7 +15,7 @@ class Status :
         args : MutableList<String>,
         cmd : String,
     ) : Unit = coroutineScope {
-        var err = if (args.isEmpty()) "No status specified." else ""
+/*        var err = if (args.isEmpty()) "No status specified." else ""
         if (args.isNotEmpty()) {
             when (args.first()) {
                 "online" -> client.user.setStatus(ClientStatusType.ONLINE).also { return@coroutineScope }
@@ -28,6 +28,6 @@ class Status :
                 }
             }
         }
-        event.channel.sendMessage(error(client, event, err, commandInfo))
+        event.channel.sendMessage(error(client, event, err, commandInfo))*/
     }
 }

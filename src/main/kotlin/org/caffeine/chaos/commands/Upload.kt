@@ -22,7 +22,7 @@ class Upload :
         cmd : String,
     ) =
         coroutineScope {
-            if (event.message.attachments.isEmpty()) {
+/*            if (event.message.attachments.isEmpty()) {
                 event.channel.sendMessage(error(client, event, "Message has no attachments!", commandInfo))
                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 return@coroutineScope
@@ -47,6 +47,6 @@ class Upload :
                         }
                     }
                 }
-            }
+            }*/
         }
 }

@@ -9,6 +9,7 @@ import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.log
+import org.caffeine.chaos.config
 
 class Token : Command(arrayOf("token"), CommandInfo("Token", "token", "Logs your token into the console.")) {
     override suspend fun onCalled(
@@ -18,12 +19,10 @@ class Token : Command(arrayOf("token"), CommandInfo("Token", "token", "Logs your
         cmd : String,
     ) =
         coroutineScope {
-            if (event.message.content.lowercase() == "${client.config.prefix}token") {
-                log(client.config.token, "TOKEN:${ConsoleColours.BLUE.value}")
-                event.channel.sendMessage(MessageBuilder().append("Token logged to console.").build())
+                log(client.rest.token, "TOKEN:${ConsoleColours.BLUE.value}")
+/*                event.channel.sendMessage(MessageBuilder().append("Token logged to console.").build())
                     .thenAccept { message ->
                         this.launch { onComplete(message, client, true) }
-                    }
-            }
+                    }*/
         }
 }

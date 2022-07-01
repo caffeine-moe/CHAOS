@@ -20,7 +20,7 @@ class Uptime : Command(arrayOf("uptime"),
         args : MutableList<String>,
         cmd : String,
     ) : Unit = coroutineScope {
-        val milliseconds = (programStartedTime - System.currentTimeMillis())
+/*        val milliseconds = (programStartedTime - System.currentTimeMillis())
         val seconds = ((milliseconds / 1000).toInt() % 60).absoluteValue
         val minutes = (milliseconds / (1000 * 60) % 60).toInt().absoluteValue
         val hours = (milliseconds / (1000 * 60 * 60) % 24).toInt().absoluteValue
@@ -31,6 +31,6 @@ class Uptime : Command(arrayOf("uptime"),
             this.launch {
                 onComplete(it, client, true)
             }
-        }
+        }*/
     }
 }

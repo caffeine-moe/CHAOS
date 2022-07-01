@@ -14,7 +14,7 @@ class CloseDm : Command(arrayOf("closedm"), CommandInfo("CloseDM", "closedm", "C
         args : MutableList<String>,
         cmd : String,
     ) {
-        val message : String = when (event.channel.type()) {
+/*        val message : String = when (event.channel.type()) {
             DiscordChannelType.DM,
             DiscordChannelType.GROUP,
             -> {
@@ -25,6 +25,6 @@ class CloseDm : Command(arrayOf("closedm"), CommandInfo("CloseDM", "closedm", "C
                 "is not a DM Channel!"
             }
         }
-        log("Channel ${event.channel.id} $message", "RESPONSE:")
+        log("Channel ${event.channel.id} $message", "RESPONSE:")    */
     }
 }

@@ -19,7 +19,7 @@ class Pin : Command(arrayOf("pin", "p"),
         args : MutableList<String>,
         cmd : String,
     ) : Unit = coroutineScope {
-        if (event.message.referenced_message != null) {
+/*        if (event.message.referenced_message != null) {
             val refmes = event.message.referenced_message!!
             when (refmes.pinned) {
                 true -> refmes.unpin()
@@ -37,6 +37,6 @@ class Pin : Command(arrayOf("pin", "p"),
             this.launch {
                 it.pin()
             }
-        }
+        }*/
     }
 }

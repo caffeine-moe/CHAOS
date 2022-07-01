@@ -24,7 +24,7 @@ open class Command(val commandNames : Array<String>, val commandInfo : CommandIn
         return MessageBuilder()
             .appendLine("**Incorrect usage** '${event.message.content}'")
             .appendLine("**Error:** $error")
-            .appendLine("**Correct usage:** `${client.config.prefix}${info.usage}`")
+            .appendLine("**Correct usage:** `${config.prefix}${info.usage}`")
             .build()
     }
 }

@@ -17,12 +17,12 @@ class Dice :
         cmd : String,
     ) : Unit =
         coroutineScope {
-            val num = (1..6).random()
+/*            val num = (1..6).random()
             event.channel.sendMessage(MessageBuilder()
                 .appendLine(":game_die: $num").build()).thenAccept { message ->
                 this.launch {
                     onComplete(message, client, client.config.auto_delete.bot.content_generation)
                 }
-            }
+            }*/
         }
 }

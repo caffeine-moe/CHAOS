@@ -16,7 +16,7 @@ class RandomChoice : Command(arrayOf("randomchoice", "rchoice", "rch"),
         args : MutableList<String>,
         cmd : String,
     ) = coroutineScope {
-        val argj = args.joinToString(" ")
+/*        val argj = args.joinToString(" ")
         val regex = "[0-9:]+".toRegex()
         val argspl = argj.split(regex)
         val err = when {
@@ -45,6 +45,6 @@ class RandomChoice : Command(arrayOf("randomchoice", "rchoice", "rch"),
             launch {
                 onComplete(it, client, client.config.auto_delete.bot.content_generation)
             }
-        }
+        }*/
     }
 }

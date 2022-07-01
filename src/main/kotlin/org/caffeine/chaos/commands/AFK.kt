@@ -19,7 +19,7 @@ class AFK :
     ) {
         val prefix = "AFK:"
         if (!afk) {
-            afkMessage = client.config.afk.message
+            afkMessage = config.afk.message
             if (args.isNotEmpty()) {
                 afkMessage = args.joinToString(" ")
             }
@@ -33,14 +33,14 @@ class AFK :
                 }
             }
             oldCustomStatus = client.user.customStatus.text
-            when (client.config.afk.status.lowercase()) {
+            when (config.afk.status.lowercase()) {
                 "online" -> client.user.setStatus(ClientStatusType.ONLINE)
                 "idle", "away" -> client.user.setStatus(ClientStatusType.IDLE)
                 "dnd", "donotdisturb" -> client.user.setStatus(ClientStatusType.DND)
                 "offline", "invis", "invisible" -> client.user.setStatus(ClientStatusType.INVISIBLE)
                 else -> {
-                    if (client.config.afk.status.isNotBlank()) {
-                        log("Invalid status '${client.config.afk.status}'. Defaulting to DND.", prefix)
+                    if (config.afk.status.isNotBlank()) {
+                        log("Invalid status '${config.afk.status}'. Defaulting to DND.", prefix)
                         client.user.setStatus(ClientStatusType.DND)
                     }
                 }

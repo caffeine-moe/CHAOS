@@ -20,7 +20,7 @@ suspend fun nitroSniper(event : MessageCreateEvent, client : Client) = coroutine
         client.user.redeemCode(code).thenAccept { rc ->
             this.launch {
                 //if the nitro sniper logger is enabled then do stuff
-                if (client.config.logger.nitro_sniper) {
+                if (config.logger.nitro_sniper) {
                     //when the redeemer function returns success, print that the code was redeemed etc.
                     //when the redeemer function returns invalid and the error is that the code is unknown, say that the code was invalid.
                     when (rc.status) {

@@ -8,6 +8,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.utils.*
 import org.caffeine.chaos.config.Config
@@ -23,6 +25,8 @@ val programStartedTime = System.currentTimeMillis()
 
 //scam link list
 var scamLinks = listOf<String>()
+
+lateinit var config : Config
 
 //main function
 suspend fun main() : Unit = coroutineScope {
@@ -47,7 +51,6 @@ suspend fun main() : Unit = coroutineScope {
         exitProcess(0)
     }
     //tries to read config
-    lateinit var config : Config
     try {
         config = json.decodeFromString(File(cfgName).readText())
     } catch (e : Exception) {
@@ -78,4 +81,14 @@ suspend fun main() : Unit = coroutineScope {
         update(client)
     }
     launch { client.login(config.token) }
+    client.eventListener.collect {
+        launch {
+            if (it == ClientEvents.Ready) {
+                ready(client)
+            }
+            if (it is MessageCreateEvent) {
+                handleMessage(it, client)
+            }
+        }
+    }
 }

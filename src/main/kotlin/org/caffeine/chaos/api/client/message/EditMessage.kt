@@ -6,8 +6,6 @@ import io.ktor.http.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.BASE_URL
-import org.caffeine.chaos.api.client
-import org.caffeine.chaos.api.utils.discordHTTPClient
 import org.caffeine.chaos.api.json
 import java.util.concurrent.CompletableFuture
 
@@ -36,6 +34,7 @@ data class EditContent(
     val content : String,
 )
 
+/*
 suspend fun editMessage(message : Message, newMessage : Message) : CompletableFuture<Message> {
     val response = discordHTTPClient.request("$BASE_URL/channels/${message.channel_id}/messages/${message.id}") {
         method = HttpMethod.Patch
@@ -58,4 +57,4 @@ suspend fun editMessage(message : Message, newMessage : Message) : CompletableFu
         messageAuthor,
         type = parsedResponse.type)
     return CompletableFuture.completedFuture(editedMessage)
-}
+}*/

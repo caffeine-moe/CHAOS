@@ -7,6 +7,7 @@ import org.caffeine.chaos.api.client.message.Message
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
 
+/*
 suspend fun user(event : MessageCreateEvent, client : Client) {
     if (client.config.auto_delete.user.enabled) {
         withContext(Dispatchers.IO) {
@@ -23,4 +24,4 @@ suspend fun bot(msg : Message, client : Client) {
         }
         msg.delete()
     }
-}
+}*/

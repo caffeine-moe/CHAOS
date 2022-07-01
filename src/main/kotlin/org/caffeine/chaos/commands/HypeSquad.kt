@@ -18,7 +18,7 @@ class HypeSquad :
         cmd : String,
     ) =
         coroutineScope {
-            var house = DiscordHypeSquadHouse.NONE
+/*            var house = DiscordHypeSquadHouse.NONE
             var err = ""
             if (args.isEmpty()) {
                 err = "No house specified."
@@ -38,6 +38,6 @@ class HypeSquad :
                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 return@coroutineScope
             }
-            client.user.setHouse(house)
+            client.user.setHouse(house)*/
         }
 }

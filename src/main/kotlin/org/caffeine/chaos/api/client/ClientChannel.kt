@@ -3,8 +3,6 @@ package org.caffeine.chaos.api.client
 import io.ktor.client.request.*
 import io.ktor.http.*
 import org.caffeine.chaos.api.BASE_URL
-import org.caffeine.chaos.api.client
-import org.caffeine.chaos.api.utils.discordHTTPClient
 
 @kotlinx.serialization.Serializable
 data class ClientChannel(
@@ -16,12 +14,12 @@ data class ClientChannel(
     var icon : String? = null,
     var owner_id : String? = null,
 ) {
-    suspend fun delete() {
+/*    suspend fun delete() {
         discordHTTPClient.request("$BASE_URL/channels/${this.id}") {
             method = HttpMethod.Delete
             headers {
                 append(HttpHeaders.Authorization, client.user.token)
             }
         }
-    }
+    }*/
 }

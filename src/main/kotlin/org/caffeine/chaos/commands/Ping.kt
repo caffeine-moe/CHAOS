@@ -25,7 +25,7 @@ class Ping : Command(arrayOf("ping", "latency"),
         cmd : String,
     ) =
         coroutineScope {
-            if (args.isEmpty()) {
+/*            if (args.isEmpty()) {
                 event.channel.sendMessage(MessageBuilder()
                     .appendLine("Pinging...")
                     .build())
@@ -100,7 +100,7 @@ class Ping : Command(arrayOf("ping", "latency"),
                             .build())
                             .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                     }
-                }
+                }*/
 
         }
 }

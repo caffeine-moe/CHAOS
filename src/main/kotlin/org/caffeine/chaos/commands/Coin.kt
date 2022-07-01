@@ -16,12 +16,12 @@ class Coin : Command(arrayOf("coin"), CommandInfo("Coin", "coin", "Flips a coin 
         cmd : String,
     ) : Unit =
         coroutineScope {
-            val face = arrayOf("Heads", "Tails").random()
+/*            val face = arrayOf("Heads", "Tails").random()
             event.channel.sendMessage(MessageBuilder()
                 .appendLine(":coin: $face!").build()).thenAccept { message ->
                 this.launch {
                     onComplete(message, client, client.config.auto_delete.bot.content_generation)
                 }
-            }
+            }*/
         }
 }

@@ -93,13 +93,13 @@ fun guildCreate(payload : String, client : Client) {
             parsed.d.channels,
             parsed.d.members
         )
-        var g : ClientGuild = guild
+/*        var g : ClientGuild = guild
         if (client.user.guilds.any { g = it; it.id == parsed.d.id }) {
             client.user.guilds.remove(g)
             client.user.guilds.add(guild)
         } else {
             client.user.guilds.add(guild)
-        }
+        }*/
     } catch (e : Exception) {
         e.printStackTrace()
     }

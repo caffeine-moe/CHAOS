@@ -21,10 +21,10 @@ private data class GuildDeleteD(
 fun guildDelete(payload : String, client : Client) {
     val parsed = jsonc.decodeFromString<GuildDelete>(payload)
     var guild = ClientGuild("", "")
-    if (client.user.guilds.all {
+/*    if (client.user.guilds.all {
             guild = it
             it.id == parsed.d.id
         }) {
         client.user.guilds.remove(guild)
-    }
+    }*/
 }

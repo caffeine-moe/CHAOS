@@ -22,7 +22,7 @@ class LeaveGroupDms :
         cmd : String,
     ) =
         coroutineScope {
-            var done = 0
+/*            var done = 0
             val channels = StringBuilder()
             try {
                 val list = client.user.channels.groupChannels.getList()
@@ -59,6 +59,6 @@ class LeaveGroupDms :
                 }
             } catch (e : Exception) {
                 println(e.printStackTrace())
-            }
+            }*/
         }
 }

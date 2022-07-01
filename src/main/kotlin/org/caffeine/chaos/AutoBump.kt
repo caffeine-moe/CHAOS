@@ -18,9 +18,9 @@ class AutoBump : Command(arrayOf("bump", "autobump", "sbump"), CommandInfo("Auto
         args : MutableList<String>,
         cmd : String,
     ) = coroutineScope {
-        val pre = "AUTO BUMP:"
+/*        val pre = "AUTO BUMP:"
         var err = ""
-        val logging = client.config.logger.auto_bump
+        val logging = config.logger.auto_bump
         if (cmd != "sbump") {
             val channel = event.channel
 
@@ -78,13 +78,13 @@ class AutoBump : Command(arrayOf("bump", "autobump", "sbump"), CommandInfo("Auto
 
             autoBumpCock = false
 
-            if (client.config.auto_bump.error.size > 2)
+            if (config.auto_bump.error.size > 2)
                 err = "Config line 47, array is only meant to have two elements."
 
-            val interval = (((client.config.auto_bump.interval * 60) * 60) * 1000).toLong().absoluteValue
+            val interval = (((config.auto_bump.interval * 60) * 60) * 1000).toLong().absoluteValue
 
-            val f = client.config.auto_bump.error.first()
-            val l = client.config.auto_bump.error.last()
+            val f = config.auto_bump.error.first()
+            val l = config.auto_bump.error.last()
 
             if (err.isNotBlank()) {
                 if (logging) {
@@ -120,5 +120,6 @@ class AutoBump : Command(arrayOf("bump", "autobump", "sbump"), CommandInfo("Auto
         }
         autoBumpCock = true
         bumping = mutableListOf()
+    }*/
     }
 }

@@ -1,60 +1,57 @@
 package org.caffeine.chaos.api.client
 
-import org.caffeine.chaos.api.Connection
-import org.caffeine.chaos.api.ConnectionType
-import org.caffeine.chaos.api.client.user.ClientUser
+import kotlinx.coroutines.flow.*
+import org.caffeine.chaos.api.client.connection.Connection
+import org.caffeine.chaos.api.client.connection.ConnectionType
+import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.api.utils.DiscordUtils
-import java.util.concurrent.CompletableFuture
 
-interface ClientEvents {
-    val ready: () -> Unit
+interface  Event
+
+abstract class ClientEvents {
+    object Ready : Event
+}
+
+class EventBus {
+    private val _events = MutableSharedFlow<Event>() // private mutable shared flow
+    val events = _events.asSharedFlow() // publicly exposed as read-only shared flow
+
+    suspend fun produceEvent(event : Event) {
+        _events.emit(event) // suspends until all subscribers receive it
+    }
+
 }
 
 private interface ClientInternal {
-    var user: ClientUser
-    //val guilds: HashMap<string, Guild>
-    //val channels: HashMap<string, BaseChannel>
-    //val relationships: HashMap<string, ClientRelationship>
-    var socket: Connection
-    var rest: DiscordUtils
+    val user: ClientUser
+    val eventListener: SharedFlow<Event>
+    //val guilds: HashMap<String, Guild>
+    //val channels: HashMap<String, BaseChannel>
+    //val relationships: HashMap<String, ClientRelationship>
+    val socket: Connection
+    val rest: DiscordUtils
     suspend fun login(token: String)
     suspend fun logout()
 }
 
-class Client() : ClientInternal {
-    override var socket : Connection = Connection()
-    override var rest : DiscordUtils = DiscordUtils()
-    override var user : ClientUser
-        get() = TODO("Not yet implemented")
-        set(value) {
-            TODO("Not yet implemented")
-        }
+class Client : ClientInternal {
+
+    override val socket : Connection = Connection()
+    override val rest : DiscordUtils = DiscordUtils()
+    private val eventBus: EventBus = EventBus()
+    override val eventListener = eventBus.events
+
+    override lateinit var user : ClientUser
 
     override suspend fun login(token: String) {
         rest.token = token
-        socket.execute(ConnectionType.CONNECT, this)
+        socket.client = this
+        socket.registerBus(eventBus)
+        socket.execute(ConnectionType.CONNECT)
     }
 
     override suspend fun logout() {
-        socket.execute(ConnectionType.DISCONNECT, this)
+        socket.execute(ConnectionType.DISCONNECT)
     }
 
 }
-
-
-
-/*
-class Client(
-    var config : Config,
-    val socket : Connection = Connection(),
-) {
-    lateinit var user : ClientUser
-    suspend fun login() {
-        client = this
-        socket.execute(ConnectionType.CONNECT, this)
-    }
-
-    suspend fun logout() {
-        socket.execute(ConnectionType.DISCONNECT, this)
-    }
-}*/

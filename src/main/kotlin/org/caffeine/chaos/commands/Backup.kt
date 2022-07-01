@@ -33,7 +33,7 @@ class Backup :
         args : MutableList<String>,
         cmd : String,
     ) : Unit = coroutineScope {
-        val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yy_HH:mm:ss"))
+/*        val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yy_HH:mm:ss"))
         event.channel.sendMessage(MessageBuilder().append("Performing backup...").build())
             .thenAccept { message ->
                 launch {
@@ -74,6 +74,6 @@ class Backup :
                         e.printStackTrace()
                     }
                 }
-            }
+            }*/
     }
 }

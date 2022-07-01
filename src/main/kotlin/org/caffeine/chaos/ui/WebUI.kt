@@ -2,10 +2,11 @@ package org.caffeine.chaos.ui
 
 import kotlinx.coroutines.*
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.config
 
 class WebUI {
-    suspend fun init(client : Client) = coroutineScope {
-        if (!client.config.web_ui.enabled) {
+    suspend fun init() = coroutineScope {
+        if (!config.web_ui.enabled) {
             return@coroutineScope
         }
 /*        launch {

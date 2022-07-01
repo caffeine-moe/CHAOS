@@ -5,20 +5,21 @@ import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.clear
 import org.caffeine.chaos.api.utils.printLogo
 import org.caffeine.chaos.api.utils.printSeparator
+import org.caffeine.chaos.config.Config
 
 
 //executed whenever the client is logged in successfully
 fun loginPrompt(client : Client) {
     //gets friend and guild count
-    val friends = client.user.relationships.friends.size
-    val guilds = client.user.guilds.size
+    val friends = 0
+    val guilds = 0
     //clears and prints edgy hackerman logo
     clear()
     printLogo()
     //prints version number
     println("${ConsoleColours.WHITE.value}Version: ${ConsoleColours.BLUE.value}${versionString}")
     //prints the prefix
-    println("${ConsoleColours.WHITE.value}Prefix: ${ConsoleColours.BLUE.value}${client.config.prefix}")
+    println("${ConsoleColours.WHITE.value}Prefix: ${ConsoleColours.BLUE.value}${config.prefix}")
     //prints the name and discriminator of the currently logged-in user
     println("${ConsoleColours.WHITE.value}Logged in as: ${client.user.username}${ConsoleColours.BLUE.value}#${client.user.discriminator}")
     //prints friend and guild count

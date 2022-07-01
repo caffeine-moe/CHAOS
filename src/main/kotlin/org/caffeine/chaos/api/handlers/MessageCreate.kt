@@ -3,9 +3,11 @@ package org.caffeine.chaos.api.handlers
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.client.Event
+import org.caffeine.chaos.api.client.EventBus
 import org.caffeine.chaos.api.client.message.*
 import org.caffeine.chaos.api.json
-import org.caffeine.chaos.handleMessage
 
 @Serializable
 private data class MessageCreate(
@@ -34,8 +36,9 @@ private data class MessageCreateD(
     val type : Int,
 )
 
-suspend fun messageCreate(payload : String, client : Client) {
-    val d = json.decodeFromString<MessageCreate>(payload).d
+suspend fun messageCreate(payload : String, client : Client, eventBus : EventBus) {
+    try {
+        val d = json.decodeFromString<MessageCreate>(payload).d
     val messageAuthor = MessageAuthor(
         d.author.username,
         d.author.discriminator,
@@ -54,9 +57,13 @@ suspend fun messageCreate(payload : String, client : Client) {
     if (d.referenced_message != null) {
         message.referenced_message = createReferencedMessage(d.referenced_message)
     }
-    val event = MessageCreateEvent(message, client, MessageChannel(d.channel_id))
-    handleMessage(event, client)
+        val event = MessageCreateEvent(message, client, MessageChannel(d.channel_id))
+        eventBus.produceEvent(event)
+    } catch (e : Exception) {
+        println(e.message)
+    }
 }
+
 
 private fun createReferencedMessage(ref : MessageCreateD) : Message {
     val refAuthor = MessageAuthor(

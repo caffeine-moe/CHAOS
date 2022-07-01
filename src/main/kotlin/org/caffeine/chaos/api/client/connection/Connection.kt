@@ -1,4 +1,4 @@
-package org.caffeine.chaos.api
+package org.caffeine.chaos.api.client.connection
 
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -13,7 +13,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
+import org.caffeine.chaos.api.*
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.EventBus
 import org.caffeine.chaos.api.payloads.client.HeartBeat
 import org.caffeine.chaos.api.payloads.client.Identify
 import org.caffeine.chaos.api.payloads.client.Resume
@@ -23,6 +25,10 @@ import org.caffeine.chaos.api.payloads.gateway.Init
 import org.caffeine.chaos.api.utils.*
 
 class Connection {
+
+    var ready: Boolean = false
+
+    private lateinit var eventBus : EventBus
 
     private val httpClient : HttpClient
         get() = HttpClient(CIO) {
@@ -85,7 +91,7 @@ class Connection {
         val payload : String,
     )
 
-    suspend fun execute(type : ConnectionType, client : Client) {
+    suspend fun execute(type : ConnectionType) {
         val payload = when (type) {
             ConnectionType.CONNECT -> {
                 fetchWebClientValues()
@@ -128,7 +134,6 @@ class Connection {
             port = 443
         ) {
             ws = this@wss
-            this@Connection.client = client
             log("${ConsoleColours.GREEN.value}Connected to the Discord gateway!", "API:")
             val event = this.incoming.receive().data
             val init = json.decodeFromString<Init>(event.decodeToString())
@@ -149,12 +154,16 @@ class Connection {
                         frame as? Frame.Text ?: continue
                         val receivedText = frame.readText()
                         launch {
-                            handleJsonRequest(receivedText, this@Connection, client)
+                            handleJsonRequest(receivedText, client, eventBus)
                         }
                     }
                 }
             }
         }
+    }
+
+    fun registerBus(bus : EventBus) {
+        eventBus = bus
     }
 
     suspend fun sendHeartBeat() {
@@ -180,7 +189,7 @@ class Connection {
 
     private suspend fun reconnect() {
         this.disconnect()
-        execute(ConnectionType.CONNECT, client)
+        execute(ConnectionType.CONNECT)
     }
 
 }

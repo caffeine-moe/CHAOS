@@ -14,6 +14,7 @@ import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.normalHTTPClient
 import org.caffeine.chaos.api.utils.log
+import org.caffeine.chaos.config.Config
 import java.io.File
 import java.net.URL
 import java.nio.file.Files
@@ -65,23 +66,22 @@ private data class Updoot(
     val latestVer : Double,
 )
 
-suspend fun update(client : Client) = coroutineScope {
+suspend fun update(client: Client) = coroutineScope {
     val updateStatus = updateStatus()
     val pre = "UPDATER:"
     if (updateStatus.clientIsOutOfDate) {
-        if (client.config.updater.notify) {
-            log("Client is out of date!", pre)
-            log("You are on version $versionString", pre)
-            log("Latest version is ${updateStatus.latestVerString}", pre)
-            if (!client.config.updater.auto_download) {
-                log("Please update here: ${updateStatus.downUrl}", pre)
-            }
+        if (config.updater.notify) {
+            log(
+                "Your version of CHAOS is outdated, please update to the latest version. Current version: $versionString, latest version: ${updateStatus.latestVerString}",
+                pre
+            )
+            log("Please visit https://caffeine.moe/CHAOS/ to download the latest version.", pre)
         }
-        if (client.config.updater.auto_download) {
+        if (config.updater.auto_download) {
             downloadUpdate(updateStatus.downUrl).thenAccept {
                 this.launch {
                     log("Downloaded latest update to ${it}!", pre)
-                    if (client.config.updater.exit) {
+                    if (config.updater.exit) {
                         client.logout()
                         exitProcess(69)
                     }
@@ -90,7 +90,7 @@ suspend fun update(client : Client) = coroutineScope {
         }
         return@coroutineScope
     }
-    log("${ConsoleColours.GREEN.value}Client is up to date!", "UPDATER:")
+    log("${ConsoleColours.GREEN.value}Client is up to date!", pre)
 }
 
 private suspend fun updateStatus() : Updoot {

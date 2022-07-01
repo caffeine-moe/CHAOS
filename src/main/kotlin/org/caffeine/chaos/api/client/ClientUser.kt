@@ -1,4 +1,4 @@
-package org.caffeine.chaos.api.client.user
+package org.caffeine.chaos.api.client
 
 import io.ktor.client.plugins.*
 import io.ktor.client.request.*
@@ -7,10 +7,8 @@ import io.ktor.http.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.BASE_URL
-import org.caffeine.chaos.api.client.*
 import org.caffeine.chaos.api.client.message.Message
 import org.caffeine.chaos.api.client.message.MessageChannel
-import org.caffeine.chaos.api.utils.discordHTTPClient
 import org.caffeine.chaos.api.handlers.CustomStatus
 import org.caffeine.chaos.api.json
 import java.util.concurrent.CompletableFuture
@@ -26,16 +24,16 @@ data class ClientUser(
     val customStatus : CustomStatus,
     val status : String,
     override val avatar : String?,
-    val relationships : ClientRelationships,
-    var guilds : MutableList<ClientGuild>,
+    //val relationships : ClientRelationships,
+    //var guilds : MutableList<ClientGuild>,
     val channels : ClientChannels,
     val token : String,
     val client : Client,
-) : DiscordUser() {
+) : DiscordUser {
 
     override val discriminatedName = "$username#$discriminator"
 
-    fun getGuild(channel : MessageChannel) : ClientGuild? {
+/*    fun getGuild(channel : MessageChannel) : ClientGuild? {
         var guild : ClientGuild? = null
         for (g in client.user.guilds) {
             for (c in g.channels) {
@@ -45,7 +43,7 @@ data class ClientUser(
             }
         }
         return guild
-    }
+    }*/
 
     suspend fun setHouse(house : DiscordHypeSquadHouse) {
         val houseid = when (house) {
@@ -55,18 +53,14 @@ data class ClientUser(
             DiscordHypeSquadHouse.BALANCE -> 3
         }
         if (house == DiscordHypeSquadHouse.NONE) {
-            discordHTTPClient.request("$BASE_URL/hypesquad/online") {
+            client.rest.discordHTTPClient.request("$BASE_URL/hypesquad/online") {
                 method = HttpMethod.Delete
-                headers {
-                    append(HttpHeaders.Authorization, client.user.token)
-                }
             }
             return
         }
-        val req = discordHTTPClient.request("$BASE_URL/hypesquad/online") {
+        val req = client.rest.discordHTTPClient.request("$BASE_URL/hypesquad/online") {
             method = HttpMethod.Post
             headers {
-                append(HttpHeaders.Authorization, client.user.token)
                 append("Content-Type", "application/json")
             }
             setBody(json.encodeToString(json.parseToJsonElement("{\"house_id\":$houseid}")))
@@ -75,10 +69,9 @@ data class ClientUser(
     }
 
     suspend fun setCustomStatus(status : String) {
-        discordHTTPClient.request("$BASE_URL/users/@me/settings") {
+        client.rest.discordHTTPClient.request("$BASE_URL/users/@me/settings") {
             method = HttpMethod.Patch
             headers {
-                append(HttpHeaders.Authorization, client.user.token)
                 append("Content-Type", "application/json")
             }
             setBody(json.parseToJsonElement("{\"custom_status\":{\"text\":\"$status\"}}").toString())
@@ -90,10 +83,9 @@ data class ClientUser(
             DiscordTheme.DARK -> "dark"
             DiscordTheme.LIGHT -> "light"
         }
-        discordHTTPClient.request("$BASE_URL/users/@me/settings") {
+        client.rest.discordHTTPClient.request("$BASE_URL/users/@me/settings") {
             method = HttpMethod.Patch
             headers {
-                append(HttpHeaders.Authorization, client.user.token)
                 append("Content-Type", "application/json")
             }
             setBody(json.encodeToString(ClientTheme(thstr)))
@@ -107,10 +99,9 @@ data class ClientUser(
             ClientStatusType.DND -> "dnd"
             ClientStatusType.INVISIBLE -> "invisible"
         }
-        discordHTTPClient.request("$BASE_URL/users/@me/settings") {
+        client.rest.discordHTTPClient.request("$BASE_URL/users/@me/settings") {
             method = HttpMethod.Patch
             headers {
-                append(HttpHeaders.Authorization, client.user.token)
                 append("Content-Type", "application/json")
             }
             setBody(json.encodeToString(ClientStatus(ststr)))
@@ -126,11 +117,8 @@ data class ClientUser(
         var la : Long
         val start = System.currentTimeMillis()
         try {
-            discordHTTPClient.request("$BASE_URL/entitlements/gift-codes/$code/redeem") {
+            client.rest.discordHTTPClient.request("$BASE_URL/entitlements/gift-codes/$code/redeem") {
                 method = HttpMethod.Post
-                headers {
-                    append(HttpHeaders.Authorization, client.user.token)
-                }
                 expectSuccess = true
             }
             val end = System.currentTimeMillis()
@@ -152,10 +140,9 @@ data class ClientUser(
     suspend fun validateChannelId(id : String) : Boolean {
         var stat : Boolean
         try {
-            val response = discordHTTPClient.request("$BASE_URL/channels/${id}/messages?limit=1") {
+            val response = client.rest.discordHTTPClient.request("$BASE_URL/channels/${id}/messages?limit=1") {
                 method = HttpMethod.Get
                 headers {
-                    append(HttpHeaders.Authorization, client.user.token)
                     append("Content-Type", "application/json")
                 }
             }
@@ -172,10 +159,9 @@ data class ClientUser(
     )
 
     suspend fun block(userId : String) {
-        discordHTTPClient.request("$BASE_URL/users/@me/relationships/$userId") {
+        client.rest.discordHTTPClient.request("$BASE_URL/users/@me/relationships/$userId") {
             method = HttpMethod.Put
             headers {
-                append(HttpHeaders.Authorization, client.user.token)
                 append("Content-Type", "application/json")
             }
             setBody(json.encodeToString(Type(2)))

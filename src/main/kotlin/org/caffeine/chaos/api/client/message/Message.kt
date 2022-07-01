@@ -2,8 +2,6 @@ package org.caffeine.chaos.api.client.message
 
 import io.ktor.client.request.*
 import io.ktor.http.*
-import org.caffeine.chaos.api.client
-import org.caffeine.chaos.api.utils.discordHTTPClient
 import java.util.concurrent.CompletableFuture
 
 @kotlinx.serialization.Serializable
@@ -21,19 +19,19 @@ data class Message(
     var referenced_message : Message? = null,
     var type : Int = 0,
 ) {
-    suspend fun edit(message : Message) : CompletableFuture<Message> {
+/*    suspend fun edit(message : Message) : CompletableFuture<Message> {
         return editMessage(this, message)
-    }
+    }*/
 
-    suspend fun delete() {
+/*    suspend fun delete() {
         try {
             deleteMessage(this)
         } catch (e : Exception) {
             e.printStackTrace()
         }
-    }
+    }*/
 
-    suspend fun pin() {
+/*    suspend fun pin() {
         discordHTTPClient.request("https://discord.com/api/v9/channels/$channel_id/pins/$id") {
             this.method = HttpMethod.Put
             headers {
@@ -49,5 +47,5 @@ data class Message(
                 append(HttpHeaders.Authorization, client.user.token)
             }
         }
-    }
+    }*/
 }

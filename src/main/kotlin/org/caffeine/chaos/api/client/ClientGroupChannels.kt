@@ -5,17 +5,13 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.BASE_URL
-import org.caffeine.chaos.api.utils.discordHTTPClient
 import org.caffeine.chaos.api.json
 
 data class ClientGroupChannels(val client : Client) {
     suspend fun getList() : MutableList<ClientChannel> {
         val list = mutableListOf<ClientChannel>()
-        val response = discordHTTPClient.request("$BASE_URL/users/@me/channels") {
+        val response = client.rest.discordHTTPClient.request("$BASE_URL/users/@me/channels") {
             method = HttpMethod.Get
-            headers {
-                append(HttpHeaders.Authorization, client.config.token)
-            }
         }
         val final = json.decodeFromString<List<ClientChannel>>(response.body())
         for ((count) in final.withIndex()) {

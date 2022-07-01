@@ -12,5 +12,5 @@ data class ClientGuildMember(
     val pending : Boolean = false,
     val premium_since : String? = "",
     val roles : List<String> = listOf(),
-    val user : ClientGuildMemberUser = ClientGuildMemberUser(),
+    val user : ClientGuildMemberUser,
 )

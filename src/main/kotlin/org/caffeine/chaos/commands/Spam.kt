@@ -20,7 +20,7 @@ class Spam : Command(arrayOf("spam"), CommandInfo("Spam", "spam <Message> <Amoun
     ) =
         coroutineScope {
             spamCock = false
-            if (args.isEmpty()) {
+/*            if (args.isEmpty()) {
                 event.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))
                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 return@coroutineScope
@@ -69,6 +69,6 @@ class Spam : Command(arrayOf("spam"), CommandInfo("Spam", "spam <Message> <Amoun
                             .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                     }
                 }
-            }
+            }*/
         }
 }

@@ -34,7 +34,7 @@ class YTDL : Command(arrayOf("ytdl", "youtubedl"),
         args : MutableList<String>,
         cmd : String,
     ) = coroutineScope {
-        if (args.isNotEmpty()) {
+/*        if (args.isNotEmpty()) {
             val regex =
                 "^((?:https?:)?//)?((?:www|m)\\.)?(youtube(-nocookie)?\\.com|youtu.be)(/(?:[\\w\\-]+\\?v=|embed/|v/)?)([\\w\\-]+)(\\S+)?\$".toRegex()
             if (regex.matches(args.first())) {
@@ -119,6 +119,6 @@ class YTDL : Command(arrayOf("ytdl", "youtubedl"),
                         }
                     }
             }
-        }
+        }*/
     }
 }

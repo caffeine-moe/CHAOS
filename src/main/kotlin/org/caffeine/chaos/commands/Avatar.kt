@@ -8,6 +8,7 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.DiscordUser
 import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.config
 
 class Avatar : Command(arrayOf("avatar", "pfp", "av"),
     CommandInfo("Avatar", "av [@user]", "Sends your avatar or a mentioned users avatar.")) {
@@ -18,7 +19,7 @@ class Avatar : Command(arrayOf("avatar", "pfp", "av"),
         cmd : String,
     ) =
         coroutineScope {
-            if (args.isNotEmpty() && event.message.mentions.isEmpty()) {
+/*            if (args.isNotEmpty() && event.message.mentions.isEmpty()) {
                 event.channel.sendMessage(error(client,
                     event,
                     "'${args.joinToString(" ")}}' is not a mentioned user.",
@@ -45,6 +46,6 @@ class Avatar : Command(arrayOf("avatar", "pfp", "av"),
                     .appendLine(avatarURL)
                     .build()
             )
-                .thenAccept { this.launch { onComplete(it, client, client.config.auto_delete.bot.content_generation) } }
+                .thenAccept { this.launch { onComplete(it, client, config.auto_delete.bot.content_generation) } }*/
         }
 }

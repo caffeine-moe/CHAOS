@@ -18,7 +18,7 @@ class Help : Command(arrayOf("help", "cmds", "commands"),
         args : MutableList<String>,
         cmd : String,
     ) : Unit = coroutineScope {
-        if (args.isEmpty()) {
+/*        if (args.isEmpty()) {
             event.channel.sendMessage(MessageBuilder()
                 .appendLine("**CHAOS v$versionString**")
                 .appendLine("**Commands:** https://caffeine.moe/CHAOS/commands/")
@@ -55,6 +55,6 @@ class Help : Command(arrayOf("help", "cmds", "commands"),
         event.channel.sendMessage(error(client, event, "${args.joinToString(" ")} is not a command.", commandInfo))
             .thenAccept {
                 launch { onComplete(it, client, true) }
-            }
+            }*/
     }
 }

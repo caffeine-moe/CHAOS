@@ -18,7 +18,7 @@ class MuteAllServers : Command(arrayOf("muteallservers", "mas", "muteservers", "
         args : MutableList<String>,
         cmd : String,
     ) : Unit = coroutineScope {
-        val mas = "Muting all servers..."
+/*        val mas = "Muting all servers..."
         event.channel.sendMessage(MessageBuilder()
             .appendLine(mas)
             .build()
@@ -50,6 +50,6 @@ class MuteAllServers : Command(arrayOf("muteallservers", "mas", "muteservers", "
                     }
                 }
             }
-        }
+        }*/
     }
 }

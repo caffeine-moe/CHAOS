@@ -1,4 +1,4 @@
-package org.caffeine.chaos.api
+package org.caffeine.chaos.api.client.connection
 
 enum class ConnectionType {
     CONNECT,

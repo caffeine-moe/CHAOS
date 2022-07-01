@@ -28,7 +28,7 @@ class Haste : Command(arrayOf("haste"),
         args : MutableList<String>,
         cmd : String,
     ) : Unit = coroutineScope {
-        event.channel.sendMessage(MessageBuilder().appendLine("Creating haste...").build()).thenAccept { message ->
+/*        event.channel.sendMessage(MessageBuilder().appendLine("Creating haste...").build()).thenAccept { message ->
             launch {
                 var body = ""
                 if (args.isNotEmpty()) {
@@ -65,6 +65,6 @@ class Haste : Command(arrayOf("haste"),
                     }
                 }
             }
-        }
+        }*/
     }
 }

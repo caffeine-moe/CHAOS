@@ -8,6 +8,6 @@ data class MessageAuthor(
     override val discriminator : String,
     override val id : String,
     override val avatar : String? = "",
-) : DiscordUser() {
+) : DiscordUser {
     override val discriminatedName = "$username#$discriminator"
 }
