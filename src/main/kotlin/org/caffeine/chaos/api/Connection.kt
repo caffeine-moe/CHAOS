@@ -57,7 +57,7 @@ class Connection {
                     append("User-Agent", userAgent)
                     append("X-Discord-Locale", "en-US")
                     append("X-Debug-Options", "bugReporterEnabled")
-                    append("X-Super-Properties", superPropertiesB64)
+                    append("X-Super-Properties", client.rest.superPropertiesB64)
                 }
             }
             engine {
@@ -89,12 +89,12 @@ class Connection {
         val payload = when (type) {
             ConnectionType.CONNECT -> {
                 fetchWebClientValues()
-                createSuperProperties()
+                client.rest.createSuperProperties()
                 val identify = json.encodeToString(Identify(
                     OPCODE.IDENTIFY.value,
                     IdentifyD(
-                        client.config.token,
-                        superProperties
+                        client.rest.token,
+                        client.rest.superProperties
                     )
                 ))
                 PayloadDef("Identify", identify)
@@ -110,13 +110,13 @@ class Connection {
             ConnectionType.RECONNECT_AND_RESUME -> {
                 disconnect()
                 fetchWebClientValues()
-                createSuperProperties()
+                client.rest.createSuperProperties()
                 val resume = json.encodeToString(Resume(
                     OPCODE.RESUME.value,
                     ResumeD(
-                        gatewaySequence,
-                        sessionId,
-                        client.config.token
+                        client.rest.gatewaySequence,
+                        client.rest.sessionId,
+                        client.rest.token
                     )
                 ))
                 PayloadDef("Resume", resume)
@@ -137,7 +137,7 @@ class Connection {
                     log("Client received OPCODE 10 HELLO, sending ${payload.name} payload and starting heartbeat.",
                         "API:")
 
-                    tokenValidator(client.config.token)
+                    client.rest.tokenValidator(client.rest.token)
 
                     heartBeat = launch { startHeartBeat(init.d.heartbeat_interval) }
                     heartBeat.start()
@@ -159,7 +159,7 @@ class Connection {
 
     suspend fun sendHeartBeat() {
         val heartbeat = json.encodeToString(HeartBeat(OPCODE.HEARTBEAT.value,
-            if (gatewaySequence > 0) gatewaySequence else null))
+            if (client.rest.gatewaySequence > 0) client.rest.gatewaySequence else null))
         ws.send(heartbeat)
     }
 

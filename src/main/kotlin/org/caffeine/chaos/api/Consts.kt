@@ -6,8 +6,6 @@ import org.caffeine.chaos.api.client.Client
 const val GATEWAY = "gateway.discord.gg"
 const val BASE_URL = "https://discord.com/api/v9"
 
-lateinit var client : Client
-
 val json = Json {
     ignoreUnknownKeys = true
     encodeDefaults = true

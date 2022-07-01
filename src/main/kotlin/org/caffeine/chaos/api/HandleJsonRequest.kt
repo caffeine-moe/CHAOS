@@ -12,7 +12,7 @@ var ready = false
 suspend fun handleJsonRequest(payload : String, connection : Connection, client : Client) {
     val event = json.decodeFromString<Default>(payload)
     if (event.s != null && event.s > 0) {
-        gatewaySequence = event.s
+        client.rest.gatewaySequence = event.s
     }
     when (event.op) {
         OPCODE.DISPATCH.value -> {

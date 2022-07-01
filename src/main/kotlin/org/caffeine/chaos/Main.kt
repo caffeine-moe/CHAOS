@@ -69,13 +69,13 @@ suspend fun main() : Unit = coroutineScope {
                 .bodyAsText()).domains
     }
     //makes new client, and logs in
-    val client = Client(config)
+    val client = Client()
     //web ui benched for now
 /*         val ui = WebUI()
         ui.init(client)*/
     //checks if client is up to date
-    if (client.config.updater.enabled) {
+    if (config.updater.enabled) {
         update(client)
     }
-    launch { client.login() }
+    launch { client.login(config.token) }
 }
