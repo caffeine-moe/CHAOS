@@ -8,11 +8,11 @@ import org.caffeine.chaos.api.utils.clear
 import org.caffeine.chaos.api.utils.log
 
 suspend fun ready(client : Client) = coroutineScope {
-    log("${ConsoleColours.BLUE.value}Welcome to CHAOS!")
-    clear()
-    registerCommands()
-    loginPrompt(client)
     launch {
+        log("${ConsoleColours.BLUE.value}Welcome to CHAOS!")
+        clear()
+        registerCommands()
+        loginPrompt(client)
         configWatcher(client)
     }
 }

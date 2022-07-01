@@ -4,6 +4,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
@@ -29,11 +30,19 @@ var scamLinks = listOf<String>()
 lateinit var config : Config
 
 //main function
-suspend fun main() : Unit = coroutineScope {
+suspend fun main(args: Array<String> = arrayOf()) : Unit = coroutineScope {
     //init
     clear()
     printLogo()
     printSeparator()
+    if (args.contains("-h") || args.contains("--help")) {
+        log("CHAOS v$versionString")
+        log("  -h, --help: Show this help message and exit")
+        log("  -v, --version: Show version information and exit")
+        log("  -c, --config: Load a config file")
+        log("  -u, --update: Check for updates")
+        return@coroutineScope
+    }
     log("${ConsoleColours.BLUE.value}CHAOS is starting...")
     //checks if config exists, if not, create one and exit
     val cfgName = "config.json"
@@ -56,6 +65,7 @@ suspend fun main() : Unit = coroutineScope {
     } catch (e : Exception) {
         //if it cant read the config then it logs that its invalid
         if (e.toString().contains("JsonDecodingException")) {
+            e.printStackTrace()
             log(
                 "Unable to interpret config, please make sure that the one you have is structured the same as the one here: https://caffeine.moe/CHAOS/config.json",
                 "\u001B[38;5;197mERROR:"
@@ -78,17 +88,23 @@ suspend fun main() : Unit = coroutineScope {
         ui.init(client)*/
     //checks if client is up to date
     if (config.updater.enabled) {
-        update(client)
+        update()
     }
-    launch { client.login(config.token) }
-    client.eventListener.collect {
-        launch {
-            if (it == ClientEvents.Ready) {
-                ready(client)
-            }
-            if (it is MessageCreateEvent) {
-                handleMessage(it, client)
+
+    //adds listeners
+    launch {
+        client.events.collect {
+            launch {
+                if (it is ClientEvents.Ready) {
+                    ready(client)
+                }
+                if (it is MessageCreateEvent) {
+                    handleMessage(it, client)
+                }
             }
         }
     }
+
+    //logs in
+    client.login(config.token)
 }

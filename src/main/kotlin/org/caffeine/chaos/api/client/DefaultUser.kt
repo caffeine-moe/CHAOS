@@ -1,9 +1,11 @@
 package org.caffeine.chaos.api.client
 
 @kotlinx.serialization.Serializable
-abstract class DefaultUser(
+class DefaultUser(
     override val username : String,
     override val discriminator : String,
     override val avatar : String?,
     override val id : String,
-) : DiscordUser
+) : DiscordUser {
+    override val discriminatedName = "$username#$discriminator"
+}

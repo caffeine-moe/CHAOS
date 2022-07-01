@@ -14,6 +14,6 @@ class Update :
         args : MutableList<String>,
         cmd : String,
     ) {
-        update(client)
+        update()
     }
 }

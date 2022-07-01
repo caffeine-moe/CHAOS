@@ -24,11 +24,9 @@ import org.caffeine.chaos.api.payloads.client.data.resume.ResumeD
 import org.caffeine.chaos.api.payloads.gateway.Init
 import org.caffeine.chaos.api.utils.*
 
-class Connection {
+class Connection(private val client : Client, private val eventBus : EventBus) {
 
-    var ready: Boolean = false
-
-    private lateinit var eventBus : EventBus
+    internal var ready: Boolean = false
 
     private val httpClient : HttpClient
         get() = HttpClient(CIO) {
@@ -81,8 +79,6 @@ class Connection {
         }
 
     lateinit var ws : DefaultClientWebSocketSession
-
-    lateinit var client : Client
 
     private var heartBeat = Job() as Job
 
@@ -160,10 +156,6 @@ class Connection {
                 }
             }
         }
-    }
-
-    fun registerBus(bus : EventBus) {
-        eventBus = bus
     }
 
     suspend fun sendHeartBeat() {

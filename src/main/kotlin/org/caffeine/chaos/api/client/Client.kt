@@ -1,9 +1,12 @@
 package org.caffeine.chaos.api.client
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import org.caffeine.chaos.api.client.connection.Connection
 import org.caffeine.chaos.api.client.connection.ConnectionType
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.api.utils.DiscordUtils
 
 interface  Event
@@ -19,12 +22,11 @@ class EventBus {
     suspend fun produceEvent(event : Event) {
         _events.emit(event) // suspends until all subscribers receive it
     }
-
 }
 
-private interface ClientInternal {
+private interface BaseClient {
     val user: ClientUser
-    val eventListener: SharedFlow<Event>
+    val events: SharedFlow<Event>
     //val guilds: HashMap<String, Guild>
     //val channels: HashMap<String, BaseChannel>
     //val relationships: HashMap<String, ClientRelationship>
@@ -34,19 +36,17 @@ private interface ClientInternal {
     suspend fun logout()
 }
 
-class Client : ClientInternal {
+class Client : BaseClient {
 
-    override val socket : Connection = Connection()
-    override val rest : DiscordUtils = DiscordUtils()
     private val eventBus: EventBus = EventBus()
-    override val eventListener = eventBus.events
+    override val socket : Connection = Connection(this, eventBus)
+    override val rest : DiscordUtils = DiscordUtils()
+    override val events : SharedFlow<Event> = eventBus.events
 
     override lateinit var user : ClientUser
 
     override suspend fun login(token: String) {
         rest.token = token
-        socket.client = this
-        socket.registerBus(eventBus)
         socket.execute(ConnectionType.CONNECT)
     }
 

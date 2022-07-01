@@ -22,8 +22,8 @@ private data class ReadyPayloadD(
     val user_settings : Settings,
     val user_settings_proto : String,
     val v : Int,
-    //val relationships : MutableList<ClientRelationship>,
-    //val guilds : MutableList<ClientGuild>,
+    val relationships : MutableList<ClientRelationship>,
+    val guilds : MutableList<ClientGuild>,
     val session_id : String,
 )
 
@@ -99,8 +99,8 @@ suspend fun ready(client : Client, payload : String, eventBus : EventBus) {
         d.user_settings.custom_status,
         d.user_settings.status,
         avatar = d.user.avatar,
-        //relationships = ClientRelationships(extractFriends(d.relationships), extractBlockList(d.relationships)),
-        //guilds = d.guilds,
+        relationships = ClientRelationships(extractFriends(d.relationships), extractBlockList(d.relationships)),
+        guilds = d.guilds,
         channels = ClientChannels(client),
         token = client.rest.token,
         client = client
@@ -113,7 +113,7 @@ suspend fun ready(client : Client, payload : String, eventBus : EventBus) {
 
 private fun extractFriends(relationships : MutableList<ClientRelationship>) : MutableList<ClientFriend> {
     val friends = mutableListOf<ClientFriend>()
-/*    for (relationship in relationships) {
+    for (relationship in relationships) {
         if (relationship.type == 1) {
             val friend = ClientFriend(
                 relationship.user.username,
@@ -123,7 +123,7 @@ private fun extractFriends(relationships : MutableList<ClientRelationship>) : Mu
             )
             friends.add(friend)
         }
-    }*/
+    }
     return friends
 }
 

@@ -66,7 +66,7 @@ private data class Updoot(
     val latestVer : Double,
 )
 
-suspend fun update(client: Client) = coroutineScope {
+suspend fun update() = coroutineScope {
     val updateStatus = updateStatus()
     val pre = "UPDATER:"
     if (updateStatus.clientIsOutOfDate) {
@@ -75,14 +75,15 @@ suspend fun update(client: Client) = coroutineScope {
                 "Your version of CHAOS is outdated, please update to the latest version. Current version: $versionString, latest version: ${updateStatus.latestVerString}",
                 pre
             )
-            log("Please visit https://caffeine.moe/CHAOS/ to download the latest version.", pre)
+            if (!config.updater.auto_download) {
+                log("Please visit https://caffeine.moe/CHAOS/ to download the latest version.", pre)
+            }
         }
         if (config.updater.auto_download) {
-            downloadUpdate(updateStatus.downUrl).thenAccept {
+            downloadUpdate(updateStatus.downUrl, updateStatus).thenAccept {
                 this.launch {
                     log("Downloaded latest update to ${it}!", pre)
                     if (config.updater.exit) {
-                        client.logout()
                         exitProcess(69)
                     }
                 }
@@ -116,15 +117,15 @@ private suspend fun updateStatus() : Updoot {
     return Updoot(clientIsOutOfDate, downUrl, gnum.joinToString("."), gver)
 }
 
-private suspend fun downloadUpdate(url : String) : CompletableFuture<String> {
-    val filename = "CHAOS-${versionString}.jar"
+private suspend fun downloadUpdate(url : String, updoot : Updoot) : CompletableFuture<String> {
+    val filename = "CHAOS-${updoot.latestVerString}.jar"
     withContext(Dispatchers.IO) {
         val inputStream = URL(url).openStream()
         Files.copy(inputStream,
             Paths.get(filename),
             StandardCopyOption.REPLACE_EXISTING)
     }
-    val filepath = File("CHAOS-${versionString}.jar").absolutePath
+    val filepath = File("CHAOS-${updoot.latestVerString}.jar").absolutePath
     return CompletableFuture.completedFuture(filepath)
 }
 
