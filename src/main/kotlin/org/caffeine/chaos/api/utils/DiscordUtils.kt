@@ -16,6 +16,7 @@ import kotlinx.serialization.json.JsonObject
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.typedefs.ChannelType
+import org.caffeine.chaos.api.typedefs.StatusType
 import java.util.*
 import kotlin.system.exitProcess
 
@@ -111,6 +112,15 @@ class DiscordUtils {
                 append(HttpHeaders.Authorization, token)
             }
         }
+    }
+
+    fun getStatusType(type: String) : StatusType {
+        StatusType.values().forEach {
+            if (it.value == type.lowercase()) {
+                return it
+            }
+        }
+        return StatusType.UNKNOWN
     }
 
     fun getChannelType(type: Number) : ChannelType {

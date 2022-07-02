@@ -11,6 +11,7 @@ import org.caffeine.chaos.api.client.message.Message
 import org.caffeine.chaos.api.client.message.MessageChannel
 import org.caffeine.chaos.api.handlers.CustomStatus
 import org.caffeine.chaos.api.json
+import org.caffeine.chaos.api.typedefs.StatusType
 import java.util.concurrent.CompletableFuture
 import kotlin.math.absoluteValue
 
@@ -22,7 +23,7 @@ data class ClientUser(
     val email : String?,
     val bio : String?,
     val customStatus : CustomStatus,
-    val status : String,
+    val status : StatusType,
     override val avatar : String?,
     val relationships : ClientRelationships,
     var guilds : MutableList<ClientGuild>,
@@ -93,19 +94,13 @@ data class ClientUser(
         }
     }
 
-    suspend fun setStatus(status : ClientStatusType) {
-        val ststr = when (status) {
-            ClientStatusType.ONLINE -> "online"
-            ClientStatusType.IDLE -> "idle"
-            ClientStatusType.DND -> "dnd"
-            ClientStatusType.INVISIBLE -> "invisible"
-        }
+    suspend fun setStatus(status : StatusType) {
         client.utils.discordHTTPClient.request("$BASE_URL/users/@me/settings") {
             method = HttpMethod.Patch
             headers {
                 append("Content-Type", "application/json")
             }
-            setBody(json.encodeToString(ClientStatus(ststr)))
+            setBody(json.encodeToString(ClientStatus(status.value)))
         }
     }
 

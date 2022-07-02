@@ -97,7 +97,7 @@ suspend fun ready(client : Client, payload : String, eventBus : EventBus) {
         d.user.email,
         d.user.bio,
         d.user_settings.custom_status,
-        d.user_settings.status,
+        client.utils.getStatusType(d.user_settings.status),
         avatar = d.user.avatar,
         relationships = ClientRelationships(extractFriends(d.relationships), extractBlockList(d.relationships)),
         guilds = d.guilds,
