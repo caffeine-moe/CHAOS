@@ -63,7 +63,7 @@ suspend fun AFKHandler(event : MessageCreateEvent, client : Client) {
 /*
         val message = if (event.channel.type() == DiscordChannelType.DM) {
 */
-            afkMessage
+        afkMessage
         } else {
             "$afkMessage <@${author.id}>"
         }

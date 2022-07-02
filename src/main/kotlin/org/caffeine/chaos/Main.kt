@@ -4,7 +4,6 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
@@ -29,31 +28,25 @@ var scamLinks = listOf<String>()
 
 lateinit var config : Config
 
+var configFile = File("config.json")
+
 //main function
-suspend fun main(args: Array<String> = arrayOf()) : Unit = coroutineScope {
+suspend fun main(args : Array<String> = arrayOf()) : Unit = coroutineScope {
     //init
     clear()
     printLogo()
     printSeparator()
-    if (args.contains("-h") || args.contains("--help")) {
-        log("CHAOS v$versionString")
-        log("  -h, --help: Show this help message and exit")
-        log("  -v, --version: Show version information and exit")
-        log("  -c, --config: Load a config file")
-        log("  -u, --update: Check for updates")
-        return@coroutineScope
-    }
+    handleArgs(args)
     log("${ConsoleColours.BLUE.value}CHAOS is starting...")
     //checks if config exists, if not, create one and exit
-    val cfgName = "config.json"
-    if (!File(cfgName).exists()) {
+    if (!configFile.exists()) {
         val default = javaClass.classLoader.getResource("defaultconfig.json")
         withContext(Dispatchers.IO) {
-            File(cfgName).createNewFile()
+            configFile.createNewFile()
         }
-        File(cfgName).writeText(default!!.readText())
+        configFile.writeText(default!!.readText())
         log(
-            "Config not found, we have generated one for you at ${File(cfgName).absolutePath}",
+            "Config not found, we have generated one for you at ${configFile.absolutePath}",
             "${ConsoleColours.RED.value}ERROR:"
         )
         log("${ConsoleColours.BLUE.value}Please change the file accordingly. Documentation: https://caffeine.moe/CHAOS/")
@@ -61,7 +54,7 @@ suspend fun main(args: Array<String> = arrayOf()) : Unit = coroutineScope {
     }
     //tries to read config
     try {
-        config = json.decodeFromString(File(cfgName).readText())
+        config = json.decodeFromString(configFile.readText())
     } catch (e : Exception) {
         //if it cant read the config then it logs that its invalid
         if (e.toString().contains("JsonDecodingException")) {
@@ -81,7 +74,7 @@ suspend fun main(args: Array<String> = arrayOf()) : Unit = coroutineScope {
             json.decodeFromString<AntiScamResponse>(normalHTTPClient.get("https://raw.githubusercontent.com/nikolaischunk/discord-phishing-links/main/domain-list.json")
                 .bodyAsText()).domains
     }
-    //makes new client, and logs in
+    //makes new client
     val client = Client()
     //web ui benched for now
 /*         val ui = WebUI()

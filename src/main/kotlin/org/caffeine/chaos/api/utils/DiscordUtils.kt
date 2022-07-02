@@ -15,6 +15,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.JsonObject
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.json
+import org.caffeine.chaos.api.typedefs.ChannelType
 import java.util.*
 import kotlin.system.exitProcess
 
@@ -110,6 +111,15 @@ class DiscordUtils {
                 append(HttpHeaders.Authorization, token)
             }
         }
+    }
+
+    fun getChannelType(type: Number) : ChannelType {
+        ChannelType.values().forEach {
+            if (it.ordinal == type) {
+                return it
+            }
+        }
+        return ChannelType.UNKNOWN
     }
 
 

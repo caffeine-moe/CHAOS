@@ -26,6 +26,7 @@ data class ClientUser(
     override val avatar : String?,
     val relationships : ClientRelationships,
     var guilds : MutableList<ClientGuild>,
+    val premium : Boolean,
     val channels : ClientChannels,
     val token : String,
     val client : Client,
@@ -53,12 +54,12 @@ data class ClientUser(
             DiscordHypeSquadHouse.BALANCE -> 3
         }
         if (house == DiscordHypeSquadHouse.NONE) {
-            client.rest.discordHTTPClient.request("$BASE_URL/hypesquad/online") {
+            client.utils.discordHTTPClient.request("$BASE_URL/hypesquad/online") {
                 method = HttpMethod.Delete
             }
             return
         }
-        val req = client.rest.discordHTTPClient.request("$BASE_URL/hypesquad/online") {
+        val req = client.utils.discordHTTPClient.request("$BASE_URL/hypesquad/online") {
             method = HttpMethod.Post
             headers {
                 append("Content-Type", "application/json")
@@ -69,7 +70,7 @@ data class ClientUser(
     }
 
     suspend fun setCustomStatus(status : String) {
-        client.rest.discordHTTPClient.request("$BASE_URL/users/@me/settings") {
+        client.utils.discordHTTPClient.request("$BASE_URL/users/@me/settings") {
             method = HttpMethod.Patch
             headers {
                 append("Content-Type", "application/json")
@@ -83,7 +84,7 @@ data class ClientUser(
             DiscordTheme.DARK -> "dark"
             DiscordTheme.LIGHT -> "light"
         }
-        client.rest.discordHTTPClient.request("$BASE_URL/users/@me/settings") {
+        client.utils.discordHTTPClient.request("$BASE_URL/users/@me/settings") {
             method = HttpMethod.Patch
             headers {
                 append("Content-Type", "application/json")
@@ -99,7 +100,7 @@ data class ClientUser(
             ClientStatusType.DND -> "dnd"
             ClientStatusType.INVISIBLE -> "invisible"
         }
-        client.rest.discordHTTPClient.request("$BASE_URL/users/@me/settings") {
+        client.utils.discordHTTPClient.request("$BASE_URL/users/@me/settings") {
             method = HttpMethod.Patch
             headers {
                 append("Content-Type", "application/json")
@@ -117,7 +118,7 @@ data class ClientUser(
         var la : Long
         val start = System.currentTimeMillis()
         try {
-            client.rest.discordHTTPClient.request("$BASE_URL/entitlements/gift-codes/$code/redeem") {
+            client.utils.discordHTTPClient.request("$BASE_URL/entitlements/gift-codes/$code/redeem") {
                 method = HttpMethod.Post
                 expectSuccess = true
             }
@@ -140,7 +141,7 @@ data class ClientUser(
     suspend fun validateChannelId(id : String) : Boolean {
         var stat : Boolean
         try {
-            val response = client.rest.discordHTTPClient.request("$BASE_URL/channels/${id}/messages?limit=1") {
+            val response = client.utils.discordHTTPClient.request("$BASE_URL/channels/${id}/messages?limit=1") {
                 method = HttpMethod.Get
                 headers {
                     append("Content-Type", "application/json")
@@ -159,7 +160,7 @@ data class ClientUser(
     )
 
     suspend fun block(userId : String) {
-        client.rest.discordHTTPClient.request("$BASE_URL/users/@me/relationships/$userId") {
+        client.utils.discordHTTPClient.request("$BASE_URL/users/@me/relationships/$userId") {
             method = HttpMethod.Put
             headers {
                 append("Content-Type", "application/json")

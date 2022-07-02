@@ -66,6 +66,19 @@ private data class Updoot(
     val latestVer : Double,
 )
 
+suspend fun checkUpdates() {
+    val updateStatus = updateStatus()
+    val pre = "UPDATER:"
+    if (updateStatus.clientIsOutOfDate) {
+            log(
+                "Your version of CHAOS is outdated, please update to the latest version. Current version: $versionString, latest version: ${updateStatus.latestVerString}",
+                pre
+            )
+        } else {
+        log("${ConsoleColours.GREEN.value}Client is up to date!", pre)
+    }
+}
+
 suspend fun update() = coroutineScope {
     val updateStatus = updateStatus()
     val pre = "UPDATER:"

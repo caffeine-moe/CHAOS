@@ -10,7 +10,7 @@ import org.caffeine.chaos.api.json
 data class ClientGroupChannels(val client : Client) {
     suspend fun getList() : MutableList<ClientChannel> {
         val list = mutableListOf<ClientChannel>()
-        val response = client.rest.discordHTTPClient.request("$BASE_URL/users/@me/channels") {
+        val response = client.utils.discordHTTPClient.request("$BASE_URL/users/@me/channels") {
             method = HttpMethod.Get
         }
         val final = json.decodeFromString<List<ClientChannel>>(response.body())

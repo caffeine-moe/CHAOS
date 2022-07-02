@@ -102,11 +102,12 @@ suspend fun ready(client : Client, payload : String, eventBus : EventBus) {
         relationships = ClientRelationships(extractFriends(d.relationships), extractBlockList(d.relationships)),
         guilds = d.guilds,
         channels = ClientChannels(client),
-        token = client.rest.token,
+        premium = d.user.premium,
+        token = client.utils.token,
         client = client
     )
     client.socket.ready = true
-    client.rest.sessionId = d.session_id
+    client.utils.sessionId = d.session_id
     log("${ConsoleColours.GREEN.value}Client logged in!", "API:")
     eventBus.produceEvent(ClientEvents.Ready)
 }

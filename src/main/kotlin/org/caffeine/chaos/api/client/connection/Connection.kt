@@ -61,7 +61,7 @@ class Connection(private val client : Client, private val eventBus : EventBus) {
                     append("User-Agent", userAgent)
                     append("X-Discord-Locale", "en-US")
                     append("X-Debug-Options", "bugReporterEnabled")
-                    append("X-Super-Properties", client.rest.superPropertiesB64)
+                    append("X-Super-Properties", client.utils.superPropertiesB64)
                 }
             }
             engine {
@@ -91,12 +91,12 @@ class Connection(private val client : Client, private val eventBus : EventBus) {
         val payload = when (type) {
             ConnectionType.CONNECT -> {
                 fetchWebClientValues()
-                client.rest.createSuperProperties()
+                client.utils.createSuperProperties()
                 val identify = json.encodeToString(Identify(
                     OPCODE.IDENTIFY.value,
                     IdentifyD(
-                        client.rest.token,
-                        client.rest.superProperties
+                        client.utils.token,
+                        client.utils.superProperties
                     )
                 ))
                 PayloadDef("Identify", identify)
@@ -112,13 +112,13 @@ class Connection(private val client : Client, private val eventBus : EventBus) {
             ConnectionType.RECONNECT_AND_RESUME -> {
                 disconnect()
                 fetchWebClientValues()
-                client.rest.createSuperProperties()
+                client.utils.createSuperProperties()
                 val resume = json.encodeToString(Resume(
                     OPCODE.RESUME.value,
                     ResumeD(
-                        client.rest.gatewaySequence,
-                        client.rest.sessionId,
-                        client.rest.token
+                        client.utils.gatewaySequence,
+                        client.utils.sessionId,
+                        client.utils.token
                     )
                 ))
                 PayloadDef("Resume", resume)
@@ -138,7 +138,7 @@ class Connection(private val client : Client, private val eventBus : EventBus) {
                     log("Client received OPCODE 10 HELLO, sending ${payload.name} payload and starting heartbeat.",
                         "API:")
 
-                    client.rest.tokenValidator(client.rest.token)
+                    client.utils.tokenValidator(client.utils.token)
 
                     heartBeat = launch { startHeartBeat(init.d.heartbeat_interval) }
                     heartBeat.start()
@@ -160,7 +160,7 @@ class Connection(private val client : Client, private val eventBus : EventBus) {
 
     suspend fun sendHeartBeat() {
         val heartbeat = json.encodeToString(HeartBeat(OPCODE.HEARTBEAT.value,
-            if (client.rest.gatewaySequence > 0) client.rest.gatewaySequence else null))
+            if (client.utils.gatewaySequence > 0) client.utils.gatewaySequence else null))
         ws.send(heartbeat)
     }
 

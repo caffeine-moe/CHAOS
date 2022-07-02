@@ -11,7 +11,7 @@ import org.caffeine.chaos.api.utils.log
 suspend fun handleJsonRequest(payload : String, client : Client, eventBus : EventBus) {
     val event = json.decodeFromString<Default>(payload)
     if (event.s != null && event.s > 0) {
-        client.rest.gatewaySequence = event.s
+        client.utils.gatewaySequence = event.s
     }
     when (event.op) {
         OPCODE.DISPATCH.value -> {

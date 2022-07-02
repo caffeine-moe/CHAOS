@@ -11,7 +11,7 @@ data class ClientChannels(val client : Client) {
     val groupChannels = ClientGroupChannels(client)
     suspend fun getAmount() : Int {
         var number = 0
-        val response = client.rest.discordHTTPClient.request("$BASE_URL/users/@me/channels") {
+        val response = client.utils.discordHTTPClient.request("$BASE_URL/users/@me/channels") {
             method = HttpMethod.Get
         }
         println(response)
@@ -24,7 +24,7 @@ data class ClientChannels(val client : Client) {
 
     suspend fun getList() : StringBuilder {
         val sb = StringBuilder()
-        val response = client.rest.discordHTTPClient.request("$BASE_URL/users/@me/channels") {
+        val response = client.utils.discordHTTPClient.request("$BASE_URL/users/@me/channels") {
             method = HttpMethod.Get
         }
         println(response)
