@@ -20,10 +20,8 @@ suspend fun handleArgs(args : Array<String>) {
                 exitProcess(69)
             }
             "-c", "--config" -> {
-                if (args.size > 1) {
-                    if (File(args[1]).exists()) {
-                        log("Loading config file ${args[1]}")
-                    }
+                if (args.size > 1 && File(args[1]).exists()) {
+                    log("Loading config file ${args[1]}")
                     configFile = File(args[1])
                 } else {
                     log("No config file specified.")
