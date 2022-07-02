@@ -1,10 +1,8 @@
 package org.caffeine.chaos.api.handlers
 
-import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientGuildMember
 import org.caffeine.chaos.api.client.ClientGuildMemberUser
-import org.caffeine.chaos.api.jsonc
 
 @kotlinx.serialization.Serializable
 private data class GuildMemberListUpdate(

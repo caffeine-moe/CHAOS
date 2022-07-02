@@ -26,7 +26,7 @@ import org.caffeine.chaos.api.utils.*
 
 class Connection(private val client : Client, private val eventBus : EventBus) {
 
-    internal var ready: Boolean = false
+    internal var ready : Boolean = false
 
     private val httpClient : HttpClient
         get() = HttpClient(CIO) {

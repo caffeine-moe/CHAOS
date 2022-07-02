@@ -1,9 +1,5 @@
 package org.caffeine.chaos.api.client.message
 
-import io.ktor.client.request.*
-import io.ktor.http.*
-import java.util.concurrent.CompletableFuture
-
 @kotlinx.serialization.Serializable
 data class Message(
     var id : String = "",

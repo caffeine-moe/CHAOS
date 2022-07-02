@@ -1,24 +1,8 @@
 package org.caffeine.chaos.api.client.message
 
-import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import org.caffeine.chaos.api.BASE_URL
-import org.caffeine.chaos.api.client.DiscordChannelType
 import org.caffeine.chaos.api.client.slashcommands.AppCommand
-import org.caffeine.chaos.api.client.slashcommands.Data
-import org.caffeine.chaos.api.client.slashcommands.SendAppCommand
-import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.utils.calcNonce
-import org.caffeine.chaos.api.utils.webkitBoundary
-import java.util.concurrent.CompletableFuture
 
 @Serializable
 open class MessageChannel(

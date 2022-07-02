@@ -62,11 +62,11 @@ suspend fun afkHandler(event : MessageCreateEvent, client : Client) {
         val message = if (event.channel.type() == DiscordChannelType.DM) {
 */
         afkMessage
-        } else {
-            "$afkMessage <@${author.id}>"
-        }
+    } else {
+        "$afkMessage <@${author.id}>"
+    }
 /*        event.channel.sendMessage(MessageBuilder()
             .appendLine(message)
             .build()
         )*/
-    }
+}

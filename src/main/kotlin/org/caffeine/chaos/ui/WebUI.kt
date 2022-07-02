@@ -1,7 +1,6 @@
 package org.caffeine.chaos.ui
 
-import kotlinx.coroutines.*
-import org.caffeine.chaos.api.client.Client
+import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.config
 
 class WebUI {

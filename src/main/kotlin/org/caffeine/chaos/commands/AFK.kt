@@ -2,8 +2,8 @@ package org.caffeine.chaos.commands
 
 import org.caffeine.chaos.*
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.typedefs.StatusType
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.typedefs.StatusType
 import org.caffeine.chaos.api.utils.log
 
 var oldCustomStatus = ""

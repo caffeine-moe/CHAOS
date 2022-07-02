@@ -1,9 +1,5 @@
 package org.caffeine.chaos.api.client.message
 
-import io.ktor.client.request.*
-import io.ktor.http.*
-import org.caffeine.chaos.api.BASE_URL
-
 /*
 suspend fun deleteMessage(message : Message) {
     try {

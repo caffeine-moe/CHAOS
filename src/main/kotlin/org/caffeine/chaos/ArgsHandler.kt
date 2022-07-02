@@ -29,7 +29,7 @@ suspend fun handleArgs(args : Array<String>) {
                 }
             }
             "-u", "--update" -> {
-               checkUpdates()
+                checkUpdates()
                 exitProcess(69)
             }
             else -> {

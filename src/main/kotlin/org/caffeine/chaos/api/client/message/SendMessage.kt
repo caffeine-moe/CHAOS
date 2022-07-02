@@ -1,14 +1,5 @@
 package org.caffeine.chaos.api.client.message
 
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import org.caffeine.chaos.api.BASE_URL
-import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.utils.calcNonce
-import org.caffeine.chaos.api.utils.log
 import java.util.concurrent.CompletableFuture
 
 @kotlinx.serialization.Serializable

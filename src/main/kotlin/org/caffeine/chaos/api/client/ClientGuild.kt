@@ -1,10 +1,6 @@
 package org.caffeine.chaos.api.client
 
-import io.ktor.client.request.*
-import io.ktor.http.*
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import org.caffeine.chaos.api.json
 
 @Serializable
 data class ClientGuild(

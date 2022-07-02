@@ -27,7 +27,8 @@ fun log(text : String, prefix : String = "") {
 
     //if the prefix parameter is not blank then set the message with the specified prefix
     if (prefix.isNotBlank()) {
-        message = "${ConsoleColours.WHITE.value}[${ConsoleColours.BLUE.value}${time}${ConsoleColours.WHITE.value}] $prefix ${ConsoleColours.BLUE.value}$text"
+        message =
+            "${ConsoleColours.WHITE.value}[${ConsoleColours.BLUE.value}${time}${ConsoleColours.WHITE.value}] $prefix ${ConsoleColours.BLUE.value}$text"
     }
 
     println(message)

@@ -22,7 +22,7 @@ import kotlin.system.exitProcess
 
 class DiscordUtils {
 
-    lateinit var token: String
+    lateinit var token : String
 
     @Serializable
     data class SuperProperties(
@@ -114,7 +114,7 @@ class DiscordUtils {
         }
     }
 
-    fun getStatusType(type: String) : StatusType {
+    fun getStatusType(type : String) : StatusType {
         StatusType.values().forEach {
             if (it.value == type.lowercase()) {
                 return it
@@ -123,7 +123,7 @@ class DiscordUtils {
         return StatusType.UNKNOWN
     }
 
-    fun getChannelType(type: Number) : ChannelType {
+    fun getChannelType(type : Number) : ChannelType {
         ChannelType.values().forEach {
             if (it.ordinal == type) {
                 return it

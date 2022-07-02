@@ -1,15 +1,20 @@
 package org.caffeine.chaos.api.client
 
 import kotlinx.serialization.Transient
+
 interface DiscordUser {
     @Transient
     val username : String
+
     @Transient
     val discriminator : String
+
     @Transient
     val id : String
+
     @Transient
     val avatar : String?
+
     @Transient
     val discriminatedName : String
 

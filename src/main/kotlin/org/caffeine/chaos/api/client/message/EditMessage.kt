@@ -1,14 +1,5 @@
 package org.caffeine.chaos.api.client.message
 
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import org.caffeine.chaos.api.BASE_URL
-import org.caffeine.chaos.api.json
-import java.util.concurrent.CompletableFuture
-
 @kotlinx.serialization.Serializable
 private data class EditMessageResponse(
     val attachments : List<MessageAttachment>?,

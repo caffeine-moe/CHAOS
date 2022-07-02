@@ -1,6 +1,8 @@
 package org.caffeine.chaos.api.client
 
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import org.caffeine.chaos.api.client.connection.Connection
 import org.caffeine.chaos.api.client.connection.ConnectionType
 import org.caffeine.chaos.api.utils.DiscordUtils
@@ -21,27 +23,28 @@ class EventBus {
 }
 
 private interface BaseClient {
-    val user: ClientUser
-    val events: SharedFlow<Event>
+    val user : ClientUser
+    val events : SharedFlow<Event>
+
     //val guilds: HashMap<String, Guild>
     //val channels: HashMap<String, BaseChannel>
     //val relationships: HashMap<String, ClientRelationship>
-    val socket: Connection
-    val utils: DiscordUtils
-    suspend fun login(token: String)
+    val socket : Connection
+    val utils : DiscordUtils
+    suspend fun login(token : String)
     suspend fun logout()
 }
 
 class Client : BaseClient {
 
-    private val eventBus: EventBus = EventBus()
+    private val eventBus : EventBus = EventBus()
     override val socket : Connection = Connection(this, eventBus)
     override val utils : DiscordUtils = DiscordUtils()
     override val events : SharedFlow<Event> = eventBus.events
 
     override lateinit var user : ClientUser
 
-    override suspend fun login(token: String) {
+    override suspend fun login(token : String) {
         utils.token = token
         socket.execute(ConnectionType.CONNECT)
     }

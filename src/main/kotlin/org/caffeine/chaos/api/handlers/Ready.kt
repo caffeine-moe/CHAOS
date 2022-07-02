@@ -2,7 +2,6 @@ package org.caffeine.chaos.api.handlers
 
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.*
-import org.caffeine.chaos.api.client.ClientUser
 import org.caffeine.chaos.api.jsonc
 import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.log

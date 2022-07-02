@@ -1,11 +1,5 @@
 package org.caffeine.chaos.commands
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.Message
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
-
 
 /*
 suspend fun user(event : MessageCreateEvent, client : Client) {

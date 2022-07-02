@@ -5,7 +5,6 @@ import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.clear
 import org.caffeine.chaos.api.utils.printLogo
 import org.caffeine.chaos.api.utils.printSeparator
-import org.caffeine.chaos.config.Config
 
 
 //executed whenever the client is logged in successfully

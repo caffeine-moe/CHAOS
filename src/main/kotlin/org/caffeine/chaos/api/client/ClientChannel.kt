@@ -1,9 +1,5 @@
 package org.caffeine.chaos.api.client
 
-import io.ktor.client.request.*
-import io.ktor.http.*
-import org.caffeine.chaos.api.BASE_URL
-
 @kotlinx.serialization.Serializable
 data class ClientChannel(
     val id : String,

@@ -1,7 +1,6 @@
 package org.caffeine.chaos.api
 
 import kotlinx.serialization.json.Json
-import org.caffeine.chaos.api.client.Client
 
 const val GATEWAY = "gateway.discord.gg"
 const val BASE_URL = "https://discord.com/api/v9"

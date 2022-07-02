@@ -1,14 +1,10 @@
 package org.caffeine.chaos.commands
 
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.commandList
-import org.caffeine.chaos.versionString
 
 class Help : Command(arrayOf("help", "cmds", "commands"),
     CommandInfo("Help", "help [command]", "Sends the command list URL OR Displays info about a specified command.")) {

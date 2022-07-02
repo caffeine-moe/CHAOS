@@ -1,18 +1,10 @@
 package org.caffeine.chaos.commands
 
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.utils.normalHTTPClient
-import java.nio.charset.MalformedInputException
 
 class Haste : Command(arrayOf("haste"),
     CommandInfo("Haste", "haste <Text> OR <file.txt>", "Uploads text OR a text document to Hastebin.")) {

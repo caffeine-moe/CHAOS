@@ -9,12 +9,10 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
-import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.utils.ConsoleColours
-import org.caffeine.chaos.api.utils.normalHTTPClient
 import org.caffeine.chaos.api.utils.log
-import org.caffeine.chaos.config.Config
+import org.caffeine.chaos.api.utils.normalHTTPClient
 import java.io.File
 import java.net.URL
 import java.nio.file.Files
@@ -70,11 +68,11 @@ suspend fun checkUpdates() {
     val updateStatus = updateStatus()
     val pre = "UPDATER:"
     if (updateStatus.clientIsOutOfDate) {
-            log(
-                "Your version of CHAOS is outdated, please update to the latest version. Current version: $versionString, latest version: ${updateStatus.latestVerString}",
-                pre
-            )
-        } else {
+        log(
+            "Your version of CHAOS is outdated, please update to the latest version. Current version: $versionString, latest version: ${updateStatus.latestVerString}",
+            pre
+        )
+    } else {
         log("${ConsoleColours.GREEN.value}Client is up to date!", pre)
     }
 }
