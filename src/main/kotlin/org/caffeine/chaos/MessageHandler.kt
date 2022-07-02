@@ -7,7 +7,6 @@ import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.commands.*
-import org.caffeine.chaos.config.Config
 
 //HashMap of commands
 var commandList : HashMap<String, Command> = HashMap()
@@ -76,7 +75,7 @@ suspend fun handleMessage(event : MessageCreateEvent, client : Client) {
     }
 
     if (afk) {
-        AFKHandler(event, client)
+        afkHandler(event, client)
     }
 
     //if the message is sent by the user the selfbot is logged into then do stuff

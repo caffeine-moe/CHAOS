@@ -1,9 +1,7 @@
 package org.caffeine.chaos
 
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.DiscordChannelType
 import org.caffeine.chaos.api.client.DiscordUser
-import org.caffeine.chaos.api.client.message.MessageBuilder
 import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.commands.oldCustomStatus
@@ -17,7 +15,7 @@ var afk = false
 
 var afkMessage = ""
 
-suspend fun AFKHandler(event : MessageCreateEvent, client : Client) {
+suspend fun afkHandler(event : MessageCreateEvent, client : Client) {
     val author = event.message.author
     val prefix = "AFK:"
     if (author.id == client.user.id) {

@@ -26,10 +26,14 @@ class AFK :
             oldStatus = client.user.status
             oldCustomStatus = client.user.customStatus.text
             val newStatus = client.utils.getStatusType(config.afk.status)
-            if (newStatus != StatusType.UNKNOWN) {
-                client.user.setStatus(newStatus)
-            } else {
-                log("Invalid status type: ${config.afk.status}", prefix)
+            if (newStatus != oldStatus) {
+                if (newStatus != StatusType.UNKNOWN) {
+                    client.user.setStatus(newStatus)
+                } else {
+                    log("Invalid status type: ${config.afk.status}", prefix)
+                    log("Using default status: ${StatusType.DND}", prefix)
+                    client.user.setStatus(StatusType.DND)
+                }
             }
             client.user.setCustomStatus(afkMessage)
             afk = afk.not()
