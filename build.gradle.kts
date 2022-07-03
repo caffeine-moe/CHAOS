@@ -23,6 +23,8 @@ repositories {
     maven(url = "https://jitpack.io")
 }
 
+group = "com.github.caffeine-moe"
+
 val ktor_version = "2.0.2"
 
 dependencies {
