@@ -8,5 +8,5 @@ enum class ChannelType {
     CATEGORY,
     NEWS,
     STORE,
-    UNKNOWN,
+    UNKNOWN;
 }
