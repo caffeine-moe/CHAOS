@@ -4,6 +4,7 @@ plugins {
     kotlin("plugin.serialization") version "1.7.0"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("java")
+    id("maven-publish")
     id("se.patrikerdes.use-latest-versions") version "0.2.18"
     id("com.github.ben-manes.versions") version "0.42.0"
 }
@@ -38,4 +39,5 @@ dependencies {
     implementation("com.github.lalyos:jfiglet:0.0.9")
     implementation("com.github.oshi:oshi-core:6.1.6")
     implementation("com.github.sealedtx:java-youtube-downloader:3.1.0")
+    implementation("com.github.caffeine-moe:CHAOS:dev-SNAPSHOT")
 }
