@@ -3,13 +3,13 @@ package org.caffeine.chaos
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.client.ClientUserRedeemedCodeError
 import org.caffeine.chaos.api.client.ClientUserRedeemedCodeStatus
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.api.utils.log
 
 //executed whenever a message is received
-suspend fun nitroSniper(event : MessageCreateEvent, client : Client) = coroutineScope {
+suspend fun nitroSniper(event : ClientEvents.MessageCreate, client : Client) = coroutineScope {
     //regex for a discord gift (nitro) link
     val regex = ("https://discord.gift/" + ".{16,24}".toRegex()).toRegex()
     //if the message content matches the regex (contains a nitro link) then do stuff
@@ -25,12 +25,12 @@ suspend fun nitroSniper(event : MessageCreateEvent, client : Client) = coroutine
                     //when the redeemer function returns invalid and the error is that the code is unknown, say that the code was invalid.
                     when (rc.status) {
                         ClientUserRedeemedCodeStatus.SUCCESS -> {
-                            log("Redeemed code ${rc.code} from ${event.message.author.discriminatedName} in ${event.channel.id}! (${rc.latency}ms)",
+                            log("Redeemed code ${rc.code} from ${event.message.author.discriminatedName} in ${event.message.channel.id}! (${rc.latency}ms)",
                                 "NITRO SNIPER:")
                         }
                         ClientUserRedeemedCodeStatus.INVALID -> {
                             if (rc.error == ClientUserRedeemedCodeError.UNKNOWN_CODE) {
-                                log("Code ${rc.code} from ${event.message.author.discriminatedName} in ${event.channel.id} was invalid! (${rc.latency}ms)",
+                                log("Code ${rc.code} from ${event.message.author.discriminatedName} in ${event.message.channel.id} was invalid! (${rc.latency}ms)",
                                     "NITRO SNIPER:")
                             }
                         }

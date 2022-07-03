@@ -1,9 +1,7 @@
 package org.caffeine.chaos
 
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.Message
-import org.caffeine.chaos.api.client.message.MessageBuilder
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.client.ClientEvents
 
 data class CommandInfo(
     val name : String,
@@ -18,13 +16,13 @@ open class Command(val commandNames : Array<String>, val commandInfo : CommandIn
         }
     }
 
-    open suspend fun onCalled(client : Client, event : MessageCreateEvent, args : MutableList<String>, cmd : String) {}
+    open suspend fun onCalled(client : Client, event : ClientEvents.MessageCreate, args : MutableList<String>, cmd : String) {}
 
-    open suspend fun error(client : Client, event : MessageCreateEvent, error : String, info : CommandInfo) : Message {
+/*    open suspend fun error(client : Client, event : MessageCreateEvent, error : String, info : CommandInfo) : Message {
         return MessageBuilder()
             .appendLine("**Incorrect usage** '${event.message.content}'")
             .appendLine("**Error:** $error")
             .appendLine("**Correct usage:** `${config.prefix}${info.usage}`")
             .build()
-    }
+    }*/
 }

@@ -4,7 +4,7 @@ import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.client.ClientEvents
 
 
 class UserInfo :
@@ -12,7 +12,7 @@ class UserInfo :
         CommandInfo("UserInfo", "info <@user>", "Displays information about a mentioned user.")) {
     override suspend fun onCalled(
         client : Client,
-        event : MessageCreateEvent,
+        event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
     ) : Unit =

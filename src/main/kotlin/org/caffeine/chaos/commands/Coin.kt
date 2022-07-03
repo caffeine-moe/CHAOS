@@ -4,12 +4,13 @@ import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.client.ClientEvents
+
 
 class Coin : Command(arrayOf("coin"), CommandInfo("Coin", "coin", "Flips a coin (Sends heads or tails).")) {
     override suspend fun onCalled(
         client : Client,
-        event : MessageCreateEvent,
+        event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
     ) : Unit =

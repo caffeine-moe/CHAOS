@@ -4,7 +4,8 @@ import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.client.ClientEvents
+
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.programStartedTime
 import kotlin.math.absoluteValue
@@ -15,7 +16,7 @@ class Uptime : Command(arrayOf("uptime"),
         "Displays how long CHAOS has been running for in Days, Hours, Minutes and Seconds.")) {
     override suspend fun onCalled(
         client : Client,
-        event : MessageCreateEvent,
+        event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
     ) : Unit = coroutineScope {

@@ -10,8 +10,8 @@ import org.caffeine.chaos.api.utils.printSeparator
 //executed whenever the client is logged in successfully
 fun loginPrompt(client : Client) {
     //gets friend and guild count
-    val friends = client.user.relationships.friends.size
-    val guilds = client.user.guilds.size
+    val friends = 0
+    val guilds = 0
     //clears and prints edgy hackerman logo
     clear()
     printLogo()

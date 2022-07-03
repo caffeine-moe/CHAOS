@@ -2,7 +2,7 @@ package org.caffeine.chaos.commands
 
 import org.caffeine.chaos.*
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.typedefs.StatusType
 import org.caffeine.chaos.api.utils.log
 
@@ -13,7 +13,7 @@ class AFK :
     Command(arrayOf("afk", "away"), CommandInfo("AFK", "afk [Message]", "Auto replies to mentions when you are afk.")) {
     override suspend fun onCalled(
         client : Client,
-        event : MessageCreateEvent,
+        event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
     ) {

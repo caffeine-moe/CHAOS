@@ -2,7 +2,7 @@ package org.caffeine.chaos.commands
 
 import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.Message
+import org.caffeine.chaos.api.models.Message
 
 suspend fun onComplete(msg : Message, client : Client, autoDelete : Boolean) = coroutineScope {
 /*    if (client.config.logger.responses) {

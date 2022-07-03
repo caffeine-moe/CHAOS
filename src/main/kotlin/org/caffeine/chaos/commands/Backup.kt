@@ -1,13 +1,10 @@
 package org.caffeine.chaos.commands
+/*
 
 import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientBlockedUser
-import org.caffeine.chaos.api.client.ClientFriend
-import org.caffeine.chaos.api.client.ClientGuild
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
 class Backup :
     Command(arrayOf("backup", "bak"),
@@ -22,10 +19,11 @@ class Backup :
 
     override suspend fun onCalled(
         client : Client,
-        event : MessageCreateEvent,
+        event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
     ) : Unit = coroutineScope {
+*/
 /*        val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yy_HH:mm:ss"))
         event.channel.sendMessage(MessageBuilder().append("Performing backup...").build())
             .thenAccept { message ->
@@ -67,6 +65,7 @@ class Backup :
                         e.printStackTrace()
                     }
                 }
-            }*/
+            }*//*
+
     }
-}
+}*/

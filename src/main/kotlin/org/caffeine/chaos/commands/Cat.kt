@@ -4,7 +4,7 @@ import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.client.ClientEvents
 
 class Cat : Command(arrayOf("cat", "meow"), CommandInfo("Cat", "cat", "Sends a random cat from cataas.com.")) {
 
@@ -15,7 +15,7 @@ class Cat : Command(arrayOf("cat", "meow"), CommandInfo("Cat", "cat", "Sends a r
 
     override suspend fun onCalled(
         client : Client,
-        event : MessageCreateEvent,
+        event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
     ) : Unit = coroutineScope {

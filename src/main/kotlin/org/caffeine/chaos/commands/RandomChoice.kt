@@ -4,13 +4,14 @@ import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.client.ClientEvents
+
 
 class RandomChoice : Command(arrayOf("randomchoice", "rchoice", "rch"),
     CommandInfo("Random Choice", "rch <Choices>", "Picks a random option/choice out of a list you provide.")) {
     override suspend fun onCalled(
         client : Client,
-        event : MessageCreateEvent,
+        event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
     ) = coroutineScope {

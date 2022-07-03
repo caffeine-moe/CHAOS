@@ -4,15 +4,14 @@ import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.api.utils.convertIdToUnix
+import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.utils.log
 
 class IdToDate : Command(arrayOf("idtodate", "idtod", "idtd"),
     CommandInfo("IdToDate", "idtodate <Discord ID>", "Converts any discord id to a normal date format.")) {
     override suspend fun onCalled(
         client : Client,
-        event : MessageCreateEvent,
+        event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
     ) = coroutineScope {
@@ -29,7 +28,7 @@ class IdToDate : Command(arrayOf("idtodate", "idtod", "idtd"),
         }
         if (err.isEmpty()) {
             val simpleDateFormat = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-            val date = java.util.Date(convertIdToUnix(id.toString()))
+            val date = java.util.Date(client.utils.convertIdToUnix(id.toString()))
             val formattedDate = simpleDateFormat.format(date)
             log("$id converted to $formattedDate")
 /*            event.channel.sendMessage(MessageBuilder()

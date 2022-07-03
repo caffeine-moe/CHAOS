@@ -2,9 +2,6 @@ package org.caffeine.chaos.api.handlers
 
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientGuild
-import org.caffeine.chaos.api.client.ClientGuildChannel
-import org.caffeine.chaos.api.client.ClientGuildMember
 import org.caffeine.chaos.api.jsonc
 
 @kotlinx.serialization.Serializable
@@ -20,7 +17,7 @@ data class GuildCreateD(
     val afk_channel_id : String = "",
     val afk_timeout : Int = 0,
     val banner : String = "",
-    val channels : MutableList<ClientGuildChannel> = mutableListOf(),
+    //val channels : MutableList<ClientGuildChannel> = mutableListOf(),
     val default_message_notifications : Int = 0,
     val description : String = "",
     val discovery_splash : String = "",
@@ -36,7 +33,7 @@ data class GuildCreateD(
     val max_members : Int = 0,
     val max_video_channel_users : Int = 0,
     val member_count : Int = 0,
-    val members : MutableList<ClientGuildMember> = mutableListOf(),
+    //val members : MutableList<ClientGuildMember> = mutableListOf(),
     val mfa_level : Int = 0,
     val name : String = "",
     val nsfw : Boolean = false,
@@ -85,7 +82,7 @@ data class Role(
 )
 
 fun guildCreate(payload : String, client : Client) {
-    try {
+/*    try {
         val parsed = jsonc.decodeFromString<GuildCreate>(payload)
         val guild = ClientGuild(
             parsed.d.name,
@@ -93,14 +90,14 @@ fun guildCreate(payload : String, client : Client) {
             parsed.d.channels,
             parsed.d.members
         )
-/*        var g : ClientGuild = guild
+*//*        var g : ClientGuild = guild
         if (client.user.guilds.any { g = it; it.id == parsed.d.id }) {
             client.user.guilds.remove(g)
             client.user.guilds.add(guild)
         } else {
             client.user.guilds.add(guild)
-        }*/
+        }*//*
     } catch (e : Exception) {
         e.printStackTrace()
-    }
+    }*/
 }

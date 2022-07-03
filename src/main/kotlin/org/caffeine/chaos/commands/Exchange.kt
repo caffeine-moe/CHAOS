@@ -13,7 +13,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.message.MessageBuilder
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
+
 import org.caffeine.chaos.api.httpclient
 
 @Serializable
@@ -33,7 +33,7 @@ private data class Ticker(
     val volume: String,
 )
 
-suspend fun exchange(client: Client, event: MessageCreateEvent) = coroutineScope {
+suspend fun exchange(client: Client, event: ClientEvents.MessageCreate) = coroutineScope {
     if (event.message.content.lowercase() == ("${client.config.prefix}exchange") || event.message.content.lowercase() == ("${client.config.prefix}crypto")) {
         val basec = client.config.exchange.base.uppercase()
         val targetc = client.config.exchange.target.uppercase()

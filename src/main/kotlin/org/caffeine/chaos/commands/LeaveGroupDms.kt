@@ -4,14 +4,15 @@ import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.client.ClientEvents
+
 
 class LeaveGroupDms :
     Command(arrayOf("leavegroupdms", "lgdm", "leavegroups"),
         CommandInfo("LeaveGroupDms", "lgdm", "Leaves all group DMs.")) {
     override suspend fun onCalled(
         client : Client,
-        event : MessageCreateEvent,
+        event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
     ) =

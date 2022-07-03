@@ -3,6 +3,7 @@ package org.caffeine.chaos.api.handlers
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.*
 import org.caffeine.chaos.api.jsonc
+import org.caffeine.chaos.api.models.Guild
 import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.log
 
@@ -21,8 +22,8 @@ private data class ReadyPayloadD(
     val user_settings : Settings,
     val user_settings_proto : String,
     val v : Int,
-    val relationships : MutableList<ClientRelationship>,
-    val guilds : MutableList<ClientGuild>,
+    //val relationships : MutableList<ClientRelationship>,
+    //val guilds : MutableList<Guild>,
     val session_id : String,
 )
 
@@ -98,9 +99,9 @@ suspend fun ready(client : Client, payload : String, eventBus : EventBus) {
         d.user_settings.custom_status,
         client.utils.getStatusType(d.user_settings.status),
         avatar = d.user.avatar,
-        relationships = ClientRelationships(extractFriends(d.relationships), extractBlockList(d.relationships)),
-        guilds = d.guilds,
-        channels = ClientChannels(client),
+        //relationships = ClientRelationships(extractFriends(d.relationships), extractBlockList(d.relationships)),
+        //guilds = d.guilds,
+        //channels = ClientChannels(client),
         premium = d.user.premium,
         token = client.utils.token,
         client = client
@@ -110,6 +111,7 @@ suspend fun ready(client : Client, payload : String, eventBus : EventBus) {
     log("${ConsoleColours.GREEN.value}Client logged in!", "API:")
     eventBus.produceEvent(ClientEvents.Ready)
 }
+/*
 
 private fun extractFriends(relationships : MutableList<ClientRelationship>) : MutableList<ClientFriend> {
     val friends = mutableListOf<ClientFriend>()
@@ -141,4 +143,4 @@ private fun extractBlockList(relationships : MutableList<ClientRelationship>) : 
         }
     }
     return blocked
-}
+}*/

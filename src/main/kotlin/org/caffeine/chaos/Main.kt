@@ -9,7 +9,6 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.utils.*
 import org.caffeine.chaos.config.Config
@@ -91,7 +90,7 @@ suspend fun main(args : Array<String> = arrayOf()) : Unit = coroutineScope {
                 if (it is ClientEvents.Ready) {
                     ready(client)
                 }
-                if (it is MessageCreateEvent) {
+                if (it is ClientEvents.MessageCreate) {
                     handleMessage(it, client)
                 }
             }

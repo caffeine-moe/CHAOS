@@ -1,21 +1,21 @@
 package org.caffeine.chaos
 
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.DiscordUser
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.models.interfaces.IDiscordUser
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.commands.oldCustomStatus
 import org.caffeine.chaos.commands.oldStatus
 
-private val cooldown : HashMap<DiscordUser, Long> = HashMap()
-private val todm : MutableList<DiscordUser> = mutableListOf()
+private val cooldown : HashMap<IDiscordUser, Long> = HashMap()
+private val todm : MutableList<IDiscordUser> = mutableListOf()
 private val sb = StringBuilder()
 
 var afk = false
 
 var afkMessage = ""
 
-suspend fun afkHandler(event : MessageCreateEvent, client : Client) {
+suspend fun afkHandler(event : ClientEvents.MessageCreate, client : Client) {
     val author = event.message.author
     val prefix = "AFK:"
     if (author.id == client.user.id) {
@@ -37,12 +37,12 @@ suspend fun afkHandler(event : MessageCreateEvent, client : Client) {
         return
     }
     var doit = false
-    if (event.message.mentions.any {
+/*    if (event.message.mentions.any {
             it.id == client.user.id
         }) {
         doit = true
-    }
-/*    if (event.channel.type() == DiscordChannelType.DM) {
+    }*/
+/*    if (event.channel.type() == ChannelType.DM) {
         doit = true
     }*/
     if (doit) {

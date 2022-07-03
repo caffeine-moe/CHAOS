@@ -1,27 +1,20 @@
 package org.caffeine.chaos.commands
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import java.awt.AlphaComposite
-import java.awt.image.BufferedImage
-import java.io.FileOutputStream
-import java.net.URL
-import javax.imageio.ImageIO
+import org.caffeine.chaos.api.client.ClientEvents
 
 
 class GayPFP : Command(arrayOf("gaypfp"),
     CommandInfo("GayPFP", "gaypfp <@user>", "Overlays a random lgbtq flag over someones pfp.")) {
     override suspend fun onCalled(
         client : Client,
-        event : MessageCreateEvent,
+        event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
     ) {
-        try {
+/*        try {
             val pfp = withContext(Dispatchers.IO) {
                 ImageIO.read(URL(event.message.mentions.first().avatarUrl()))
                     .getScaledInstance(512, 512, BufferedImage.SCALE_SMOOTH)
@@ -46,6 +39,6 @@ class GayPFP : Command(arrayOf("gaypfp"),
             }
         } catch (e : Exception) {
             e.printStackTrace()
-        }
+        } */
     }
 }

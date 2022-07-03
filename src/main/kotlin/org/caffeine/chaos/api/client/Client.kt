@@ -5,12 +5,15 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import org.caffeine.chaos.api.client.connection.Connection
 import org.caffeine.chaos.api.client.connection.ConnectionType
+import org.caffeine.chaos.api.models.Guild
+import org.caffeine.chaos.api.models.Message
 import org.caffeine.chaos.api.utils.DiscordUtils
 
 interface Event
 
 abstract class ClientEvents {
     object Ready : Event
+    class MessageCreate (val message: Message = Message()) : Event
 }
 
 class EventBus {
@@ -25,9 +28,6 @@ class EventBus {
 private interface BaseClient {
     val user : ClientUser
     val events : SharedFlow<Event>
-
-    //val guilds: HashMap<String, Guild>
-    //val channels: HashMap<String, BaseChannel>
     //val relationships: HashMap<String, ClientRelationship>
     val socket : Connection
     val utils : DiscordUtils

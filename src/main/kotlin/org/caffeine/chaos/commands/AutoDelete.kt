@@ -2,7 +2,7 @@ package org.caffeine.chaos.commands
 
 
 /*
-suspend fun user(event : MessageCreateEvent, client : Client) {
+suspend fun user(event : ClientEvents.MessageCreate, client : Client) {
     if (client.config.auto_delete.user.enabled) {
         withContext(Dispatchers.IO) {
             Thread.sleep(client.config.auto_delete.user.delay * 1000)

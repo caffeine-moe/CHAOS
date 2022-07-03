@@ -1,20 +1,21 @@
 package org.caffeine.chaos.commands
+/*
 
 import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
 
 class Avatar : Command(arrayOf("avatar", "pfp", "av"),
     CommandInfo("Avatar", "av [@user]", "Sends your avatar or a mentioned users avatar.")) {
     override suspend fun onCalled(
         client : Client,
-        event : MessageCreateEvent,
+        event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
     ) =
         coroutineScope {
+*/
 /*            if (args.isNotEmpty() && event.message.mentions.isEmpty()) {
                 event.channel.sendMessage(error(client,
                     event,
@@ -42,6 +43,7 @@ class Avatar : Command(arrayOf("avatar", "pfp", "av"),
                     .appendLine(avatarURL)
                     .build()
             )
-                .thenAccept { this.launch { onComplete(it, client, config.auto_delete.bot.content_generation) } }*/
+                .thenAccept { this.launch { onComplete(it, client, config.auto_delete.bot.content_generation) } }*//*
+
         }
-}
+}*/

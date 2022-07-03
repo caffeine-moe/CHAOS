@@ -4,13 +4,14 @@ import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.client.ClientEvents
+
 
 class MuteAllServers : Command(arrayOf("muteallservers", "mas", "muteservers", "muteguilds", "muteallguilds", "mag"),
     CommandInfo("MuteAllServers", "mas", "Mutes all servers indefinitely.")) {
     override suspend fun onCalled(
         client : Client,
-        event : MessageCreateEvent,
+        event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
     ) : Unit = coroutineScope {

@@ -1,9 +1,7 @@
 package org.caffeine.chaos
 
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientGuild
-import org.caffeine.chaos.api.client.message.MessageChannel
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.commands.*
@@ -21,10 +19,10 @@ var purgeCock = false
 var autoBumpCock = false
 
 //list of channels that autobump is currently bumping
-var bumping = mutableListOf<MessageChannel>()
+//var bumping = mutableListOf<MessageChannel>()
 
 //list of all guilds that the client is lazy loading
-private val guilds = HashMap<String, ClientGuild>()
+//private val guilds = HashMap<String, ClientGuild>()
 
 //loads all the commands into the hashmap commandList
 fun registerCommands() {
@@ -32,12 +30,12 @@ fun registerCommands() {
     Help()
     Ping()
     IP()
-    Avatar()
+    //Avatar()
     Spam()
     SSpam()
     Purge()
     SPurge()
-    Backup()
+    //Backup()
     Restore()
     //exchange(client, event)
     Coin()
@@ -68,7 +66,7 @@ fun registerCommands() {
 }
 
 //executed whenever a message event is received by the client
-suspend fun handleMessage(event : MessageCreateEvent, client : Client) {
+suspend fun handleMessage(event : ClientEvents.MessageCreate, client : Client) {
     //if nitro sniper is enabled and email is verified, pass the message to the nitro sniper
     if (config.nitro_sniper.enabled && client.user.verified) {
         nitroSniper(event, client)

@@ -1,10 +1,10 @@
 package org.caffeine.chaos.api.handlers
 
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientGuildMember
-import org.caffeine.chaos.api.client.ClientGuildMemberUser
+import org.caffeine.chaos.api.models.GuildMember
+import org.caffeine.chaos.api.models.User
 
-@kotlinx.serialization.Serializable
+/*@kotlinx.serialization.Serializable
 private data class GuildMemberListUpdate(
     val d : GuildMemberListUpdateD = GuildMemberListUpdateD(),
     val op : Int = 0,
@@ -39,7 +39,7 @@ private data class Op(
 @kotlinx.serialization.Serializable
 private data class Item(
     val group : Group = Group(),
-    val member : ClientGuildMember,
+    val member : GuildMember = GuildMember(),
 )
 
 @kotlinx.serialization.Serializable
@@ -48,7 +48,7 @@ private data class Presence(
     val client_status : ClientStatus = ClientStatus(),
     val game : String? = "",
     val status : String = "",
-    val user : ClientGuildMemberUser,
+    val user : User = User(),
 )
 
 @kotlinx.serialization.Serializable
@@ -81,7 +81,7 @@ private data class Assets(
 @kotlinx.serialization.Serializable
 private data class Timestamps(
     val start : Long = 0,
-)
+)*/
 
 fun guildMemberListUpdate(payload : String, client : Client) {
 /*    val decoded = jsonc.decodeFromString<GuildMemberListUpdate>(payload)

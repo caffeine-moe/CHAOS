@@ -16,8 +16,10 @@ import kotlinx.serialization.json.JsonObject
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.typedefs.ChannelType
+import org.caffeine.chaos.api.typedefs.HypeSquadHouseType
 import org.caffeine.chaos.api.typedefs.StatusType
 import java.util.*
+import kotlin.math.absoluteValue
 import kotlin.system.exitProcess
 
 class DiscordUtils {
@@ -105,6 +107,14 @@ class DiscordUtils {
         }
     }
 
+    fun calcNonce(id : Long = 0) : Long {
+        val unixTs = if (id == 0L) System.currentTimeMillis() else id
+        return ((unixTs - 1420070400000) * 4194304).absoluteValue
+    }
+
+    fun convertIdToUnix(id : String) : Long {
+        return (id.toLong() / 4194304 + 1420070400000).absoluteValue
+    }
 
     suspend fun tokenValidator(token : String) {
         discordHTTPClient.get("$BASE_URL/users/@me") {
@@ -130,6 +140,24 @@ class DiscordUtils {
             }
         }
         return ChannelType.UNKNOWN
+    }
+
+    fun getHouseType(type : String) : HypeSquadHouseType {
+        HypeSquadHouseType.values().forEach {
+            if (it.value == type.lowercase()) {
+                return it
+            }
+        }
+        return HypeSquadHouseType.UNKNOWN
+    }
+
+    fun getHouseType(type : Number) : HypeSquadHouseType {
+        HypeSquadHouseType.values().forEach {
+            if (it.ordinal == type) {
+                return it
+            }
+        }
+        return HypeSquadHouseType.UNKNOWN
     }
 
 

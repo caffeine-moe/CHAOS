@@ -4,7 +4,8 @@ import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.chaos.api.client.ClientEvents
+
 
 class Ping : Command(arrayOf("ping", "latency"),
     CommandInfo("Ping",
@@ -12,7 +13,7 @@ class Ping : Command(arrayOf("ping", "latency"),
         "Checks how long it takes to connect to the discord gateway OR a specified IP or URL in milliseconds.")) {
     override suspend fun onCalled(
         client : Client,
-        event : MessageCreateEvent,
+        event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
     ) =

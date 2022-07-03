@@ -2,8 +2,8 @@ package org.caffeine.chaos.api.handlers
 
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientGuild
 import org.caffeine.chaos.api.jsonc
+import org.caffeine.chaos.api.models.Guild
 
 @kotlinx.serialization.Serializable
 private data class GuildDelete(
@@ -20,7 +20,7 @@ private data class GuildDeleteD(
 
 fun guildDelete(payload : String, client : Client) {
     val parsed = jsonc.decodeFromString<GuildDelete>(payload)
-    var guild = ClientGuild("", "")
+    var guild = Guild("", "")
 /*    if (client.user.guilds.all {
             guild = it
             it.id == parsed.d.id
