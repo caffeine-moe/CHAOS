@@ -3,7 +3,6 @@ package org.caffeine.chaos.api.models
 import org.caffeine.chaos.api.models.interfaces.IDiscordUser
 import kotlin.math.absoluteValue
 
-@kotlinx.serialization.Serializable
 data class User(
     override val username : String = "",
     override val discriminator : String = "",

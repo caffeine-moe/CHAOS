@@ -2,14 +2,13 @@ package org.caffeine.chaos.api.client
 
 import io.ktor.client.plugins.*
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.handlers.CustomStatus
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.models.interfaces.IDiscordUser
-import org.caffeine.chaos.api.models.Guild
+import org.caffeine.chaos.api.models.User
 import org.caffeine.chaos.api.models.channels.BaseChannel
 import org.caffeine.chaos.api.typedefs.HypeSquadHouseType
 import org.caffeine.chaos.api.typedefs.MessageOptions
@@ -144,8 +143,8 @@ data class ClientUser(
         return CompletableFuture.completedFuture(rc)
     }
 
-    suspend fun block(userId : String) {
-        client.utils.discordHTTPClient.request("$BASE_URL/users/@me/relationships/$userId") {
+    suspend fun block(user : User) {
+        client.utils.discordHTTPClient.request("$BASE_URL/users/@me/relationships/${user.id}") {
             method = HttpMethod.Put
             headers {
                 append("Content-Type", "application/json")
