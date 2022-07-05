@@ -8,21 +8,26 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.cookies.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.JsonObject
 import org.caffeine.chaos.api.BASE_URL
+import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.json
+import org.caffeine.chaos.api.models.Message
 import org.caffeine.chaos.api.typedefs.ChannelType
 import org.caffeine.chaos.api.typedefs.HypeSquadHouseType
+import org.caffeine.chaos.api.typedefs.MessageOptions
 import org.caffeine.chaos.api.typedefs.StatusType
 import java.util.*
+import java.util.concurrent.CompletableFuture
 import kotlin.math.absoluteValue
 import kotlin.system.exitProcess
 
-class DiscordUtils {
+open class DiscordUtils {
 
     lateinit var token : String
 
@@ -107,9 +112,9 @@ class DiscordUtils {
         }
     }
 
-    fun calcNonce(id : Long = 0) : Long {
+    fun calcNonce(id : Long = 0) : String {
         val unixTs = if (id == 0L) System.currentTimeMillis() else id
-        return ((unixTs - 1420070400000) * 4194304).absoluteValue
+        return ((unixTs - 1420070400000) * 4194304).absoluteValue.toString()
     }
 
     fun convertIdToUnix(id : String) : Long {
@@ -159,6 +164,54 @@ class DiscordUtils {
         }
         return HypeSquadHouseType.UNKNOWN
     }
+
+    class MessageBuilder : DiscordUtils() {
+        private var sb = StringBuilder()
+        private var tts = false
+        //private var attachments = mutableListOf<MessageAttachment>()
+        fun build() : MessageOptions {
+            return MessageOptions(sb.toString(), tts, calcNonce())
+        }
+
+        fun append(text : String) : MessageBuilder {
+            sb.append(text)
+            return this
+        }
+
+        fun appendLine(text : String) : MessageBuilder {
+            sb.appendLine(text)
+            return this
+        }
+
+/*        fun addAttachment(attachment : MessageAttachment) : MessageBuilder {
+            attachments.add(attachment)
+            return this
+        }*/
+    }
+
+    suspend fun createMessage(options : MessageOptions, id : String) : CompletableFuture<Message> {
+        val response = discordHTTPClient.post("$BASE_URL/channels/${id}/messages") {
+            headers {
+                append(HttpHeaders.Authorization, token)
+                append(HttpHeaders.ContentType, "application/json")
+            }
+            setBody(json.encodeToString(options))
+        }
+        return CompletableFuture.completedFuture(Message())
+    }
+
+
+/*    async createMessage(options: MessageOptions, id: string) {
+        const response = await fetch(
+            `${Constants.API}/${ENDPOINTS.CHANNELS}/${id}/${ENDPOINTS.MESSAGES}`,
+            {
+                method: "POST",
+                headers,
+                body: JSON.stringify(options),
+            },
+        );
+        return response.json();
+    }*/
 
 
 /*

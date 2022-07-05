@@ -78,7 +78,7 @@ class Connection(private val client : Client, private val eventBus : EventBus) {
             }
         }
 
-    lateinit var ws : DefaultClientWebSocketSession
+    lateinit var webSocket : DefaultClientWebSocketSession
 
     private var heartBeat = Job() as Job
 
@@ -129,7 +129,7 @@ class Connection(private val client : Client, private val eventBus : EventBus) {
             path = "/?v=9&encoding=json",
             port = 443
         ) {
-            ws = this@wss
+            webSocket = this@wss
             log("${ConsoleColours.GREEN.value}Connected to the Discord gateway!", "API:")
             val event = this.incoming.receive().data
             val init = json.decodeFromString<Init>(event.decodeToString())
@@ -161,7 +161,7 @@ class Connection(private val client : Client, private val eventBus : EventBus) {
     suspend fun sendHeartBeat() {
         val heartbeat = json.encodeToString(HeartBeat(OPCODE.HEARTBEAT.value,
             if (client.utils.gatewaySequence > 0) client.utils.gatewaySequence else null))
-        ws.send(heartbeat)
+        webSocket.send(heartbeat)
     }
 
     private suspend fun startHeartBeat(interval : Long) {
@@ -174,7 +174,7 @@ class Connection(private val client : Client, private val eventBus : EventBus) {
 
     private suspend fun disconnect() {
         this.heartBeat.cancel()
-        this.ws.close()
+        this.webSocket.close()
         ready = false
         log("Client logged out.", "API:")
     }

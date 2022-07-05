@@ -1,10 +1,12 @@
 package org.caffeine.chaos.api.typedefs
 
-interface MessageOptions {
-    val content: String?
-    val tts: Boolean?
+@kotlinx.serialization.Serializable
+data class MessageOptions (
+    val content: String = "",
+    val tts: Boolean = false,
+    val nonce : String = ""
     //val embed: MessageEmbed;
-}
+)
 
 interface MessageDeleteOptions {
     val timeout: Number?;

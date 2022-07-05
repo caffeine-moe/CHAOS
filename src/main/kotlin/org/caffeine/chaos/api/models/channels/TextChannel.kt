@@ -1,10 +1,12 @@
 package org.caffeine.chaos.api.models.channels
 
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.models.Message
 import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
 import org.caffeine.chaos.api.typedefs.ChannelType
 import org.caffeine.chaos.api.typedefs.MessageOptions
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 class TextChannel(
     override val id : String = "",
@@ -20,7 +22,7 @@ class TextChannel(
     override val nsfw : Boolean = false,
     override val rateLimitPerUser : Number = 0,
 ) : GuildChannel, TextBasedChannel  {
-    override suspend fun sendMessage(payload: MessageOptions) {
-        client.user.sendMessage(this, payload)
+    override suspend fun sendMessage(payload: MessageOptions) : CompletableFuture<Message> {
+        return client.utils.createMessage(payload, this.id)
     }
 }

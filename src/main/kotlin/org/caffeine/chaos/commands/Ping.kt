@@ -1,10 +1,15 @@
 package org.caffeine.chaos.commands
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.utils.DiscordUtils
+import java.net.InetAddress
 
 
 class Ping : Command(arrayOf("ping", "latency"),
@@ -16,8 +21,14 @@ class Ping : Command(arrayOf("ping", "latency"),
         event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
-    ) =
+    ) : Unit =
         coroutineScope {
+            event.message.channel.sendMessage(DiscordUtils.MessageBuilder().appendLine("Pong!").build()).thenAccept {
+                launch {
+                    //onComplete(it, client, true)
+                }
+            }
+        }
 /*            if (args.isEmpty()) {
                 event.channel.sendMessage(MessageBuilder()
                     .appendLine("Pinging...")
@@ -96,4 +107,3 @@ class Ping : Command(arrayOf("ping", "latency"),
                 }*/
 
         }
-}

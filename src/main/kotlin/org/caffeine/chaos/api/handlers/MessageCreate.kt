@@ -45,7 +45,7 @@ suspend fun messageCreate(payload : String, client : Client, eventBus : EventBus
             client,
             d.id,
             TextChannel(
-                d.id,
+                d.channel_id,
                 client,
             ),
             Guild(),
