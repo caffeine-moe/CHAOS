@@ -2,6 +2,8 @@ package org.caffeine.chaos.api.handlers
 
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.*
+import org.caffeine.chaos.api.client.user.ClientUser
+import org.caffeine.chaos.api.client.user.ClientUserSettings
 import org.caffeine.chaos.api.jsonc
 import org.caffeine.chaos.api.models.Guild
 import org.caffeine.chaos.api.utils.ConsoleColours
@@ -19,7 +21,7 @@ private data class ReadyPayload(
 private data class ReadyPayloadD(
     val country_code : String,
     val user : ReadyPayloadDUser,
-    val user_settings : Settings,
+    val user_settings : ReadyPayloadDUserSettings,
     val user_settings_proto : String,
     val v : Int,
     //val relationships : MutableList<ClientRelationship>,
@@ -46,7 +48,7 @@ private data class ReadyPayloadDUser(
 )
 
 @kotlinx.serialization.Serializable
-private data class Settings(
+private data class ReadyPayloadDUserSettings(
     val afk_timeout : Int = 0,
     val allow_accessibility_detection : Boolean = false,
     val animate_emoji : Boolean = false,
@@ -80,7 +82,7 @@ private data class Settings(
 )
 
 @kotlinx.serialization.Serializable
-data class CustomStatus(
+private data class CustomStatus(
     val emoji_id : String? = "",
     val emoji_name : String? = "",
     val expires_at : String? = "",
@@ -96,8 +98,7 @@ suspend fun ready(client : Client, payload : String, eventBus : EventBus) {
         d.user.id,
         d.user.email,
         d.user.bio,
-        d.user_settings.custom_status,
-        client.utils.getStatusType(d.user_settings.status),
+        createUserSettings(d, client),
         avatar = d.user.avatar,
         //relationships = ClientRelationships(extractFriends(d.relationships), extractBlockList(d.relationships)),
         //guilds = d.guilds,
@@ -111,6 +112,48 @@ suspend fun ready(client : Client, payload : String, eventBus : EventBus) {
     log("${ConsoleColours.GREEN.value}Client logged in!", "API:")
     eventBus.produceEvent(ClientEvents.Ready)
 }
+
+private fun createUserSettings(d: ReadyPayloadD, client : Client) : ClientUserSettings {
+    return ClientUserSettings(
+        d.user_settings.afk_timeout,
+        d.user_settings.allow_accessibility_detection,
+        d.user_settings.animate_emoji,
+        d.user_settings.animate_stickers,
+        d.user_settings.contact_sync_enabled,
+        d.user_settings.convert_emoticons,
+        org.caffeine.chaos.api.client.user.CustomStatus(
+            d.user_settings.custom_status.emoji_id,
+            d.user_settings.custom_status.emoji_name,
+            d.user_settings.custom_status.expires_at,
+            d.user_settings.custom_status.text
+        ),
+        d.user_settings.default_guilds_restricted,
+        d.user_settings.detect_platform_accounts,
+        d.user_settings.developer_mode,
+        d.user_settings.disable_games_tab,
+        d.user_settings.enable_tts_command,
+        d.user_settings.explicit_content_filter,
+        d.user_settings.friend_discovery_flags,
+        d.user_settings.gif_auto_play,
+        listOf(),
+        //d.user_settings.guild_positions,
+        d.user_settings.inline_attachment_media,
+        d.user_settings.inline_embed_media,
+        d.user_settings.locale,
+        d.user_settings.message_display_compact,
+        d.user_settings.native_phone_integration_enabled,
+        d.user_settings.passwordless,
+        d.user_settings.render_embeds,
+        d.user_settings.render_reactions,
+        //d.user_settings.restricted_guilds,
+        listOf(),
+        d.user_settings.show_current_game,
+        client.utils.getStatusType(d.user_settings.status),
+        d.user_settings.stream_notifications_enabled,
+        client.utils.getThemeType(d.user_settings.theme),
+    )
+}
+
 /*
 
 private fun extractFriends(relationships : MutableList<ClientRelationship>) : MutableList<ClientFriend> {

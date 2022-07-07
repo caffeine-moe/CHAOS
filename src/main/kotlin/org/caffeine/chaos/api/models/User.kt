@@ -1,6 +1,6 @@
 package org.caffeine.chaos.api.models
 
-import org.caffeine.chaos.api.models.interfaces.IDiscordUser
+import org.caffeine.chaos.api.models.interfaces.DiscordUser
 import kotlin.math.absoluteValue
 
 data class User(
@@ -8,7 +8,7 @@ data class User(
     override val discriminator : String = "",
     override val avatar : String? = "",
     override val id : String = "",
-) : IDiscordUser {
+) : DiscordUser {
     override val discriminatedName = "$username#$discriminator"
     override fun avatarUrl() : String {
         return if (!avatar.isNullOrBlank()) {

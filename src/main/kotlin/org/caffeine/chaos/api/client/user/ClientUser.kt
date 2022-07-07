@@ -1,19 +1,16 @@
-package org.caffeine.chaos.api.client
+package org.caffeine.chaos.api.client.user
 
 import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.BASE_URL
-import org.caffeine.chaos.api.handlers.CustomStatus
+import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.models.interfaces.IDiscordUser
+import org.caffeine.chaos.api.models.interfaces.DiscordUser
 import org.caffeine.chaos.api.models.User
 import org.caffeine.chaos.api.models.channels.BaseChannel
-import org.caffeine.chaos.api.typedefs.HypeSquadHouseType
-import org.caffeine.chaos.api.typedefs.MessageOptions
-import org.caffeine.chaos.api.typedefs.ThemeType
-import org.caffeine.chaos.api.typedefs.StatusType
+import org.caffeine.chaos.api.typedefs.*
 import java.util.concurrent.CompletableFuture
 import kotlin.math.absoluteValue
 
@@ -24,8 +21,7 @@ data class ClientUser(
     override val id : String,
     val email : String?,
     val bio : String?,
-    val customStatus : CustomStatus,
-    val status : StatusType,
+    val settings : ClientUserSettings,
     override val avatar : String?,
     //val relationships : ClientRelationships,
     //val channels: HashMap<String, BaseChannel>,
@@ -33,7 +29,7 @@ data class ClientUser(
     val premium : Boolean,
     val token : String,
     val client : Client,
-) : IDiscordUser {
+) : DiscordUser {
 
     override val discriminatedName = "$username#$discriminator"
 
@@ -118,8 +114,8 @@ data class ClientUser(
         return Any()
     }
 
-    suspend fun redeemCode(code : String) : CompletableFuture<ClientUserRedeemedCode> {
-        var rc = ClientUserRedeemedCode()
+    suspend fun redeemCode(code : String) : CompletableFuture<RedeemedCode> {
+        var rc = RedeemedCode()
         var la : Long
         val start = System.currentTimeMillis()
         try {
@@ -129,15 +125,15 @@ data class ClientUser(
             }
             val end = System.currentTimeMillis()
             la = (start - end)
-            rc = ClientUserRedeemedCode(code, la.absoluteValue, ClientUserRedeemedCodeStatus.SUCCESS)
+            rc = RedeemedCode(code, la.absoluteValue, RedeemedCodeStatusType.SUCCESS)
         } catch (ex : Exception) {
             val end = System.currentTimeMillis()
             la = (start - end)
             if (ex.toString().contains("Unknown Gift Code")) {
-                rc = ClientUserRedeemedCode(code,
+                rc = RedeemedCode(code,
                     la.absoluteValue,
-                    ClientUserRedeemedCodeStatus.INVALID,
-                    ClientUserRedeemedCodeError.UNKNOWN_CODE)
+                    RedeemedCodeStatusType.INVALID,
+                    RedeemedCodeErrorType.UNKNOWN_CODE)
             }
         }
         return CompletableFuture.completedFuture(rc)

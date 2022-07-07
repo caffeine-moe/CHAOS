@@ -1,8 +1,6 @@
 package org.caffeine.chaos.api.models.interfaces
 
-import kotlinx.serialization.Transient
-
-interface IDiscordUser {
+interface DiscordUser {
     val username : String
     val discriminator : String
     val id : String

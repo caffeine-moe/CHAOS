@@ -18,10 +18,7 @@ import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.models.Message
-import org.caffeine.chaos.api.typedefs.ChannelType
-import org.caffeine.chaos.api.typedefs.HypeSquadHouseType
-import org.caffeine.chaos.api.typedefs.MessageOptions
-import org.caffeine.chaos.api.typedefs.StatusType
+import org.caffeine.chaos.api.typedefs.*
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import kotlin.math.absoluteValue
@@ -163,6 +160,15 @@ open class DiscordUtils {
             }
         }
         return HypeSquadHouseType.UNKNOWN
+    }
+
+    fun getThemeType(theme : String) : ThemeType {
+        ThemeType.values().forEach {
+            if (it.value == theme.lowercase()) {
+                return it
+            }
+        }
+        return ThemeType.UNKNOWN
     }
 
     class MessageBuilder : DiscordUtils() {

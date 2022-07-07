@@ -5,7 +5,9 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import org.caffeine.chaos.api.client.connection.Connection
 import org.caffeine.chaos.api.client.connection.ConnectionType
+import org.caffeine.chaos.api.client.user.ClientUser
 import org.caffeine.chaos.api.models.Message
+import org.caffeine.chaos.api.models.interfaces.DiscordUser
 import org.caffeine.chaos.api.utils.DiscordUtils
 
 interface Event

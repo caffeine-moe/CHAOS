@@ -2,13 +2,13 @@ package org.caffeine.chaos
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
-import org.caffeine.chaos.api.models.interfaces.IDiscordUser
+import org.caffeine.chaos.api.models.interfaces.DiscordUser
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.commands.oldCustomStatus
 import org.caffeine.chaos.commands.oldStatus
 
-private val cooldown : HashMap<IDiscordUser, Long> = HashMap()
-private val todm : MutableList<IDiscordUser> = mutableListOf()
+private val cooldown : HashMap<DiscordUser, Long> = HashMap()
+private val todm : MutableList<DiscordUser> = mutableListOf()
 private val sb = StringBuilder()
 
 var afk = false

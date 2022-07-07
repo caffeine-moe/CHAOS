@@ -4,8 +4,8 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
-import org.caffeine.chaos.api.client.ClientUserRedeemedCodeError
-import org.caffeine.chaos.api.client.ClientUserRedeemedCodeStatus
+import org.caffeine.chaos.api.typedefs.RedeemedCodeErrorType
+import org.caffeine.chaos.api.typedefs.RedeemedCodeStatusType
 import org.caffeine.chaos.api.utils.log
 
 //executed whenever a message is received
@@ -24,12 +24,12 @@ suspend fun nitroSniper(event : ClientEvents.MessageCreate, client : Client) = c
                     //when the redeemer function returns success, print that the code was redeemed etc.
                     //when the redeemer function returns invalid and the error is that the code is unknown, say that the code was invalid.
                     when (rc.status) {
-                        ClientUserRedeemedCodeStatus.SUCCESS -> {
+                        RedeemedCodeStatusType.SUCCESS -> {
                             log("Redeemed code ${rc.code} from ${event.message.author.discriminatedName} in ${event.message.channel.id}! (${rc.latency}ms)",
                                 "NITRO SNIPER:")
                         }
-                        ClientUserRedeemedCodeStatus.INVALID -> {
-                            if (rc.error == ClientUserRedeemedCodeError.UNKNOWN_CODE) {
+                        RedeemedCodeStatusType.INVALID -> {
+                            if (rc.error == RedeemedCodeErrorType.UNKNOWN_CODE) {
                                 log("Code ${rc.code} from ${event.message.author.discriminatedName} in ${event.message.channel.id} was invalid! (${rc.latency}ms)",
                                     "NITRO SNIPER:")
                             }
