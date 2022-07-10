@@ -7,6 +7,7 @@ import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.json
+import org.caffeine.chaos.api.models.Guild
 import org.caffeine.chaos.api.models.interfaces.DiscordUser
 import org.caffeine.chaos.api.models.User
 import org.caffeine.chaos.api.models.channels.BaseChannel
@@ -23,9 +24,9 @@ data class ClientUser(
     val bio : String?,
     val settings : ClientUserSettings,
     override val avatar : String?,
-    //val relationships : ClientRelationships,
+    val relationships : ClientUserRelationships,
     //val channels: HashMap<String, BaseChannel>,
-    //val guilds : HashMap<String, Guild>,
+    val guilds : Map<String, Guild>,
     val premium : Boolean,
     val token : String,
     val client : Client,
@@ -99,7 +100,7 @@ data class ClientUser(
             headers {
                 append("Content-Type", "application/json")
             }
-            setBody(json.parseToJsonElement("{\"status\":{\"text\":\"${status.value}\"}}").toString())
+            setBody(json.parseToJsonElement("{\"status\":\"${status.value}\"}").toString())
         }
     }
 

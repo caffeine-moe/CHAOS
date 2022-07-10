@@ -2,6 +2,7 @@ package org.caffeine.chaos.api.utils
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Date
 
 enum class ConsoleColours(val value : String) {
     WHITE("\u001B[38;5;255m"),
@@ -18,20 +19,10 @@ fun clear() {
 //logger utility
 fun log(text : String, prefix : String = "") {
     //gets current date and time
-    var message : String
-    val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss"))
+    val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss.SSS"))
 
-    //if the prefix is blank set the message with the default prefix
-    message =
-        "${ConsoleColours.WHITE.value}[${ConsoleColours.BLUE.value}${time}${ConsoleColours.WHITE.value}] CHAOS: ${ConsoleColours.BLUE.value}$text"
-
-    //if the prefix parameter is not blank then set the message with the specified prefix
-    if (prefix.isNotBlank()) {
-        message =
-            "${ConsoleColours.WHITE.value}[${ConsoleColours.BLUE.value}${time}${ConsoleColours.WHITE.value}] $prefix ${ConsoleColours.BLUE.value}$text"
-    }
-
-    println(message)
+    //prints to console
+    println("${ConsoleColours.WHITE.value}[${ConsoleColours.BLUE.value}${time}${ConsoleColours.WHITE.value}] ${prefix.ifBlank { "CHAOS:" }} ${ConsoleColours.BLUE.value}$text")
 }
 
 //prints edgy hackerman logo

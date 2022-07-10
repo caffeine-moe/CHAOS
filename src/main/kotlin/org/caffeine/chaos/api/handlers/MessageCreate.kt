@@ -8,8 +8,8 @@ import org.caffeine.chaos.api.client.EventBus
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.models.Guild
 import org.caffeine.chaos.api.models.Message
-import org.caffeine.chaos.api.models.User
 import org.caffeine.chaos.api.models.channels.TextChannel
+import org.caffeine.chaos.api.models.interfaces.DiscordUser
 
 @Serializable
 private data class MessageCreate(
@@ -38,6 +38,14 @@ private data class MessageCreateD(
     val type : Int,
 )
 
+@Serializable
+private data class User(
+    val username : String = "",
+    val discriminator : String = "",
+    val avatar : String? = "",
+    val id : String = "",
+)
+
 suspend fun messageCreate(payload : String, client : Client, eventBus : EventBus) {
     val d = json.decodeFromString<MessageCreate>(payload).d
     val event = ClientEvents.MessageCreate(
@@ -49,7 +57,12 @@ suspend fun messageCreate(payload : String, client : Client, eventBus : EventBus
                 client,
             ),
             Guild(),
-            d.author,
+            org.caffeine.chaos.api.models.User(
+                d.author.username,
+                d.author.discriminator,
+                d.author.avatar,
+                d.author.id,
+            ),
             null,
             d.content,
             tts = d.tts ?: false,

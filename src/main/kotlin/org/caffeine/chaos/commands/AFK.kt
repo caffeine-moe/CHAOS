@@ -23,8 +23,8 @@ class AFK :
             if (args.isNotEmpty()) {
                 afkMessage = args.joinToString(" ")
             }
-            oldStatus = client.user.status
-            oldCustomStatus = client.user.customStatus.text
+            oldStatus = client.user.settings.status
+            oldCustomStatus = client.user.settings.customStatus.text
             val newStatus = client.utils.getStatusType(config.afk.status)
             if (newStatus != oldStatus) {
                 if (newStatus != StatusType.UNKNOWN) {

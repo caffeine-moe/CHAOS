@@ -21,7 +21,6 @@ data class ClientUserSettings(
     val explicitContentFilter : Int = 0,
     val friendDiscoveryFlags : Int = 0,
     val gifAutoPlay : Boolean = false,
-    val guildPositions : List<Guild> = listOf(),
     val inlineAttachmentMedia : Boolean = false,
     val inlineEmbedMedia : Boolean = false,
     val locale : String = "",
