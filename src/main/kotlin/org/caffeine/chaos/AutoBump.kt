@@ -3,6 +3,7 @@ package org.caffeine.chaos
 import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.utils.log
 
 class AutoBump : Command(arrayOf("bump", "autobump", "sbump"), CommandInfo("AutoBump", "bump", "Autobumps.")) {
     override suspend fun onCalled(
@@ -11,6 +12,12 @@ class AutoBump : Command(arrayOf("bump", "autobump", "sbump"), CommandInfo("Auto
         args : MutableList<String>,
         cmd : String,
     ) = coroutineScope {
+        if (event.message.guild == null) {
+            log("AutoBump can only be used in a server.", "AutoBump")
+            return@coroutineScope
+        } else {
+            println("${event.message.guild.name} - ${event.message.guild.id} - ${event.message.content}")
+        }
 /*        val pre = "AUTO BUMP:"
         var err = ""
         val logging = config.logger.auto_bump

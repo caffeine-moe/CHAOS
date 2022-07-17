@@ -10,6 +10,7 @@ import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import kotlinx.coroutines.async
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -17,6 +18,7 @@ import kotlinx.serialization.json.JsonObject
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.json
+import org.caffeine.chaos.api.models.Guild
 import org.caffeine.chaos.api.models.Message
 import org.caffeine.chaos.api.typedefs.*
 import java.util.*
@@ -27,6 +29,7 @@ import kotlin.system.exitProcess
 open class DiscordUtils {
 
     lateinit var token : String
+    lateinit var client : Client
 
     @Serializable
     data class SuperProperties(
@@ -115,7 +118,7 @@ open class DiscordUtils {
     }
 
     fun convertIdToUnix(id : String) : Long {
-        return (id.toLong() / 4194304 + 1420070400000).absoluteValue
+        return if (id.isNotBlank()) { (id.toLong() / 4194304 + 1420070400000).absoluteValue } else { 0 }
     }
 
     suspend fun tokenValidator(token : String) {
@@ -169,6 +172,32 @@ open class DiscordUtils {
             }
         }
         return ThemeType.UNKNOWN
+    }
+
+    private fun String.isValidSnowflake() : Boolean {
+        val unix = convertIdToUnix(this)
+        return unix <= System.currentTimeMillis() && unix > 1420070400000
+    }
+
+    fun Long.isValidSnowflake() : Boolean {
+        return convertIdToUnix(this.toString()) <= System.currentTimeMillis()
+    }
+
+    suspend fun fetchGuild(id : String) : Guild? {
+        var guild : Guild? = null
+
+        if (id.isValidSnowflake() && client.user.guilds.containsKey(id)) {
+            guild = client.user.guilds[id]
+        } else if (id.isValidSnowflake()) {
+            val response = discordHTTPClient.get("$BASE_URL/users/@me/guilds/$id") {
+                headers {
+                    append(HttpHeaders.Authorization, token)
+                }
+            }
+            println(response.bodyAsText())
+        }
+
+        return guild
     }
 
     class MessageBuilder : DiscordUtils() {

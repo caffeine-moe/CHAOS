@@ -13,6 +13,7 @@ import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.utils.*
 import org.caffeine.chaos.config.Config
 import java.io.File
+import java.net.ConnectException
 import kotlin.system.exitProcess
 
 //version lmao
@@ -67,6 +68,8 @@ suspend fun main(args : Array<String> = arrayOf()) : Unit = coroutineScope {
             exitProcess(69)
         }
     }
+    //checks if internet access is available
+    checkNetwork()
     //gets antiscam links
     if (config.anti_scam.enabled) {
         scamLinks =
@@ -99,4 +102,13 @@ suspend fun main(args : Array<String> = arrayOf()) : Unit = coroutineScope {
 
     //logs in
     client.login(config.token)
+}
+
+suspend fun checkNetwork() {
+    try {
+        normalHTTPClient.get("https://example.com")
+    }catch (e: ConnectException) {
+        log("Unable to connect to the internet; internet access is needed for CHAOS.")
+        exitProcess(69)
+    }
 }

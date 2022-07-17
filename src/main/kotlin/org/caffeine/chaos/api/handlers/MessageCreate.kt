@@ -36,6 +36,7 @@ private data class MessageCreateD(
     val timestamp : String?,
     val tts : Boolean?,
     val type : Int,
+    val guild_id : String? = null,
 )
 
 @Serializable
@@ -47,31 +48,36 @@ private data class User(
 )
 
 suspend fun messageCreate(payload : String, client : Client, eventBus : EventBus) {
-    val d = json.decodeFromString<MessageCreate>(payload).d
-    val event = ClientEvents.MessageCreate(
-        message = Message(
-            client,
-            d.id,
-            TextChannel(
-                d.channel_id,
+    try {
+
+        val d = json.decodeFromString<MessageCreate>(payload).d
+        val event = ClientEvents.MessageCreate(
+            message = Message(
                 client,
-            ),
-            Guild(),
-            org.caffeine.chaos.api.models.User(
-                d.author.username,
-                d.author.discriminator,
-                d.author.avatar,
-                d.author.id,
-            ),
-            null,
-            d.content,
-            tts = d.tts ?: false,
-            mentionedEveryone = d.mention_everyone,
-            nonce = client.utils.calcNonce(d.id.toLong()).toString(),
-            pinned = d.pinned,
-            type = d.type
+                d.id,
+                TextChannel(
+                    d.channel_id,
+                    client,
+                ),
+                client.utils.fetchGuild(d.guild_id ?: ""),
+                org.caffeine.chaos.api.models.User(
+                    d.author.username,
+                    d.author.discriminator,
+                    d.author.avatar,
+                    d.author.id,
+                ),
+                null,
+                d.content,
+                tts = d.tts ?: false,
+                mentionedEveryone = d.mention_everyone,
+                nonce = d.id,
+                pinned = d.pinned,
+                type = d.type
+            )
         )
-    )
-    eventBus.produceEvent(event)
+        eventBus.produceEvent(event)
+    }catch (e: Exception) {
+        println("Error in messageCreate: ${e.printStackTrace()}")
+    }
 }
    

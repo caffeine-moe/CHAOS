@@ -24,7 +24,7 @@ data class ClientUser(
     val bio : String?,
     val settings : ClientUserSettings,
     override val avatar : String?,
-    val relationships : ClientUserRelationships,
+    //val relationships : ClientUserRelationships,
     //val channels: HashMap<String, BaseChannel>,
     val guilds : Map<String, Guild>,
     val premium : Boolean,

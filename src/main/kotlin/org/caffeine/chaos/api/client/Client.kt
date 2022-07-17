@@ -47,6 +47,7 @@ class Client : BaseClient {
 
     override suspend fun login(token : String) {
         utils.token = token
+        utils.client = this
         socket.execute(ConnectionType.CONNECT)
     }
 

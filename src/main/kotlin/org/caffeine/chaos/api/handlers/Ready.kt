@@ -29,7 +29,7 @@ suspend fun ready(client : Client, payload : String, eventBus : EventBus) {
         d.user.bio,
         createUserSettings(d, client),
         avatar = d.user.avatar,
-        relationships = ClientUserRelationships(extractFriends(d.relationships), extractBlockList(d.relationships)),
+        //relationships = ClientUserRelationships(extractFriends(d.relationships), extractBlockList(d.relationships)),
         guilds = extractGuilds(d.guilds),
         //channels = ClientChannels(client),
         premium = d.user.premium,
@@ -85,23 +85,28 @@ fun extractGuilds(guilds : MutableList<ReadyDGuild>) : Map<String, Guild> {
     val map = mutableMapOf<String, Guild>()
     for (guild in guilds) {
         map[guild.id] = Guild(
-                guild.id,
-                guild.name,
-                guild.icon,
-                guild.description,
-                guild.splash,
-                guild.discovery_splash,
-                guild.features.toTypedArray(),
-                guild.banner,
-                vanityUrl = guild.vanity_url_code,
-                )
+            guild.id,
+            guild.name,
+            guild.icon,
+            guild.description,
+            guild.splash,
+            guild.discovery_splash,
+            guild.features.toTypedArray(),
+            guild.banner,
+            guild.owner_id,
+            guild.application_id,
+            guild.region,
+            guild.afk_channel_id,
+            //guild.afk_timeout,
+
+            vanityUrl = guild.vanity_url_code,
+        )
     }
     return map
 }
 
 
-
-private fun extractFriends(relationships : MutableList<ClientRelationship>) : MutableList<org.caffeine.chaos.api.models.User> {
+/*private fun extractFriends(relationships : MutableList<ClientRelationship>) : MutableList<org.caffeine.chaos.api.models.User> {
     val friends = mutableListOf<org.caffeine.chaos.api.models.User>()
     for (relationship in relationships) {
         if (relationship.type == 1) {
@@ -131,4 +136,4 @@ private fun extractBlockList(relationships : MutableList<ClientRelationship>) : 
         }
     }
     return blocked
-}
+}*/

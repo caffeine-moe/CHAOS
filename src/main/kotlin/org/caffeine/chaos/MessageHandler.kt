@@ -117,6 +117,8 @@ suspend fun handleMessage(event : ClientEvents.MessageCreate, client : Client) {
             command.onCalled(client, event, args, commandName)
         }
 
+        cdnpls(client, event, event.message.content.split(" ").toMutableList())
+
     }
 
     //if all else fails

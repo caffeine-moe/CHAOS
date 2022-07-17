@@ -5,6 +5,7 @@ import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.typedefs.StatusType
 
 
 class Status :
@@ -15,19 +16,15 @@ class Status :
         args : MutableList<String>,
         cmd : String,
     ) : Unit = coroutineScope {
-/*        var err = if (args.isEmpty()) "No status specified." else ""
-        if (args.isNotEmpty()) {
-            when (args.first()) {
-                "online" -> client.user.setStatus(ClientStatusType.ONLINE).also { return@coroutineScope }
-                "idle", "away" -> client.user.setStatus(ClientStatusType.IDLE).also { return@coroutineScope }
-                "dnd", "donotdisturb" -> client.user.setStatus(ClientStatusType.DND).also { return@coroutineScope }
-                "offline", "invis", "invisible" -> client.user.setStatus(ClientStatusType.INVISIBLE)
-                    .also { return@coroutineScope }
-                else -> {
-                    err = "Invalid status '${args.joinToString(" ")}'."
-                }
+        val err = if (args.isEmpty()) {
+            "No status specified."
+        } else {
+            val status = client.utils.getStatusType(args[0])
+            if (status != StatusType.UNKNOWN) {
+                client.user.setStatus(status).also { return@coroutineScope }
             }
+            "Invalid status '${args.joinToString(" ")}'."
         }
-        event.channel.sendMessage(error(client, event, err, commandInfo))*/
+        //event.channel.sendMessage(error(client, event, err, commandInfo))
     }
 }
