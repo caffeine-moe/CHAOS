@@ -17,7 +17,6 @@ class EventBus {
         _events.emit(event) // suspends until all subscribers receive it
     }
 }
-
 class Client : BaseClient {
 
     private var _user : ClientUser = ClientUser(true, "", "", "", "", "", ClientUserSettings(), "", true, "", this)
@@ -37,9 +36,7 @@ class Client : BaseClient {
     override suspend fun logout() {
         socket.execute(ConnectionType.DISCONNECT)
     }
-
     override suspend fun setUser(user : ClientUser) {
         _user = user
     }
-
 }
