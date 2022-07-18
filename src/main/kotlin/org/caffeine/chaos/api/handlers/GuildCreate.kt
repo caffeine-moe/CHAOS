@@ -3,6 +3,7 @@ package org.caffeine.chaos.api.handlers
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.jsonc
+import org.caffeine.chaos.api.models.Guild
 
 @kotlinx.serialization.Serializable
 private data class GuildCreate(
@@ -82,22 +83,9 @@ data class Role(
 )
 
 fun guildCreate(payload : String, client : Client) {
-/*    try {
         val parsed = jsonc.decodeFromString<GuildCreate>(payload)
-        val guild = ClientGuild(
+        val guild = Guild(
             parsed.d.name,
             parsed.d.id,
-            parsed.d.channels,
-            parsed.d.members
         )
-*//*        var g : ClientGuild = guild
-        if (client.user.guilds.any { g = it; it.id == parsed.d.id }) {
-            client.user.guilds.remove(g)
-            client.user.guilds.add(guild)
-        } else {
-            client.user.guilds.add(guild)
-        }*//*
-    } catch (e : Exception) {
-        e.printStackTrace()
-    }*/
 }

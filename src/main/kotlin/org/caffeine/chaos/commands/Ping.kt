@@ -9,6 +9,7 @@ import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.utils.DiscordUtils
+import org.caffeine.chaos.api.utils.MessageBuilder
 import java.net.InetAddress
 
 
@@ -23,7 +24,7 @@ class Ping : Command(arrayOf("ping", "latency"),
         cmd : String,
     ) : Unit =
         coroutineScope {
-            event.message.channel.sendMessage(DiscordUtils.MessageBuilder().appendLine("Pong!").build()).thenAccept {
+            event.message.channel.sendMessage(MessageBuilder().appendLine("Pong!").build()).thenAccept {
                 launch {
                     //onComplete(it, client, true)
                 }

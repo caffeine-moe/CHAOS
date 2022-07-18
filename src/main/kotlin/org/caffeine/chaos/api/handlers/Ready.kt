@@ -1,13 +1,10 @@
 package org.caffeine.chaos.api.handlers
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.client.EventBus
 import org.caffeine.chaos.api.client.user.ClientUser
-import org.caffeine.chaos.api.client.user.ClientUserRelationships
 import org.caffeine.chaos.api.client.user.ClientUserSettings
 import org.caffeine.chaos.api.jsonc
 import org.caffeine.chaos.api.models.Guild
@@ -16,11 +13,10 @@ import org.caffeine.chaos.api.payloads.gateway.data.ready.ReadyD
 import org.caffeine.chaos.api.payloads.gateway.data.ready.ReadyDGuild
 import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.log
-import java.io.File
 
 suspend fun ready(client : Client, payload : String, eventBus : EventBus) {
     val d = jsonc.decodeFromString<Ready>(payload).d
-    client.user = ClientUser(
+    val user = ClientUser(
         d.user.verified,
         d.user.username,
         d.user.discriminator,
@@ -30,16 +26,17 @@ suspend fun ready(client : Client, payload : String, eventBus : EventBus) {
         createUserSettings(d, client),
         avatar = d.user.avatar,
         //relationships = ClientUserRelationships(extractFriends(d.relationships), extractBlockList(d.relationships)),
-        guilds = extractGuilds(d.guilds),
         //channels = ClientChannels(client),
         premium = d.user.premium,
         token = client.utils.token,
         client = client
     )
+    client.setUser(user)
+    client.user.setGuilds(extractGuilds(d.guilds))
     client.socket.ready = true
     client.utils.sessionId = d.session_id
     log("${ConsoleColours.GREEN.value}Client logged in!", "API:")
-    eventBus.produceEvent(ClientEvents.Ready)
+    eventBus.produceEvent(ClientEvents.Ready(user))
 }
 
 private fun createUserSettings(d : ReadyD, client : Client) : ClientUserSettings {

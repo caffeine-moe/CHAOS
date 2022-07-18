@@ -200,30 +200,6 @@ open class DiscordUtils {
         return guild
     }
 
-    class MessageBuilder : DiscordUtils() {
-        private var sb = StringBuilder()
-        private var tts = false
-        //private var attachments = mutableListOf<MessageAttachment>()
-        fun build() : MessageOptions {
-            return MessageOptions(sb.toString(), tts, calcNonce())
-        }
-
-        fun append(text : String) : MessageBuilder {
-            sb.append(text)
-            return this
-        }
-
-        fun appendLine(text : String) : MessageBuilder {
-            sb.appendLine(text)
-            return this
-        }
-
-/*        fun addAttachment(attachment : MessageAttachment) : MessageBuilder {
-            attachments.add(attachment)
-            return this
-        }*/
-    }
-
     suspend fun createMessage(options : MessageOptions, id : String) : CompletableFuture<Message> {
         val response = discordHTTPClient.post("$BASE_URL/channels/${id}/messages") {
             headers {
@@ -274,4 +250,28 @@ open class DiscordUtils {
         superPropertiesStr = json.encodeToString(superProperties)
         superPropertiesB64 = Base64.getEncoder().encodeToString(superPropertiesStr.toByteArray())
     }
+}
+
+class MessageBuilder : DiscordUtils() {
+    private var sb = StringBuilder()
+    private var tts = false
+    //private var attachments = mutableListOf<MessageAttachment>()
+    fun build() : MessageOptions {
+        return MessageOptions(sb.toString(), tts, calcNonce())
+    }
+
+    fun append(text : String) : MessageBuilder {
+        sb.append(text)
+        return this
+    }
+
+    fun appendLine(text : String) : MessageBuilder {
+        sb.appendLine(text)
+        return this
+    }
+
+/*        fun addAttachment(attachment : MessageAttachment) : MessageBuilder {
+            attachments.add(attachment)
+            return this
+        }*/
 }
