@@ -3,14 +3,15 @@ package org.caffeine.chaos.api.client.connection
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.Event
 import org.caffeine.chaos.api.OPCODE
-import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.BaseClient
+import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.client.EventBus
 import org.caffeine.chaos.api.handlers.*
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.payloads.gateway.Default
 import org.caffeine.chaos.api.utils.log
 
-suspend fun handleJsonRequest(payload : String, client : Client, eventBus : EventBus) {
+suspend fun handleJsonRequest(payload : String, client : ClientImpl, eventBus : EventBus) {
     val event = json.decodeFromString<Default>(payload)
     if (event.s != null && event.s > 0) {
         client.utils.gatewaySequence = event.s
@@ -23,22 +24,22 @@ suspend fun handleJsonRequest(payload : String, client : Client, eventBus : Even
                 }
                 Event.MESSAGE_CREATE.value -> {
                     if (client.socket.ready) {
-                        messageCreate(payload, client, eventBus)
+                        //messageCreate(payload, client, eventBus)
                     }
                 }
                 Event.GUILD_DELETE.value -> {
                     if (client.socket.ready) {
-                        guildDelete(payload, client)
+                        //guildDelete(payload, client)
                     }
                 }
                 Event.GUILD_CREATE.value -> {
                     if (client.socket.ready) {
-                        guildCreate(payload, client)
+                        //guildCreate(payload, client)
                     }
                 }
                 Event.GUILD_MEMBER_LIST_UPDATE.value -> {
                     if (client.socket.ready) {
-                        guildMemberListUpdate(payload, client)
+                        //guildMemberListUpdate(payload, client)
                     }
                 }
             }

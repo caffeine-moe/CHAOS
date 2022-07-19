@@ -1,9 +1,7 @@
 package org.caffeine.chaos.api.handlers
 
 import kotlinx.serialization.decodeFromString
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvents
-import org.caffeine.chaos.api.client.EventBus
+import org.caffeine.chaos.api.client.*
 import org.caffeine.chaos.api.client.user.ClientUser
 import org.caffeine.chaos.api.client.user.ClientUserSettings
 import org.caffeine.chaos.api.jsonc
@@ -14,7 +12,7 @@ import org.caffeine.chaos.api.payloads.gateway.data.ready.ReadyDGuild
 import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.log
 
-suspend fun ready(client : Client, payload : String, eventBus : EventBus) {
+suspend fun ready(client : ClientImpl, payload : String, eventBus : EventBus) {
     val d = jsonc.decodeFromString<Ready>(payload).d
     val user = ClientUser(
         d.user.verified,
@@ -39,7 +37,7 @@ suspend fun ready(client : Client, payload : String, eventBus : EventBus) {
     eventBus.produceEvent(ClientEvents.Ready(user))
 }
 
-private fun createUserSettings(d : ReadyD, client : Client) : ClientUserSettings {
+private fun createUserSettings(d : ReadyD, client : BaseClient) : ClientUserSettings {
     return ClientUserSettings(
         d.user_settings.afk_timeout,
         d.user_settings.allow_accessibility_detection,

@@ -14,7 +14,9 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.*
+import org.caffeine.chaos.api.client.BaseClient
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.client.EventBus
 import org.caffeine.chaos.api.payloads.client.HeartBeat
 import org.caffeine.chaos.api.payloads.client.Identify
@@ -24,7 +26,7 @@ import org.caffeine.chaos.api.payloads.client.data.resume.ResumeD
 import org.caffeine.chaos.api.payloads.gateway.Init
 import org.caffeine.chaos.api.utils.*
 
-class Connection(private val client : Client, private val eventBus : EventBus) {
+class Connection(private val client : ClientImpl, private val eventBus : EventBus) {
 
     internal var ready : Boolean = false
 

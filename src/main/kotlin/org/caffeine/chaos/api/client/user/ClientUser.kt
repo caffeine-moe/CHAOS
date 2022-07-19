@@ -5,6 +5,7 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.BASE_URL
+import org.caffeine.chaos.api.client.BaseClient
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.models.Guild
@@ -28,7 +29,7 @@ data class ClientUser(
     //val channels: HashMap<String, BaseChannel>,
     val premium : Boolean,
     val token : String,
-    val client : Client,
+    val client : BaseClient,
 ) : DiscordUser {
 
     private val _guilds = HashMap<String, Guild>()
