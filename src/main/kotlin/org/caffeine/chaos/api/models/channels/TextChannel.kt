@@ -1,5 +1,6 @@
 package org.caffeine.chaos.api.models.channels
 
+import org.caffeine.chaos.api.client.BaseClient
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.models.Message
 import org.caffeine.chaos.api.models.interfaces.TextBasedChannel

@@ -28,8 +28,6 @@ import org.caffeine.chaos.api.utils.*
 
 class Connection(private val client : ClientImpl, private val eventBus : EventBus) {
 
-    internal var ready : Boolean = false
-
     private val httpClient : HttpClient
         get() = HttpClient(CIO) {
             install(WebSockets)
@@ -177,7 +175,7 @@ class Connection(private val client : ClientImpl, private val eventBus : EventBu
     private suspend fun disconnect() {
         this.heartBeat.cancel()
         this.webSocket.close()
-        ready = false
+        client.ready = false
         log("Client logged out.", "API:")
     }
 

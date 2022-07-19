@@ -7,19 +7,11 @@ import org.caffeine.chaos.api.client.user.ClientUser
 import org.caffeine.chaos.api.client.user.ClientUserSettings
 import org.caffeine.chaos.api.utils.DiscordUtils
 
-class Client constructor(private val impl : ClientImpl = ClientImpl()) : BaseClient by impl {
-    private val eventBus : EventBus = EventBus()
-
-    override val socket : Connection = Connection(impl, eventBus)
-    override val utils : DiscordUtils = DiscordUtils()
-    override val events : SharedFlow<ClientEvent> = eventBus.events
-    override val user : ClientUser get() = impl.user
-
+class Client (private val impl : ClientImpl = ClientImpl()) : BaseClient by impl {
     override suspend fun login(token : String) {
-        impl.utils.token = token
-        impl.utils.client = this@Client
+        impl.client = this
         utils.token = token
-        utils.client = this@Client
+        utils.client = this
         socket.execute(ConnectionType.CONNECT)
     }
 

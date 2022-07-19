@@ -10,6 +10,7 @@ import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.BaseClient
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.utils.*
 import org.caffeine.chaos.config.Config
@@ -79,6 +80,7 @@ suspend fun main(args : Array<String> = arrayOf()) : Unit = coroutineScope {
     }
     //makes new client
     val client = Client()
+
     //web ui benched for now
 /*         val ui = WebUI()
         ui.init(client)*/

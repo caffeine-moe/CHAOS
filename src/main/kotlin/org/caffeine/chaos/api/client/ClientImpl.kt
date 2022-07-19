@@ -8,8 +8,11 @@ import org.caffeine.chaos.api.client.user.ClientUserSettings
 import org.caffeine.chaos.api.utils.DiscordUtils
 
 class ClientImpl : BaseClient {
+
+    var ready : Boolean = false
+    lateinit var client : Client
     private val eventBus : EventBus = EventBus()
-    override val socket : Connection = Connection(this@ClientImpl, eventBus)
+    override val socket : Connection = Connection(this, eventBus)
     override val utils : DiscordUtils = DiscordUtils()
     override val events : SharedFlow<ClientEvent> = eventBus.events
     override var user : ClientUser = ClientUser(true, "", "", "", "", "", ClientUserSettings(), "", true, "", this)
@@ -18,10 +21,6 @@ class ClientImpl : BaseClient {
     }
 
     override suspend fun logout() {
-
     }
 
-    suspend fun setUser(user : ClientUser) {
-        this.user = user
-    }
 }

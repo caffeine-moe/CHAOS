@@ -1,5 +1,6 @@
 package org.caffeine.chaos.api.client.connection
 
+import io.ktor.utils.io.core.*
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.Event
 import org.caffeine.chaos.api.OPCODE
@@ -23,22 +24,22 @@ suspend fun handleJsonRequest(payload : String, client : ClientImpl, eventBus : 
                     ready(client, payload, eventBus)
                 }
                 Event.MESSAGE_CREATE.value -> {
-                    if (client.socket.ready) {
-                        //messageCreate(payload, client, eventBus)
+                    if (client.ready) {
+                        messageCreate(payload, client, eventBus)
                     }
                 }
                 Event.GUILD_DELETE.value -> {
-                    if (client.socket.ready) {
+                    if (client.ready) {
                         //guildDelete(payload, client)
                     }
                 }
                 Event.GUILD_CREATE.value -> {
-                    if (client.socket.ready) {
+                    if (client.ready) {
                         //guildCreate(payload, client)
                     }
                 }
                 Event.GUILD_MEMBER_LIST_UPDATE.value -> {
-                    if (client.socket.ready) {
+                    if (client.ready) {
                         //guildMemberListUpdate(payload, client)
                     }
                 }

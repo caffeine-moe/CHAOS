@@ -29,9 +29,9 @@ suspend fun ready(client : ClientImpl, payload : String, eventBus : EventBus) {
         token = client.utils.token,
         client = client
     )
-    client.setUser(user)
+    client.user = user
     client.user.setGuilds(extractGuilds(d.guilds))
-    client.socket.ready = true
+    client.ready = true
     client.utils.sessionId = d.session_id
     log("${ConsoleColours.GREEN.value}Client logged in!", "API:")
     eventBus.produceEvent(ClientEvents.Ready(user))

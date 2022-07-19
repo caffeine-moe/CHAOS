@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.client.EventBus
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.models.Guild
@@ -47,17 +48,16 @@ private data class User(
     val id : String = "",
 )
 
-suspend fun messageCreate(payload : String, client : Client, eventBus : EventBus) {
+suspend fun messageCreate(payload : String, client : ClientImpl, eventBus : EventBus) {
     try {
-
         val d = json.decodeFromString<MessageCreate>(payload).d
         val event = ClientEvents.MessageCreate(
             message = Message(
-                client,
+                client.client,
                 d.id,
                 TextChannel(
                     d.channel_id,
-                    client,
+                    client.client,
                 ),
                 client.utils.fetchGuild(d.guild_id ?: ""),
                 org.caffeine.chaos.api.models.User(
