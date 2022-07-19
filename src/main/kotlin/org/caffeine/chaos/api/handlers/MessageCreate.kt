@@ -52,13 +52,10 @@ suspend fun messageCreate(payload : String, client : ClientImpl, eventBus : Even
     try {
         val d = json.decodeFromString<MessageCreate>(payload).d
         val event = ClientEvents.MessageCreate(
-            message = Message(
+            Message(
                 client.client,
                 d.id,
-                TextChannel(
-                    d.channel_id,
-                    client.client,
-                ),
+                TextChannel(d.channel_id, client.client),
                 client.utils.fetchGuild(d.guild_id ?: ""),
                 org.caffeine.chaos.api.models.User(
                     d.author.username,

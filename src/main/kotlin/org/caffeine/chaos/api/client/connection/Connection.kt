@@ -26,7 +26,9 @@ import org.caffeine.chaos.api.payloads.client.data.resume.ResumeD
 import org.caffeine.chaos.api.payloads.gateway.Init
 import org.caffeine.chaos.api.utils.*
 
-class Connection(private val client : ClientImpl, private val eventBus : EventBus) {
+internal class Connection(private val client : ClientImpl, private val eventBus : EventBus) {
+
+    var ready = false
 
     private val httpClient : HttpClient
         get() = HttpClient(CIO) {

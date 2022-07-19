@@ -29,14 +29,9 @@ data class ClientUser(
     //val channels: HashMap<String, BaseChannel>,
     val premium : Boolean,
     val token : String,
-    val client : BaseClient,
-) : DiscordUser {
-
-    private val _guilds = HashMap<String, Guild>()
-
-    val guilds : Map<String, Guild>
-        get() = _guilds
-
+    val client : Client,
+    private val impl : ClientUserImpl
+) : DiscordUser, BaseClientUser by impl {
 
     override val discriminatedName = "$username#$discriminator"
 
@@ -154,18 +149,5 @@ data class ClientUser(
             }
             setBody(json.parseToJsonElement("{\"type\":2}").toString())
         }
-    }
-
-    fun addGuild(guild : Guild) {
-        _guilds[guild.id] = guild
-    }
-
-    fun removeGuild(guild : Guild) {
-        _guilds.remove(guild.id)
-    }
-
-    fun setGuilds(guilds : Map<String, Guild>) {
-        _guilds.clear()
-        _guilds.putAll(guilds)
     }
 }

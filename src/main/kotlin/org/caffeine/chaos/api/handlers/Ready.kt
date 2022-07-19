@@ -24,13 +24,13 @@ suspend fun ready(client : ClientImpl, payload : String, eventBus : EventBus) {
         createUserSettings(d, client),
         avatar = d.user.avatar,
         //relationships = ClientUserRelationships(extractFriends(d.relationships), extractBlockList(d.relationships)),
-        //channels = ClientChannels(client),
         premium = d.user.premium,
         token = client.utils.token,
-        client = client
+        client = client.client,
+        impl = client.userImpl
     )
     client.user = user
-    client.user.setGuilds(extractGuilds(d.guilds))
+    client.userImpl.setGuilds(extractGuilds(d.guilds))
     client.ready = true
     client.utils.sessionId = d.session_id
     log("${ConsoleColours.GREEN.value}Client logged in!", "API:")
@@ -99,7 +99,6 @@ fun extractGuilds(guilds : MutableList<ReadyDGuild>) : Map<String, Guild> {
     }
     return map
 }
-
 
 /*private fun extractFriends(relationships : MutableList<ClientRelationship>) : MutableList<org.caffeine.chaos.api.models.User> {
     val friends = mutableListOf<org.caffeine.chaos.api.models.User>()

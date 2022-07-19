@@ -21,6 +21,7 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.models.Guild
 import org.caffeine.chaos.api.models.Message
+import org.caffeine.chaos.api.models.channels.BaseChannel
 import org.caffeine.chaos.api.typedefs.*
 import java.util.*
 import java.util.concurrent.CompletableFuture

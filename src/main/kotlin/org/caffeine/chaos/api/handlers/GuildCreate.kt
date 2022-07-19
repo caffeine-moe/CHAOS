@@ -2,6 +2,7 @@ package org.caffeine.chaos.api.handlers
 
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.jsonc
 import org.caffeine.chaos.api.models.Guild
 
@@ -82,7 +83,7 @@ data class Role(
     val unicode_emoji : String? = "",
 )
 
-fun guildCreate(payload : String, client : Client) {
+fun guildCreate(payload : String, client : ClientImpl) {
         val parsed = jsonc.decodeFromString<GuildCreate>(payload)
         val guild = Guild(
             parsed.d.id,
@@ -91,5 +92,5 @@ fun guildCreate(payload : String, client : Client) {
             parsed.d.description,
             parsed.d.splash,
         )
-        client.user.addGuild(guild)
+        client.userImpl
 }

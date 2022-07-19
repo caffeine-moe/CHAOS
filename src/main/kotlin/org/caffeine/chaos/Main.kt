@@ -1,5 +1,6 @@
 package org.caffeine.chaos
 
+import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +17,7 @@ import org.caffeine.chaos.api.utils.*
 import org.caffeine.chaos.config.Config
 import java.io.File
 import java.net.ConnectException
+import kotlin.math.truncate
 import kotlin.system.exitProcess
 
 //version lmao
@@ -80,7 +82,6 @@ suspend fun main(args : Array<String> = arrayOf()) : Unit = coroutineScope {
     }
     //makes new client
     val client = Client()
-
     //web ui benched for now
 /*         val ui = WebUI()
         ui.init(client)*/
@@ -97,14 +98,19 @@ suspend fun main(args : Array<String> = arrayOf()) : Unit = coroutineScope {
                     ready(client)
                 }
                 if (it is ClientEvents.MessageCreate) {
+                    println(it.message.guild?.name)
                     handleMessage(it, client)
                 }
             }
         }
     }
 
-    //logs in
-    client.login(config.token)
+    try {
+        //logs in
+        client.login(config.token)
+    }catch (e: Exception) {
+        e.printStackTrace()
+    }
 }
 
 suspend fun checkNetwork() {
