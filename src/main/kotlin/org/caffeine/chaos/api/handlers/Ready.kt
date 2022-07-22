@@ -164,7 +164,7 @@ private fun extractPrivateChannels(channels : MutableList<ReadyDPrivateChannel>,
             client,
             client.utils.getChannelType(channel.type),
             channel.last_message_id,
-            channel.name.ifBlank { "${channel.recipients.first()}" },
+            channel.name.ifBlank { channel.recipients.first().username },
             recipients,
         )
     }

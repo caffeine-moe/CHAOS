@@ -97,7 +97,6 @@ suspend fun main(args : Array<String> = arrayOf()) : Unit = coroutineScope {
                     ready(client)
                 }
                 if (it is ClientEvents.MessageCreate) {
-                    println("${it.message.author.username} said: ${it.message.content} in ${it.message.channel.name} in ${it.message.guild?.name}")
                     handleMessage(it, client)
                 }
             }
