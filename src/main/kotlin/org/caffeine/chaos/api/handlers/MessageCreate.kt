@@ -67,7 +67,6 @@ suspend fun messageCreate(payload : String, client : ClientImpl, eventBus : Even
                 d.content,
                 tts = d.tts ?: false,
                 mentionedEveryone = d.mention_everyone,
-                nonce = d.id,
                 pinned = d.pinned,
                 type = d.type
             )

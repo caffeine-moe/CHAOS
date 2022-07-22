@@ -1,8 +1,6 @@
 package org.caffeine.chaos.api.models
 
-import org.caffeine.chaos.api.client.BaseClient
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.models.channels.BaseChannel
 import org.caffeine.chaos.api.models.channels.TextChannel
 import java.util.Date
 
@@ -18,7 +16,6 @@ data class Message(
     val editedAt: Date = Date(),
     val tts: Boolean = false,
     val mentionedEveryone: Boolean = false,
-    val nonce: String = "",
     val pinned: Boolean = false,
     val type: Number = 0,
 )

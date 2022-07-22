@@ -2,6 +2,8 @@ package org.caffeine.chaos.api.client.user
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.models.Guild
+import org.caffeine.chaos.api.models.channels.BaseChannel
+import org.caffeine.chaos.api.models.channels.DMChannel
 import kotlin.math.absoluteValue
 
 data class ClientUserImpl(
@@ -13,8 +15,7 @@ data class ClientUserImpl(
     override var bio : String?,
     override var settings : ClientUserSettings,
     override var avatar : String?,
-    override val relationships : ClientUserRelationships,
-    //val channels: HashMap<String, BaseChannel>
+    override var relationships : ClientUserRelationships,
     override var premium : Boolean,
     override var token : String,
     override val client : Client,
@@ -35,19 +36,11 @@ data class ClientUserImpl(
         }
     }
 
-    private var _guilds = HashMap<String, Guild>()
+    var _privateChannels = HashMap<String, DMChannel>()
+    override val privateChannels : Map<String, DMChannel>
+        get() = _privateChannels
+
+    var _guilds = HashMap<String, Guild>()
     override val guilds : Map<String, Guild> get() = _guilds
 
-    fun addGuild(guild : Guild) {
-        _guilds[guild.id] = guild
-    }
-
-    fun removeGuild(guild : Guild) {
-        _guilds.remove(guild.id)
-    }
-
-    fun setGuilds(guilds : Map<String, Guild>) {
-        _guilds.clear()
-        _guilds.putAll(guilds)
-    }
 }

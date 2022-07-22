@@ -1,7 +1,11 @@
 package org.caffeine.chaos.api.models.channels
 
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.models.Message
+import org.caffeine.chaos.api.models.User
+import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
 import org.caffeine.chaos.api.typedefs.ChannelType
+import org.caffeine.chaos.api.typedefs.MessageOptions
 import java.util.*
 
 class DMChannel(
@@ -9,7 +13,11 @@ class DMChannel(
     override val client: Client,
     override val type: ChannelType,
     val lastMessageId: String,
-    val lastPinTimestamp: Date,
     override val name: String,
-    val position: Number,
-) : BaseChannel
+    val recipients : Map<String, User>,
+) : BaseChannel, TextBasedChannel {
+    override suspend fun sendMessage(payload : MessageOptions) : Message {
+        client.user.sendMessage(this, payload)
+        return Message()
+    }
+}

@@ -25,6 +25,7 @@ data class ReadyDGuild(
     val nsfw: Boolean = false,
     val nsfw_level: Int = 0,
     val owner_id: String = "",
+    val widget_enabled: Boolean = false,
     val preferred_locale: String = "",
     val premium_progress_bar_enabled: Boolean = false,
     val premium_subscription_count: Int = 0,

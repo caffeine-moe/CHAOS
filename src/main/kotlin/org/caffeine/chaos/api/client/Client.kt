@@ -1,13 +1,10 @@
 package org.caffeine.chaos.api.client
 
-import kotlinx.coroutines.flow.SharedFlow
-import org.caffeine.chaos.api.client.connection.Connection
 import org.caffeine.chaos.api.client.connection.ConnectionType
-import org.caffeine.chaos.api.client.user.ClientUser
-import org.caffeine.chaos.api.client.user.ClientUserSettings
-import org.caffeine.chaos.api.utils.DiscordUtils
 
-class Client internal constructor(private val impl : ClientImpl = ClientImpl()) : BaseClient by impl {
+private val impl : ClientImpl = ClientImpl()
+
+class Client : BaseClient by impl {
 
     override suspend fun login(token : String) {
         impl.client = this

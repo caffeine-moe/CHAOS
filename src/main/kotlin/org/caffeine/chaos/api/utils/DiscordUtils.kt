@@ -10,18 +10,16 @@ import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import kotlinx.coroutines.async
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.JsonObject
 import org.caffeine.chaos.api.BASE_URL
-import org.caffeine.chaos.api.client.BaseClient
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.models.Guild
 import org.caffeine.chaos.api.models.Message
-import org.caffeine.chaos.api.models.channels.BaseChannel
+import org.caffeine.chaos.api.models.channels.DMChannel
 import org.caffeine.chaos.api.typedefs.*
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -183,6 +181,14 @@ open class DiscordUtils {
 
     fun Long.isValidSnowflake() : Boolean {
         return convertIdToUnix(this.toString()) <= System.currentTimeMillis()
+    }
+
+    suspend fun fetchPrivateChannel(id : String) : DMChannel {
+        return client.user.privateChannels[id] ?: client.user.privateChannels.values.first {
+            it.recipients.containsKey(
+                id
+            )
+        }
     }
 
     suspend fun fetchGuild(id : String) : Guild? {

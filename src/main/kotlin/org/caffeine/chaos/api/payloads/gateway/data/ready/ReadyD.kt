@@ -9,5 +9,6 @@ data class ReadyD(
     val v : Int,
     val relationships : MutableList<ReadyDRelationship>,
     val guilds : MutableList<ReadyDGuild>,
+    val private_channels : MutableList<ReadyDPrivateChannel>,
     val session_id : String,
 )

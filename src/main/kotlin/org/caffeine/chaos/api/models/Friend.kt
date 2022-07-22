@@ -31,6 +31,6 @@ private val client : Client
         client.user.removeFriend(this)
     }
     suspend fun sendMessage(message : MessageOptions) {
-        client.user.sendMessage(DMChannel(id, client, ChannelType.DM, "", Date(), username, 69), message)
+        client.user.sendMessage(client.utils.fetchPrivateChannel(this.id), message)
     }
 }

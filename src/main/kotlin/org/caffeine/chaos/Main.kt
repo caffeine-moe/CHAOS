@@ -3,10 +3,7 @@ package org.caffeine.chaos
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.BaseClient
 import org.caffeine.chaos.api.client.Client
@@ -100,6 +97,7 @@ suspend fun main(args : Array<String> = arrayOf()) : Unit = coroutineScope {
                     ready(client)
                 }
                 if (it is ClientEvents.MessageCreate) {
+                    println("${it.message.author.username} said: ${it.message.content} in ${it.message.channel.name} in ${it.message.guild?.name}")
                     handleMessage(it, client)
                 }
             }

@@ -10,15 +10,20 @@ import org.caffeine.chaos.api.jsonc
 import org.caffeine.chaos.api.models.BlockedUser
 import org.caffeine.chaos.api.models.Friend
 import org.caffeine.chaos.api.models.Guild
-import org.caffeine.chaos.api.models.interfaces.DiscordUser
+import org.caffeine.chaos.api.models.channels.DMChannel
 import org.caffeine.chaos.api.payloads.gateway.Ready
 import org.caffeine.chaos.api.payloads.gateway.data.ready.ReadyD
 import org.caffeine.chaos.api.payloads.gateway.data.ready.ReadyDGuild
+import org.caffeine.chaos.api.payloads.gateway.data.ready.ReadyDPrivateChannel
 import org.caffeine.chaos.api.payloads.gateway.data.ready.ReadyDRelationship
 import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.log
+import java.io.File
 
 suspend fun ready(client : ClientImpl, payload : String, eventBus : EventBus) {
+    val f = File("ready.json")
+    f.createNewFile()
+    f.writeText(payload)
     val d = jsonc.decodeFromString<Ready>(payload).d
     client.userImpl = ClientUserImpl(
         d.user.verified,
@@ -28,15 +33,16 @@ suspend fun ready(client : ClientImpl, payload : String, eventBus : EventBus) {
         d.user.email,
         d.user.bio,
         createUserSettings(d, client),
-        avatar = d.user.avatar,
-        relationships = ClientUserRelationships(extractFriends(d.relationships, client.client), extractBlockList(d.relationships, client.client)),
-        premium = d.user.premium,
-        token = client.utils.token,
-        client = client.client,
+        d.user.avatar,
+        ClientUserRelationships(extractFriends(d.relationships, client.client), extractBlockList(d.relationships, client.client)),
+        d.user.premium,
+        client.utils.token,
+        client.client,
     )
     val user = ClientUser(client.userImpl)
     client.user = user
-    client.userImpl.setGuilds(extractGuilds(d.guilds))
+    client.userImpl._privateChannels.putAll(extractPrivateChannels(d.private_channels, client.client))
+    client.userImpl._guilds.putAll(extractGuilds(d.guilds))
     client.ready = true
     client.utils.sessionId = d.session_id
     log("${ConsoleColours.GREEN.value}Client logged in!", "API:")
@@ -98,9 +104,27 @@ fun extractGuilds(guilds : MutableList<ReadyDGuild>) : Map<String, Guild> {
             guild.application_id,
             guild.region,
             guild.afk_channel_id,
-            //guild.afk_timeout,
-
-            vanityUrl = guild.vanity_url_code,
+            guild.afk_timeout,
+            guild.system_channel_id,
+            guild.widget_enabled,
+            "",
+            guild.verification_level,
+            guild.default_message_notifications,
+            guild.mfa_level,
+            guild.explicit_content_filter,
+            0,
+            guild.max_members,
+            guild.max_video_channel_users,
+            "https://discord.gg/${guild.vanity_url_code}",
+            guild.vanity_url_code,
+            guild.premium_tier,
+            guild.premium_subscription_count,
+            guild.system_channel_flags,
+            guild.preferred_locale,
+            guild.rules_channel_id,
+            guild.public_updates_channel_id,
+            false,
+            "",
         )
     }
     return map
@@ -121,6 +145,30 @@ private fun extractFriends(relationships : MutableList<ReadyDRelationship>, clie
         }
     }
     return friends
+}
+
+private fun extractPrivateChannels(channels : MutableList<ReadyDPrivateChannel>, client : Client) : HashMap<String, DMChannel> {
+    val map = hashMapOf<String, DMChannel>()
+    for (channel in channels) {
+        val recipients = hashMapOf<String, org.caffeine.chaos.api.models.User>()
+        for (recipient in channel.recipients) {
+            recipients[recipient.id] = org.caffeine.chaos.api.models.User(
+                recipient.username,
+                recipient.discriminator,
+                recipient.avatar,
+                recipient.id,
+            )
+        }
+        map[channel.id] = DMChannel(
+            channel.id,
+            client,
+            client.utils.getChannelType(channel.type),
+            channel.last_message_id,
+            channel.name.ifBlank { "${channel.recipients.first()}" },
+            recipients,
+        )
+    }
+    return map
 }
 
 private fun extractBlockList(relationships : MutableList<ReadyDRelationship>, client : Client) : HashMap<String, BlockedUser> {
