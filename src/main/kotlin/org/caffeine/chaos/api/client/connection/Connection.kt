@@ -14,8 +14,6 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.*
-import org.caffeine.chaos.api.client.BaseClient
-import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.client.EventBus
 import org.caffeine.chaos.api.payloads.client.HeartBeat

@@ -103,12 +103,8 @@ suspend fun main(args : Array<String> = arrayOf()) : Unit = coroutineScope {
         }
     }
 
-    try {
-        //logs in
-        client.login(config.token)
-    }catch (e: Exception) {
-        e.printStackTrace()
-    }
+    //logs in
+    client.login(config.token)
 }
 
 suspend fun checkNetwork() {
