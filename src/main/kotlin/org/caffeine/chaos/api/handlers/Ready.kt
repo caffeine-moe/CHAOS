@@ -7,11 +7,14 @@ import org.caffeine.chaos.api.client.user.ClientUserImpl
 import org.caffeine.chaos.api.client.user.ClientUserRelationships
 import org.caffeine.chaos.api.client.user.ClientUserSettings
 import org.caffeine.chaos.api.jsonc
+import org.caffeine.chaos.api.models.BlockedUser
+import org.caffeine.chaos.api.models.Friend
 import org.caffeine.chaos.api.models.Guild
 import org.caffeine.chaos.api.models.interfaces.DiscordUser
 import org.caffeine.chaos.api.payloads.gateway.Ready
 import org.caffeine.chaos.api.payloads.gateway.data.ready.ReadyD
 import org.caffeine.chaos.api.payloads.gateway.data.ready.ReadyDGuild
+import org.caffeine.chaos.api.payloads.gateway.data.ready.ReadyDRelationship
 import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.log
 
@@ -26,7 +29,7 @@ suspend fun ready(client : ClientImpl, payload : String, eventBus : EventBus) {
         d.user.bio,
         createUserSettings(d, client),
         avatar = d.user.avatar,
-        relationships = ClientUserRelationships(listOf(), listOf()),
+        relationships = ClientUserRelationships(extractFriends(d.relationships, client.client), extractBlockList(d.relationships, client.client)),
         premium = d.user.premium,
         token = client.utils.token,
         client = client.client,
@@ -103,34 +106,36 @@ fun extractGuilds(guilds : MutableList<ReadyDGuild>) : Map<String, Guild> {
     return map
 }
 
-/*private fun extractFriends(relationships : MutableList<ClientRelationship>) : HashMap<String, org.caffeine.chaos.api.models.User> {
-    val friends = mutableListOf<org.caffeine.chaos.api.models.User>()
+private fun extractFriends(relationships : MutableList<ReadyDRelationship>, client : Client) : HashMap<String, Friend> {
+    val friends = hashMapOf<String, Friend>()
     for (relationship in relationships) {
         if (relationship.type == 1) {
-            val friend = org.caffeine.chaos.api.models.User(
-                relationship.user.username,
-                relationship.user.discriminator,
-                relationship.user.id,
-                relationship.user.avatar
-            )
-            friends.add(friend)
-        }
-    }
-    return friends
-}*/
-
-/*private fun extractBlockList(relationships : MutableList<ClientRelationship>) : HashMap<String, org.caffeine.chaos.api.models.User> {
-    val blocked = mutableListOf<org.caffeine.chaos.api.models.User>()
-    for (relationship in relationships) {
-        if (relationship.type == 2) {
-            val user = org.caffeine.chaos.api.models.User(
+            val friend = Friend(
                 relationship.user.username,
                 relationship.user.discriminator,
                 relationship.user.avatar,
-                relationship.user.id
+                relationship.user.id,
+                client
             )
-            blocked.add(user)
+            friends[friend.id] = friend
+        }
+    }
+    return friends
+}
+
+private fun extractBlockList(relationships : MutableList<ReadyDRelationship>, client : Client) : HashMap<String, BlockedUser> {
+    val blocked = hashMapOf<String, BlockedUser>()
+    for (relationship in relationships) {
+        if (relationship.type == 2) {
+            val user = BlockedUser(
+                relationship.user.username,
+                relationship.user.discriminator,
+                relationship.user.avatar,
+                relationship.user.id,
+                client
+            )
+            blocked[user.id] = user
         }
     }
     return blocked
-}*/
+}

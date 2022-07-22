@@ -8,6 +8,8 @@ import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.client.BaseClient
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.json
+import org.caffeine.chaos.api.models.BlockedUser
+import org.caffeine.chaos.api.models.Friend
 import org.caffeine.chaos.api.models.Guild
 import org.caffeine.chaos.api.models.interfaces.DiscordUser
 import org.caffeine.chaos.api.models.User
@@ -29,6 +31,14 @@ class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
         }
         return guild
     }*/
+
+    fun unblock(user : BlockedUser) {
+        return
+    }
+
+    fun removeFriend(friend : Friend) {
+        return
+    }
 
     suspend fun setHouse(house : HypeSquadHouseType) {
         if (house == HypeSquadHouseType.NONE) {

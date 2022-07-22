@@ -7,7 +7,7 @@ data class ReadyD(
     val user_settings : ReadyDUserSettings,
     val user_settings_proto : String,
     val v : Int,
-    //val relationships : MutableList<ClientRelationship>,
+    val relationships : MutableList<ReadyDRelationship>,
     val guilds : MutableList<ReadyDGuild>,
     val session_id : String,
 )

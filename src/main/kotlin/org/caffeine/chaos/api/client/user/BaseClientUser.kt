@@ -1,6 +1,7 @@
 package org.caffeine.chaos.api.client.user
 
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.models.Friend
 import org.caffeine.chaos.api.models.Guild
 import org.caffeine.chaos.api.models.interfaces.DiscordUser
 
