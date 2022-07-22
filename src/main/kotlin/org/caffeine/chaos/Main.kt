@@ -12,7 +12,9 @@ import org.caffeine.chaos.api.client.BaseClient
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.client.ClientImpl
+import org.caffeine.chaos.api.client.user.ClientUserImpl
 import org.caffeine.chaos.api.json
+import org.caffeine.chaos.api.models.interfaces.DiscordUser
 import org.caffeine.chaos.api.utils.*
 import org.caffeine.chaos.config.Config
 import java.io.File
@@ -98,7 +100,6 @@ suspend fun main(args : Array<String> = arrayOf()) : Unit = coroutineScope {
                     ready(client)
                 }
                 if (it is ClientEvents.MessageCreate) {
-                    println(it.message.guild?.name)
                     handleMessage(it, client)
                 }
             }

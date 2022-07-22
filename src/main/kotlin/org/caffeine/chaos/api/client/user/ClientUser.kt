@@ -16,36 +16,7 @@ import org.caffeine.chaos.api.typedefs.*
 import java.util.concurrent.CompletableFuture
 import kotlin.math.absoluteValue
 
-data class ClientUser(
-    val verified : Boolean,
-    override val username : String,
-    override val discriminator : String,
-    override val id : String,
-    val email : String?,
-    val bio : String?,
-    val settings : ClientUserSettings,
-    override val avatar : String?,
-    //val relationships : ClientUserRelationships,
-    //val channels: HashMap<String, BaseChannel>,
-    val premium : Boolean,
-    val token : String,
-    val client : Client,
-    private val impl : ClientUserImpl
-) : DiscordUser, BaseClientUser by impl {
-
-    override val discriminatedName = "$username#$discriminator"
-
-    override fun avatarUrl() : String {
-        return if (!avatar.isNullOrBlank()) {
-            if (avatar.startsWith("a_")) {
-                "https://cdn.discordapp.com/avatars/$id/$avatar.gif?size=4096"
-            } else {
-                "https://cdn.discordapp.com/avatars/$id/$avatar.png?size=4096"
-            }
-        } else {
-            "https://cdn.discordapp.com/embed/avatars/${discriminator.toInt().absoluteValue % 5}.png"
-        }
-    }
+class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
 
 /*    fun getGuild(channel : MessageChannel) : ClientGuild? {
         var guild : ClientGuild? = null
@@ -61,7 +32,7 @@ data class ClientUser(
 
     suspend fun setHouse(house : HypeSquadHouseType) {
         if (house == HypeSquadHouseType.NONE) {
-            client.utils.discordHTTPClient.request("$BASE_URL/hypesquad/online") {
+            val request = client.utils.discordHTTPClient.request("$BASE_URL/hypesquad/online") {
                 method = HttpMethod.Delete
             }
         } else {
