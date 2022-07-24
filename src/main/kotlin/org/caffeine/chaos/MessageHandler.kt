@@ -30,7 +30,7 @@ fun registerCommands() {
     Help()
     Ping()
     IP()
-    //Avatar()
+    Avatar()
     Spam()
     SSpam()
     Purge()
@@ -59,7 +59,6 @@ fun registerCommands() {
     Dice()
     IdToDate()
     Update()
-    YTDL()
     AFK()
     RandomChoice()
     GayPFP()
@@ -116,8 +115,9 @@ suspend fun handleMessage(event : ClientEvents.MessageCreate, client : Client) {
             //finally, execute the command
             command.onCalled(client, event, args, commandName)
         }
-
-        cdnpls(client, event, event.message.content.split(" ").toMutableList())
+        if (config.cdnpls.enabled) {
+            cdnpls(event)
+        }
 
     }
 

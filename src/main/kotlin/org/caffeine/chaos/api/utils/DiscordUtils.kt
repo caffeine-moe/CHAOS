@@ -10,6 +10,7 @@ import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -17,18 +18,20 @@ import kotlinx.serialization.json.JsonObject
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.json
+import org.caffeine.chaos.api.models.Attachment
 import org.caffeine.chaos.api.models.Guild
 import org.caffeine.chaos.api.models.Message
 import org.caffeine.chaos.api.models.User
-import org.caffeine.chaos.api.models.channels.BaseChannel
 import org.caffeine.chaos.api.models.channels.DMChannel
 import org.caffeine.chaos.api.models.channels.TextChannel
 import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
+import org.caffeine.chaos.api.payloads.gateway.data.SerialAttachment
 import org.caffeine.chaos.api.payloads.gateway.data.SerialGuild
 import org.caffeine.chaos.api.payloads.gateway.data.SerialMessage
+import org.caffeine.chaos.api.payloads.gateway.data.SerialUser
 import org.caffeine.chaos.api.typedefs.*
+import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.CompletableFuture
 import kotlin.math.absoluteValue
 import kotlin.system.exitProcess
 
@@ -197,6 +200,40 @@ open class DiscordUtils {
         return convertIdToUnix(this.toString()) <= System.currentTimeMillis()
     }
 
+    suspend fun fetchMessagesAsCollection(channel : TextBasedChannel, filters : MessageFilters) : Collection<Message> {
+        val collection : MutableList<Message> = mutableListOf()
+        val messagesPerRequest = 100
+        while (true) {
+            var parameters = ""
+            parameters += if (filters.limit > 0) "limit=${messagesPerRequest.coerceAtMost(filters.limit - collection.size)}&"
+            else "limit=${messagesPerRequest}&"
+            if (filters.before_id.isNotBlank()) parameters += "before=${filters.before_id}&"
+            if (filters.after_id.isNotBlank()) parameters += "after=${filters.after_id}&"
+            if (filters.author_id.isNotBlank()) parameters += "author_id=${filters.author_id}&"
+            if (filters.mentioning_user_id.isNotBlank()) parameters += "mentions=${filters.mentioning_user_id}&"
+            val response = discordHTTPClient.request("$BASE_URL/channels/${channel.id}/messages?${parameters}") {
+                method = HttpMethod.Get
+                headers {
+                    append(HttpHeaders.Authorization, token)
+                    append(HttpHeaders.ContentType, "application/json")
+                }
+            }
+            val newMessages = json.decodeFromString<List<Message>>(response.bodyAsText())
+            collection.addAll(newMessages)
+            filters.before_id = collection.last().id
+            collection.removeIf { filters.author_id.isNotBlank(); it.author.id != filters.author_id }
+
+            if (filters.needed != 0 && collection.size >= filters.needed)
+                break
+
+            if (newMessages.size < messagesPerRequest)
+                break
+
+            delay(200)
+        }
+        return collection
+    }
+
     suspend fun fetchPrivateChannel(id : String) : DMChannel {
         return client.user.privateChannels[id] ?: client.user.privateChannels.values.first {
             it.recipients.containsKey(
@@ -266,12 +303,37 @@ open class DiscordUtils {
         return guild
     }
 
+    fun fetchChannel(channelId : String) : TextBasedChannel? {
+        return client.user.privateChannels[channelId]
+    }
+
     suspend fun createMessage(message: SerialMessage) : Message {
+
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+
+        val editedTimestamp = if (!message.edited_timestamp.isNullOrBlank()) {
+            dateFormat.parse(message.edited_timestamp)
+        } else { null }
+
+        val mentions = hashMapOf<String, User>()
+
+        val attachmeents = hashMapOf<String, Attachment>()
+
+        for (mention in message.mentions) {
+            mentions[mention.id] = createUser(mention)
+        }
+
+        for (attachment in message.attachments) {
+            attachmeents[attachment.id] = createAttachment(attachment)
+        }
+
         return Message(
             client,
             message.id,
             //TextChannel(d.channel_id, client.client),
-            client.utils.fetchChannel(message.channel_id),
+            client.utils.fetchChannel(message.channel_id)
+            //shouldn't happen ever but just in case
+            ?: TextChannel(message.channel_id),
             client.utils.fetchGuild(message.guild_id ?: ""),
             User(
                 message.author.username,
@@ -280,26 +342,38 @@ open class DiscordUtils {
                 message.author.id,
             ),
             message.content,
-            tts = message.tts ?: false,
-            mentionedEveryone = message.mention_everyone,
-            pinned = message.pinned,
-            type = getMessageType(message.type),
+            dateFormat.parse(message.timestamp),
+            editedTimestamp,
+            message.tts ?: false,
+            message.mention_everyone,
+            mentions,
+            attachmeents,
+            message.pinned,
+            getMessageType(message.type),
         )
     }
 
+    fun createAttachment(attachment : SerialAttachment) : Attachment {
+        return Attachment(
+            attachment.content_type,
+            attachment.filename,
+            attachment.height,
+            attachment.id,
+            attachment.proxy_url,
+            attachment.size,
+            attachment.url,
+            attachment.width,
+        )
+    }
 
-/*    async createMessage(options: MessageOptions, id: string) {
-        const response = await fetch(
-            `${Constants.API}/${ENDPOINTS.CHANNELS}/${id}/${ENDPOINTS.MESSAGES}`,
-            {
-                method: "POST",
-                headers,
-                body: JSON.stringify(options),
-            },
-        );
-        return response.json();
-    }*/
-
+    fun createUser(user: SerialUser) : User {
+        return User(
+            user.username,
+            user.discriminator,
+            user.avatar,
+            user.id,
+        )
+    }
 
 /*
     Super Properties Stuff
@@ -326,10 +400,6 @@ open class DiscordUtils {
         superPropertiesStr = json.encodeToString(superProperties)
         superPropertiesB64 = Base64.getEncoder().encodeToString(superPropertiesStr.toByteArray())
     }
-
-    fun fetchChannel(channelId : String) : TextBasedChannel {
-        return client.user.privateChannels[channelId] ?: TextChannel(channelId)
-    }
 }
 
 class MessageBuilder : DiscordUtils() {
@@ -355,3 +425,12 @@ class MessageBuilder : DiscordUtils() {
             return this
         }*/
 }
+
+data class MessageFilters(
+    var mentioning_user_id : String = "",
+    var author_id : String = "",
+    var before_id : String = "",
+    var after_id : String = "",
+    var limit : Int = 0,
+    var needed : Int = 0,
+)

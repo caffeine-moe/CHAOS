@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SerialMessage(
-    //val attachments : List<MessageAttachment> = mutableListOf(),
+    val attachments : List<SerialAttachment> = mutableListOf(),
     val author : SerialUser,
     val channel_id : String,
     val content : String,
@@ -13,7 +13,7 @@ data class SerialMessage(
     val id : String,
     val mention_everyone : Boolean = false,
     val mention_roles : List<String> = mutableListOf(),
-    //val mentions : List<MessageMention> = mutableListOf(),
+    val mentions : List<SerialUser> = mutableListOf(),
     val pinned : Boolean,
     val referenced_message : SerialMessage? = null,
     val timestamp : String?,

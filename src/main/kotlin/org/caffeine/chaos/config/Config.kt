@@ -17,5 +17,5 @@ data class Config(
     val restore : Restore,
     val nitro_sniper : NitroSniper,
     val auto_bump : AutoBump,
-    val ytdl : YTDL,
+    val cdnpls : CDNPls,
 )

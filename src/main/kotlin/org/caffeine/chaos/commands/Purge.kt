@@ -1,10 +1,14 @@
 package org.caffeine.chaos.commands
 
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.*
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.models.Message
+import org.caffeine.chaos.api.typedefs.MessageType
+import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.utils.MessageFilters
 
 import org.caffeine.chaos.purgeCock
 
@@ -18,36 +22,36 @@ class Purge : Command(arrayOf("purge", "sclear"),
     ) =
         coroutineScope {
             purgeCock = false
-            /*
             val channel = when {
                 args.size < 1 -> {
-                    event.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))
+                    event.message.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))
                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                     return@coroutineScope
                 }
                 args.size == 1 -> {
-                    event.channel
+                    event.message.channel
                 }
                 args.size == 2 -> {
-                    if (!client.user.validateChannelId(args.first())) {
-                        event.channel.sendMessage(error(client,
+                    val channel = client.utils.fetchChannel(args[1])
+                    if (channel == null) {
+                        event.message.channel.sendMessage(error(client,
                             event,
                             "${args.first()} is not a valid channel.",
                             commandInfo))
                             .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                         return@coroutineScope
                     }
-                    MessageChannel(args.first())
+                    channel
                 }
                 else -> {
-                    event.channel.sendMessage(error(client, event, "Too many arguments.", commandInfo))
+                    event.message.channel.sendMessage(error(client, event, "Too many arguments.", commandInfo))
                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                     return@coroutineScope
                 }
             }
             val num = if (!args.last().toString().contains("[^0-9]".toRegex())) {
                 if (args.last().toInt() <= 0) {
-                    event.channel.sendMessage(error(client, event, "Amount must be higher than 0.", commandInfo))
+                    event.message.channel.sendMessage(error(client, event, "Amount must be higher than 0.", commandInfo))
                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                     return@coroutineScope
                 }
@@ -57,7 +61,7 @@ class Purge : Command(arrayOf("purge", "sclear"),
                     "max" -> { Int.MAX_VALUE }
                     "all" -> { Int.MAX_VALUE }
                     else -> {
-                        event.channel.sendMessage(error(client,
+                        event.message.channel.sendMessage(error(client,
                             event,
                             "${args.last()} is not an integer.",
                             commandInfo))
@@ -67,10 +71,12 @@ class Purge : Command(arrayOf("purge", "sclear"),
                 }
             }
             var done = 0
+            println("fetching messages")
             val messages =
                 channel.messagesAsCollection(MessageFilters(author_id = client.user.id, needed = num))
+            println("fetched ${messages.size} messages")
             if (messages.isEmpty()) {
-                event.channel.sendMessage(
+                event.message.channel.sendMessage(
                     MessageBuilder()
                         .appendLine("There is nothing to delete!")
                         .build())
@@ -78,25 +84,21 @@ class Purge : Command(arrayOf("purge", "sclear"),
                 return@coroutineScope
             }
             for (message : Message in messages.filter { message -> message.author.id == client.user.id }) {
-                if (message.type != 3) {
+                if (message.type == MessageType.DEFAULT) {
                     if (done % 10 == 0 && done != 0) {
-                        withContext(Dispatchers.IO) {
-                            Thread.sleep(5000)
-                        }
+                        delay(5000)
                     }
                     message.delete()
-                    withContext(Dispatchers.IO) {
-                        Thread.sleep(1000)
-                    }
+                    delay(1000)
                     done++
                     if (purgeCock) break
                     if (done == num) break
                 }
             }
-            event.channel.sendMessage(MessageBuilder()
+            event.message.channel.sendMessage(MessageBuilder()
                 .appendLine("Removed $done message${if (done > 1) "s" else ""}!")
                 .build())
-                .thenAccept { message -> this.launch { onComplete(message, client, true) } }*/
+                .thenAccept { message -> this.launch { onComplete(message, client, true) } }
         }
 
 

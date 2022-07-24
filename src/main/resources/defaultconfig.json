@@ -12,7 +12,8 @@
     "responses": true,
     "anti_scam": true,
     "nitro_sniper": true,
-    "auto_bump": true
+    "auto_bump": true,
+    "cdnpls" : true
   },
   "web_ui" : {
     "enabled" : true
@@ -59,8 +60,7 @@
     "interval": 2,
     "error": [5, 15]
   },
-  "ytdl": {
-    "download": false,
-    "upload": true
+  "cdnpls": {
+    "enabled": true
   }
 }

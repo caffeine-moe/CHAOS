@@ -1,10 +1,14 @@
 package org.caffeine.chaos.commands
-/*
 
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.models.interfaces.DiscordUser
+import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.config
 
 class Avatar : Command(arrayOf("avatar", "pfp", "av"),
     CommandInfo("Avatar", "av [@user]", "Sends your avatar or a mentioned users avatar.")) {
@@ -15,9 +19,8 @@ class Avatar : Command(arrayOf("avatar", "pfp", "av"),
         cmd : String,
     ) =
         coroutineScope {
-*/
-/*            if (args.isNotEmpty() && event.message.mentions.isEmpty()) {
-                event.channel.sendMessage(error(client,
+           if (args.isNotEmpty() && event.message.mentions.isEmpty()) {
+                event.message.channel.sendMessage(error(client,
                     event,
                     "'${args.joinToString(" ")}}' is not a mentioned user.",
                     commandInfo)).thenAccept { message ->
@@ -33,17 +36,17 @@ class Avatar : Command(arrayOf("avatar", "pfp", "av"),
                 user = client.user
                 avatarURL = client.user.avatarUrl()
             } else {
-                user = event.message.mentions.first()
+                user = event.message.mentions.values.first()
                 avatarURL = user.avatarUrl()
             }
 
-            event.channel.sendMessage(
+            event.message.channel.sendMessage(
                 MessageBuilder()
                     .appendLine("${user.discriminatedName}'s Avatar")
                     .appendLine(avatarURL)
                     .build()
             )
-                .thenAccept { this.launch { onComplete(it, client, config.auto_delete.bot.content_generation) } }*//*
+                .thenAccept { this.launch { onComplete(it, client, config.auto_delete.bot.content_generation) } }
 
         }
-}*/
+}

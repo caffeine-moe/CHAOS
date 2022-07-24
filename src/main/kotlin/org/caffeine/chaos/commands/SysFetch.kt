@@ -1,10 +1,14 @@
 package org.caffeine.chaos.commands
 
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.config
+import oshi.SystemInfo
 
 
 class SysFetch : Command(arrayOf("sysfetch", "sysinfo", "fetch"),
@@ -15,12 +19,14 @@ class SysFetch : Command(arrayOf("sysfetch", "sysinfo", "fetch"),
         args : MutableList<String>,
         cmd : String,
     ) : Unit = coroutineScope {
-/*        val sysInfo = SystemInfo()
+        val sysInfo = SystemInfo()
+
         val proc = sysInfo.hardware.processor
         val gpu = sysInfo.hardware.graphicsCards.first()
         val ram = sysInfo.hardware.memory
         val up = sysInfo.operatingSystem.systemUptime
-        event.channel.sendMessage(MessageBuilder()
+        event.message.channel.sendMessage(
+            MessageBuilder()
             .appendLine("Fetching info...").build()).thenAccept { message ->
             this.launch {
                 message.edit(MessageBuilder()
@@ -35,9 +41,9 @@ class SysFetch : Command(arrayOf("sysfetch", "sysinfo", "fetch"),
                     .appendLine("```")
                     .build()
                 ).thenAccept {
-                    this.launch { onComplete(it, client, client.config.auto_delete.bot.content_generation) }
+                    this.launch { onComplete(it, client, config.auto_delete.bot.content_generation) }
                 }
             }
-        }*/
+        }
     }
 }

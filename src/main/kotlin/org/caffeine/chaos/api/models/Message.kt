@@ -9,18 +9,20 @@ import java.util.Date
 import java.util.concurrent.CompletableFuture
 
 data class Message(
-    val client: Client = Client(),
-    val id: String = "",
-    val channel: TextBasedChannel = TextChannel(),
-    val guild: Guild? = Guild(),
-    val author: User = User(),
-    val content: String = "",
-    val timestamp: Date = Date(),
-    val editedAt: Date = Date(),
-    val tts: Boolean = false,
-    val mentionedEveryone: Boolean = false,
-    val pinned: Boolean = false,
-    val type: MessageType = MessageType.DEFAULT,
+    val client : Client = Client(),
+    val id : String = "",
+    val channel : TextBasedChannel = TextChannel(),
+    val guild : Guild? = Guild(),
+    val author : User = User(),
+    val content : String = "",
+    val timestamp : Date = Date(),
+    val editedAt : Date? = Date(),
+    val tts : Boolean = false,
+    val mentionedEveryone : Boolean = false,
+    val mentions : Map<String, User> = mapOf(),
+    val attachments : Map<String, Attachment> = mapOf(),
+    val pinned : Boolean = false,
+    val type : MessageType = MessageType.DEFAULT,
 ) {
     suspend fun delete() {
         client.user.deleteMessage(this)
