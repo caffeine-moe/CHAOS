@@ -87,7 +87,7 @@ suspend fun handleMessage(event : MessageCreateEvent, client : Client) {
 
             //set args value as the message content split by spaces into a list
             //and removes the first element (the actual command)
-            val args = event.message.content.lowercase().replaceFirst(config.prefix, "").split(" ").toMutableList()
+            val args = event.message.content.lowercase().replaceFirst(client.config.prefix, "").split(" ").toMutableList()
             args.removeAt(0)
 
             //finally, execute the command
