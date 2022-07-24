@@ -8,7 +8,7 @@ import org.caffeine.chaos.api.client.user.ClientUserImpl
 import org.caffeine.chaos.api.client.user.ClientUserSettings
 import org.caffeine.chaos.api.utils.DiscordUtils
 
-class ClientImpl() : BaseClient {
+class ClientImpl : BaseClient {
 
     lateinit var client : Client
     var ready : Boolean = false
@@ -19,10 +19,8 @@ class ClientImpl() : BaseClient {
     lateinit var userImpl : ClientUserImpl
     override lateinit var user : ClientUser //= ClientUser(true, "", "", "", "", "", ClientUserSettings(), "", true, "", Client(), userImpl)
 
-    override suspend fun login(token : String) {
-    }
+    override suspend fun login(token : String) {}
 
-    override suspend fun logout() {
-    }
+    override suspend fun logout() {}
 
 }

@@ -12,6 +12,7 @@ import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.client.user.ClientUserImpl
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.models.interfaces.DiscordUser
+import org.caffeine.chaos.api.typedefs.ChannelType
 import org.caffeine.chaos.api.utils.*
 import org.caffeine.chaos.config.Config
 import java.io.File

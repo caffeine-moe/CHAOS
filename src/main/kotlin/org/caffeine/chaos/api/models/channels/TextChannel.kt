@@ -24,6 +24,6 @@ class TextChannel(
     override val rateLimitPerUser : Number = 0,
 ) : GuildChannel, TextBasedChannel  {
     override suspend fun sendMessage(payload: MessageOptions) : CompletableFuture<Message> {
-        return client.utils.createMessage(payload, this.id)
+        return client.user.sendMessage(this, payload)
     }
 }

@@ -12,8 +12,8 @@ import org.caffeine.chaos.api.models.Friend
 import org.caffeine.chaos.api.models.Guild
 import org.caffeine.chaos.api.models.channels.DMChannel
 import org.caffeine.chaos.api.payloads.gateway.Ready
+import org.caffeine.chaos.api.payloads.gateway.data.SerialGuild
 import org.caffeine.chaos.api.payloads.gateway.data.ready.ReadyD
-import org.caffeine.chaos.api.payloads.gateway.data.ready.ReadyDGuild
 import org.caffeine.chaos.api.payloads.gateway.data.ready.ReadyDPrivateChannel
 import org.caffeine.chaos.api.payloads.gateway.data.ready.ReadyDRelationship
 import org.caffeine.chaos.api.utils.ConsoleColours
@@ -42,7 +42,7 @@ suspend fun ready(client : ClientImpl, payload : String, eventBus : EventBus) {
     val user = ClientUser(client.userImpl)
     client.user = user
     client.userImpl._privateChannels.putAll(extractPrivateChannels(d.private_channels, client.client))
-    client.userImpl._guilds.putAll(extractGuilds(d.guilds))
+    client.userImpl._guilds.putAll(extractGuilds(d.guilds, client.client))
     client.ready = true
     client.utils.sessionId = d.session_id
     log("${ConsoleColours.GREEN.value}Client logged in!", "API:")
@@ -88,44 +88,10 @@ private fun createUserSettings(d : ReadyD, client : BaseClient) : ClientUserSett
     )
 }
 
-fun extractGuilds(guilds : MutableList<ReadyDGuild>) : Map<String, Guild> {
+suspend fun extractGuilds(guilds : MutableList<SerialGuild>, client : Client) : Map<String, Guild> {
     val map = mutableMapOf<String, Guild>()
     for (guild in guilds) {
-        map[guild.id] = Guild(
-            guild.id,
-            guild.name,
-            guild.icon,
-            guild.description,
-            guild.splash,
-            guild.discovery_splash,
-            guild.features.toTypedArray(),
-            guild.banner,
-            guild.owner_id,
-            guild.application_id,
-            guild.region,
-            guild.afk_channel_id,
-            guild.afk_timeout,
-            guild.system_channel_id,
-            guild.widget_enabled,
-            "",
-            guild.verification_level,
-            guild.default_message_notifications,
-            guild.mfa_level,
-            guild.explicit_content_filter,
-            0,
-            guild.max_members,
-            guild.max_video_channel_users,
-            "https://discord.gg/${guild.vanity_url_code}",
-            guild.vanity_url_code,
-            guild.premium_tier,
-            guild.premium_subscription_count,
-            guild.system_channel_flags,
-            guild.preferred_locale,
-            guild.rules_channel_id,
-            guild.public_updates_channel_id,
-            false,
-            "",
-        )
+        map[guild.id] = client.utils.createGuild(guild) ?: continue
     }
     return map
 }

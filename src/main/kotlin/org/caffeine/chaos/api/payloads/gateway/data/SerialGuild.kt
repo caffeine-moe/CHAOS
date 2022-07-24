@@ -1,7 +1,7 @@
-package org.caffeine.chaos.api.payloads.gateway.data.ready
+package org.caffeine.chaos.api.payloads.gateway.data
 
 @kotlinx.serialization.Serializable
-data class ReadyDGuild(
+data class SerialGuild(
     val afk_channel_id: String = "",
     val afk_timeout: Int = 0,
     val application_id: String? = null,

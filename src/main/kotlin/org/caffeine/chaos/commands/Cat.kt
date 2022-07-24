@@ -1,11 +1,18 @@
 package org.caffeine.chaos.commands
 
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
-import org.caffeine.chaos.api.models.interfaces.DiscordUser
+import org.caffeine.chaos.api.json
+import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.utils.normalHTTPClient
+import org.caffeine.chaos.config
 
 class Cat : Command(arrayOf("cat", "meow"), CommandInfo("Cat", "cat", "Sends a random cat from cataas.com.")) {
 
@@ -20,10 +27,7 @@ class Cat : Command(arrayOf("cat", "meow"), CommandInfo("Cat", "cat", "Sends a r
         args : MutableList<String>,
         cmd : String,
     ) : Unit = coroutineScope {
-        if (event.message.author == client.user as DiscordUser) {
-            println("lmao")
-        }
-/*        val response = normalHTTPClient.get("https://cataas.com/cat?json=true") {
+        val response = normalHTTPClient.get("https://cataas.com/cat?json=true") {
             headers {
                 append("Host", "cataas.com")
                 append("Connection", "keep-alive")
@@ -41,13 +45,13 @@ class Cat : Command(arrayOf("cat", "meow"), CommandInfo("Cat", "cat", "Sends a r
             }
         }
         val cat = json.decodeFromString<CatResponse>(response.bodyAsText())
-        event.channel.sendMessage(
+        event.message.channel.sendMessage(
             MessageBuilder()
                 .appendLine("**Meow!!**")
                 .appendLine("https://cataas.com${cat.url}")
                 .build()
         ).thenAccept { message ->
-            this.launch { onComplete(message, client, client.config.auto_delete.bot.content_generation) }
-        }*/
+            this.launch { onComplete(message, client, config.auto_delete.bot.content_generation) }
+        }
     }
 }

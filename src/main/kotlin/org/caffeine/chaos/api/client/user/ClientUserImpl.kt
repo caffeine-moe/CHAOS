@@ -41,6 +41,7 @@ data class ClientUserImpl(
         get() = _privateChannels
 
     var _guilds = HashMap<String, Guild>()
-    override val guilds : Map<String, Guild> get() = _guilds
+    override val guilds : Map<String, Guild>
+        get() = _guilds
 
 }

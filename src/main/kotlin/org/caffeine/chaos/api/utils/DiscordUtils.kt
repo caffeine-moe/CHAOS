@@ -19,7 +19,13 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.models.Guild
 import org.caffeine.chaos.api.models.Message
+import org.caffeine.chaos.api.models.User
+import org.caffeine.chaos.api.models.channels.BaseChannel
 import org.caffeine.chaos.api.models.channels.DMChannel
+import org.caffeine.chaos.api.models.channels.TextChannel
+import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
+import org.caffeine.chaos.api.payloads.gateway.data.SerialGuild
+import org.caffeine.chaos.api.payloads.gateway.data.SerialMessage
 import org.caffeine.chaos.api.typedefs.*
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -173,6 +179,14 @@ open class DiscordUtils {
         }
         return ThemeType.UNKNOWN
     }
+    fun getMessageType(type : Number) : MessageType {
+        MessageType.values().forEach {
+            if (it.ordinal == type) {
+                return it
+            }
+        }
+        return MessageType.UNKNOWN
+    }
 
     private fun String.isValidSnowflake() : Boolean {
         val unix = convertIdToUnix(this)
@@ -197,26 +211,80 @@ open class DiscordUtils {
         if (id.isValidSnowflake() && client.user.guilds.containsKey(id)) {
             guild = client.user.guilds[id]
         } else if (id.isValidSnowflake()) {
-            val response = discordHTTPClient.get("$BASE_URL/users/@me/guilds/$id") {
+            val response = discordHTTPClient.get("$BASE_URL/guilds/$id") {
                 headers {
                     append(HttpHeaders.Authorization, token)
                 }
             }
-            println(response.bodyAsText())
+            guild = createGuild(json.decodeFromString(response.bodyAsText()))
         }
-
         return guild
     }
 
-    suspend fun createMessage(options : MessageOptions, id : String) : CompletableFuture<Message> {
-        val response = discordHTTPClient.post("$BASE_URL/channels/${id}/messages") {
-            headers {
-                append(HttpHeaders.Authorization, token)
-                append(HttpHeaders.ContentType, "application/json")
-            }
-            setBody(json.encodeToString(options))
+    fun createGuild(payload: SerialGuild) : Guild? {
+        var guild : Guild? = null
+        try {
+            guild = Guild(
+                payload.id,
+                payload.name,
+                payload.icon,
+                payload.description,
+                payload.splash,
+                payload.discovery_splash,
+                payload.features.toTypedArray(),
+                payload.banner,
+                payload.owner_id,
+                payload.application_id,
+                payload.region,
+                payload.afk_channel_id,
+                payload.afk_timeout,
+                payload.system_channel_id,
+                payload.widget_enabled,
+                "",
+                payload.verification_level,
+                payload.default_message_notifications,
+                payload.mfa_level,
+                payload.explicit_content_filter,
+                0,
+                payload.max_members,
+                payload.max_video_channel_users,
+                "https://discord.gg/${payload.vanity_url_code}",
+                payload.vanity_url_code,
+                payload.premium_tier,
+                payload.premium_subscription_count,
+                payload.system_channel_flags,
+                payload.preferred_locale,
+                payload.rules_channel_id,
+                payload.public_updates_channel_id,
+                false,
+                "",
+            )
+        } catch (e : Exception) {
+            log("Error creating guild: ${e.message}", "API:")
+            guild = null
         }
-        return CompletableFuture.completedFuture(Message())
+        return guild
+    }
+
+    suspend fun createMessage(message: SerialMessage) : Message {
+        return Message(
+            client,
+            message.id,
+            //TextChannel(d.channel_id, client.client),
+            client.utils.fetchChannel(message.channel_id),
+            client.utils.fetchGuild(message.guild_id ?: ""),
+            User(
+                message.author.username,
+                message.author.discriminator,
+                message.author.avatar,
+                message.author.id,
+            ),
+            message.content,
+            tts = message.tts ?: false,
+            mentionedEveryone = message.mention_everyone,
+            pinned = message.pinned,
+            type = getMessageType(message.type),
+        )
     }
 
 
@@ -257,6 +325,10 @@ open class DiscordUtils {
             clientBuildNumber)
         superPropertiesStr = json.encodeToString(superProperties)
         superPropertiesB64 = Base64.getEncoder().encodeToString(superPropertiesStr.toByteArray())
+    }
+
+    fun fetchChannel(channelId : String) : TextBasedChannel {
+        return client.user.privateChannels[channelId] ?: TextChannel(channelId)
     }
 }
 

@@ -2,18 +2,18 @@ package org.caffeine.chaos.api.client.user
 
 import io.ktor.client.plugins.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.client.BaseClient
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.models.BlockedUser
-import org.caffeine.chaos.api.models.Friend
-import org.caffeine.chaos.api.models.Guild
+import org.caffeine.chaos.api.models.*
 import org.caffeine.chaos.api.models.interfaces.DiscordUser
-import org.caffeine.chaos.api.models.User
 import org.caffeine.chaos.api.models.channels.BaseChannel
+import org.caffeine.chaos.api.payloads.gateway.data.SerialMessage
 import org.caffeine.chaos.api.typedefs.*
 import java.util.concurrent.CompletableFuture
 import kotlin.math.absoluteValue
@@ -32,6 +32,12 @@ class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
         return guild
     }*/
 
+    suspend fun deleteChannel(channel : BaseChannel) {
+        client.utils.discordHTTPClient.request("$BASE_URL/channels/${channel.id}") {
+            method = HttpMethod.Delete
+        }
+    }
+
     fun unblock(user : BlockedUser) {
         return
     }
@@ -42,7 +48,7 @@ class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
 
     suspend fun setHouse(house : HypeSquadHouseType) {
         if (house == HypeSquadHouseType.NONE) {
-            val request = client.utils.discordHTTPClient.request("$BASE_URL/hypesquad/online") {
+            client.utils.discordHTTPClient.request("$BASE_URL/hypesquad/online") {
                 method = HttpMethod.Delete
             }
         } else {
@@ -86,15 +92,22 @@ class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
         }
     }
 
-    suspend fun sendMessage(channel : BaseChannel, message : MessageOptions) : Any {
-        client.utils.discordHTTPClient.request("$BASE_URL/channels/${channel.id}/messages") {
+    suspend fun sendMessage(channel : BaseChannel, message : MessageOptions) : CompletableFuture<Message> {
+        val response = client.utils.discordHTTPClient.request("$BASE_URL/channels/${channel.id}/messages") {
             method = HttpMethod.Post
             headers {
                 append("Content-Type", "application/json")
             }
             setBody(json.encodeToString(message))
         }
-        return Any()
+        val serial = json.decodeFromString<SerialMessage>(response.bodyAsText())
+        return CompletableFuture.completedFuture(client.utils.createMessage(serial))
+    }
+
+    suspend fun deleteMessage(message : Message) {
+        client.utils.discordHTTPClient.request("$BASE_URL/channels/${message.channel.id}/messages/${message.id}") {
+            method = HttpMethod.Delete
+        }
     }
 
     suspend fun redeemCode(code : String) : CompletableFuture<RedeemedCode> {
@@ -130,5 +143,17 @@ class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
             }
             setBody(json.parseToJsonElement("{\"type\":2}").toString())
         }
+    }
+
+    suspend fun editMessage(message : Message, edit : MessageOptions) : CompletableFuture<Message> {
+        val response = client.utils.discordHTTPClient.request("$BASE_URL/channels/${message.channel.id}/messages/${message.id}") {
+            method = HttpMethod.Patch
+            headers {
+                append("Content-Type", "application/json")
+            }
+            setBody(json.encodeToString(edit))
+        }
+        val serial = json.decodeFromString<SerialMessage>(response.bodyAsText())
+        return CompletableFuture.completedFuture(client.utils.createMessage(serial))
     }
 }

@@ -7,6 +7,7 @@ import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
 import org.caffeine.chaos.api.typedefs.ChannelType
 import org.caffeine.chaos.api.typedefs.MessageOptions
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 class DMChannel(
     override val id: String,
@@ -15,9 +16,12 @@ class DMChannel(
     val lastMessageId: String,
     override val name: String,
     val recipients : Map<String, User>,
-) : BaseChannel, TextBasedChannel {
-    override suspend fun sendMessage(payload : MessageOptions) : Message {
-        client.user.sendMessage(this, payload)
-        return Message()
+) : TextBasedChannel {
+    override suspend fun sendMessage(payload : MessageOptions) : CompletableFuture<Message> {
+       return client.user.sendMessage(this, payload)
+    }
+
+    suspend fun delete() {
+        client.user.deleteChannel(this)
     }
 }

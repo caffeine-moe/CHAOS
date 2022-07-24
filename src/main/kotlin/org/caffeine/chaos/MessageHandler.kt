@@ -104,13 +104,13 @@ suspend fun handleMessage(event : ClientEvents.MessageCreate, client : Client) {
             }
 
             //if autodelete on the user is enabled then delete the command message
-/*            if (config.auto_delete.user.enabled) {
-                user(event, client)
-            }*/
+            if (config.auto_delete.user.enabled) {
+                user(event)
+            }
 
             //set args value as the message content split by spaces into a list
             //and removes the first element (the actual command)
-            val args = event.message.content.split(" ").toMutableList()
+            val args = event.message.content.lowercase().replaceFirst(config.prefix, "").split(" ").toMutableList()
             args.removeAt(0)
 
             //finally, execute the command

@@ -1,5 +1,8 @@
 package org.caffeine.chaos.commands
 
+import io.ktor.network.selector.*
+import io.ktor.network.sockets.*
+import io.ktor.util.network.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -11,6 +14,7 @@ import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.utils.DiscordUtils
 import org.caffeine.chaos.api.utils.MessageBuilder
 import java.net.InetAddress
+import java.net.URL
 
 
 class Ping : Command(arrayOf("ping", "latency"),
@@ -24,14 +28,8 @@ class Ping : Command(arrayOf("ping", "latency"),
         cmd : String,
     ) : Unit =
         coroutineScope {
-            event.message.channel.sendMessage(MessageBuilder().appendLine("Pong!").build()).thenAccept {
-                launch {
-                    //onComplete(it, client, true)
-                }
-            }
-        }
-/*            if (args.isEmpty()) {
-                event.channel.sendMessage(MessageBuilder()
+            if (args.isEmpty()) {
+                event.message.channel.sendMessage(MessageBuilder()
                     .appendLine("Pinging...")
                     .build())
                     .thenAccept { message ->
@@ -54,7 +52,7 @@ class Ping : Command(arrayOf("ping", "latency"),
                     }
                 return@coroutineScope
             }
-            event.channel.sendMessage(MessageBuilder()
+            event.message.channel.sendMessage(MessageBuilder()
                 .appendLine("Pinging...")
                 .build())
                 .thenAccept { message ->
@@ -105,6 +103,7 @@ class Ping : Command(arrayOf("ping", "latency"),
                             .build())
                             .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                     }
-                }*/
+                }
 
         }
+}
