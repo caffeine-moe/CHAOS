@@ -7,8 +7,10 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
 
 
-class Haste : Command(arrayOf("haste"),
-    CommandInfo("Haste", "haste <Text> OR <file.txt>", "Uploads text OR a text document to Hastebin.")) {
+class Haste : Command(
+    arrayOf("haste"),
+    CommandInfo("Haste", "haste <Text> OR <file.txt>", "Uploads text OR a text document to Hastebin.")
+) {
 
     @kotlinx.serialization.Serializable
     private data class HasteResponse(

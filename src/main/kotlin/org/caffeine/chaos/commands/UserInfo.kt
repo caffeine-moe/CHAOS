@@ -6,16 +6,16 @@ import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
-import org.caffeine.chaos.api.models.User
 import org.caffeine.chaos.api.models.interfaces.DiscordUser
-import org.caffeine.chaos.api.utils.DiscordUtils
 import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.config
 
 
 class UserInfo :
-    Command(arrayOf("userinfo", "info"),
-        CommandInfo("UserInfo", "info <@user>", "Displays information about a mentioned user.")) {
+    Command(
+        arrayOf("userinfo", "info"),
+        CommandInfo("UserInfo", "info <@user>", "Displays information about a mentioned user.")
+    ) {
     override suspend fun onCalled(
         client : Client,
         event : ClientEvents.MessageCreate,
@@ -55,7 +55,8 @@ class UserInfo :
                     .appendLine("**Bot:** ${usrInfo.bot}")
                     .appendLine("**Public Flags:** ${usrInfo.publicFlags}")*/
                     .appendLine("**Account Creation Date:** $acd")
-                    .build()).thenAccept { message ->
+                    .build()
+            ).thenAccept { message ->
                 this.launch { onComplete(message, client, config.auto_delete.bot.content_generation) }
             }
             return@coroutineScope

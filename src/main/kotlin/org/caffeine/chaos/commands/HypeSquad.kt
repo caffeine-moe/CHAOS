@@ -10,8 +10,10 @@ import org.caffeine.chaos.api.utils.log
 
 
 class HypeSquad :
-    Command(arrayOf("hypesquad", "house", "hs"),
-        CommandInfo("HypeSquad", "hypesquad <House>", "Changes your HypeSquad house.")) {
+    Command(
+        arrayOf("hypesquad", "house", "hs"),
+        CommandInfo("HypeSquad", "hypesquad <House>", "Changes your HypeSquad house.")
+    ) {
     override suspend fun onCalled(
         client : Client,
         event : ClientEvents.MessageCreate,

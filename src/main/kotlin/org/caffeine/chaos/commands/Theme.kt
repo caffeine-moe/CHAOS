@@ -17,15 +17,15 @@ class Theme : Command(arrayOf("theme", "dth"), CommandInfo("Theme", "theme <Them
         cmd : String,
     ) =
         coroutineScope {
-           val err : String = if (args.isNotEmpty()) {
+            val err : String = if (args.isNotEmpty()) {
                 val theme = when (args.first().lowercase()) {
                     "d", "dark" -> ThemeType.DARK
                     "l", "light" -> ThemeType.LIGHT
                     else -> null
                 }
                 if (theme != null) {
-                        client.user.setTheme(theme)
-                        return@coroutineScope
+                    client.user.setTheme(theme)
+                    return@coroutineScope
                 }
                 "${args.joinToString(" ")} is not a valid theme!"
             } else {

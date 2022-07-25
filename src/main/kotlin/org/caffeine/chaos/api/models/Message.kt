@@ -5,7 +5,7 @@ import org.caffeine.chaos.api.models.channels.TextChannel
 import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
 import org.caffeine.chaos.api.typedefs.MessageOptions
 import org.caffeine.chaos.api.typedefs.MessageType
-import java.util.Date
+import java.util.*
 import java.util.concurrent.CompletableFuture
 
 data class Message(

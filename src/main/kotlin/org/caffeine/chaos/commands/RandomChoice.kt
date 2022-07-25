@@ -7,8 +7,10 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
 
 
-class RandomChoice : Command(arrayOf("randomchoice", "rchoice", "rch"),
-    CommandInfo("Random Choice", "rch <Choices>", "Picks a random option/choice out of a list you provide.")) {
+class RandomChoice : Command(
+    arrayOf("randomchoice", "rchoice", "rch"),
+    CommandInfo("Random Choice", "rch <Choices>", "Picks a random option/choice out of a list you provide.")
+) {
     override suspend fun onCalled(
         client : Client,
         event : ClientEvents.MessageCreate,

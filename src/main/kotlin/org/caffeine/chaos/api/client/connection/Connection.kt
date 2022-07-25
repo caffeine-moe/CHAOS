@@ -92,13 +92,15 @@ internal class Connection(private val client : ClientImpl, private val eventBus 
             ConnectionType.CONNECT -> {
                 fetchWebClientValues()
                 client.utils.createSuperProperties()
-                val identify = json.encodeToString(Identify(
-                    OPCODE.IDENTIFY.value,
-                    IdentifyD(
-                        client.utils.token,
-                        client.utils.superProperties
+                val identify = json.encodeToString(
+                    Identify(
+                        OPCODE.IDENTIFY.value,
+                        IdentifyD(
+                            client.utils.token,
+                            client.utils.superProperties
+                        )
                     )
-                ))
+                )
                 PayloadDef("Identify", identify)
             }
             ConnectionType.DISCONNECT -> {
@@ -113,14 +115,16 @@ internal class Connection(private val client : ClientImpl, private val eventBus 
                 disconnect()
                 fetchWebClientValues()
                 client.utils.createSuperProperties()
-                val resume = json.encodeToString(Resume(
-                    OPCODE.RESUME.value,
-                    ResumeD(
-                        client.utils.gatewaySequence,
-                        client.utils.sessionId,
-                        client.utils.token
+                val resume = json.encodeToString(
+                    Resume(
+                        OPCODE.RESUME.value,
+                        ResumeD(
+                            client.utils.gatewaySequence,
+                            client.utils.sessionId,
+                            client.utils.token
+                        )
                     )
-                ))
+                )
                 PayloadDef("Resume", resume)
             }
         }
@@ -135,8 +139,10 @@ internal class Connection(private val client : ClientImpl, private val eventBus 
             val init = json.decodeFromString<Init>(event.decodeToString())
             when (init.op) {
                 OPCODE.HELLO.value -> {
-                    log("Client received OPCODE 10 HELLO, sending ${payload.name} payload and starting heartbeat.",
-                        "API:")
+                    log(
+                        "Client received OPCODE 10 HELLO, sending ${payload.name} payload and starting heartbeat.",
+                        "API:"
+                    )
 
                     client.utils.tokenValidator(client.utils.token)
 
@@ -159,8 +165,12 @@ internal class Connection(private val client : ClientImpl, private val eventBus 
     }
 
     suspend fun sendHeartBeat() {
-        val heartbeat = json.encodeToString(HeartBeat(OPCODE.HEARTBEAT.value,
-            if (client.utils.gatewaySequence > 0) client.utils.gatewaySequence else null))
+        val heartbeat = json.encodeToString(
+            HeartBeat(
+                OPCODE.HEARTBEAT.value,
+                if (client.utils.gatewaySequence > 0) client.utils.gatewaySequence else null
+            )
+        )
         webSocket.send(heartbeat)
     }
 

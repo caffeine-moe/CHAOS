@@ -1,6 +1,5 @@
 package org.caffeine.chaos
 
-import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.api.utils.log

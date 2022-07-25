@@ -7,8 +7,10 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.utils.log
 
-class IdToDate : Command(arrayOf("idtodate", "idtod", "idtd"),
-    CommandInfo("IdToDate", "idtodate <Discord ID>", "Converts any discord id to a normal date format.")) {
+class IdToDate : Command(
+    arrayOf("idtodate", "idtod", "idtd"),
+    CommandInfo("IdToDate", "idtodate <Discord ID>", "Converts any discord id to a normal date format.")
+) {
     override suspend fun onCalled(
         client : Client,
         event : ClientEvents.MessageCreate,

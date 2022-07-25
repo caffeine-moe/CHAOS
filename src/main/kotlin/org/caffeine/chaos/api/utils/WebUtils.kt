@@ -36,8 +36,10 @@ var userAgent =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36"
 
 suspend fun fetchWebClientValues() {
-    val dua = json.decodeFromString<DUAProp>(normalHTTPClient.get("https://discord-user-api.cf/api/v1/properties/web")
-        .bodyAsText())
+    val dua = json.decodeFromString<DUAProp>(
+        normalHTTPClient.get("https://discord-user-api.cf/api/v1/properties/web")
+            .bodyAsText()
+    )
     clientVersion = dua.chrome_version
     clientBuildNumber = dua.client_build_number
     userAgent = dua.chrome_user_agent

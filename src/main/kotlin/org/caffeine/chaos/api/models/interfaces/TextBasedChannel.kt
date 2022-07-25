@@ -11,8 +11,8 @@ import java.util.concurrent.CompletableFuture
 interface TextBasedChannel : BaseChannel {
     override val client : Client
     override val id : String
-    override val name: String?
+    override val name : String?
     override val type : ChannelType
-    suspend fun sendMessage(payload: MessageOptions): CompletableFuture<Message>
+    suspend fun sendMessage(payload : MessageOptions) : CompletableFuture<Message>
     suspend fun messagesAsCollection(messageFilters : MessageFilters) : Collection<Message>
 }

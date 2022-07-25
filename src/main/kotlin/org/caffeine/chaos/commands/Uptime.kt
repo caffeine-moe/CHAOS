@@ -7,16 +7,18 @@ import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.utils.MessageBuilder
-
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.programStartedTime
-import java.time.format.DateTimeFormatter
 import kotlin.math.absoluteValue
 
-class Uptime : Command(arrayOf("uptime"),
-    CommandInfo("Uptime",
+class Uptime : Command(
+    arrayOf("uptime"),
+    CommandInfo(
+        "Uptime",
         "uptime",
-        "Displays how long CHAOS has been running for in Days, Hours, Minutes and Seconds.")) {
+        "Displays how long CHAOS has been running for in Days, Hours, Minutes and Seconds."
+    )
+) {
     override suspend fun onCalled(
         client : Client,
         event : ClientEvents.MessageCreate,
@@ -31,8 +33,9 @@ class Uptime : Command(arrayOf("uptime"),
         log("CHAOS has been running for $days days, $hours hours, $minutes minutes and $seconds seconds.)")
         event.message.channel.sendMessage(
             MessageBuilder()
-            .appendLine("CHAOS has been running for $days days, $hours hours, $minutes minutes and $seconds seconds.")
-            .build()).thenAccept {
+                .appendLine("CHAOS has been running for $days days, $hours hours, $minutes minutes and $seconds seconds.")
+                .build()
+        ).thenAccept {
             this.launch {
                 onComplete(it, client, true)
             }

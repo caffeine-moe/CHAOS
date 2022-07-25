@@ -1,23 +1,19 @@
 package org.caffeine.chaos
 
-import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
-import org.caffeine.chaos.api.client.BaseClient
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
-import org.caffeine.chaos.api.client.ClientImpl
-import org.caffeine.chaos.api.client.user.ClientUserImpl
 import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.models.interfaces.DiscordUser
-import org.caffeine.chaos.api.typedefs.ChannelType
 import org.caffeine.chaos.api.utils.*
 import org.caffeine.chaos.config.Config
 import java.io.File
 import java.net.ConnectException
-import kotlin.math.truncate
 import kotlin.system.exitProcess
 
 //version lmao
@@ -77,8 +73,10 @@ suspend fun main(args : Array<String> = arrayOf()) : Unit = coroutineScope {
     //gets antiscam links
     if (config.anti_scam.enabled) {
         scamLinks =
-            json.decodeFromString<AntiScamResponse>(normalHTTPClient.get("https://raw.githubusercontent.com/nikolaischunk/discord-phishing-links/main/domain-list.json")
-                .bodyAsText()).domains
+            json.decodeFromString<AntiScamResponse>(
+                normalHTTPClient.get("https://raw.githubusercontent.com/nikolaischunk/discord-phishing-links/main/domain-list.json")
+                    .bodyAsText()
+            ).domains
     }
     //makes new client
     val client = Client()
@@ -111,7 +109,7 @@ suspend fun main(args : Array<String> = arrayOf()) : Unit = coroutineScope {
 suspend fun checkNetwork() {
     try {
         normalHTTPClient.get("https://example.com")
-    }catch (e: ConnectException) {
+    } catch (e : ConnectException) {
         log("Unable to connect to the internet; internet access is needed for CHAOS.")
         exitProcess(69)
     }

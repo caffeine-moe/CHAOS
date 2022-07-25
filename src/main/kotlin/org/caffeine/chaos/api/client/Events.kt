@@ -9,7 +9,7 @@ interface ClientEvent
 
 abstract class ClientEvents {
     class Ready(val user : ClientUser) : ClientEvent
-    class MessageCreate (val message: Message = Message()) : ClientEvent
+    class MessageCreate(val message : Message = Message()) : ClientEvent
 }
 
 class EventBus {

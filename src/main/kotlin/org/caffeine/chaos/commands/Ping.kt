@@ -11,16 +11,18 @@ import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
-import org.caffeine.chaos.api.utils.DiscordUtils
 import org.caffeine.chaos.api.utils.MessageBuilder
-import java.net.InetAddress
 import java.net.URL
 
 
-class Ping : Command(arrayOf("ping", "latency"),
-    CommandInfo("Ping",
+class Ping : Command(
+    arrayOf("ping", "latency"),
+    CommandInfo(
+        "Ping",
         "ping [IP/URL]",
-        "Checks how long it takes to connect to the discord gateway OR a specified IP or URL in milliseconds.")) {
+        "Checks how long it takes to connect to the discord gateway OR a specified IP or URL in milliseconds."
+    )
+) {
     override suspend fun onCalled(
         client : Client,
         event : ClientEvents.MessageCreate,
@@ -29,9 +31,11 @@ class Ping : Command(arrayOf("ping", "latency"),
     ) : Unit =
         coroutineScope {
             if (args.isEmpty()) {
-                event.message.channel.sendMessage(MessageBuilder()
-                    .appendLine("Pinging...")
-                    .build())
+                event.message.channel.sendMessage(
+                    MessageBuilder()
+                        .appendLine("Pinging...")
+                        .build()
+                )
                     .thenAccept { message ->
                         this.launch {
                             val selectorManager = ActorSelectorManager(Dispatchers.IO)
@@ -42,19 +46,23 @@ class Ping : Command(arrayOf("ping", "latency"),
                                 serverSocket.close()
                             }
                             val ping = stop - start
-                            message.edit(MessageBuilder()
-                                .appendLine(":ping_pong: Pong!")
-                                .appendLine("Target: Discord API")
-                                .appendLine("Latency: ${ping}ms")
-                                .build())
+                            message.edit(
+                                MessageBuilder()
+                                    .appendLine(":ping_pong: Pong!")
+                                    .appendLine("Target: Discord API")
+                                    .appendLine("Latency: ${ping}ms")
+                                    .build()
+                            )
                                 .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                         }
                     }
                 return@coroutineScope
             }
-            event.message.channel.sendMessage(MessageBuilder()
-                .appendLine("Pinging...")
-                .build())
+            event.message.channel.sendMessage(
+                MessageBuilder()
+                    .appendLine("Pinging...")
+                    .build()
+            )
                 .thenAccept { message ->
                     this.launch {
                         val start : Long
@@ -81,10 +89,12 @@ class Ping : Command(arrayOf("ping", "latency"),
                                     "IP/URL '$url' is invalid."
                                 }
                                 is SocketTimeoutException -> {
-                                    message.edit(MessageBuilder()
-                                        .appendLine(":pensive: Connection timed out")
-                                        .appendLine("Try a different IP or URL...")
-                                        .build())
+                                    message.edit(
+                                        MessageBuilder()
+                                            .appendLine(":pensive: Connection timed out")
+                                            .appendLine("Try a different IP or URL...")
+                                            .build()
+                                    )
                                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                                     return@launch
                                 }
@@ -96,11 +106,13 @@ class Ping : Command(arrayOf("ping", "latency"),
                             return@launch
                         }
                         val ping = stop - start
-                        message.edit(MessageBuilder()
-                            .appendLine(":ping_pong: Pong!")
-                            .appendLine("Target: $url")
-                            .appendLine("Latency: ${ping}ms")
-                            .build())
+                        message.edit(
+                            MessageBuilder()
+                                .appendLine(":ping_pong: Pong!")
+                                .appendLine("Target: $url")
+                                .appendLine("Latency: ${ping}ms")
+                                .build()
+                        )
                             .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                     }
                 }

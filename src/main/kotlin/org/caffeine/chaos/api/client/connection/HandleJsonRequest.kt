@@ -1,13 +1,12 @@
 package org.caffeine.chaos.api.client.connection
 
-import io.ktor.utils.io.core.*
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.Event
 import org.caffeine.chaos.api.OPCODE
-import org.caffeine.chaos.api.client.BaseClient
 import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.client.EventBus
-import org.caffeine.chaos.api.handlers.*
+import org.caffeine.chaos.api.handlers.messageCreate
+import org.caffeine.chaos.api.handlers.ready
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.payloads.gateway.Default
 import org.caffeine.chaos.api.utils.log

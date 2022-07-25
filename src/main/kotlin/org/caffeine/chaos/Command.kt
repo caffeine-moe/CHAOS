@@ -2,7 +2,6 @@ package org.caffeine.chaos
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
-import org.caffeine.chaos.api.models.Message
 import org.caffeine.chaos.api.typedefs.MessageOptions
 import org.caffeine.chaos.api.utils.MessageBuilder
 
@@ -19,9 +18,20 @@ open class Command(val commandNames : Array<String>, val commandInfo : CommandIn
         }
     }
 
-    open suspend fun onCalled(client : Client, event : ClientEvents.MessageCreate, args : MutableList<String>, cmd : String) {}
+    open suspend fun onCalled(
+        client : Client,
+        event : ClientEvents.MessageCreate,
+        args : MutableList<String>,
+        cmd : String,
+    ) {
+    }
 
-    open suspend fun error(client : Client, event : ClientEvents.MessageCreate, error : String, info : CommandInfo) : MessageOptions {
+    open suspend fun error(
+        client : Client,
+        event : ClientEvents.MessageCreate,
+        error : String,
+        info : CommandInfo,
+    ) : MessageOptions {
         return MessageBuilder()
             .appendLine("**Incorrect usage** '${event.message.content}'")
             .appendLine("**Error:** $error")

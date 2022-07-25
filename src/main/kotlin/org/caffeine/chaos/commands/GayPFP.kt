@@ -6,8 +6,10 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
 
 
-class GayPFP : Command(arrayOf("gaypfp"),
-    CommandInfo("GayPFP", "gaypfp <@user>", "Overlays a random lgbtq flag over someones pfp.")) {
+class GayPFP : Command(
+    arrayOf("gaypfp"),
+    CommandInfo("GayPFP", "gaypfp <@user>", "Overlays a random lgbtq flag over someones pfp.")
+) {
     override suspend fun onCalled(
         client : Client,
         event : ClientEvents.MessageCreate,

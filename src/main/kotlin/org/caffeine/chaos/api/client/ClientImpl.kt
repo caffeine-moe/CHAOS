@@ -2,10 +2,8 @@ package org.caffeine.chaos.api.client
 
 import kotlinx.coroutines.flow.SharedFlow
 import org.caffeine.chaos.api.client.connection.Connection
-import org.caffeine.chaos.api.client.connection.ConnectionType
 import org.caffeine.chaos.api.client.user.ClientUser
 import org.caffeine.chaos.api.client.user.ClientUserImpl
-import org.caffeine.chaos.api.client.user.ClientUserSettings
 import org.caffeine.chaos.api.utils.DiscordUtils
 
 class ClientImpl : BaseClient {

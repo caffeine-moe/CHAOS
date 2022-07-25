@@ -9,7 +9,7 @@ data class BlockedUser(
     override val discriminator : String = "",
     override val avatar : String? = "",
     override val id : String = "",
-    private val client : Client
+    private val client : Client,
 ) : DiscordUser {
     override val discriminatedName = "$username#$discriminator"
     override fun avatarUrl() : String {
@@ -23,6 +23,7 @@ data class BlockedUser(
             "https://cdn.discordapp.com/embed/avatars/${discriminator.toInt().absoluteValue % 5}.png"
         }
     }
+
     fun unblock() {
         client.user.unblock(this)
     }

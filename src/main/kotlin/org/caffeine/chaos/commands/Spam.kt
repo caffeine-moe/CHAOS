@@ -1,10 +1,14 @@
 package org.caffeine.chaos.commands
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.utils.MessageBuilder
 
 import org.caffeine.chaos.spamCock
 
@@ -17,8 +21,8 @@ class Spam : Command(arrayOf("spam"), CommandInfo("Spam", "spam <Message> <Amoun
     ) =
         coroutineScope {
             spamCock = false
-/*            if (args.isEmpty()) {
-                event.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))
+            if (args.isEmpty()) {
+                event.message.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))
                     .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 return@coroutineScope
             }
@@ -26,7 +30,14 @@ class Spam : Command(arrayOf("spam"), CommandInfo("Spam", "spam <Message> <Amoun
             try {
                 val number = args.last().toLong()
                 if (number <= 0) {
-                    event.channel.sendMessage(error(client, event, "Amount must be higher than 0.", commandInfo))
+                    event.message.channel.sendMessage(
+                        error(
+                            client,
+                            event,
+                            "Amount must be higher than 0.",
+                            commandInfo
+                        )
+                    )
                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                     return@coroutineScope
                 }
@@ -37,35 +48,41 @@ class Spam : Command(arrayOf("spam"), CommandInfo("Spam", "spam <Message> <Amoun
                             Thread.sleep(5000)
                         }
                     }
-                    event.channel.sendMessage(MessageBuilder().appendLine(msg).build())
+                    event.message.channel.sendMessage(MessageBuilder().appendLine(msg).build())
                     done++
                     withContext(Dispatchers.IO) {
                         Thread.sleep(250)
                     }
                 }
                 if (done > 1) {
-                    event.channel.sendMessage(MessageBuilder().appendLine("Done spamming '$msg' $done times.")
-                        .build())
+                    event.message.channel.sendMessage(
+                        MessageBuilder().appendLine("Done spamming '$msg' $done times.")
+                            .build()
+                    )
                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 }
                 if (done == 1) {
-                    event.channel.sendMessage(MessageBuilder().appendLine("Done spamming '$msg' once.").build())
+                    event.message.channel.sendMessage(MessageBuilder().appendLine("Done spamming '$msg' once.").build())
                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                 }
             } catch (e : Exception) {
                 when (e) {
                     is NumberFormatException -> {
-                        event.channel.sendMessage(error(client,
-                            event,
-                            "'${args.last()}' is not an integer.",
-                            commandInfo))
+                        event.message.channel.sendMessage(
+                            error(
+                                client,
+                                event,
+                                "'${args.last()}' is not an integer.",
+                                commandInfo
+                            )
+                        )
                             .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                     }
                     is IndexOutOfBoundsException -> {
-                        event.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))
+                        event.message.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))
                             .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                     }
                 }
-            }*/
+            }
         }
 }

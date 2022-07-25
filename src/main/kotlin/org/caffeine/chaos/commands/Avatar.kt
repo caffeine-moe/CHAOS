@@ -10,8 +10,10 @@ import org.caffeine.chaos.api.models.interfaces.DiscordUser
 import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.config
 
-class Avatar : Command(arrayOf("avatar", "pfp", "av"),
-    CommandInfo("Avatar", "av [@user]", "Sends your avatar or a mentioned users avatar.")) {
+class Avatar : Command(
+    arrayOf("avatar", "pfp", "av"),
+    CommandInfo("Avatar", "av [@user]", "Sends your avatar or a mentioned users avatar.")
+) {
     override suspend fun onCalled(
         client : Client,
         event : ClientEvents.MessageCreate,
@@ -19,11 +21,15 @@ class Avatar : Command(arrayOf("avatar", "pfp", "av"),
         cmd : String,
     ) =
         coroutineScope {
-           if (args.isNotEmpty() && event.message.mentions.isEmpty()) {
-                event.message.channel.sendMessage(error(client,
-                    event,
-                    "'${args.joinToString(" ")}}' is not a mentioned user.",
-                    commandInfo)).thenAccept { message ->
+            if (args.isNotEmpty() && event.message.mentions.isEmpty()) {
+                event.message.channel.sendMessage(
+                    error(
+                        client,
+                        event,
+                        "'${args.joinToString(" ")}}' is not a mentioned user.",
+                        commandInfo
+                    )
+                ).thenAccept { message ->
                     this.launch { onComplete(message, client, true) }
                 }
                 return@coroutineScope

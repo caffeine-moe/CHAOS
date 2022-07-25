@@ -1,5 +1,5 @@
 package org.caffeine.chaos
-
+/*
 import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
@@ -15,29 +15,12 @@ class AutoBump : Command(arrayOf("bump", "autobump", "sbump"), CommandInfo("Auto
         if (event.message.guild == null) {
             log("AutoBump can only be used in a server.", "AutoBump")
             return@coroutineScope
-        } else {
-            println("${event.message.guild.name} - ${event.message.guild.id} - ${event.message.content}")
         }
-/*        val pre = "AUTO BUMP:"
+        val pre = "AUTO BUMP:"
         var err = ""
         val logging = config.logger.auto_bump
         if (cmd != "sbump") {
-            val channel = event.channel
-
-            val guild = client.user.getGuild(channel)
-
-            val guildChannel = if (guild != null) {
-                var chan : ClientGuildChannel? = null
-                for (c in guild.channels) {
-                    if (c.id == channel.id) {
-                        chan = c
-                    }
-                }
-                chan
-            } else {
-                err = "Channel ${channel.id} is not a guild channel."
-                null
-            }
+            val channel = event.message.channel
 
             var set = AppCommand()
 
@@ -120,6 +103,6 @@ class AutoBump : Command(arrayOf("bump", "autobump", "sbump"), CommandInfo("Auto
         }
         autoBumpCock = true
         bumping = mutableListOf()
-    }*/
     }
-}
+    }
+}*/

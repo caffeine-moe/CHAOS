@@ -83,13 +83,13 @@ data class Role(
 )
 
 fun guildCreate(payload : String, client : ClientImpl) {
-        val parsed = jsonc.decodeFromString<GuildCreate>(payload)
-        val guild = Guild(
-            parsed.d.id,
-            parsed.d.name,
-            parsed.d.icon,
-            parsed.d.description,
-            parsed.d.splash,
-        )
-        client.userImpl
+    val parsed = jsonc.decodeFromString<GuildCreate>(payload)
+    val guild = Guild(
+        parsed.d.id,
+        parsed.d.name,
+        parsed.d.icon,
+        parsed.d.description,
+        parsed.d.splash,
+    )
+    client.userImpl
 }

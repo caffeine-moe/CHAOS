@@ -132,9 +132,11 @@ private suspend fun downloadUpdate(url : String, updoot : Updoot) : CompletableF
     val filename = "CHAOS-${updoot.latestVerString}.jar"
     withContext(Dispatchers.IO) {
         val inputStream = URL(url).openStream()
-        Files.copy(inputStream,
+        Files.copy(
+            inputStream,
             Paths.get(filename),
-            StandardCopyOption.REPLACE_EXISTING)
+            StandardCopyOption.REPLACE_EXISTING
+        )
     }
     val filepath = File("CHAOS-${updoot.latestVerString}.jar").absolutePath
     return CompletableFuture.completedFuture(filepath)

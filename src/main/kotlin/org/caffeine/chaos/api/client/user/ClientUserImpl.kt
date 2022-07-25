@@ -2,7 +2,6 @@ package org.caffeine.chaos.api.client.user
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.models.Guild
-import org.caffeine.chaos.api.models.channels.BaseChannel
 import org.caffeine.chaos.api.models.channels.DMChannel
 import kotlin.math.absoluteValue
 
@@ -19,7 +18,7 @@ data class ClientUserImpl(
     override var premium : Boolean,
     override var token : String,
     override val client : Client,
-): BaseClientUser {
+) : BaseClientUser {
 
     override val discriminatedName : String
         get() = "$username#$discriminator"

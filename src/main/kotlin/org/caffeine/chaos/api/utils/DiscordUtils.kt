@@ -127,7 +127,11 @@ open class DiscordUtils {
     }
 
     fun convertIdToUnix(id : String) : Long {
-        return if (id.isNotBlank()) { (id.toLong() / 4194304 + 1420070400000).absoluteValue } else { 0 }
+        return if (id.isNotBlank()) {
+            (id.toLong() / 4194304 + 1420070400000).absoluteValue
+        } else {
+            0
+        }
     }
 
     suspend fun tokenValidator(token : String) {
@@ -182,6 +186,7 @@ open class DiscordUtils {
         }
         return ThemeType.UNKNOWN
     }
+
     fun getMessageType(type : Number) : MessageType {
         MessageType.values().forEach {
             if (it.ordinal == type) {
@@ -258,7 +263,7 @@ open class DiscordUtils {
         return guild
     }
 
-    fun createGuild(payload: SerialGuild) : Guild? {
+    fun createGuild(payload : SerialGuild) : Guild? {
         var guild : Guild? = null
         try {
             guild = Guild(
@@ -285,7 +290,7 @@ open class DiscordUtils {
                 0,
                 payload.max_members,
                 payload.max_video_channel_users,
-                "https://discord.gg/${payload.vanity_url_code}",
+                if (payload.vanity_url_code != null) "https://discord.gg/${payload.vanity_url_code}" else null,
                 payload.vanity_url_code,
                 payload.premium_tier,
                 payload.premium_subscription_count,
@@ -307,13 +312,15 @@ open class DiscordUtils {
         return client.user.privateChannels[channelId]
     }
 
-    suspend fun createMessage(message: SerialMessage) : Message {
+    suspend fun createMessage(message : SerialMessage) : Message {
 
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
 
         val editedTimestamp = if (!message.edited_timestamp.isNullOrBlank()) {
             dateFormat.parse(message.edited_timestamp)
-        } else { null }
+        } else {
+            null
+        }
 
         val mentions = hashMapOf<String, User>()
 
@@ -333,7 +340,7 @@ open class DiscordUtils {
             //TextChannel(d.channel_id, client.client),
             client.utils.fetchChannel(message.channel_id)
             //shouldn't happen ever but just in case
-            ?: TextChannel(message.channel_id),
+                ?: TextChannel(message.channel_id),
             client.utils.fetchGuild(message.guild_id ?: ""),
             User(
                 message.author.username,
@@ -366,7 +373,7 @@ open class DiscordUtils {
         )
     }
 
-    fun createUser(user: SerialUser) : User {
+    fun createUser(user : SerialUser) : User {
         return User(
             user.username,
             user.discriminator,
@@ -384,7 +391,8 @@ open class DiscordUtils {
     var superPropertiesB64 = ""
 
     fun createSuperProperties() {
-        superProperties = SuperProperties("Windows",
+        superProperties = SuperProperties(
+            "Windows",
             "Chrome",
             "",
             userAgent,
@@ -396,7 +404,8 @@ open class DiscordUtils {
             "",
             "stable",
             "en-US",
-            clientBuildNumber)
+            clientBuildNumber
+        )
         superPropertiesStr = json.encodeToString(superProperties)
         superPropertiesB64 = Base64.getEncoder().encodeToString(superPropertiesStr.toByteArray())
     }
@@ -405,6 +414,7 @@ open class DiscordUtils {
 class MessageBuilder : DiscordUtils() {
     private var sb = StringBuilder()
     private var tts = false
+
     //private var attachments = mutableListOf<MessageAttachment>()
     fun build() : MessageOptions {
         return MessageOptions(sb.toString(), tts, calcNonce())

@@ -7,10 +7,14 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
 
 
-class Pin : Command(arrayOf("pin", "p"),
-    CommandInfo("Pin",
+class Pin : Command(
+    arrayOf("pin", "p"),
+    CommandInfo(
+        "Pin",
         "pin <Message OR Reply>",
-        "Pins text that you put after the command OR a message that you reply to.")) {
+        "Pins text that you put after the command OR a message that you reply to."
+    )
+) {
     override suspend fun onCalled(
         client : Client,
         event : ClientEvents.MessageCreate,

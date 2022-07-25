@@ -34,7 +34,10 @@ suspend fun ready(client : ClientImpl, payload : String, eventBus : EventBus) {
         d.user.bio,
         createUserSettings(d, client),
         d.user.avatar,
-        ClientUserRelationships(extractFriends(d.relationships, client.client), extractBlockList(d.relationships, client.client)),
+        ClientUserRelationships(
+            extractFriends(d.relationships, client.client),
+            extractBlockList(d.relationships, client.client)
+        ),
         d.user.premium,
         client.utils.token,
         client.client,
@@ -113,7 +116,10 @@ private fun extractFriends(relationships : MutableList<ReadyDRelationship>, clie
     return friends
 }
 
-private fun extractPrivateChannels(channels : MutableList<ReadyDPrivateChannel>, client : Client) : HashMap<String, DMChannel> {
+private fun extractPrivateChannels(
+    channels : MutableList<ReadyDPrivateChannel>,
+    client : Client,
+) : HashMap<String, DMChannel> {
     val map = hashMapOf<String, DMChannel>()
     for (channel in channels) {
         val recipients = hashMapOf<String, org.caffeine.chaos.api.models.User>()
@@ -137,7 +143,10 @@ private fun extractPrivateChannels(channels : MutableList<ReadyDPrivateChannel>,
     return map
 }
 
-private fun extractBlockList(relationships : MutableList<ReadyDRelationship>, client : Client) : HashMap<String, BlockedUser> {
+private fun extractBlockList(
+    relationships : MutableList<ReadyDRelationship>,
+    client : Client,
+) : HashMap<String, BlockedUser> {
     val blocked = hashMapOf<String, BlockedUser>()
     for (relationship in relationships) {
         if (relationship.type == 2) {

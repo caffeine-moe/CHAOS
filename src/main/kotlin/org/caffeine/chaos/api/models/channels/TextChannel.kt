@@ -1,6 +1,5 @@
 package org.caffeine.chaos.api.models.channels
 
-import org.caffeine.chaos.api.client.BaseClient
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.models.Message
 import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
@@ -23,8 +22,8 @@ class TextChannel(
     override val permissionOverwrites : Array<Any> = arrayOf(),
     override val nsfw : Boolean = false,
     override val rateLimitPerUser : Number = 0,
-) : GuildChannel, TextBasedChannel  {
-    override suspend fun sendMessage(payload: MessageOptions) : CompletableFuture<Message> {
+) : GuildChannel, TextBasedChannel {
+    override suspend fun sendMessage(payload : MessageOptions) : CompletableFuture<Message> {
         return client.user.sendMessage(this, payload)
     }
 

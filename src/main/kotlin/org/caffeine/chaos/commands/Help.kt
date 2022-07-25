@@ -7,8 +7,10 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
 
 
-class Help : Command(arrayOf("help", "cmds", "commands"),
-    CommandInfo("Help", "help [command]", "Sends the command list URL OR Displays info about a specified command.")) {
+class Help : Command(
+    arrayOf("help", "cmds", "commands"),
+    CommandInfo("Help", "help [command]", "Sends the command list URL OR Displays info about a specified command.")
+) {
     override suspend fun onCalled(
         client : Client,
         event : ClientEvents.MessageCreate,

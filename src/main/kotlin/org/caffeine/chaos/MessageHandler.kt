@@ -35,7 +35,7 @@ fun registerCommands() {
     SSpam()
     Purge()
     SPurge()
-    //Backup()
+    Backup()
     Restore()
     //exchange(client, event)
     Coin()
@@ -51,7 +51,7 @@ fun registerCommands() {
     Uptime()
     SysFetch()
     UserInfo()
-    AutoBump()
+    //AutoBump()
     MuteAllServers()
     Theme()
     Pin()
@@ -80,7 +80,7 @@ suspend fun handleMessage(event : ClientEvents.MessageCreate, client : Client) {
 
 /*        val guild = client.user.getGuild(event.channel)
 
-        if (guild != null) {
+    `    if (guild != null) {
             if (!guilds.contains(guild.id)) {
                 client.user.fetchGuildMembers(guild)
                 guilds[guild.id] = guild

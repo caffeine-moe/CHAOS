@@ -1,8 +1,6 @@
 package org.caffeine.chaos.api.handlers
 
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.models.GuildMember
-import org.caffeine.chaos.api.models.User
 
 /*@kotlinx.serialization.Serializable
 private data class GuildMemberListUpdate(

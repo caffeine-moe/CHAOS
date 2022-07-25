@@ -8,8 +8,10 @@ import org.caffeine.chaos.api.client.ClientEvents
 
 
 class LeaveGroupDms :
-    Command(arrayOf("leavegroupdms", "lgdm", "leavegroups"),
-        CommandInfo("LeaveGroupDms", "lgdm", "Leaves all group DMs.")) {
+    Command(
+        arrayOf("leavegroupdms", "lgdm", "leavegroups"),
+        CommandInfo("LeaveGroupDms", "lgdm", "Leaves all group DMs.")
+    ) {
     override suspend fun onCalled(
         client : Client,
         event : ClientEvents.MessageCreate,

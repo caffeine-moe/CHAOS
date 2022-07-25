@@ -25,6 +25,6 @@ class Status :
             }
             "Invalid status '${args.joinToString(" ")}'."
         }
-        //event.channel.sendMessage(error(client, event, err, commandInfo))
+        event.message.channel.sendMessage(error(client, event, err, commandInfo))
     }
 }
