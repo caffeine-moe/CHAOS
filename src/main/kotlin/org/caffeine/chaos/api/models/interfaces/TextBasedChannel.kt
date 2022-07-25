@@ -1,8 +1,7 @@
 package org.caffeine.chaos.api.models.interfaces
 
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.models.Message
-import org.caffeine.chaos.api.models.channels.BaseChannel
+import org.caffeine.chaos.api.models.message.Message
 import org.caffeine.chaos.api.typedefs.ChannelType
 import org.caffeine.chaos.api.typedefs.MessageOptions
 import org.caffeine.chaos.api.utils.MessageFilters

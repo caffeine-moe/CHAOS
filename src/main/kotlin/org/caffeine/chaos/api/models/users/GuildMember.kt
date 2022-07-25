@@ -1,4 +1,4 @@
-package org.caffeine.chaos.api.models
+package org.caffeine.chaos.api.models.users
 
 import java.util.*
 

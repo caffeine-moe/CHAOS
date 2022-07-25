@@ -7,10 +7,11 @@ import org.caffeine.chaos.api.client.user.ClientUserImpl
 import org.caffeine.chaos.api.client.user.ClientUserRelationships
 import org.caffeine.chaos.api.client.user.ClientUserSettings
 import org.caffeine.chaos.api.jsonc
-import org.caffeine.chaos.api.models.BlockedUser
-import org.caffeine.chaos.api.models.Friend
-import org.caffeine.chaos.api.models.Guild
+import org.caffeine.chaos.api.models.users.BlockedUser
+import org.caffeine.chaos.api.models.users.Friend
+import org.caffeine.chaos.api.models.guild.Guild
 import org.caffeine.chaos.api.models.channels.DMChannel
+import org.caffeine.chaos.api.models.users.User
 import org.caffeine.chaos.api.payloads.gateway.Ready
 import org.caffeine.chaos.api.payloads.gateway.data.SerialGuild
 import org.caffeine.chaos.api.payloads.gateway.data.ready.ReadyD
@@ -20,7 +21,7 @@ import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.log
 import java.io.File
 
-suspend fun ready(client : ClientImpl, payload : String, eventBus : EventBus) {
+suspend fun ready(client : ClientImpl, payload : String) {
     val f = File("ready.json")
     f.createNewFile()
     f.writeText(payload)
@@ -49,7 +50,7 @@ suspend fun ready(client : ClientImpl, payload : String, eventBus : EventBus) {
     client.ready = true
     client.utils.sessionId = d.session_id
     log("${ConsoleColours.GREEN.value}Client logged in!", "API:")
-    eventBus.produceEvent(ClientEvents.Ready(user))
+    client.eventBus.produceEvent(ClientEvents.Ready(user))
 }
 
 private fun createUserSettings(d : ReadyD, client : BaseClient) : ClientUserSettings {
@@ -122,13 +123,14 @@ private fun extractPrivateChannels(
 ) : HashMap<String, DMChannel> {
     val map = hashMapOf<String, DMChannel>()
     for (channel in channels) {
-        val recipients = hashMapOf<String, org.caffeine.chaos.api.models.User>()
+        val recipients = hashMapOf<String, User>()
         for (recipient in channel.recipients) {
-            recipients[recipient.id] = org.caffeine.chaos.api.models.User(
+            recipients[recipient.id] = User(
                 recipient.username,
                 recipient.discriminator,
                 recipient.avatar,
                 recipient.id,
+                client
             )
         }
         map[channel.id] = DMChannel(

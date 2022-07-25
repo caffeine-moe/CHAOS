@@ -1,19 +1,14 @@
 package org.caffeine.chaos.api.handlers
 
 import kotlinx.serialization.decodeFromString
+import org.caffeine.chaos.api.client.ClientEvent
+import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.jsonc
-import org.caffeine.chaos.api.models.Guild
+import org.caffeine.chaos.api.models.guild.Guild
+import org.caffeine.chaos.api.payloads.gateway.GuildCreate
 
-@kotlinx.serialization.Serializable
-private data class GuildCreate(
-    val d : GuildCreateD = GuildCreateD(),
-    val op : Int = 0,
-    val s : Int = 0,
-    val t : String = "",
-)
-
-@kotlinx.serialization.Serializable
+/*@kotlinx.serialization.Serializable
 data class GuildCreateD(
     val afk_channel_id : String = "",
     val afk_timeout : Int = 0,
@@ -80,16 +75,14 @@ data class Role(
     val permissions_new : String = "",
     val position : Int = 0,
     val unicode_emoji : String? = "",
-)
+)*/
 
-fun guildCreate(payload : String, client : ClientImpl) {
+suspend fun guildCreate(payload : String, client : ClientImpl) {
     val parsed = jsonc.decodeFromString<GuildCreate>(payload)
-    val guild = Guild(
-        parsed.d.id,
-        parsed.d.name,
-        parsed.d.icon,
-        parsed.d.description,
-        parsed.d.splash,
-    )
-    client.userImpl
+    val guild = client.utils.createGuild(parsed.d)
+    if (guild != null) {
+        println("added ${guild.name}")
+        client.userImpl._guilds[guild.id] = guild
+        client.eventBus.produceEvent(ClientEvents.GuildCreate(guild))
+    }
 }

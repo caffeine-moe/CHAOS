@@ -8,11 +8,11 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.models.BlockedUser
-import org.caffeine.chaos.api.models.Friend
-import org.caffeine.chaos.api.models.Message
-import org.caffeine.chaos.api.models.User
-import org.caffeine.chaos.api.models.channels.BaseChannel
+import org.caffeine.chaos.api.models.users.BlockedUser
+import org.caffeine.chaos.api.models.users.Friend
+import org.caffeine.chaos.api.models.message.Message
+import org.caffeine.chaos.api.models.users.User
+import org.caffeine.chaos.api.models.interfaces.BaseChannel
 import org.caffeine.chaos.api.payloads.gateway.data.SerialMessage
 import org.caffeine.chaos.api.typedefs.*
 import java.util.concurrent.CompletableFuture

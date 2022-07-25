@@ -1,17 +1,22 @@
-package org.caffeine.chaos.api.models
+package org.caffeine.chaos.api.models.users
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.models.interfaces.DiscordUser
-import org.caffeine.chaos.api.typedefs.MessageOptions
 import kotlin.math.absoluteValue
 
-data class Friend(
+data class BlockedUser(
     override val username : String = "",
     override val discriminator : String = "",
     override val avatar : String? = "",
     override val id : String = "",
     private val client : Client,
 ) : DiscordUser {
+
+    override val avatarDecoration : String? = null
+    override val banner : String? = null
+    override val bannerColor : String? = null
+    override val accentColour : String? = null
+
     override val discriminatedName = "$username#$discriminator"
     override fun avatarUrl() : String {
         return if (!avatar.isNullOrBlank()) {
@@ -25,11 +30,7 @@ data class Friend(
         }
     }
 
-    fun removeFriend() {
-        client.user.removeFriend(this)
-    }
-
-    suspend fun sendMessage(message : MessageOptions) {
-        client.user.sendMessage(client.utils.fetchPrivateChannel(this.id), message)
+    fun unblock() {
+        client.user.unblock(this)
     }
 }

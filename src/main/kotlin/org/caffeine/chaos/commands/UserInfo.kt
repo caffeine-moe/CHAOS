@@ -48,12 +48,9 @@ class UserInfo :
                     .appendLine("**Username:** ${usrInfo.username}")
                     .appendLine("**Discriminator:** ${usrInfo.discriminator}")
                     .appendLine("**Avatar:** <${usrInfo.avatarUrl()}>")
-/*                    .appendLine("**Avatar Decoration:** ${usrInfo.avatarDecoration}")
+                    .appendLine("**Avatar Decoration:** ${usrInfo.avatarDecoration}")
                     .appendLine("**Banner:** <${usrInfo.banner}>")
                     .appendLine("**Banner Colour:** ${usrInfo.bannerColor}")
-                    .appendLine("**Accent Colour:** ${usrInfo.accentColor}")
-                    .appendLine("**Bot:** ${usrInfo.bot}")
-                    .appendLine("**Public Flags:** ${usrInfo.publicFlags}")*/
                     .appendLine("**Account Creation Date:** $acd")
                     .build()
             ).thenAccept { message ->

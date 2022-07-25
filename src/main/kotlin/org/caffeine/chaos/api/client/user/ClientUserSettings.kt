@@ -1,6 +1,6 @@
 package org.caffeine.chaos.api.client.user
 
-import org.caffeine.chaos.api.models.Guild
+import org.caffeine.chaos.api.models.guild.Guild
 import org.caffeine.chaos.api.typedefs.StatusType
 import org.caffeine.chaos.api.typedefs.ThemeType
 

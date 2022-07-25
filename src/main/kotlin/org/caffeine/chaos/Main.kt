@@ -7,9 +7,12 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
+import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.json
+import org.caffeine.chaos.api.models.interfaces.DiscordUser
+import org.caffeine.chaos.api.typedefs.MessageOptions
 import org.caffeine.chaos.api.utils.*
 import org.caffeine.chaos.config.Config
 import java.io.File
@@ -92,11 +95,13 @@ suspend fun main(args : Array<String> = arrayOf()) : Unit = coroutineScope {
     launch {
         client.events.collect {
             launch {
-                if (it is ClientEvents.Ready) {
-                    ready(client)
-                }
-                if (it is ClientEvents.MessageCreate) {
-                    handleMessage(it, client)
+                when (it) {
+                    is ClientEvents.Ready -> {
+                        ready(client)
+                    }
+                    is ClientEvents.MessageCreate -> {
+                        handleMessage(it, client)
+                    }
                 }
             }
         }

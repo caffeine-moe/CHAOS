@@ -1,5 +1,7 @@
 package org.caffeine.chaos.api.payloads.gateway.data
 
+import org.caffeine.chaos.api.models.users.GuildMember
+
 @kotlinx.serialization.Serializable
 data class SerialGuild(
     val afk_channel_id : String = "",
@@ -12,6 +14,7 @@ data class SerialGuild(
     val explicit_content_filter : Int = 0,
     val features : List<String> = listOf(),
     //val guild_scheduled_events: List<String> = listOf(),
+    val members : MutableList<SerialGuildMember> = mutableListOf(),
     val icon : String = "",
     val id : String = "",
     val joined_at : String = "",

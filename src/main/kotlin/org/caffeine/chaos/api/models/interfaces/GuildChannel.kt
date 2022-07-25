@@ -1,6 +1,7 @@
-package org.caffeine.chaos.api.models.channels
+package org.caffeine.chaos.api.models.interfaces
 
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.models.interfaces.BaseChannel
 import org.caffeine.chaos.api.typedefs.ChannelType
 import java.util.*
 

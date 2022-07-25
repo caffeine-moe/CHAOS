@@ -1,7 +1,7 @@
 package org.caffeine.chaos.api.client.user
 
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.models.Guild
+import org.caffeine.chaos.api.models.guild.Guild
 import org.caffeine.chaos.api.models.channels.DMChannel
 import kotlin.math.absoluteValue
 
@@ -19,6 +19,11 @@ data class ClientUserImpl(
     override var token : String,
     override val client : Client,
 ) : BaseClientUser {
+
+    override val avatarDecoration : String? = null
+    override val banner : String? = null
+    override val bannerColor : String? = null
+    override val accentColour : String? = null
 
     override val discriminatedName : String
         get() = "$username#$discriminator"

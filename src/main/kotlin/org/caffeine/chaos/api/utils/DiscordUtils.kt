@@ -15,15 +15,20 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.decodeFromJsonElement
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.user.BaseClientUser
 import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.models.Attachment
-import org.caffeine.chaos.api.models.Guild
-import org.caffeine.chaos.api.models.Message
-import org.caffeine.chaos.api.models.User
+import org.caffeine.chaos.api.models.message.MessageAttachment
+import org.caffeine.chaos.api.models.guild.Guild
+import org.caffeine.chaos.api.models.message.Message
+import org.caffeine.chaos.api.models.users.User
 import org.caffeine.chaos.api.models.channels.DMChannel
 import org.caffeine.chaos.api.models.channels.TextChannel
+import org.caffeine.chaos.api.models.interfaces.DiscordUser
 import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
 import org.caffeine.chaos.api.payloads.gateway.data.SerialAttachment
 import org.caffeine.chaos.api.payloads.gateway.data.SerialGuild
@@ -208,33 +213,50 @@ open class DiscordUtils {
     suspend fun fetchMessagesAsCollection(channel : TextBasedChannel, filters : MessageFilters) : Collection<Message> {
         val collection : MutableList<Message> = mutableListOf()
         val messagesPerRequest = 100
-        while (true) {
-            var parameters = ""
-            parameters += if (filters.limit > 0) "limit=${messagesPerRequest.coerceAtMost(filters.limit - collection.size)}&"
-            else "limit=${messagesPerRequest}&"
-            if (filters.before_id.isNotBlank()) parameters += "before=${filters.before_id}&"
-            if (filters.after_id.isNotBlank()) parameters += "after=${filters.after_id}&"
-            if (filters.author_id.isNotBlank()) parameters += "author_id=${filters.author_id}&"
-            if (filters.mentioning_user_id.isNotBlank()) parameters += "mentions=${filters.mentioning_user_id}&"
-            val response = discordHTTPClient.request("$BASE_URL/channels/${channel.id}/messages?${parameters}") {
-                method = HttpMethod.Get
-                headers {
-                    append(HttpHeaders.Authorization, token)
-                    append(HttpHeaders.ContentType, "application/json")
+
+        try {
+
+            if (filters.author_id == client.user.id && filters.before_id.isBlank()) {
+                val lastMessageResponse =
+                    discordHTTPClient.get("$BASE_URL/channels/${channel.id}/messages/search?author_id=${client.user.id}&limit=1") {}
+                json.parseToJsonElement(lastMessageResponse.bodyAsText()).jsonObject["messages"]?.jsonArray?.forEach {
+                    filters.before_id = json.decodeFromJsonElement<List<SerialMessage>>(it).first().id
                 }
             }
-            val newMessages = json.decodeFromString<List<Message>>(response.bodyAsText())
-            collection.addAll(newMessages)
-            filters.before_id = collection.last().id
-            collection.removeIf { filters.author_id.isNotBlank(); it.author.id != filters.author_id }
 
-            if (filters.needed != 0 && collection.size >= filters.needed)
-                break
+            while (true) {
+                var parameters = ""
+                parameters += if (filters.limit > 0) "limit=${messagesPerRequest.coerceAtMost(filters.limit - collection.size)}&"
+                else "limit=${messagesPerRequest}&"
+                if (filters.before_id.isNotBlank()) parameters += "before=${filters.before_id}&"
+                if (filters.after_id.isNotBlank()) parameters += "after=${filters.after_id}&"
+                if (filters.author_id.isNotBlank()) parameters += "author_id=${filters.author_id}&"
+                if (filters.mentioning_user_id.isNotBlank()) parameters += "mentions=${filters.mentioning_user_id}&"
+                val response = discordHTTPClient.request("$BASE_URL/channels/${channel.id}/messages?${parameters}") {
+                    method = HttpMethod.Get
+                    headers {
+                        append(HttpHeaders.Authorization, token)
+                        append(HttpHeaders.ContentType, "application/json")
+                    }
+                }
+                val newMessages = json.decodeFromString<MutableList<SerialMessage>>(response.bodyAsText())
+                newMessages.removeIf { filters.author_id.isNotBlank() && it.author.id != filters.author_id }
+                newMessages.forEach { collection.add(createMessage(it)) }
+                filters.before_id = collection.last().id
 
-            if (newMessages.size < messagesPerRequest)
-                break
+                if (filters.needed != 0 && collection.size >= filters.needed)
+                    break
 
-            delay(200)
+                if (newMessages.size < messagesPerRequest)
+                    break
+
+                println(collection.size)
+
+                delay(200)
+            }
+        } catch (e : Exception) {
+            log("Error: ${e.message}", "API:")
+            e.printStackTrace()
         }
         return collection
     }
@@ -264,7 +286,7 @@ open class DiscordUtils {
     }
 
     fun createGuild(payload : SerialGuild) : Guild? {
-        var guild : Guild? = null
+        var guild : Guild?
         try {
             guild = Guild(
                 payload.id,
@@ -324,7 +346,7 @@ open class DiscordUtils {
 
         val mentions = hashMapOf<String, User>()
 
-        val attachmeents = hashMapOf<String, Attachment>()
+        val attachmeents = hashMapOf<String, MessageAttachment>()
 
         for (mention in message.mentions) {
             mentions[mention.id] = createUser(mention)
@@ -347,6 +369,7 @@ open class DiscordUtils {
                 message.author.discriminator,
                 message.author.avatar,
                 message.author.id,
+                client
             ),
             message.content,
             dateFormat.parse(message.timestamp),
@@ -360,8 +383,8 @@ open class DiscordUtils {
         )
     }
 
-    fun createAttachment(attachment : SerialAttachment) : Attachment {
-        return Attachment(
+    fun createAttachment(attachment : SerialAttachment) : MessageAttachment {
+        return MessageAttachment(
             attachment.content_type,
             attachment.filename,
             attachment.height,
@@ -379,6 +402,7 @@ open class DiscordUtils {
             user.discriminator,
             user.avatar,
             user.id,
+            client
         )
     }
 
@@ -408,6 +432,11 @@ open class DiscordUtils {
         )
         superPropertiesStr = json.encodeToString(superProperties)
         superPropertiesB64 = Base64.getEncoder().encodeToString(superPropertiesStr.toByteArray())
+    }
+
+    suspend fun fetchUser(id : String) : DiscordUser {
+        val response  = client.utils.discordHTTPClient.get("$BASE_URL/users/$id").bodyAsText()
+        return createUser(json.decodeFromString(response))
     }
 }
 

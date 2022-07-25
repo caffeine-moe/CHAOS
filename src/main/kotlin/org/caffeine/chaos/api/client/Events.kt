@@ -3,13 +3,16 @@ package org.caffeine.chaos.api.client
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import org.caffeine.chaos.api.client.user.ClientUser
-import org.caffeine.chaos.api.models.Message
+import org.caffeine.chaos.api.models.guild.Guild
+import org.caffeine.chaos.api.models.message.Message
 
 interface ClientEvent
 
 abstract class ClientEvents {
     class Ready(val user : ClientUser) : ClientEvent
-    class MessageCreate(val message : Message = Message()) : ClientEvent
+    class MessageCreate(val message : Message) : ClientEvent
+    class GuildCreate(val guild : Guild) : ClientEvent
+    class GuildDelete(val guild : Guild) : ClientEvent
 }
 
 class EventBus {

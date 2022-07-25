@@ -1,6 +1,6 @@
-package org.caffeine.chaos.api.models
+package org.caffeine.chaos.api.models.message
 
-data class Attachment(
+data class MessageAttachment(
     val content_type : String = "",
     val filename : String = "",
     val height : Int = 0,
