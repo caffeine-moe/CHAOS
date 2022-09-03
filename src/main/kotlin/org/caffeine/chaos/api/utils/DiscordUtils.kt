@@ -20,16 +20,15 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.user.BaseClientUser
 import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.models.message.MessageAttachment
-import org.caffeine.chaos.api.models.guild.Guild
-import org.caffeine.chaos.api.models.message.Message
-import org.caffeine.chaos.api.models.users.User
 import org.caffeine.chaos.api.models.channels.DMChannel
 import org.caffeine.chaos.api.models.channels.TextChannel
+import org.caffeine.chaos.api.models.guild.Guild
 import org.caffeine.chaos.api.models.interfaces.DiscordUser
 import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
+import org.caffeine.chaos.api.models.message.Message
+import org.caffeine.chaos.api.models.message.MessageAttachment
+import org.caffeine.chaos.api.models.users.User
 import org.caffeine.chaos.api.payloads.gateway.data.SerialAttachment
 import org.caffeine.chaos.api.payloads.gateway.data.SerialGuild
 import org.caffeine.chaos.api.payloads.gateway.data.SerialMessage
@@ -435,7 +434,7 @@ open class DiscordUtils {
     }
 
     suspend fun fetchUser(id : String) : DiscordUser {
-        val response  = client.utils.discordHTTPClient.get("$BASE_URL/users/$id").bodyAsText()
+        val response = client.utils.discordHTTPClient.get("$BASE_URL/users/$id").bodyAsText()
         return createUser(json.decodeFromString(response))
     }
 }

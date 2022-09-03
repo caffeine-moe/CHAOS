@@ -4,7 +4,6 @@ import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.Event
 import org.caffeine.chaos.api.OPCODE
 import org.caffeine.chaos.api.client.ClientImpl
-import org.caffeine.chaos.api.client.EventBus
 import org.caffeine.chaos.api.handlers.guildCreate
 import org.caffeine.chaos.api.handlers.guildDelete
 import org.caffeine.chaos.api.handlers.messageCreate

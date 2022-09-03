@@ -1,7 +1,5 @@
 package org.caffeine.chaos.api.payloads.gateway.data
 
-import org.caffeine.chaos.api.models.users.GuildMember
-
 @kotlinx.serialization.Serializable
 data class SerialGuild(
     val afk_channel_id : String = "",

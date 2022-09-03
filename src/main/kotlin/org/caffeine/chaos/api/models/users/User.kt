@@ -9,7 +9,7 @@ data class User(
     override val discriminator : String = "",
     override val avatar : String? = "",
     override val id : String = "",
-    val client : Client
+    val client : Client,
 ) : DiscordUser {
 
     override val avatarDecoration : String? = null

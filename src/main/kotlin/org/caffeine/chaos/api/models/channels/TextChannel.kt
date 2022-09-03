@@ -2,8 +2,8 @@ package org.caffeine.chaos.api.models.channels
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.models.interfaces.GuildChannel
-import org.caffeine.chaos.api.models.message.Message
 import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
+import org.caffeine.chaos.api.models.message.Message
 import org.caffeine.chaos.api.typedefs.ChannelType
 import org.caffeine.chaos.api.typedefs.MessageOptions
 import org.caffeine.chaos.api.utils.MessageFilters

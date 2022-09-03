@@ -1,16 +1,19 @@
 package org.caffeine.chaos.api.handlers
 
 import kotlinx.serialization.decodeFromString
-import org.caffeine.chaos.api.client.*
+import org.caffeine.chaos.api.client.BaseClient
+import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.client.user.ClientUser
 import org.caffeine.chaos.api.client.user.ClientUserImpl
 import org.caffeine.chaos.api.client.user.ClientUserRelationships
 import org.caffeine.chaos.api.client.user.ClientUserSettings
 import org.caffeine.chaos.api.jsonc
+import org.caffeine.chaos.api.models.channels.DMChannel
+import org.caffeine.chaos.api.models.guild.Guild
 import org.caffeine.chaos.api.models.users.BlockedUser
 import org.caffeine.chaos.api.models.users.Friend
-import org.caffeine.chaos.api.models.guild.Guild
-import org.caffeine.chaos.api.models.channels.DMChannel
 import org.caffeine.chaos.api.models.users.User
 import org.caffeine.chaos.api.payloads.gateway.Ready
 import org.caffeine.chaos.api.payloads.gateway.data.SerialGuild

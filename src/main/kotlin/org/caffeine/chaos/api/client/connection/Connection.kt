@@ -13,9 +13,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
-import org.caffeine.chaos.api.*
+import org.caffeine.chaos.api.GATEWAY
+import org.caffeine.chaos.api.OPCODE
 import org.caffeine.chaos.api.client.ClientImpl
-import org.caffeine.chaos.api.client.EventBus
+import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.payloads.client.HeartBeat
 import org.caffeine.chaos.api.payloads.client.Identify
 import org.caffeine.chaos.api.payloads.client.Resume
