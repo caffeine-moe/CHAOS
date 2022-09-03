@@ -13,5 +13,5 @@ interface TextBasedChannel : BaseChannel {
     override val name : String?
     override val type : ChannelType
     suspend fun sendMessage(payload : MessageOptions) : CompletableFuture<Message>
-    suspend fun messagesAsCollection(messageFilters : MessageFilters) : Collection<Message>
+    suspend fun fetchHistory(messageFilters : MessageFilters) : List<Message>
 }

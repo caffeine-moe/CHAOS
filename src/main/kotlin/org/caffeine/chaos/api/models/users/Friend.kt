@@ -36,6 +36,6 @@ data class Friend(
     }
 
     suspend fun sendMessage(message : MessageOptions) {
-        client.user.sendMessage(client.utils.fetchPrivateChannel(this.id), message)
+        client.utils.fetchPrivateChannel(this.id)?.let { client.user.sendMessage(it, message) }
     }
 }

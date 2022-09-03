@@ -8,6 +8,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.json
+import org.caffeine.chaos.api.models.channels.DMChannel
 import org.caffeine.chaos.api.models.interfaces.BaseChannel
 import org.caffeine.chaos.api.models.message.Message
 import org.caffeine.chaos.api.models.users.BlockedUser
@@ -19,6 +20,16 @@ import java.util.concurrent.CompletableFuture
 import kotlin.math.absoluteValue
 
 class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
+
+    fun dmChannels() : HashMap<String, DMChannel>  {
+        val map = hashMapOf<String, DMChannel>()
+        for (i in impl._channels) {
+            if (i.value is DMChannel) {
+                map[i.key] = i.value as DMChannel
+            }
+        }
+        return map
+    }
 
 /*    fun getGuild(channel : MessageChannel) : ClientGuild? {
         var guild : ClientGuild? = null

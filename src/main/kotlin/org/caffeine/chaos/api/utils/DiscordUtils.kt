@@ -24,6 +24,7 @@ import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.models.channels.DMChannel
 import org.caffeine.chaos.api.models.channels.TextChannel
 import org.caffeine.chaos.api.models.guild.Guild
+import org.caffeine.chaos.api.models.interfaces.BaseChannel
 import org.caffeine.chaos.api.models.interfaces.DiscordUser
 import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
 import org.caffeine.chaos.api.models.message.Message
@@ -36,6 +37,7 @@ import org.caffeine.chaos.api.payloads.gateway.data.SerialUser
 import org.caffeine.chaos.api.typedefs.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.absoluteValue
 import kotlin.system.exitProcess
 
@@ -209,8 +211,8 @@ open class DiscordUtils {
         return convertIdToUnix(this.toString()) <= System.currentTimeMillis()
     }
 
-    suspend fun fetchMessagesAsCollection(channel : TextBasedChannel, filters : MessageFilters) : Collection<Message> {
-        val collection : MutableList<Message> = mutableListOf()
+    suspend fun fetchMessages(channel : TextBasedChannel, filters : MessageFilters) : List<Message> {
+        val collection : MutableList<Message> = arrayListOf()
         val messagesPerRequest = 100
 
         try {
@@ -240,7 +242,7 @@ open class DiscordUtils {
                 }
                 val newMessages = json.decodeFromString<MutableList<SerialMessage>>(response.bodyAsText())
                 newMessages.removeIf { filters.author_id.isNotBlank() && it.author.id != filters.author_id }
-                newMessages.forEach { collection.add(createMessage(it)) }
+                newMessages.forEach { collection += createMessage(it) }
                 filters.before_id = collection.last().id
 
                 if (filters.needed != 0 && collection.size >= filters.needed)
@@ -260,12 +262,8 @@ open class DiscordUtils {
         return collection
     }
 
-    suspend fun fetchPrivateChannel(id : String) : DMChannel {
-        return client.user.privateChannels[id] ?: client.user.privateChannels.values.first {
-            it.recipients.containsKey(
-                id
-            )
-        }
+    suspend fun fetchPrivateChannel(id : String) : DMChannel? {
+        return client.user.dmChannels()[id]
     }
 
     suspend fun fetchGuild(id : String) : Guild? {
@@ -294,7 +292,6 @@ open class DiscordUtils {
                 payload.description,
                 payload.splash,
                 payload.discovery_splash,
-                payload.features.toTypedArray(),
                 payload.banner,
                 payload.owner_id,
                 payload.application_id,
@@ -329,8 +326,8 @@ open class DiscordUtils {
         return guild
     }
 
-    fun fetchChannel(channelId : String) : TextBasedChannel? {
-        return client.user.privateChannels[channelId]
+    fun fetchChannel(channelId : String) : BaseChannel? {
+        return client.user.channels[channelId]
     }
 
     suspend fun createMessage(message : SerialMessage) : Message {
@@ -359,9 +356,9 @@ open class DiscordUtils {
             client,
             message.id,
             //TextChannel(d.channel_id, client.client),
-            client.utils.fetchChannel(message.channel_id)
+            (client.utils.fetchChannel(message.channel_id)
             //shouldn't happen ever but just in case
-                ?: TextChannel(message.channel_id),
+                ?: TextChannel(message.channel_id)) as TextBasedChannel,
             client.utils.fetchGuild(message.guild_id ?: ""),
             User(
                 message.author.username,
@@ -380,6 +377,10 @@ open class DiscordUtils {
             message.pinned,
             getMessageType(message.type),
         )
+    }
+
+    fun createChannel() {
+
     }
 
     fun createAttachment(attachment : SerialAttachment) : MessageAttachment {

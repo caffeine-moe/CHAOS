@@ -7,6 +7,7 @@ import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
 import org.caffeine.chaos.api.models.message.Message
 import org.caffeine.chaos.api.typedefs.MessageType
 import org.caffeine.chaos.api.utils.MessageBuilder
@@ -36,7 +37,7 @@ class Purge : Command(
                     event.message.channel
                 }
                 args.size == 2 -> {
-                    val channel = client.utils.fetchChannel(args[1])
+                    val channel = client.utils.fetchChannel(args[1]) as TextBasedChannel
                     if (channel == null) {
                         event.message.channel.sendMessage(
                             error(
@@ -94,7 +95,7 @@ class Purge : Command(
                 }
             }
             var done = 0
-            val messages = channel.messagesAsCollection(MessageFilters(author_id = client.user.id, needed = num))
+            val messages = channel.fetchHistory(MessageFilters(author_id = client.user.id, needed = num))
             if (messages.isEmpty()) {
                 event.message.channel.sendMessage(
                     MessageBuilder()

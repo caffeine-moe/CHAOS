@@ -11,11 +11,11 @@ class ClientImpl : BaseClient {
     lateinit var client : Client
     var ready : Boolean = false
     val eventBus : EventBus = EventBus()
-    internal val socket : Connection = Connection(this)
+    override val socket : Connection = Connection(this)
     override val utils : DiscordUtils = DiscordUtils()
     override val events : SharedFlow<ClientEvent> = eventBus.events
     lateinit var userImpl : ClientUserImpl
-    override lateinit var user : ClientUser //= ClientUser(true, "", "", "", "", "", ClientUserSettings(), "", true, "", Client(), userImpl)
+    override lateinit var user : ClientUser
 
     override suspend fun login(token : String) {}
 

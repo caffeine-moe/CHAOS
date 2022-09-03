@@ -3,6 +3,7 @@ package org.caffeine.chaos.api.client.user
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.models.channels.DMChannel
 import org.caffeine.chaos.api.models.guild.Guild
+import org.caffeine.chaos.api.models.interfaces.BaseChannel
 import org.caffeine.chaos.api.models.interfaces.DiscordUser
 
 interface BaseClientUser : DiscordUser {
@@ -15,7 +16,7 @@ interface BaseClientUser : DiscordUser {
     val settings : ClientUserSettings
     override val avatar : String?
     val relationships : ClientUserRelationships
-    val privateChannels : Map<String, DMChannel>
+    val channels : Map<String, BaseChannel>
     val premium : Boolean
     val token : String
     val client : Client

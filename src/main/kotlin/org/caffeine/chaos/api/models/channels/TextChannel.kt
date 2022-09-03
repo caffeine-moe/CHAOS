@@ -28,7 +28,7 @@ class TextChannel(
         return client.user.sendMessage(this, payload)
     }
 
-    override suspend fun messagesAsCollection(messageFilters : MessageFilters) : Collection<Message> {
-        return client.utils.fetchMessagesAsCollection(this, messageFilters)
+    override suspend fun fetchHistory(messageFilters : MessageFilters) : List<Message> {
+        return client.utils.fetchMessages(this, messageFilters)
     }
 }

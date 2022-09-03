@@ -1,6 +1,7 @@
 package org.caffeine.chaos.api.models.channels
 
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.models.interfaces.BaseChannel
 import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
 import org.caffeine.chaos.api.models.message.Message
 import org.caffeine.chaos.api.models.users.User
@@ -21,8 +22,8 @@ class DMChannel(
         return client.user.sendMessage(this, payload)
     }
 
-    override suspend fun messagesAsCollection(messageFilters : MessageFilters) : Collection<Message> {
-        return client.utils.fetchMessagesAsCollection(this, messageFilters)
+    override suspend fun fetchHistory(messageFilters : MessageFilters) : List<Message> {
+        return client.utils.fetchMessages(this, messageFilters)
     }
 
     suspend fun delete() {

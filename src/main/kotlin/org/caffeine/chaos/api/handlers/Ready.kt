@@ -45,7 +45,7 @@ suspend fun ready(client : ClientImpl, payload : String) {
     )
     val user = ClientUser(client.userImpl)
     client.user = user
-    client.userImpl._privateChannels.putAll(extractPrivateChannels(d.private_channels, client.client))
+    client.userImpl._channels.putAll(extractPrivateChannels(d.private_channels, client.client))
     client.userImpl._guilds.putAll(extractGuilds(d.guilds, client.client))
     client.ready = true
     client.utils.sessionId = d.session_id

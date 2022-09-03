@@ -3,6 +3,7 @@ package org.caffeine.chaos.api.client.user
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.models.channels.DMChannel
 import org.caffeine.chaos.api.models.guild.Guild
+import org.caffeine.chaos.api.models.interfaces.BaseChannel
 import kotlin.math.absoluteValue
 
 data class ClientUserImpl(
@@ -20,10 +21,10 @@ data class ClientUserImpl(
     override val client : Client,
 ) : BaseClientUser {
 
-    override val avatarDecoration : String? = null
-    override val banner : String? = null
-    override val bannerColor : String? = null
-    override val accentColour : String? = null
+    override var avatarDecoration : String? = null
+    override var banner : String? = null
+    override var bannerColor : String? = null
+    override var accentColour : String? = null
 
     override val discriminatedName : String
         get() = "$username#$discriminator"
@@ -40,9 +41,9 @@ data class ClientUserImpl(
         }
     }
 
-    var _privateChannels = HashMap<String, DMChannel>()
-    override val privateChannels : Map<String, DMChannel>
-        get() = _privateChannels
+    var _channels = HashMap<String, BaseChannel>()
+    override val channels : Map<String, BaseChannel>
+        get() = _channels
 
     var _guilds = HashMap<String, Guild>()
     override val guilds : Map<String, Guild>

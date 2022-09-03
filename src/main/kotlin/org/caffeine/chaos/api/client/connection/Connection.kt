@@ -25,7 +25,7 @@ import org.caffeine.chaos.api.payloads.client.data.resume.ResumeD
 import org.caffeine.chaos.api.payloads.gateway.Init
 import org.caffeine.chaos.api.utils.*
 
-internal class Connection(private val client : ClientImpl) {
+class Connection(private val client : ClientImpl) {
 
     var ready = false
 
