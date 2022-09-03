@@ -7,7 +7,6 @@ data class Guild(
     val description : String? = null,
     val splash : String? = null,
     val discoverySplash : String? = null,
-    val features : Array<Any> = arrayOf(),
     val banner : String? = null,
     val ownerId : String = "",
     val applicationId : String? = null,
