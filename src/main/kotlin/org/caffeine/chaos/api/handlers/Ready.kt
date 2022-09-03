@@ -25,9 +25,6 @@ import org.caffeine.chaos.api.utils.log
 import java.io.File
 
 suspend fun ready(client : ClientImpl, payload : String) {
-    val f = File("ready.json")
-    f.createNewFile()
-    f.writeText(payload)
     val d = jsonc.decodeFromString<Ready>(payload).d
     client.userImpl = ClientUserImpl(
         d.user.verified,
