@@ -39,7 +39,7 @@ class UserInfo :
             }
             val usrInfo = usr
             val sdf = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-            val date = java.util.Date(client.utils.convertIdToUnix(usrInfo.id))
+            val date = java.util.Date(client.user.convertIdToUnix(usrInfo.id))
             val acd = sdf.format(date)
             event.message.channel.sendMessage(
                 MessageBuilder()
@@ -48,9 +48,6 @@ class UserInfo :
                     .appendLine("**Username:** ${usrInfo.username}")
                     .appendLine("**Discriminator:** ${usrInfo.discriminator}")
                     .appendLine("**Avatar:** <${usrInfo.avatarUrl()}>")
-                    .appendLine("**Avatar Decoration:** ${usrInfo.avatarDecoration}")
-                    .appendLine("**Banner:** <${usrInfo.banner}>")
-                    .appendLine("**Banner Colour:** ${usrInfo.bannerColor}")
                     .appendLine("**Account Creation Date:** $acd")
                     .build()
             ).thenAccept { message ->

@@ -8,8 +8,8 @@ class Client : BaseClient by impl {
 
     override suspend fun login(token : String) {
         impl.client = this
-        utils.token = token
-        utils.client = this
+        impl.utils.token = token
+        impl.utils.client = impl
         impl.socket.execute(ConnectionType.CONNECT)
     }
 

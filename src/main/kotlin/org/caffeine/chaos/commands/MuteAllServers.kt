@@ -1,10 +1,11 @@
 package org.caffeine.chaos.commands
 
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.*
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.utils.MessageBuilder
 
 
 class MuteAllServers : Command(
@@ -17,13 +18,14 @@ class MuteAllServers : Command(
         args : MutableList<String>,
         cmd : String,
     ) : Unit = coroutineScope {
-/*        val mas = "Muting all servers..."
-        event.channel.sendMessage(MessageBuilder()
+        val mas = "Muting all servers..."
+        event.channel.sendMessage(
+            MessageBuilder()
             .appendLine(mas)
             .build()
         ).thenAccept { message ->
             this.launch {
-                val list = client.user.guilds
+                val list = client.user.guilds.values
                 val max = list.size
                 var done = 0
                 suspend fun up() {
@@ -36,9 +38,7 @@ class MuteAllServers : Command(
                     i.muteForever()
                     done++
                     up()
-                    withContext(Dispatchers.IO) {
-                        Thread.sleep(500)
-                    }
+                    delay(500)
                 }
                 message.edit(MessageBuilder()
                     .appendLine("Muted all servers!")
@@ -49,6 +49,6 @@ class MuteAllServers : Command(
                     }
                 }
             }
-        }*/
+        }
     }
 }

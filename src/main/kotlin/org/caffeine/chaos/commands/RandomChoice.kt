@@ -1,10 +1,13 @@
 package org.caffeine.chaos.commands
 
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.config
 
 
 class RandomChoice : Command(
@@ -17,7 +20,7 @@ class RandomChoice : Command(
         args : MutableList<String>,
         cmd : String,
     ) = coroutineScope {
-/*        val argj = args.joinToString(" ")
+        val argj = args.joinToString(" ")
         val regex = "[0-9:]+".toRegex()
         val argspl = argj.split(regex)
         val err = when {
@@ -39,13 +42,14 @@ class RandomChoice : Command(
             return@coroutineScope
         }
 
-        event.channel.sendMessage(MessageBuilder()
+        event.channel.sendMessage(
+            MessageBuilder()
             .appendLine(argspl.random().trim())
             .build()
         ).thenAccept {
             launch {
-                onComplete(it, client, client.config.auto_delete.bot.content_generation)
+                onComplete(it, client, config.auto_delete.bot.content_generation)
             }
-        }*/
+        }
     }
 }

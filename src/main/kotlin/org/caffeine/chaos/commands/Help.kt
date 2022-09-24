@@ -1,10 +1,11 @@
 package org.caffeine.chaos.commands
 
 import kotlinx.coroutines.coroutineScope
-import org.caffeine.chaos.Command
-import org.caffeine.chaos.CommandInfo
+import kotlinx.coroutines.launch
+import org.caffeine.chaos.*
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.utils.MessageBuilder
 
 
 class Help : Command(
@@ -17,19 +18,20 @@ class Help : Command(
         args : MutableList<String>,
         cmd : String,
     ) : Unit = coroutineScope {
-/*        if (args.isEmpty()) {
-            event.channel.sendMessage(MessageBuilder()
+        if (args.isEmpty()) {
+            event.channel.sendMessage(
+                MessageBuilder()
                 .appendLine("**CHAOS v$versionString**")
                 .appendLine("**Commands:** https://caffeine.moe/CHAOS/commands/")
                 .build()
             ).thenAccept { message ->
                 launch {
-                    onComplete(message, client, client.config.auto_delete.bot.content_generation)
+                    onComplete(message, client, config.auto_delete.bot.content_generation)
                 }
             }
             return@coroutineScope
         }
-        val command : Command? = commandList[args.first().replace(client.config.prefix, "")]
+        val command : Command? = commandList[args.first().replace(config.prefix, "")]
         if (command != null) {
             val msg = MessageBuilder()
                 .appendLine("__**${command.commandInfo.name}**__")
@@ -42,11 +44,11 @@ class Help : Command(
                     msg.appendLine("**Aliases:** $sb")
                 }
             }
-            msg.appendLine("**Usage:** ${client.config.prefix}${command.commandInfo.usage}")
+            msg.appendLine("**Usage:** ${config.prefix}${command.commandInfo.usage}")
             msg.appendLine("**Description:** ${command.commandInfo.description}")
             event.channel.sendMessage(msg.build()).thenAccept { message ->
                 launch {
-                    onComplete(message, client, client.config.auto_delete.bot.content_generation)
+                    onComplete(message, client, config.auto_delete.bot.content_generation)
                 }
             }
             return@coroutineScope
@@ -54,6 +56,6 @@ class Help : Command(
         event.channel.sendMessage(error(client, event, "${args.joinToString(" ")} is not a command.", commandInfo))
             .thenAccept {
                 launch { onComplete(it, client, true) }
-            }*/
+            }
     }
 }

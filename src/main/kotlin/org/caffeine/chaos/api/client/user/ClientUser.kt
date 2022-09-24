@@ -9,6 +9,7 @@ import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.models.channels.DMChannel
+import org.caffeine.chaos.api.models.guild.Guild
 import org.caffeine.chaos.api.models.interfaces.BaseChannel
 import org.caffeine.chaos.api.models.message.Message
 import org.caffeine.chaos.api.models.users.BlockedUser
@@ -16,20 +17,14 @@ import org.caffeine.chaos.api.models.users.Friend
 import org.caffeine.chaos.api.models.users.User
 import org.caffeine.chaos.api.payloads.gateway.data.SerialMessage
 import org.caffeine.chaos.api.typedefs.*
+import org.caffeine.chaos.api.utils.log
 import java.util.concurrent.CompletableFuture
 import kotlin.math.absoluteValue
 
 class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
 
-    fun dmChannels() : HashMap<String, DMChannel>  {
-        val map = hashMapOf<String, DMChannel>()
-        for (i in impl._channels) {
-            if (i.value is DMChannel) {
-                map[i.key] = i.value as DMChannel
-            }
-        }
-        return map
-    }
+    val dmChannels : Map<String, DMChannel>
+    get() = impl._channels.values.filterIsInstance<DMChannel>().associateBy { it.id }
 
 /*    fun getGuild(channel : MessageChannel) : ClientGuild? {
         var guild : ClientGuild? = null
@@ -44,7 +39,7 @@ class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
     }*/
 
     suspend fun deleteChannel(channel : BaseChannel) {
-        client.utils.discordHTTPClient.request("$BASE_URL/channels/${channel.id}") {
+        clientImpl.utils.discordHTTPClient.request("$BASE_URL/channels/${channel.id}") {
             method = HttpMethod.Delete
         }
     }
@@ -59,11 +54,11 @@ class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
 
     suspend fun setHouse(house : HypeSquadHouseType) {
         if (house == HypeSquadHouseType.NONE) {
-            client.utils.discordHTTPClient.request("$BASE_URL/hypesquad/online") {
+            clientImpl.utils.discordHTTPClient.request("$BASE_URL/hypesquad/online") {
                 method = HttpMethod.Delete
             }
         } else {
-            client.utils.discordHTTPClient.request("$BASE_URL/hypesquad/online") {
+            clientImpl.utils.discordHTTPClient.request("$BASE_URL/hypesquad/online") {
                 method = HttpMethod.Post
                 headers {
                     append("Content-Type", "application/json")
@@ -74,7 +69,7 @@ class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
     }
 
     suspend fun setCustomStatus(status : String) {
-        client.utils.discordHTTPClient.request("$BASE_URL/users/@me/settings") {
+        clientImpl.utils.discordHTTPClient.request("$BASE_URL/users/@me/settings") {
             method = HttpMethod.Patch
             headers {
                 append("Content-Type", "application/json")
@@ -84,7 +79,7 @@ class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
     }
 
     suspend fun setTheme(theme : ThemeType) {
-        client.utils.discordHTTPClient.request("$BASE_URL/users/@me/settings") {
+        clientImpl.utils.discordHTTPClient.request("$BASE_URL/users/@me/settings") {
             method = HttpMethod.Patch
             headers {
                 append("Content-Type", "application/json")
@@ -94,7 +89,7 @@ class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
     }
 
     suspend fun setStatus(status : StatusType) {
-        client.utils.discordHTTPClient.request("$BASE_URL/users/@me/settings") {
+        clientImpl.utils.discordHTTPClient.request("$BASE_URL/users/@me/settings") {
             method = HttpMethod.Patch
             headers {
                 append("Content-Type", "application/json")
@@ -104,7 +99,7 @@ class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
     }
 
     suspend fun sendMessage(channel : BaseChannel, message : MessageOptions) : CompletableFuture<Message> {
-        val response = client.utils.discordHTTPClient.request("$BASE_URL/channels/${channel.id}/messages") {
+        val response = clientImpl.utils.discordHTTPClient.request("$BASE_URL/channels/${channel.id}/messages") {
             method = HttpMethod.Post
             headers {
                 append("Content-Type", "application/json")
@@ -112,11 +107,11 @@ class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
             setBody(json.encodeToString(message))
         }
         val serial = json.decodeFromString<SerialMessage>(response.bodyAsText())
-        return CompletableFuture.completedFuture(client.utils.createMessage(serial))
+        return CompletableFuture.completedFuture(clientImpl.utils.createMessage(serial))
     }
 
     suspend fun deleteMessage(message : Message) {
-        client.utils.discordHTTPClient.request("$BASE_URL/channels/${message.channel.id}/messages/${message.id}") {
+        clientImpl.utils.discordHTTPClient.request("$BASE_URL/channels/${message.channel.id}/messages/${message.id}") {
             method = HttpMethod.Delete
         }
     }
@@ -126,7 +121,7 @@ class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
         var la : Long
         val start = System.currentTimeMillis()
         try {
-            client.utils.discordHTTPClient.request("$BASE_URL/entitlements/gift-codes/$code/redeem") {
+            clientImpl.utils.discordHTTPClient.request("$BASE_URL/entitlements/gift-codes/$code/redeem") {
                 method = HttpMethod.Post
                 expectSuccess = true
             }
@@ -149,7 +144,7 @@ class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
     }
 
     suspend fun block(user : User) {
-        client.utils.discordHTTPClient.request("$BASE_URL/users/@me/relationships/${user.id}") {
+        clientImpl.utils.discordHTTPClient.request("$BASE_URL/users/@me/relationships/${user.id}") {
             method = HttpMethod.Put
             headers {
                 append("Content-Type", "application/json")
@@ -160,7 +155,7 @@ class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
 
     suspend fun editMessage(message : Message, edit : MessageOptions) : CompletableFuture<Message> {
         val response =
-            client.utils.discordHTTPClient.request("$BASE_URL/channels/${message.channel.id}/messages/${message.id}") {
+            clientImpl.utils.discordHTTPClient.request("$BASE_URL/channels/${message.channel.id}/messages/${message.id}") {
                 method = HttpMethod.Patch
                 headers {
                     append("Content-Type", "application/json")
@@ -168,6 +163,19 @@ class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
                 setBody(json.encodeToString(edit))
             }
         val serial = json.decodeFromString<SerialMessage>(response.bodyAsText())
-        return CompletableFuture.completedFuture(client.utils.createMessage(serial))
+        return CompletableFuture.completedFuture(clientImpl.utils.createMessage(serial))
     }
+
+    fun convertIdToUnix(id : String) : Long {
+        return if (id.isNotBlank()) {
+            (id.toLong() / 4194304 + 1420070400000).absoluteValue
+        } else {
+            0
+        }
+    }
+
+    fun muteGuild(guild : Guild, i : Int) {
+        log("NOT IMPLEMENTED // TODO")
+    }
+
 }

@@ -17,6 +17,7 @@ import org.caffeine.chaos.api.models.users.Friend
 import org.caffeine.chaos.api.models.users.User
 import org.caffeine.chaos.api.payloads.gateway.Ready
 import org.caffeine.chaos.api.payloads.gateway.data.SerialGuild
+import org.caffeine.chaos.api.payloads.gateway.data.guild.create.GuildCreateD
 import org.caffeine.chaos.api.payloads.gateway.data.ready.ReadyD
 import org.caffeine.chaos.api.payloads.gateway.data.ready.ReadyDPrivateChannel
 import org.caffeine.chaos.api.payloads.gateway.data.ready.ReadyDRelationship
@@ -41,19 +42,21 @@ suspend fun ready(client : ClientImpl, payload : String) {
         ),
         d.user.premium,
         client.utils.token,
+        false,
         client.client,
+        client
     )
     val user = ClientUser(client.userImpl)
     client.user = user
-    client.userImpl._channels.putAll(extractPrivateChannels(d.private_channels, client.client))
-    client.userImpl._guilds.putAll(extractGuilds(d.guilds, client.client))
+    client.userImpl._channels.putAll(extractPrivateChannels(d.private_channels, client))
+    client.userImpl._guilds.putAll(extractGuilds(d.guilds, client))
     client.ready = true
     client.utils.sessionId = d.session_id
     log("${ConsoleColours.GREEN.value}Client logged in!", "API:")
     client.eventBus.produceEvent(ClientEvents.Ready(user))
 }
 
-private fun createUserSettings(d : ReadyD, client : BaseClient) : ClientUserSettings {
+private fun createUserSettings(d : ReadyD, client : ClientImpl) : ClientUserSettings {
     return ClientUserSettings(
         d.user_settings.afk_timeout,
         d.user_settings.allow_accessibility_detection,
@@ -92,7 +95,7 @@ private fun createUserSettings(d : ReadyD, client : BaseClient) : ClientUserSett
     )
 }
 
-suspend fun extractGuilds(guilds : MutableList<SerialGuild>, client : Client) : Map<String, Guild> {
+suspend fun extractGuilds(guilds : MutableList<GuildCreateD>, client : ClientImpl) : Map<String, Guild> {
     val map = mutableMapOf<String, Guild>()
     for (guild in guilds) {
         map[guild.id] = client.utils.createGuild(guild) ?: continue
@@ -109,6 +112,7 @@ private fun extractFriends(relationships : MutableList<ReadyDRelationship>, clie
                 relationship.user.discriminator,
                 relationship.user.avatar,
                 relationship.user.id,
+                false,
                 client
             )
             friends[friend.id] = friend
@@ -119,7 +123,7 @@ private fun extractFriends(relationships : MutableList<ReadyDRelationship>, clie
 
 private fun extractPrivateChannels(
     channels : MutableList<ReadyDPrivateChannel>,
-    client : Client,
+    client : ClientImpl,
 ) : HashMap<String, DMChannel> {
     val map = hashMapOf<String, DMChannel>()
     for (channel in channels) {
@@ -130,12 +134,13 @@ private fun extractPrivateChannels(
                 recipient.discriminator,
                 recipient.avatar,
                 recipient.id,
-                client
+                recipient.bot,
+                client.client
             )
         }
         map[channel.id] = DMChannel(
             channel.id,
-            client,
+            client.client,
             client.utils.getChannelType(channel.type),
             channel.last_message_id,
             channel.name.ifBlank { channel.recipients.first().username },
@@ -157,6 +162,7 @@ private fun extractBlockList(
                 relationship.user.discriminator,
                 relationship.user.avatar,
                 relationship.user.id,
+                relationship.user.bot,
                 client
             )
             blocked[user.id] = user

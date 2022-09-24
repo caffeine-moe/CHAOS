@@ -19,13 +19,15 @@ import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import org.caffeine.chaos.api.BASE_URL
-import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.json
+import org.caffeine.chaos.api.models.message.MessageFilters
 import org.caffeine.chaos.api.models.channels.DMChannel
 import org.caffeine.chaos.api.models.channels.TextChannel
 import org.caffeine.chaos.api.models.guild.Guild
 import org.caffeine.chaos.api.models.interfaces.BaseChannel
 import org.caffeine.chaos.api.models.interfaces.DiscordUser
+import org.caffeine.chaos.api.models.interfaces.GuildChannel
 import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
 import org.caffeine.chaos.api.models.message.Message
 import org.caffeine.chaos.api.models.message.MessageAttachment
@@ -34,17 +36,18 @@ import org.caffeine.chaos.api.payloads.gateway.data.SerialAttachment
 import org.caffeine.chaos.api.payloads.gateway.data.SerialGuild
 import org.caffeine.chaos.api.payloads.gateway.data.SerialMessage
 import org.caffeine.chaos.api.payloads.gateway.data.SerialUser
+import org.caffeine.chaos.api.payloads.gateway.data.guild.create.GuildCreateD
+import org.caffeine.chaos.api.payloads.gateway.data.guild.create.GuildCreateDChannel
 import org.caffeine.chaos.api.typedefs.*
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.math.absoluteValue
 import kotlin.system.exitProcess
 
 open class DiscordUtils {
 
     lateinit var token : String
-    lateinit var client : Client
+    lateinit var client : ClientImpl
 
     @Serializable
     data class SuperProperties(
@@ -132,14 +135,6 @@ open class DiscordUtils {
         return ((unixTs - 1420070400000) * 4194304).absoluteValue.toString()
     }
 
-    fun convertIdToUnix(id : String) : Long {
-        return if (id.isNotBlank()) {
-            (id.toLong() / 4194304 + 1420070400000).absoluteValue
-        } else {
-            0
-        }
-    }
-
     suspend fun tokenValidator(token : String) {
         discordHTTPClient.get("$BASE_URL/users/@me") {
             headers {
@@ -203,12 +198,8 @@ open class DiscordUtils {
     }
 
     private fun String.isValidSnowflake() : Boolean {
-        val unix = convertIdToUnix(this)
+        val unix = client.user.convertIdToUnix(this)
         return unix <= System.currentTimeMillis() && unix > 1420070400000
-    }
-
-    fun Long.isValidSnowflake() : Boolean {
-        return convertIdToUnix(this.toString()) <= System.currentTimeMillis()
     }
 
     suspend fun fetchMessages(channel : TextBasedChannel, filters : MessageFilters) : List<Message> {
@@ -263,7 +254,7 @@ open class DiscordUtils {
     }
 
     suspend fun fetchPrivateChannel(id : String) : DMChannel? {
-        return client.user.dmChannels()[id]
+        return client.user.dmChannels[id]
     }
 
     suspend fun fetchGuild(id : String) : Guild? {
@@ -282,8 +273,15 @@ open class DiscordUtils {
         return guild
     }
 
-    fun createGuild(payload : SerialGuild) : Guild? {
+    fun createGuild(payload : GuildCreateD) : Guild? {
         var guild : Guild?
+        payload.channels.forEach {
+            val channel = createGuildChannel(it)
+            client.userImpl._channels.put(
+                it.id,
+                channel
+            )
+        }
         try {
             guild = Guild(
                 payload.id,
@@ -291,31 +289,31 @@ open class DiscordUtils {
                 payload.icon,
                 payload.description,
                 payload.splash,
-                payload.discovery_splash,
+                payload.discoverySplash,
                 payload.banner,
-                payload.owner_id,
-                payload.application_id,
+                payload.ownerId,
+                payload.applicationId,
                 payload.region,
-                payload.afk_channel_id,
-                payload.afk_timeout,
-                payload.system_channel_id,
-                payload.widget_enabled,
+                payload.afkChannelId,
+                payload.afkTimeout,
+                payload.systemChannelId,
+                payload.widgetEnabled,
                 "",
-                payload.verification_level,
-                payload.default_message_notifications,
-                payload.mfa_level,
-                payload.explicit_content_filter,
+                payload.verificationLevel,
+                payload.defaultMessageNotifications,
+                payload.mfaLevel,
+                payload.explicitContentFilter,
                 0,
-                payload.max_members,
-                payload.max_video_channel_users,
-                if (payload.vanity_url_code != null) "https://discord.gg/${payload.vanity_url_code}" else null,
-                payload.vanity_url_code,
-                payload.premium_tier,
-                payload.premium_subscription_count,
-                payload.system_channel_flags,
-                payload.preferred_locale,
-                payload.rules_channel_id,
-                payload.public_updates_channel_id,
+                payload.maxMembers,
+                payload.maxVideoChannelUsers,
+                if (payload.vanityUrlCode != null) "https://discord.gg/${payload.vanityUrlCode}" else null,
+                payload.vanityUrlCode,
+                payload.premiumTier,
+                payload.premiumSubscriptionCount,
+                payload.systemChannelFlags,
+                payload.preferredLocale,
+                payload.rulesChannelId,
+                payload.publicUpdatesChannelId,
                 false,
                 "",
             )
@@ -324,6 +322,22 @@ open class DiscordUtils {
             guild = null
         }
         return guild
+    }
+
+    fun createGuildChannel(channel : GuildCreateDChannel) : GuildChannel {
+        when (channel.type) {
+            ChannelType.TEXT.ordinal -> {
+                return TextChannel(
+                    channel.id,
+                    client.client,
+                    ChannelType.TEXT,
+                    channel.id,
+                    Date(),
+                    channel.name
+                )
+            }
+        }
+        return TextChannel()
     }
 
     fun fetchChannel(channelId : String) : BaseChannel? {
@@ -353,7 +367,7 @@ open class DiscordUtils {
         }
 
         return Message(
-            client,
+            client.client,
             message.id,
             //TextChannel(d.channel_id, client.client),
             (client.utils.fetchChannel(message.channel_id)
@@ -365,7 +379,8 @@ open class DiscordUtils {
                 message.author.discriminator,
                 message.author.avatar,
                 message.author.id,
-                client
+                message.author.bot,
+                client.client
             ),
             message.content,
             dateFormat.parse(message.timestamp),
@@ -402,7 +417,8 @@ open class DiscordUtils {
             user.discriminator,
             user.avatar,
             user.id,
-            client
+            user.bot,
+            client.client
         )
     }
 
@@ -438,6 +454,10 @@ open class DiscordUtils {
         val response = client.utils.discordHTTPClient.get("$BASE_URL/users/$id").bodyAsText()
         return createUser(json.decodeFromString(response))
     }
+
+    fun fetchTextChannel(channelId : String) : TextBasedChannel? {
+        return client.user.channels.filter { it.value.type == ChannelType.TEXT }[channelId] as TextBasedChannel?
+    }
 }
 
 class MessageBuilder : DiscordUtils() {
@@ -465,11 +485,3 @@ class MessageBuilder : DiscordUtils() {
         }*/
 }
 
-data class MessageFilters(
-    var mentioning_user_id : String = "",
-    var author_id : String = "",
-    var before_id : String = "",
-    var after_id : String = "",
-    var limit : Int = 0,
-    var needed : Int = 0,
-)

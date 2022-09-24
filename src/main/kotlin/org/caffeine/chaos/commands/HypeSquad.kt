@@ -21,32 +21,7 @@ class HypeSquad :
         cmd : String,
     ) =
         coroutineScope {
-            var house = HypeSquadHouseType.NONE
-            val err = if (args.isEmpty()) {
-                "No house specified."
-            } else {
-                if (args.first().toIntOrNull() != null) {
-                    if (client.utils.getHouseType(args.first().toInt()) == HypeSquadHouseType.UNKNOWN) {
-                        "Invalid HypeSquad house '${args.joinToString(" ")}'"
-                    } else {
-                        house = client.utils.getHouseType(args.first().toInt())
-                        ""
-                    }
-                } else {
-                    if (client.utils.getHouseType(args.first()) == HypeSquadHouseType.UNKNOWN) {
-                        "Invalid HypeSquad house '${args.joinToString(" ")}'"
-                    } else {
-                        house = client.utils.getHouseType(args.first())
-                        ""
-                    }
-                }
-            }
-            if (err.isNotBlank()) {
-/*                event.channel.sendMessage(error(client, event, err, commandInfo))
-                    .thenAccept { message -> this.launch { onComplete(message, client, true) } }*/
-                log(err)
-                return@coroutineScope
-            }
+            val house = HypeSquadHouseType.valueOf(args.first().toString())
             client.user.setHouse(house)
         }
 }

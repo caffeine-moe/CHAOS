@@ -19,7 +19,7 @@ class Token : Command(arrayOf("token"), CommandInfo("Token", "token", "Logs your
         cmd : String,
     ) : Unit =
         coroutineScope {
-            log("${client.user.discriminatedName} : ${client.utils.token}", "TOKEN:${ConsoleColours.BLUE.value}")
+            log("${client.user.discriminatedName} : ${client.user.token}", "TOKEN:${ConsoleColours.BLUE.value}")
             event.message.channel.sendMessage(MessageBuilder().append("Token logged to console.").build())
                 .thenAccept { message ->
                     this.launch { onComplete(message, client, true) }

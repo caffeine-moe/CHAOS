@@ -4,7 +4,7 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.models.message.Message
 import org.caffeine.chaos.api.typedefs.ChannelType
 import org.caffeine.chaos.api.typedefs.MessageOptions
-import org.caffeine.chaos.api.utils.MessageFilters
+import org.caffeine.chaos.api.models.message.MessageFilters
 import java.util.concurrent.CompletableFuture
 
 interface TextBasedChannel : BaseChannel {
@@ -14,4 +14,5 @@ interface TextBasedChannel : BaseChannel {
     override val type : ChannelType
     suspend fun sendMessage(payload : MessageOptions) : CompletableFuture<Message>
     suspend fun fetchHistory(messageFilters : MessageFilters) : List<Message>
+    override suspend fun delete()
 }

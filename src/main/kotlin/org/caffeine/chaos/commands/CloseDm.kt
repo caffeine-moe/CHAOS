@@ -4,6 +4,8 @@ import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.typedefs.ChannelType
+import org.caffeine.chaos.api.utils.log
 
 
 class CloseDm : Command(arrayOf("closedm"), CommandInfo("CloseDM", "closedm", "Closes a dm channel.")) {
@@ -13,9 +15,9 @@ class CloseDm : Command(arrayOf("closedm"), CommandInfo("CloseDM", "closedm", "C
         args : MutableList<String>,
         cmd : String,
     ) {
-/*        val message : String = when (event.channel.type()) {
-            DiscordChannelType.DM,
-            DiscordChannelType.GROUP,
+        val message : String = when (event.channel.type) {
+            ChannelType.DM,
+            ChannelType.GROUP,
             -> {
                 event.channel.delete()
                 "closed!"
@@ -24,6 +26,6 @@ class CloseDm : Command(arrayOf("closedm"), CommandInfo("CloseDM", "closedm", "C
                 "is not a DM Channel!"
             }
         }
-        log("Channel ${event.channel.id} $message", "RESPONSE:")    */
+        log("Channel ${event.channel.id} $message", "RESPONSE:")
     }
 }

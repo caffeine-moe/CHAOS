@@ -9,7 +9,6 @@ internal interface BaseClient {
     val user : ClientUser
     val events : SharedFlow<ClientEvent>
     val socket : Connection
-    val utils : DiscordUtils
     suspend fun login(token : String)
     suspend fun logout()
 }

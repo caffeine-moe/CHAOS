@@ -12,7 +12,7 @@ class ClientImpl : BaseClient {
     var ready : Boolean = false
     val eventBus : EventBus = EventBus()
     override val socket : Connection = Connection(this)
-    override val utils : DiscordUtils = DiscordUtils()
+    val utils : DiscordUtils = DiscordUtils()
     override val events : SharedFlow<ClientEvent> = eventBus.events
     lateinit var userImpl : ClientUserImpl
     override lateinit var user : ClientUser

@@ -11,7 +11,7 @@ import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
 import org.caffeine.chaos.api.models.message.Message
 import org.caffeine.chaos.api.typedefs.MessageType
 import org.caffeine.chaos.api.utils.MessageBuilder
-import org.caffeine.chaos.api.utils.MessageFilters
+import org.caffeine.chaos.api.models.message.MessageFilters
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.purgeCock
 
@@ -37,19 +37,7 @@ class Purge : Command(
                     event.message.channel
                 }
                 args.size == 2 -> {
-                    val channel = client.utils.fetchChannel(args[1]) as TextBasedChannel
-                    if (channel == null) {
-                        event.message.channel.sendMessage(
-                            error(
-                                client,
-                                event,
-                                "${args.first()} is not a valid channel.",
-                                commandInfo
-                            )
-                        )
-                            .thenAccept { message -> this.launch { onComplete(message, client, true) } }
-                        return@coroutineScope
-                    }
+                    val channel = client.user.fetchChannelFromId(args[1]) as TextBasedChannel
                     channel
                 }
                 else -> {

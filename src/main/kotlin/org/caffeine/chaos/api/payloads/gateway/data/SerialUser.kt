@@ -9,5 +9,6 @@ data class SerialUser(
     val banner_color : String = "",
     val discriminator : String = "",
     val id : String = "",
+    val bot : Boolean = false,
     val username : String = "",
 )

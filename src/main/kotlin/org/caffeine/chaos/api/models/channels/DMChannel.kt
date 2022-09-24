@@ -1,13 +1,12 @@
 package org.caffeine.chaos.api.models.channels
 
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.models.interfaces.BaseChannel
 import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
 import org.caffeine.chaos.api.models.message.Message
 import org.caffeine.chaos.api.models.users.User
 import org.caffeine.chaos.api.typedefs.ChannelType
 import org.caffeine.chaos.api.typedefs.MessageOptions
-import org.caffeine.chaos.api.utils.MessageFilters
+import org.caffeine.chaos.api.models.message.MessageFilters
 import java.util.concurrent.CompletableFuture
 
 class DMChannel(
@@ -23,10 +22,10 @@ class DMChannel(
     }
 
     override suspend fun fetchHistory(messageFilters : MessageFilters) : List<Message> {
-        return client.utils.fetchMessages(this, messageFilters)
+        return client.user.fetchMessagesFromChannel(this, messageFilters)
     }
 
-    suspend fun delete() {
+    override suspend fun delete() {
         client.user.deleteChannel(this)
     }
 }

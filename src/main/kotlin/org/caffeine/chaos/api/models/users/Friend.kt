@@ -10,13 +10,9 @@ data class Friend(
     override val discriminator : String = "",
     override val avatar : String? = "",
     override val id : String = "",
+    override val bot : Boolean,
     private val client : Client,
 ) : DiscordUser {
-
-    override val avatarDecoration : String? = null
-    override val banner : String? = null
-    override val bannerColor : String? = null
-    override val accentColour : String? = null
 
     override val discriminatedName = "$username#$discriminator"
     override fun avatarUrl() : String {
@@ -36,6 +32,6 @@ data class Friend(
     }
 
     suspend fun sendMessage(message : MessageOptions) {
-        client.utils.fetchPrivateChannel(this.id)?.let { client.user.sendMessage(it, message) }
+        //client.user.sendMessage(this, message)
     }
 }

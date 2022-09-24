@@ -62,6 +62,7 @@ fun registerCommands() {
     AFK()
     RandomChoice()
     GayPFP()
+    ChannelName()
 }
 
 //executed whenever a message event is received by the client

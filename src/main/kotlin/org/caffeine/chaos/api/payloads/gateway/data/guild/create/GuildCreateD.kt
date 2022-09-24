@@ -1,8 +1,9 @@
-package org.caffeine.chaos.api.models.guild
+package org.caffeine.chaos.api.payloads.gateway.data.guild.create
 
-import org.caffeine.chaos.api.client.Client
+import kotlinx.serialization.Serializable
 
-data class Guild(
+@Serializable
+data class GuildCreateD (
     val id : String = "",
     val name : String = "",
     val icon : String = "",
@@ -18,26 +19,22 @@ data class Guild(
     val systemChannelId : String? = "",
     val widgetEnabled : Boolean = false,
     val widgetChannelId : String = "",
-    val verificationLevel : Number = 0,
-    val defaultMessageNotifications : Number = 0,
-    val mfaLevel : Number = 0,
-    val explicitContentFilter : Number = 0,
-    val maxPresences : Number = 0,
-    val maxMembers : Number = 0,
-    val maxVideoChannelUsers : Number = 0,
+    val verificationLevel : Int = 0,
+    val defaultMessageNotifications : Int = 0,
+    val mfaLevel : Int = 0,
+    val explicitContentFilter : Int = 0,
+    val maxPresences : Int = 0,
+    val maxMembers : Int = 0,
+    val maxVideoChannelUsers : Int = 0,
     val vanityUrl : String? = null,
     val vanityUrlCode : String? = null,
-    val premiumTier : Number = 0,
-    val premiumSubscriptionCount : Number = 0,
-    val systemChannelFlags : Number = 0,
+    val premiumTier : Int = 0,
+    val premiumSubscriptionCount : Int = 0,
+    val systemChannelFlags : Int = 0,
     val preferredLocale : String = "",
     val rulesChannelId : String? = "",
     val publicUpdatesChannelId : String? = "",
     val embedEnabled : Boolean = false,
     val embedChannelId : String = "",
-    val client : Client = Client()
-) {
-    fun muteForever() {
-        client.user.muteGuild(this, -1)
-    }
-}
+    val channels : List<GuildCreateDChannel> = listOf()
+)

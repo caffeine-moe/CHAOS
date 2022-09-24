@@ -19,7 +19,7 @@ class Status :
         val err = if (args.isEmpty()) {
             "No status specified."
         } else {
-            val status = client.utils.getStatusType(args[0])
+            val status = StatusType.valueOf(args[0])
             if (status != StatusType.UNKNOWN) {
                 client.user.setStatus(status).also { return@coroutineScope }
             }

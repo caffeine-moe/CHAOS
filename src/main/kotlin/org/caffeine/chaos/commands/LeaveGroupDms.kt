@@ -1,10 +1,18 @@
 package org.caffeine.chaos.commands
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.models.channels.DMChannel
+import org.caffeine.chaos.api.models.interfaces.BaseChannel
+import org.caffeine.chaos.api.typedefs.ChannelType
+import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.utils.log
 
 
 class LeaveGroupDms :
@@ -19,10 +27,10 @@ class LeaveGroupDms :
         cmd : String,
     ) =
         coroutineScope {
-/*            var done = 0
+            var done = 0
             val channels = StringBuilder()
             try {
-                val list = client.user.channels.groupChannels.getList()
+                val list = client.user.channels.values.filter { it.type == ChannelType.GROUP }
                 if (list.isEmpty()) {
                     event.channel.sendMessage(MessageBuilder()
                         .appendLine("There are no channels to delete!")
@@ -30,7 +38,7 @@ class LeaveGroupDms :
                         .thenAccept { message -> this.launch { onComplete(message, client, true) } }
                     return@coroutineScope
                 }
-                for (channel : ClientChannel in list) {
+                for (channel : BaseChannel in list) {
                     channel.delete()
                     channels.append("${channel.name}, ")
                     done++
@@ -48,7 +56,8 @@ class LeaveGroupDms :
                 }
                 if (done == 1) {
                     log(channels.toString(), "CHANNELS DELETED:")
-                    event.channel.sendMessage(MessageBuilder()
+                    event.channel.sendMessage(
+                        MessageBuilder()
                         .appendLine("Done! Deleted $done channel!")
                         .appendLine("Check the console to see the name of the deleted channel.")
                         .build())
@@ -56,6 +65,6 @@ class LeaveGroupDms :
                 }
             } catch (e : Exception) {
                 println(e.printStackTrace())
-            }*/
+            }
         }
 }

@@ -1,10 +1,19 @@
 package org.caffeine.chaos.commands
 
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.json
+import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.utils.normalHTTPClient
+import org.caffeine.chaos.config
 
 
 class Haste : Command(
@@ -23,7 +32,7 @@ class Haste : Command(
         args : MutableList<String>,
         cmd : String,
     ) : Unit = coroutineScope {
-/*        event.channel.sendMessage(MessageBuilder().appendLine("Creating haste...").build()).thenAccept { message ->
+        event.channel.sendMessage(MessageBuilder().appendLine("Creating haste...").build()).thenAccept { message ->
             launch {
                 var body = ""
                 if (args.isNotEmpty()) {
@@ -31,7 +40,7 @@ class Haste : Command(
                 }
                 if (event.message.attachments.isNotEmpty()) {
                     try {
-                        body = normalHTTPClient.get(event.message.attachments.first().url).bodyAsText()
+                        body = normalHTTPClient.get(event.message.attachments.values.first().url).bodyAsText()
                     } catch (e : MalformedInputException) {
                         message.edit(error(client,
                             event,
@@ -56,10 +65,10 @@ class Haste : Command(
                 message.edit(MessageBuilder().appendLine("https://www.toptal.com/developers/hastebin/${haste.key}")
                     .build()).thenAccept { message ->
                     this.launch {
-                        onComplete(message, client, client.config.auto_delete.bot.content_generation)
+                        onComplete(message, client, config.auto_delete.bot.content_generation)
                     }
                 }
             }
-        }*/
+        }
     }
 }

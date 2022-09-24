@@ -1,9 +1,16 @@
 package org.caffeine.chaos.commands
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
+import java.awt.AlphaComposite
+import java.awt.image.BufferedImage
+import java.io.FileOutputStream
+import java.net.URL
+import javax.imageio.ImageIO
 
 
 class GayPFP : Command(
@@ -16,9 +23,9 @@ class GayPFP : Command(
         args : MutableList<String>,
         cmd : String,
     ) {
-/*        try {
+       try {
             val pfp = withContext(Dispatchers.IO) {
-                ImageIO.read(URL(event.message.mentions.first().avatarUrl()))
+                ImageIO.read(URL(event.message.mentions.values.first().avatarUrl()))
                     .getScaledInstance(512, 512, BufferedImage.SCALE_SMOOTH)
             }
             val gayflag = withContext(Dispatchers.IO) {
@@ -41,6 +48,6 @@ class GayPFP : Command(
             }
         } catch (e : Exception) {
             e.printStackTrace()
-        } */
+        }
     }
 }

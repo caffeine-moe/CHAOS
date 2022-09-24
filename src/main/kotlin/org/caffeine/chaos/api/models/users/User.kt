@@ -9,13 +9,9 @@ data class User(
     override val discriminator : String = "",
     override val avatar : String? = "",
     override val id : String = "",
+    override val bot : Boolean = false,
     val client : Client,
 ) : DiscordUser {
-
-    override val avatarDecoration : String? = null
-    override val banner : String? = null
-    override val bannerColor : String? = null
-    override val accentColour : String? = null
 
     override val discriminatedName = "$username#$discriminator"
     override fun avatarUrl() : String {
