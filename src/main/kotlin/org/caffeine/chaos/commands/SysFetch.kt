@@ -35,7 +35,7 @@ class SysFetch : Command(
                     .appendLine("OS: ${sysInfo.operatingSystem.family}")
                     .appendLine("UPTIME: ${up / (60 * 60 * 24)}d ${(up % 86400) / (60 * 60)}h ${(up / 60) % 60}m ${up % 60}s")
                     .appendLine("CPU: ${proc.processorIdentifier.name} (${proc.physicalProcessorCount}C ${proc.logicalProcessorCount}T)")
-                    .appendLine("RAM: ${ram.total / (1073741824)}GB")
+                    .appendLine("RAM: ${(ram.total / 1073741824) + 1}GB")
                     .appendLine("GPU: ${gpu.name}")
                     .appendLine("HOST: ${sysInfo.hardware.computerSystem.baseboard.model}")
                     .appendLine("OS VER: ${sysInfo.operatingSystem.versionInfo}")
