@@ -1,7 +1,6 @@
 package org.caffeine.chaos
 
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.typedefs.RedeemedCodeErrorType
@@ -17,26 +16,25 @@ suspend fun nitroSniper(event : ClientEvents.MessageCreate, client : Client) = c
         //removes the url prefix to get the code
         val code = event.message.content.removePrefix("https://discord.gift/")
         //redeems the code then on completion does stuff
-        client.user.redeemCode(code).thenAccept { rc ->
-            this.launch {
-                //if the nitro sniper logger is enabled then do stuff
-                if (config.logger.nitro_sniper) {
-                    //when the redeemer function returns success, print that the code was redeemed etc.
-                    //when the redeemer function returns invalid and the error is that the code is unknown, say that the code was invalid.
-                    when (rc.status) {
-                        RedeemedCodeStatusType.SUCCESS -> {
+        client.user.redeemCode(code).await().also { rc ->
+            //if the nitro sniper logger is enabled then do stuff
+            if (config.logger.nitro_sniper) {
+                //when the redeemer function returns success, print that the code was redeemed etc.
+                //when the redeemer function returns invalid and the error is that the code is unknown, say that the code was invalid.
+                when (rc.status) {
+                    RedeemedCodeStatusType.SUCCESS -> {
+                        log(
+                            "Redeemed code ${rc.code} from ${event.message.author.discriminatedName} in ${event.message.channel.id}! (${rc.latency}ms)",
+                            "NITRO SNIPER:"
+                        )
+                    }
+
+                    RedeemedCodeStatusType.INVALID -> {
+                        if (rc.error == RedeemedCodeErrorType.UNKNOWN_CODE) {
                             log(
-                                "Redeemed code ${rc.code} from ${event.message.author.discriminatedName} in ${event.message.channel.id}! (${rc.latency}ms)",
+                                "Code ${rc.code} from ${event.message.author.discriminatedName} in ${event.message.channel.id} was invalid! (${rc.latency}ms)",
                                 "NITRO SNIPER:"
                             )
-                        }
-                        RedeemedCodeStatusType.INVALID -> {
-                            if (rc.error == RedeemedCodeErrorType.UNKNOWN_CODE) {
-                                log(
-                                    "Code ${rc.code} from ${event.message.author.discriminatedName} in ${event.message.channel.id} was invalid! (${rc.latency}ms)",
-                                    "NITRO SNIPER:"
-                                )
-                            }
                         }
                     }
                 }

@@ -21,13 +21,11 @@ class Help : Command(
         if (args.isEmpty()) {
             event.channel.sendMessage(
                 MessageBuilder()
-                .appendLine("**CHAOS v$versionString**")
-                .appendLine("**Commands:** https://caffeine.moe/CHAOS/commands/")
-                .build()
-            ).thenAccept { message ->
-                launch {
-                    onComplete(message, client, config.auto_delete.bot.content_generation)
-                }
+                    .appendLine("**CHAOS v$versionString**")
+                    .appendLine("**Commands:** https://caffeine.moe/CHAOS/commands/")
+                    .build()
+            ).await().also { message ->
+                onComplete(message, client, config.auto_delete.bot.content_generation)
             }
             return@coroutineScope
         }
@@ -46,7 +44,7 @@ class Help : Command(
             }
             msg.appendLine("**Usage:** ${config.prefix}${command.commandInfo.usage}")
             msg.appendLine("**Description:** ${command.commandInfo.description}")
-            event.channel.sendMessage(msg.build()).thenAccept { message ->
+            event.channel.sendMessage(msg.build()).await().also { message ->
                 launch {
                     onComplete(message, client, config.auto_delete.bot.content_generation)
                 }
@@ -54,7 +52,7 @@ class Help : Command(
             return@coroutineScope
         }
         event.channel.sendMessage(error(client, event, "${args.joinToString(" ")} is not a command.", commandInfo))
-            .thenAccept {
+            .await().also {
                 launch { onComplete(it, client, true) }
             }
     }

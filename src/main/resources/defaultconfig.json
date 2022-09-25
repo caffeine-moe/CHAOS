@@ -13,12 +13,12 @@
     "anti_scam": true,
     "nitro_sniper": true,
     "auto_bump": true,
-    "cdnpls" : true
+    "cdnpls": true
   },
-  "web_ui" : {
-    "enabled" : true
+  "web_ui": {
+    "enabled": true
   },
-  "afk" : {
+  "afk": {
     "message": "I am afk, back soon.",
     "cooldown": 30,
     "status": "dnd"
@@ -58,7 +58,10 @@
   },
   "auto_bump": {
     "interval": 2,
-    "error": [5, 15]
+    "error": [
+      5,
+      15
+    ]
   },
   "cdnpls": {
     "enabled": true

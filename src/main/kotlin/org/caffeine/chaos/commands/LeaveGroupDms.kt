@@ -2,13 +2,11 @@ package org.caffeine.chaos.commands
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
-import org.caffeine.chaos.api.models.channels.DMChannel
 import org.caffeine.chaos.api.models.interfaces.BaseChannel
 import org.caffeine.chaos.api.typedefs.ChannelType
 import org.caffeine.chaos.api.utils.MessageBuilder
@@ -32,10 +30,12 @@ class LeaveGroupDms :
             try {
                 val list = client.user.channels.values.filter { it.type == ChannelType.GROUP }
                 if (list.isEmpty()) {
-                    event.channel.sendMessage(MessageBuilder()
-                        .appendLine("There are no channels to delete!")
-                        .build())
-                        .thenAccept { message -> this.launch { onComplete(message, client, true) } }
+                    event.channel.sendMessage(
+                        MessageBuilder()
+                            .appendLine("There are no channels to delete!")
+                            .build()
+                    )
+                        .await().also { message -> onComplete(message, client, true) }
                     return@coroutineScope
                 }
                 for (channel : BaseChannel in list) {
@@ -48,20 +48,23 @@ class LeaveGroupDms :
                 }
                 if (done > 1) {
                     log(channels.toString(), "CHANNELS DELETED:")
-                    event.channel.sendMessage(MessageBuilder()
-                        .appendLine("Done! Deleted $done channels!")
-                        .appendLine("Check the console to see a list of the deleted channels.")
-                        .build())
-                        .thenAccept { message -> this.launch { onComplete(message, client, true) } }
+                    event.channel.sendMessage(
+                        MessageBuilder()
+                            .appendLine("Done! Deleted $done channels!")
+                            .appendLine("Check the console to see a list of the deleted channels.")
+                            .build()
+                    )
+                        .await().also { message -> onComplete(message, client, true) }
                 }
                 if (done == 1) {
                     log(channels.toString(), "CHANNELS DELETED:")
                     event.channel.sendMessage(
                         MessageBuilder()
-                        .appendLine("Done! Deleted $done channel!")
-                        .appendLine("Check the console to see the name of the deleted channel.")
-                        .build())
-                        .thenAccept { message -> this.launch { onComplete(message, client, true) } }
+                            .appendLine("Done! Deleted $done channel!")
+                            .appendLine("Check the console to see the name of the deleted channel.")
+                            .build()
+                    )
+                        .await().also { message -> onComplete(message, client, true) }
                 }
             } catch (e : Exception) {
                 println(e.printStackTrace())

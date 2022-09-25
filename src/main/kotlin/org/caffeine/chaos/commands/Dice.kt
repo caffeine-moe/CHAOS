@@ -1,7 +1,6 @@
 package org.caffeine.chaos.commands
 
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
@@ -22,10 +21,9 @@ class Dice :
             val num = (1..6).random()
             event.channel.sendMessage(
                 MessageBuilder()
-                .appendLine(":game_die: $num").build()).thenAccept { message ->
-                this.launch {
-                    onComplete(message, client, config.auto_delete.bot.content_generation)
-                }
+                    .appendLine(":game_die: $num").build()
+            ).await().also { message ->
+                onComplete(message, client, config.auto_delete.bot.content_generation)
             }
         }
 }

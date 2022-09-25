@@ -1,6 +1,5 @@
 package org.caffeine.chaos.api.payloads.gateway
 
-import org.caffeine.chaos.api.payloads.gateway.data.SerialGuild
 import org.caffeine.chaos.api.payloads.gateway.data.guild.create.GuildCreateD
 
 @kotlinx.serialization.Serializable

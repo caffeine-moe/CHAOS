@@ -1,7 +1,6 @@
 package org.caffeine.chaos.commands
 
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
@@ -35,10 +34,8 @@ class Uptime : Command(
             MessageBuilder()
                 .appendLine("CHAOS has been running for $days days, $hours hours, $minutes minutes and $seconds seconds.")
                 .build()
-        ).thenAccept {
-            this.launch {
-                onComplete(it, client, true)
-            }
+        ).await().also {
+            onComplete(it, client, true)
         }
     }
 }

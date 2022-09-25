@@ -1,7 +1,6 @@
 package org.caffeine.chaos.commands
 
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
@@ -29,27 +28,25 @@ class RandomChoice : Command(
             else -> ""
         }
         if (err.isNotBlank()) {
-            event.channel.sendMessage(error(
-                client,
-                event,
-                err,
-                commandInfo
-            )).thenAccept {
-                launch {
-                    onComplete(it, client, true)
-                }
+            event.channel.sendMessage(
+                error(
+                    client,
+                    event,
+                    err,
+                    commandInfo
+                )
+            ).await().also {
+                onComplete(it, client, true)
             }
             return@coroutineScope
         }
 
         event.channel.sendMessage(
             MessageBuilder()
-            .appendLine(argspl.random().trim())
-            .build()
-        ).thenAccept {
-            launch {
-                onComplete(it, client, config.auto_delete.bot.content_generation)
-            }
+                .appendLine(argspl.random().trim())
+                .build()
+        ).await().also {
+            onComplete(it, client, config.auto_delete.bot.content_generation)
         }
     }
 }

@@ -1,7 +1,6 @@
 package org.caffeine.chaos.commands
 
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
@@ -31,10 +30,8 @@ class Theme : Command(arrayOf("theme", "dth"), CommandInfo("Theme", "theme <Them
             } else {
                 "No arguments passed for theme."
             }
-            event.message.channel.sendMessage(error(client, event, err, commandInfo)).thenAccept {
-                this.launch {
-                    onComplete(it, client, true)
-                }
+            event.message.channel.sendMessage(error(client, event, err, commandInfo)).await().also {
+                onComplete(it, client, true)
             }
         }
 }

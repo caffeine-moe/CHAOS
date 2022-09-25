@@ -79,14 +79,14 @@ suspend fun handleMessage(event : ClientEvents.MessageCreate, client : Client) {
     //if the message is sent by the user the selfbot is logged into then do stuff
     if (event.message.author.id == client.user.id) {
 
-/*        val guild = client.user.getGuild(event.channel)
+        /*        val guild = client.user.getGuild(event.channel)
 
-    `    if (guild != null) {
-            if (!guilds.contains(guild.id)) {
-                client.user.fetchGuildMembers(guild)
-                guilds[guild.id] = guild
-            }
-        }*/
+            `    if (guild != null) {
+                    if (!guilds.contains(guild.id)) {
+                        client.user.fetchGuildMembers(guild)
+                        guilds[guild.id] = guild
+                    }
+                }*/
 
         //if the message starts with the configured prefix and isn't just the prefix
         //then remove the prefix and set the first item in the message (the command) as a value

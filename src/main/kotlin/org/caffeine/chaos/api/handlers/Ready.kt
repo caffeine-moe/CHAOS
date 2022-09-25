@@ -1,7 +1,6 @@
 package org.caffeine.chaos.api.handlers
 
 import kotlinx.serialization.decodeFromString
-import org.caffeine.chaos.api.client.BaseClient
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.client.ClientImpl
@@ -16,14 +15,12 @@ import org.caffeine.chaos.api.models.users.BlockedUser
 import org.caffeine.chaos.api.models.users.Friend
 import org.caffeine.chaos.api.models.users.User
 import org.caffeine.chaos.api.payloads.gateway.Ready
-import org.caffeine.chaos.api.payloads.gateway.data.SerialGuild
 import org.caffeine.chaos.api.payloads.gateway.data.guild.create.GuildCreateD
 import org.caffeine.chaos.api.payloads.gateway.data.ready.ReadyD
 import org.caffeine.chaos.api.payloads.gateway.data.ready.ReadyDPrivateChannel
 import org.caffeine.chaos.api.payloads.gateway.data.ready.ReadyDRelationship
 import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.log
-import java.io.File
 
 suspend fun ready(client : ClientImpl, payload : String) {
     val d = jsonc.decodeFromString<Ready>(payload).d

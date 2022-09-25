@@ -15,10 +15,12 @@ suspend fun handleArgs(args : Array<String>) {
                 log("  -u, --update: Check for updates")
                 exitProcess(69)
             }
+
             "-v", "--version" -> {
                 log("CHAOS v$versionString")
                 exitProcess(69)
             }
+
             "-c", "--config" -> {
                 if (args.size > 1 && File(args[1]).exists()) {
                     log("Loading config file ${args[1]}")
@@ -28,10 +30,12 @@ suspend fun handleArgs(args : Array<String>) {
                     exitProcess(69)
                 }
             }
+
             "-u", "--update" -> {
                 checkUpdates()
                 exitProcess(69)
             }
+
             else -> {
                 log("Unknown argument: ${args.first()}")
                 exitProcess(69)

@@ -4,7 +4,6 @@ import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.jsonc
-import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
 import org.caffeine.chaos.api.payloads.gateway.MessageCreate
 
 suspend fun messageCreate(payload : String, client : ClientImpl) {
@@ -12,7 +11,8 @@ suspend fun messageCreate(payload : String, client : ClientImpl) {
         val d = jsonc.decodeFromString<MessageCreate>(payload).d
         val message = client.utils.createMessage(d)
         val channel = message.channel
-        val event = ClientEvents.MessageCreate(message,
+        val event = ClientEvents.MessageCreate(
+            message,
             channel
         )
         client.eventBus.produceEvent(event)

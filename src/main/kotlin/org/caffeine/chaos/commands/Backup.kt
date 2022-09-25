@@ -2,7 +2,6 @@ package org.caffeine.chaos.commands
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.Command
@@ -53,78 +52,75 @@ class Backup :
     ) : Unit = coroutineScope {
         val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yy_HH:mm:ss"))
         event.message.channel.sendMessage(MessageBuilder().append("Performing backup...").build())
-            .thenAccept { message ->
-                launch {
+            .await().also { message ->
+                try {
+                    val blockList = mutableListOf<PrivateUser>()
+
+                    val friends = mutableListOf<PrivateUser>()
+
+                    val simpleGuilds = mutableListOf<PrivateGuild>()
+
+                    for (i in client.user.guilds.values.toList()) {
+                        simpleGuilds.add(
+                            PrivateGuild(name = i.name, id = i.id, vanityUrl = i.vanityUrl)
+                        )
+
+                    }
+
+                    for (i in client.user.relationships.friends.values.toList()) {
+                        friends.add(
+                            PrivateUser(
+                                username = i.username,
+                                discriminator = i.discriminator,
+                                id = i.id,
+                                avatar = i.avatar,
+                            )
+                        )
+                    }
+
+                    for (i in client.user.relationships.blockedUsers.values.toList()) {
+                        blockList.add(
+                            PrivateUser(
+                                username = i.username,
+                                discriminator = i.discriminator,
+                                id = i.id,
+                                avatar = i.avatar,
+                            )
+                        )
+                    }
+
+                    val textToWrite = jsonp.encodeToString(BackupStructure(blockList, friends, simpleGuilds))
+                    val p = File("Backup")
+                    if (!p.exists()) {
+                        p.mkdir()
+                    }
+                    var f : File
+                    f = File("${p.absolutePath}\\$time.json")
+                    if (p.absolutePath.startsWith("/")) {
+                        f = File("${p.absolutePath}/$time.json")
+                    }
+                    withContext(Dispatchers.IO) {
+                        Files.createFile(f.toPath())
+                    }
+                    File(f.toPath().toString()).writeText(textToWrite)
                     try {
-                        val blockList = mutableListOf<PrivateUser>()
-
-                        val friends = mutableListOf<PrivateUser>()
-
-                        val simpleGuilds = mutableListOf<PrivateGuild>()
-
-                        for (i in client.user.guilds.values.toList()) {
-                            simpleGuilds.add(
-                                PrivateGuild(name = i.name, id = i.id, vanityUrl = i.vanityUrl)
-                            )
-
+                        message.edit(
+                            MessageBuilder()
+                                .appendLine("Backup successful!")
+                                .appendLine("Saved to: ${f.absolutePath}")
+                                .build()
+                        ).await().also { message ->
+                            onComplete(message, client, true)
                         }
-
-                        for (i in client.user.relationships.friends.values.toList()) {
-                            friends.add(
-                                PrivateUser(
-                                    username = i.username,
-                                    discriminator = i.discriminator,
-                                    id = i.id,
-                                    avatar = i.avatar,
-                                )
-                            )
-                        }
-
-                        for (i in client.user.relationships.blockedUsers.values.toList()) {
-                            blockList.add(
-                                PrivateUser(
-                                    username = i.username,
-                                    discriminator = i.discriminator,
-                                    id = i.id,
-                                    avatar = i.avatar,
-                                )
-                            )
-                        }
-
-                        val textToWrite = jsonp.encodeToString(BackupStructure(blockList, friends, simpleGuilds))
-                        val p = File("Backup")
-                        if (!p.exists()) {
-                            p.mkdir()
-                        }
-                        var f : File
-                        f = File("${p.absolutePath}\\$time.json")
-                        if (p.absolutePath.startsWith("/")) {
-                            f = File("${p.absolutePath}/$time.json")
-                        }
-                        withContext(Dispatchers.IO) {
-                            Files.createFile(f.toPath())
-                        }
-                        File(f.toPath().toString()).writeText(textToWrite)
-                        try {
-                            message.edit(
-                                MessageBuilder()
-                                    .appendLine("Backup successful!")
-                                    .appendLine("Saved to: ${f.absolutePath}")
-                                    .build()
-                            ).thenAccept { message ->
-                                launch {
-                                    onComplete(message, client, true)
-                                }
-                            }
-                            return@launch
-                        } catch (e : Exception) {
-                            e.printStackTrace()
-                        }
+                        return@also
                     } catch (e : Exception) {
                         e.printStackTrace()
                     }
+                } catch (e : Exception) {
+                    e.printStackTrace()
                 }
             }
+
 
     }
 }

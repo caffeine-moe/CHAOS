@@ -23,21 +23,25 @@ suspend fun handleJsonRequest(payload : String, client : ClientImpl) {
                 Event.READY.value -> {
                     ready(client, payload)
                 }
+
                 Event.MESSAGE_CREATE.value -> {
                     if (client.ready) {
                         messageCreate(payload, client)
                     }
                 }
+
                 Event.GUILD_DELETE.value -> {
                     if (client.ready) {
                         guildDelete(payload, client)
                     }
                 }
+
                 Event.GUILD_CREATE.value -> {
                     if (client.ready) {
                         guildCreate(payload, client)
                     }
                 }
+
                 Event.GUILD_MEMBER_LIST_UPDATE.value -> {
                     if (client.ready) {
                         //guildMemberListUpdate(payload, client)
@@ -45,20 +49,25 @@ suspend fun handleJsonRequest(payload : String, client : ClientImpl) {
                 }
             }
         }
+
         OPCODE.HEARTBEAT.value -> {
             client.socket.sendHeartBeat()
         }
+
         OPCODE.RECONNECT.value -> {
             log("Gateway sent opcode 7 RECONNECT, reconnecting...", "API:")
             client.socket.execute(ConnectionType.RECONNECT_AND_RESUME)
         }
+
         OPCODE.INVALID_SESSION.value -> {
             log("Client received OPCODE 9 INVALID SESSION, reconnecting...", "API:")
             client.socket.execute(ConnectionType.RECONNECT)
         }
+
         OPCODE.HEARTBEAT_ACK.value -> {
 
         }
+
         else -> {
             println(payload)
         }

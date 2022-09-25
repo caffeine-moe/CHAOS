@@ -1,5 +1,6 @@
 package org.caffeine.chaos.api.models.message
 
+import kotlinx.coroutines.CompletableDeferred
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.models.channels.TextChannel
 import org.caffeine.chaos.api.models.guild.Guild
@@ -8,13 +9,12 @@ import org.caffeine.chaos.api.models.users.User
 import org.caffeine.chaos.api.typedefs.MessageOptions
 import org.caffeine.chaos.api.typedefs.MessageType
 import java.util.*
-import java.util.concurrent.CompletableFuture
 
 data class Message(
     val client : Client = Client(),
     val id : String = "",
     val channel : TextBasedChannel = TextChannel(),
-    val guild : Guild? = Guild(),
+    val guild : Guild? = null,
     val author : User = User(client = client),
     val content : String = "",
     val timestamp : Date = Date(),
@@ -30,7 +30,7 @@ data class Message(
         client.user.deleteMessage(this)
     }
 
-    suspend fun edit(edit : MessageOptions) : CompletableFuture<Message> {
+    suspend fun edit(edit : MessageOptions) : CompletableDeferred<Message> {
         return client.user.editMessage(this, edit)
     }
 }

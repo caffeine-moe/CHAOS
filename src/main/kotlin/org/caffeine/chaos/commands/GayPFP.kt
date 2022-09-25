@@ -23,7 +23,7 @@ class GayPFP : Command(
         args : MutableList<String>,
         cmd : String,
     ) {
-       try {
+        try {
             val pfp = withContext(Dispatchers.IO) {
                 ImageIO.read(URL(event.message.mentions.values.first().avatarUrl()))
                     .getScaledInstance(512, 512, BufferedImage.SCALE_SMOOTH)

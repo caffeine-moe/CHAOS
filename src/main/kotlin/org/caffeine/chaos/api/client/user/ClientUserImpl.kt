@@ -12,7 +12,6 @@ import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.models.channels.DMChannel
 import org.caffeine.chaos.api.models.guild.Guild
 import org.caffeine.chaos.api.models.interfaces.BaseChannel
 import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
@@ -63,7 +62,10 @@ data class ClientUserImpl(
         get() = _guilds
 
 
-    override suspend fun fetchMessagesFromChannel(channel : TextBasedChannel, filters : MessageFilters) : List<Message> {
+    override suspend fun fetchMessagesFromChannel(
+        channel : TextBasedChannel,
+        filters : MessageFilters,
+    ) : List<Message> {
         val collection : MutableList<Message> = arrayListOf()
         val messagesPerRequest = 100
 
@@ -85,13 +87,14 @@ data class ClientUserImpl(
                 if (filters.after_id.isNotBlank()) parameters += "after=${filters.after_id}&"
                 if (filters.author_id.isNotBlank()) parameters += "author_id=${filters.author_id}&"
                 if (filters.mentioning_user_id.isNotBlank()) parameters += "mentions=${filters.mentioning_user_id}&"
-                val response = clientImpl.utils.discordHTTPClient.request("$BASE_URL/channels/${channel.id}/messages?${parameters}") {
-                    method = HttpMethod.Get
-                    headers {
-                        append(HttpHeaders.Authorization, token)
-                        append(HttpHeaders.ContentType, "application/json")
+                val response =
+                    clientImpl.utils.discordHTTPClient.request("$BASE_URL/channels/${channel.id}/messages?${parameters}") {
+                        method = HttpMethod.Get
+                        headers {
+                            append(HttpHeaders.Authorization, token)
+                            append(HttpHeaders.ContentType, "application/json")
+                        }
                     }
-                }
                 val newMessages = json.decodeFromString<MutableList<SerialMessage>>(response.bodyAsText())
                 newMessages.removeIf { filters.author_id.isNotBlank() && it.author.id != filters.author_id }
                 newMessages.forEach { collection += clientImpl.utils.createMessage(it) }

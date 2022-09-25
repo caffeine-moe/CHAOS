@@ -1,7 +1,6 @@
 package org.caffeine.chaos.commands
 
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
@@ -40,19 +39,15 @@ class IdToDate : Command(
                     .appendLine("**The id $id as a date is:**")
                     .appendLine(formattedDate)
                     .build()
-            ).thenAccept {
-                launch {
-                    onComplete(it, client, true)
-                }
+            ).await().also {
+                onComplete(it, client, true)
             }
             return@coroutineScope
         }
         event.channel.sendMessage(
             error(client, event, err, commandInfo)
-        ).thenAccept {
-            launch {
-                onComplete(it, client, true)
-            }
+        ).await().also {
+            onComplete(it, client, true)
         }
     }
 }

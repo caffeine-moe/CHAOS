@@ -3,7 +3,7 @@ package org.caffeine.chaos.api.payloads.gateway.data.guild.create
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class GuildCreateD (
+data class GuildCreateD(
     val id : String = "",
     val name : String = "",
     val icon : String = "",
@@ -36,5 +36,5 @@ data class GuildCreateD (
     val publicUpdatesChannelId : String? = "",
     val embedEnabled : Boolean = false,
     val embedChannelId : String = "",
-    val channels : List<GuildCreateDChannel> = listOf()
+    val channels : List<GuildCreateDChannel> = listOf(),
 )

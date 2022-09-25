@@ -21,7 +21,6 @@ import kotlinx.serialization.json.jsonObject
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.models.message.MessageFilters
 import org.caffeine.chaos.api.models.channels.DMChannel
 import org.caffeine.chaos.api.models.channels.TextChannel
 import org.caffeine.chaos.api.models.guild.Guild
@@ -31,9 +30,9 @@ import org.caffeine.chaos.api.models.interfaces.GuildChannel
 import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
 import org.caffeine.chaos.api.models.message.Message
 import org.caffeine.chaos.api.models.message.MessageAttachment
+import org.caffeine.chaos.api.models.message.MessageFilters
 import org.caffeine.chaos.api.models.users.User
 import org.caffeine.chaos.api.payloads.gateway.data.SerialAttachment
-import org.caffeine.chaos.api.payloads.gateway.data.SerialGuild
 import org.caffeine.chaos.api.payloads.gateway.data.SerialMessage
 import org.caffeine.chaos.api.payloads.gateway.data.SerialUser
 import org.caffeine.chaos.api.payloads.gateway.data.guild.create.GuildCreateD
@@ -71,9 +70,9 @@ open class DiscordUtils {
 
     var sessionId = ""
 
-/*
-    Http Client
- */
+    /*
+        Http Client
+     */
 
     val discordHTTPClient : HttpClient = HttpClient(CIO) {
         install(WebSockets)
@@ -316,6 +315,7 @@ open class DiscordUtils {
                 payload.publicUpdatesChannelId,
                 false,
                 "",
+                client.client,
             )
         } catch (e : Exception) {
             log("Error creating guild: ${e.message}", "API:")
@@ -422,9 +422,9 @@ open class DiscordUtils {
         )
     }
 
-/*
-    Super Properties Stuff
- */
+    /*
+        Super Properties Stuff
+     */
 
     var superProperties = SuperProperties()
     var superPropertiesStr = ""
@@ -479,9 +479,9 @@ class MessageBuilder : DiscordUtils() {
         return this
     }
 
-/*        fun addAttachment(attachment : MessageAttachment) : MessageBuilder {
-            attachments.add(attachment)
-            return this
-        }*/
+    /*        fun addAttachment(attachment : MessageAttachment) : MessageBuilder {
+                attachments.add(attachment)
+                return this
+            }*/
 }
 

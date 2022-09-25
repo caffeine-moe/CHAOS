@@ -104,14 +104,17 @@ class Connection(private val client : ClientImpl) {
                 )
                 PayloadDef("Identify", identify)
             }
+
             ConnectionType.DISCONNECT -> {
                 disconnect()
                 return
             }
+
             ConnectionType.RECONNECT -> {
                 reconnect()
                 return
             }
+
             ConnectionType.RECONNECT_AND_RESUME -> {
                 disconnect()
                 fetchWebClientValues()

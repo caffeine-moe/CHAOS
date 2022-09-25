@@ -1,13 +1,13 @@
 package org.caffeine.chaos.api.models.channels
 
+import kotlinx.coroutines.CompletableDeferred
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
 import org.caffeine.chaos.api.models.message.Message
+import org.caffeine.chaos.api.models.message.MessageFilters
 import org.caffeine.chaos.api.models.users.User
 import org.caffeine.chaos.api.typedefs.ChannelType
 import org.caffeine.chaos.api.typedefs.MessageOptions
-import org.caffeine.chaos.api.models.message.MessageFilters
-import java.util.concurrent.CompletableFuture
 
 class DMChannel(
     override val id : String,
@@ -17,7 +17,7 @@ class DMChannel(
     override val name : String,
     val recipients : Map<String, User>,
 ) : TextBasedChannel {
-    override suspend fun sendMessage(payload : MessageOptions) : CompletableFuture<Message> {
+    override suspend fun sendMessage(payload : MessageOptions) : CompletableDeferred<Message> {
         return client.user.sendMessage(this, payload)
     }
 

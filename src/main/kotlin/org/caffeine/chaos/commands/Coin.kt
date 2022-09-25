@@ -1,7 +1,6 @@
 package org.caffeine.chaos.commands
 
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
@@ -21,10 +20,9 @@ class Coin : Command(arrayOf("coin"), CommandInfo("Coin", "coin", "Flips a coin 
             val face = arrayOf("Heads", "Tails").random()
             event.channel.sendMessage(
                 MessageBuilder()
-                .appendLine(":coin: $face!").build()).thenAccept { message ->
-                this.launch {
-                    onComplete(message, client, config.auto_delete.bot.content_generation)
-                }
+                    .appendLine(":coin: $face!").build()
+            ).await().also { message ->
+                onComplete(message, client, config.auto_delete.bot.content_generation)
             }
         }
 }

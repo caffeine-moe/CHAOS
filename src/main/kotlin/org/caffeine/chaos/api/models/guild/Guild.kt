@@ -35,7 +35,7 @@ data class Guild(
     val publicUpdatesChannelId : String? = "",
     val embedEnabled : Boolean = false,
     val embedChannelId : String = "",
-    val client : Client = Client()
+    val client : Client,
 ) {
     fun muteForever() {
         client.user.muteGuild(this, -1)

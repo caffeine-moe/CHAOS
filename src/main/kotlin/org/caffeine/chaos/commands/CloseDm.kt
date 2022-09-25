@@ -22,6 +22,7 @@ class CloseDm : Command(arrayOf("closedm"), CommandInfo("CloseDM", "closedm", "C
                 event.channel.delete()
                 "closed!"
             }
+
             else -> {
                 "is not a DM Channel!"
             }

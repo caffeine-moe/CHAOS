@@ -1,7 +1,6 @@
 package org.caffeine.chaos.commands
 
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
@@ -29,8 +28,8 @@ class Avatar : Command(
                         "'${args.joinToString(" ")}}' is not a mentioned user.",
                         commandInfo
                     )
-                ).thenAccept { message ->
-                    this.launch { onComplete(message, client, true) }
+                ).await().also { message ->
+                    onComplete(message, client, true)
                 }
                 return@coroutineScope
             }
@@ -52,7 +51,7 @@ class Avatar : Command(
                     .appendLine(avatarURL)
                     .build()
             )
-                .thenAccept { this.launch { onComplete(it, client, config.auto_delete.bot.content_generation) } }
+                .await().also { onComplete(it, client, config.auto_delete.bot.content_generation) }
 
         }
 }

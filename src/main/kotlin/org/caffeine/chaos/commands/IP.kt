@@ -1,6 +1,5 @@
 package org.caffeine.chaos.commands
 
-import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.network.selector.*
@@ -8,7 +7,6 @@ import io.ktor.network.sockets.*
 import io.ktor.util.network.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
@@ -103,37 +101,37 @@ class IP : Command(arrayOf("ip"), CommandInfo("IP", "ip <IP/URL>", "Looks up inf
         coroutineScope {
             if (args.isEmpty()) {
                 event.channel.sendMessage(error(client, event, "No IP/URL specified.", commandInfo))
-                    .thenAccept { message -> this.launch { onComplete(message, client, true) } }
+                    .await().also { message -> onComplete(message, client, true) }
                 return@coroutineScope
             }
             event.channel.sendMessage(MessageBuilder().appendLine("Looking up IP/URL").build())
-                .thenAccept { message ->
-                    this.launch {
-                        val url = args.joinToString(" ")
-                        try {
-                            val host = if (url.contains("://")) {
-                                withContext(Dispatchers.IO) {
-                                    URL(url).host
-                                }
-                            } else {
-                                val selectorManager = ActorSelectorManager(Dispatchers.IO)
-                                val con = aSocket(selectorManager).tcp().connect(url, 443)
-                                con.remoteAddress.toJavaAddress().hostname
+                .await().also { message ->
+                    val url = args.joinToString(" ")
+                    try {
+                        val host = if (url.contains("://")) {
+                            withContext(Dispatchers.IO) {
+                                URL(url).host
                             }
-                            val ip = withContext(Dispatchers.IO) {
-                                InetAddress.getByName(host).hostAddress
-                            }
-                            val response =
-                                normalHTTPClient.request("https://ipwhois.pro/$ip?key=Sxd2AkU2ZL0YtkSR&security=1&lang=en") {
-                                    headers {
-                                        append("Referer", "https://ipwhois.io/")
-                                    }
+                        } else {
+                            val selectorManager = ActorSelectorManager(Dispatchers.IO)
+                            val con = aSocket(selectorManager).tcp().connect(url, 443)
+                            con.remoteAddress.toJavaAddress().hostname
+                        }
+                        val ip = withContext(Dispatchers.IO) {
+                            InetAddress.getByName(host).hostAddress
+                        }
+                        val response =
+                            normalHTTPClient.request("https://ipwhois.pro/$ip?key=Sxd2AkU2ZL0YtkSR&security=1&lang=en") {
+                                headers {
+                                    append("Referer", "https://ipwhois.io/")
                                 }
-                            val parsedResponse =
-                                json.decodeFromString<IpApiResponse>(response.bodyAsText())
-                            when (parsedResponse.success) {
-                                true -> {
-                                    message.edit(MessageBuilder()
+                            }
+                        val parsedResponse =
+                            json.decodeFromString<IpApiResponse>(response.bodyAsText())
+                        when (parsedResponse.success) {
+                            true -> {
+                                message.edit(
+                                    MessageBuilder()
                                         .appendLine("**Information for IP/URL $url**")
                                         .appendLine("**IP:** ${parsedResponse.ip}")
                                         .appendLine("**Continent:** ${parsedResponse.continent}")
@@ -147,34 +145,39 @@ class IP : Command(arrayOf("ip"), CommandInfo("IP", "ip <IP/URL>", "Looks up inf
                                         .appendLine("**VPN:** ${parsedResponse.security.vpn}")
                                         .appendLine("**Hosting:** ${parsedResponse.security.hosting}")
                                         .appendLine("**Tor:** ${parsedResponse.security.tor}")
-                                        .build())
-                                        .thenAccept { message -> this.launch { onComplete(message, client, true) } }
-                                }
-                                false -> {
-                                    message.edit(error(client, event, parsedResponse.message, commandInfo))
-                                        .thenAccept { message -> this.launch { onComplete(message, client, true) } }
-                                }
+                                        .build()
+                                )
+                                    .await().also { message -> onComplete(message, client, true) }
                             }
-                        } catch (e : Exception) {
-                            when (e) {
-                                is UnresolvedAddressException -> {
-                                    message.edit(error(client, event, "IP/URL is invalid.", commandInfo))
-                                        .thenAccept { message -> this.launch { onComplete(message, client, true) } }
-                                    return@launch
-                                }
-                                is SocketTimeoutException -> {
-                                    message.edit(MessageBuilder()
+
+                            false -> {
+                                message.edit(error(client, event, parsedResponse.message, commandInfo))
+                                    .await().also { message -> onComplete(message, client, true) }
+                            }
+                        }
+                    } catch (e : Exception) {
+                        when (e) {
+                            is UnresolvedAddressException -> {
+                                message.edit(error(client, event, "IP/URL is invalid.", commandInfo))
+                                    .await().also { message -> onComplete(message, client, true) }
+                                return@also
+                            }
+
+                            is SocketTimeoutException -> {
+                                message.edit(
+                                    MessageBuilder()
                                         .appendLine(":pensive: Connection timed out")
                                         .appendLine("Try a different IP or URL...")
-                                        .build())
-                                        .thenAccept { message -> this.launch { onComplete(message, client, true) } }
-                                    return@launch
-                                }
-                                else -> {
-                                    message.edit(error(client, event, e.message.toString(), commandInfo))
-                                        .thenAccept { message -> this.launch { onComplete(message, client, true) } }
-                                    return@launch
-                                }
+                                        .build()
+                                )
+                                    .await().also { message -> onComplete(message, client, true) }
+                                return@also
+                            }
+
+                            else -> {
+                                message.edit(error(client, event, e.message.toString(), commandInfo))
+                                    .await().also { message -> onComplete(message, client, true) }
+                                return@also
                             }
                         }
                     }

@@ -1,7 +1,6 @@
 package org.caffeine.chaos.commands
 
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
@@ -32,8 +31,8 @@ class UserInfo :
             }
             if (error.isNotBlank()) {
                 event.message.channel.sendMessage(error(client, event, error, commandInfo))
-                    .thenAccept { message ->
-                        this.launch { onComplete(message, client, true) }
+                    .await().also { message ->
+                        onComplete(message, client, true)
                     }
                 return@coroutineScope
             }
@@ -50,8 +49,8 @@ class UserInfo :
                     .appendLine("**Avatar:** <${usrInfo.avatarUrl()}>")
                     .appendLine("**Account Creation Date:** $acd")
                     .build()
-            ).thenAccept { message ->
-                this.launch { onComplete(message, client, config.auto_delete.bot.content_generation) }
+            ).await().also { message ->
+                onComplete(message, client, config.auto_delete.bot.content_generation)
             }
             return@coroutineScope
         }

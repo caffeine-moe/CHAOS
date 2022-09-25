@@ -1,12 +1,10 @@
 package org.caffeine.chaos.commands
 
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
-
 import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.api.utils.log
@@ -21,8 +19,8 @@ class Token : Command(arrayOf("token"), CommandInfo("Token", "token", "Logs your
         coroutineScope {
             log("${client.user.discriminatedName} : ${client.user.token}", "TOKEN:${ConsoleColours.BLUE.value}")
             event.message.channel.sendMessage(MessageBuilder().append("Token logged to console.").build())
-                .thenAccept { message ->
-                    this.launch { onComplete(message, client, true) }
+                .await().also { message ->
+                    onComplete(message, client, true)
                 }
         }
 }

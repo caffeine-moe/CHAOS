@@ -4,6 +4,7 @@ import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.BASE_URL
@@ -18,25 +19,24 @@ import org.caffeine.chaos.api.models.users.User
 import org.caffeine.chaos.api.payloads.gateway.data.SerialMessage
 import org.caffeine.chaos.api.typedefs.*
 import org.caffeine.chaos.api.utils.log
-import java.util.concurrent.CompletableFuture
 import kotlin.math.absoluteValue
 
 class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
 
     val dmChannels : Map<String, DMChannel>
-    get() = impl._channels.values.filterIsInstance<DMChannel>().associateBy { it.id }
+        get() = impl._channels.values.filterIsInstance<DMChannel>().associateBy { it.id }
 
-/*    fun getGuild(channel : MessageChannel) : ClientGuild? {
-        var guild : ClientGuild? = null
-        for (g in client.user.guilds) {
-            for (c in g.channels) {
-                if (c.id == channel.id) {
-                    guild = g
+    /*    fun getGuild(channel : MessageChannel) : ClientGuild? {
+            var guild : ClientGuild? = null
+            for (g in client.user.guilds) {
+                for (c in g.channels) {
+                    if (c.id == channel.id) {
+                        guild = g
+                    }
                 }
             }
-        }
-        return guild
-    }*/
+            return guild
+        }*/
 
     suspend fun deleteChannel(channel : BaseChannel) {
         clientImpl.utils.discordHTTPClient.request("$BASE_URL/channels/${channel.id}") {
@@ -98,7 +98,7 @@ class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
         }
     }
 
-    suspend fun sendMessage(channel : BaseChannel, message : MessageOptions) : CompletableFuture<Message> {
+    suspend fun sendMessage(channel : BaseChannel, message : MessageOptions) : CompletableDeferred<Message> {
         val response = clientImpl.utils.discordHTTPClient.request("$BASE_URL/channels/${channel.id}/messages") {
             method = HttpMethod.Post
             headers {
@@ -107,7 +107,7 @@ class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
             setBody(json.encodeToString(message))
         }
         val serial = json.decodeFromString<SerialMessage>(response.bodyAsText())
-        return CompletableFuture.completedFuture(clientImpl.utils.createMessage(serial))
+        return CompletableDeferred(clientImpl.utils.createMessage(serial))
     }
 
     suspend fun deleteMessage(message : Message) {
@@ -116,7 +116,7 @@ class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
         }
     }
 
-    suspend fun redeemCode(code : String) : CompletableFuture<RedeemedCode> {
+    suspend fun redeemCode(code : String) : CompletableDeferred<RedeemedCode> {
         var rc = RedeemedCode()
         var la : Long
         val start = System.currentTimeMillis()
@@ -140,7 +140,7 @@ class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
                 )
             }
         }
-        return CompletableFuture.completedFuture(rc)
+        return CompletableDeferred(rc)
     }
 
     suspend fun block(user : User) {
@@ -153,7 +153,7 @@ class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
         }
     }
 
-    suspend fun editMessage(message : Message, edit : MessageOptions) : CompletableFuture<Message> {
+    suspend fun editMessage(message : Message, edit : MessageOptions) : CompletableDeferred<Message> {
         val response =
             clientImpl.utils.discordHTTPClient.request("$BASE_URL/channels/${message.channel.id}/messages/${message.id}") {
                 method = HttpMethod.Patch
@@ -163,7 +163,7 @@ class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
                 setBody(json.encodeToString(edit))
             }
         val serial = json.decodeFromString<SerialMessage>(response.bodyAsText())
-        return CompletableFuture.completedFuture(clientImpl.utils.createMessage(serial))
+        return CompletableDeferred(clientImpl.utils.createMessage(serial))
     }
 
     fun convertIdToUnix(id : String) : Long {

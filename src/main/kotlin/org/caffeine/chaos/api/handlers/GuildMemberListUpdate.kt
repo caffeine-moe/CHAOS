@@ -82,31 +82,31 @@ private data class Timestamps(
 )*/
 
 fun guildMemberListUpdate(payload : String, client : Client) {
-/*    val decoded = jsonc.decodeFromString<GuildMemberListUpdate>(payload)
-    val guild = client.user.guilds.find { it.id == decoded.d.guild_id } ?: return
-    for (op in decoded.d.ops) {
-        when (op.op) {
-            "DELETE" -> {
-                if (guild.members.size >= op.index) {
-                    guild.members.removeAt(op.index)
+    /*    val decoded = jsonc.decodeFromString<GuildMemberListUpdate>(payload)
+        val guild = client.user.guilds.find { it.id == decoded.d.guild_id } ?: return
+        for (op in decoded.d.ops) {
+            when (op.op) {
+                "DELETE" -> {
+                    if (guild.members.size >= op.index) {
+                        guild.members.removeAt(op.index)
+                    }
                 }
-            }
-            "UPDATE" -> {
-                for (i in op.items) {
-                    val member = i.member
-                    val rep = guild.members.withIndex().find { it.value.user.id == member.user.id } ?: return
-                    guild.members[rep.index] = rep.value
+                "UPDATE" -> {
+                    for (i in op.items) {
+                        val member = i.member
+                        val rep = guild.members.withIndex().find { it.value.user.id == member.user.id } ?: return
+                        guild.members[rep.index] = rep.value
+                    }
                 }
-            }
-            "SYNC" -> {
-                for (i in op.items) {
-                    val member = i.member
+                "SYNC" -> {
+                    for (i in op.items) {
+                        val member = i.member
 
-                    if (!guild.members.contains(member)) {
-                        guild.members.add(member)
+                        if (!guild.members.contains(member)) {
+                            guild.members.add(member)
+                        }
                     }
                 }
             }
-        }
-    }*/
+        }*/
 }

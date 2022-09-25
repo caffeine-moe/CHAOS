@@ -2,16 +2,15 @@ package org.caffeine.chaos.commands
 
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
 import org.caffeine.chaos.api.models.message.Message
+import org.caffeine.chaos.api.models.message.MessageFilters
 import org.caffeine.chaos.api.typedefs.MessageType
 import org.caffeine.chaos.api.utils.MessageBuilder
-import org.caffeine.chaos.api.models.message.MessageFilters
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.purgeCock
 
@@ -30,19 +29,22 @@ class Purge : Command(
             val channel = when {
                 args.size < 1 -> {
                     event.message.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))
-                        .thenAccept { message -> this.launch { onComplete(message, client, true) } }
+                        .await().also { message -> onComplete(message, client, true) }
                     return@coroutineScope
                 }
+
                 args.size == 1 -> {
                     event.message.channel
                 }
+
                 args.size == 2 -> {
                     val channel = client.user.fetchChannelFromId(args[1]) as TextBasedChannel
                     channel
                 }
+
                 else -> {
                     event.message.channel.sendMessage(error(client, event, "Too many arguments.", commandInfo))
-                        .thenAccept { message -> this.launch { onComplete(message, client, true) } }
+                        .await().also { message -> onComplete(message, client, true) }
                     return@coroutineScope
                 }
             }
@@ -56,7 +58,7 @@ class Purge : Command(
                             commandInfo
                         )
                     )
-                        .thenAccept { message -> this.launch { onComplete(message, client, true) } }
+                        .await().also { message -> onComplete(message, client, true) }
                     return@coroutineScope
                 }
                 args.last().toInt()
@@ -65,9 +67,11 @@ class Purge : Command(
                     "max" -> {
                         Int.MAX_VALUE
                     }
+
                     "all" -> {
                         Int.MAX_VALUE
                     }
+
                     else -> {
                         event.message.channel.sendMessage(
                             error(
@@ -77,7 +81,7 @@ class Purge : Command(
                                 commandInfo
                             )
                         )
-                            .thenAccept { message -> this.launch { onComplete(message, client, true) } }
+                            .await().also { message -> onComplete(message, client, true) }
                         return@coroutineScope
                     }
                 }
@@ -90,7 +94,7 @@ class Purge : Command(
                         .appendLine("There is nothing to delete!")
                         .build()
                 )
-                    .thenAccept { message -> this.launch { onComplete(message, client, true) } }
+                    .await().also { message -> onComplete(message, client, true) }
                 return@coroutineScope
             }
             for (message : Message in messages.filter { message -> message.author.id == client.user.id }) {
@@ -111,6 +115,6 @@ class Purge : Command(
                     .appendLine("Removed $done message${if (done > 1) "s" else ""}!")
                     .build()
             )
-                .thenAccept { message -> this.launch { onComplete(message, client, true) } }
+                .await().also { message -> onComplete(message, client, true) }
         }
 }

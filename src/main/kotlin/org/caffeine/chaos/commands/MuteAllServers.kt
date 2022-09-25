@@ -1,6 +1,7 @@
 package org.caffeine.chaos.commands
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
@@ -21,33 +22,32 @@ class MuteAllServers : Command(
         val mas = "Muting all servers..."
         event.channel.sendMessage(
             MessageBuilder()
-            .appendLine(mas)
-            .build()
-        ).thenAccept { message ->
-            this.launch {
-                val list = client.user.guilds.values
-                val max = list.size
-                var done = 0
-                suspend fun up() {
-                    message.edit(MessageBuilder()
+                .appendLine(mas)
+                .build()
+        ).await().also { message ->
+            val list = client.user.guilds.values
+            val max = list.size
+            var done = 0
+            suspend fun up() {
+                message.edit(
+                    MessageBuilder()
                         .appendLine(mas)
                         .appendLine("$done/$max")
-                        .build())
-                }
-                for (i in list) {
-                    i.muteForever()
-                    done++
-                    up()
-                    delay(500)
-                }
-                message.edit(MessageBuilder()
+                        .build()
+                )
+            }
+            for (i in list) {
+                i.muteForever()
+                done++
+                up()
+                delay(500)
+            }
+            message.edit(
+                MessageBuilder()
                     .appendLine("Muted all servers!")
                     .build()
-                ).thenAccept {
-                    this.launch {
-                        onComplete(it, client, true)
-                    }
-                }
+            ).await().also {
+                onComplete(it, client, true)
             }
         }
     }

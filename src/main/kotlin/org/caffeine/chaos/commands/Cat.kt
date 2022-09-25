@@ -3,7 +3,6 @@ package org.caffeine.chaos.commands
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
@@ -50,8 +49,8 @@ class Cat : Command(arrayOf("cat", "meow"), CommandInfo("Cat", "cat", "Sends a r
                 .appendLine("**Meow!!**")
                 .appendLine("https://cataas.com${cat.url}")
                 .build()
-        ).thenAccept { message ->
-            this.launch { onComplete(message, client, config.auto_delete.bot.content_generation) }
+        ).await().also { message ->
+            onComplete(message, client, config.auto_delete.bot.content_generation)
         }
     }
 }

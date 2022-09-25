@@ -81,8 +81,8 @@ suspend fun main(args : Array<String> = arrayOf()) : Unit = coroutineScope {
     //makes new client
     val client = Client()
     //web ui benched for now
-/*         val ui = WebUI()
-        ui.init(client)*/
+    /*         val ui = WebUI()
+            ui.init(client)*/
     //checks if client is up to date
     if (config.updater.enabled) {
         update()
@@ -96,6 +96,7 @@ suspend fun main(args : Array<String> = arrayOf()) : Unit = coroutineScope {
                     is ClientEvents.Ready -> {
                         ready(client)
                     }
+
                     is ClientEvents.MessageCreate -> {
                         handleMessage(it, client)
                     }

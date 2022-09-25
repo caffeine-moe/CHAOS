@@ -37,14 +37,14 @@ suspend fun afkHandler(event : ClientEvents.MessageCreate, client : Client) {
         return
     }
     var doit = false
-/*    if (event.message.mentions.any {
-            it.id == client.user.id
-        }) {
-        doit = true
-    }*/
-/*    if (event.channel.type() == ChannelType.DM) {
-        doit = true
-    }*/
+    /*    if (event.message.mentions.any {
+                it.id == client.user.id
+            }) {
+            doit = true
+        }*/
+    /*    if (event.channel.type() == ChannelType.DM) {
+            doit = true
+        }*/
     if (doit) {
         if (cooldown.contains(author)) {
             val i = cooldown[author] ?: return
@@ -58,15 +58,15 @@ suspend fun afkHandler(event : ClientEvents.MessageCreate, client : Client) {
         if (!todm.contains(author)) {
             todm.add(author)
         }
-/*
-        val message = if (event.channel.type() == DiscordChannelType.DM) {
-*/
+        /*
+                val message = if (event.channel.type() == DiscordChannelType.DM) {
+        */
         afkMessage
     } else {
         "$afkMessage <@${author.id}>"
     }
-/*        event.channel.sendMessage(MessageBuilder()
-            .appendLine(message)
-            .build()
-        )*/
+    /*        event.channel.sendMessage(MessageBuilder()
+                .appendLine(message)
+                .build()
+            )*/
 }
