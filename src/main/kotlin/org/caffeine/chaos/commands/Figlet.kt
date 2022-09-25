@@ -19,7 +19,7 @@ class Figlet :
     ) {
         if (args.isEmpty()) {
             event.channel.sendMessage(error(client, event, "No specified text to figletize.", commandInfo))
-                .await().also { message -> onComplete(message, client, true) }
+                .await().also { message -> onComplete(message, true) }
             return
         }
         try {
@@ -30,11 +30,11 @@ class Figlet :
                     .appendLine("```$figletizedText```")
                     .build()
             ).await().also { message ->
-                onComplete(message, client, config.auto_delete.bot.content_generation)
+                onComplete(message, config.auto_delete.bot.content_generation)
             }
         } catch (e : ArrayIndexOutOfBoundsException) {
             event.channel.sendMessage(error(client, event, "Text contains non ASCII characters.", commandInfo))
-                .await().also { message -> onComplete(message, client, true) }
+                .await().also { message -> onComplete(message, true) }
             return
         }
     }
