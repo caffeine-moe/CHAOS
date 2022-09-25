@@ -1,6 +1,5 @@
 package org.caffeine.chaos.commands
 
-import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
@@ -20,25 +19,25 @@ class Pin : Command(
         event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
-    ) : Unit = coroutineScope {
-/*        if (event.message.referenced_message != null) {
-            val refmes = event.message.referenced_message!!
-            when (refmes.pinned) {
-                true -> refmes.unpin()
-                false -> refmes.pin()
-            }
-            return@coroutineScope
-        }
-        if (args.isEmpty()) {
-            log("Unable to pin message, no arguments."); return@coroutineScope
-        }
-        event.channel.sendMessage(MessageBuilder()
-            .appendLine(args.joinToString(" "))
-            .build()
-        ).thenAccept {
-            this.launch {
-                it.pin()
-            }
-        }*/
+    ) {
+        /*        if (event.message.referenced_message != null) {
+                    val refmes = event.message.referenced_message!!
+                    when (refmes.pinned) {
+                        true -> refmes.unpin()
+                        false -> refmes.pin()
+                    }
+                    return
+                }
+                if (args.isEmpty()) {
+                    log("Unable to pin message, no arguments."); return
+                }
+                event.channel.sendMessage(MessageBuilder()
+                    .appendLine(args.joinToString(" "))
+                    .build()
+                ).thenAccept {
+                    this.launch {
+                        it.pin()
+                    }
+                }*/
     }
 }

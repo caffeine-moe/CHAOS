@@ -4,7 +4,6 @@ import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
 import io.ktor.util.network.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
@@ -27,93 +26,92 @@ class Ping : Command(
         event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
-    ) : Unit =
-        coroutineScope {
-            if (args.isEmpty()) {
-                event.message.channel.sendMessage(
-                    MessageBuilder()
-                        .appendLine("Pinging...")
-                        .build()
-                )
-                    .await().also { message ->
-                        val selectorManager = ActorSelectorManager(Dispatchers.IO)
-                        val start = System.currentTimeMillis()
-                        val serverSocket = aSocket(selectorManager).tcp().connect("gateway.discord.gg", 80)
-                        val stop = System.currentTimeMillis()
-                        withContext(Dispatchers.IO) {
-                            serverSocket.close()
-                        }
-                        val ping = stop - start
-                        message.edit(
-                            MessageBuilder()
-                                .appendLine(":ping_pong: Pong!")
-                                .appendLine("Target: Discord API")
-                                .appendLine("Latency: ${ping}ms")
-                                .build()
-                        )
-                            .await().also { message -> onComplete(message, client, true) }
-                    }
-                return@coroutineScope
-            }
+    ) {
+        if (args.isEmpty()) {
             event.message.channel.sendMessage(
                 MessageBuilder()
                     .appendLine("Pinging...")
                     .build()
             )
                 .await().also { message ->
-                    val start : Long
-                    val stop : Long
-                    val url = args.joinToString(" ")
-                    try {
-                        val host = if (url.contains("://")) {
-                            withContext(Dispatchers.IO) {
-                                URL(url).host
-                            }
-                        } else {
-                            val selectorManager = ActorSelectorManager(Dispatchers.IO)
-                            val con = aSocket(selectorManager).tcp().connect(url, 443)
-                            con.remoteAddress.toJavaAddress().hostname
-                        }
-                        val selectorManager = ActorSelectorManager(Dispatchers.IO)
-                        start = System.currentTimeMillis()
-                        aSocket(selectorManager).tcp().connect(host, 80)
-                        stop = System.currentTimeMillis()
-                        selectorManager.close()
-                    } catch (e : Exception) {
-                        val err : String = when (e) {
-                            is UnresolvedAddressException -> {
-                                "IP/URL '$url' is invalid."
-                            }
-
-                            is SocketTimeoutException -> {
-                                message.edit(
-                                    MessageBuilder()
-                                        .appendLine(":pensive: Connection timed out")
-                                        .appendLine("Try a different IP or URL...")
-                                        .build()
-                                )
-                                    .await().also { message -> onComplete(message, client, true) }
-                                return@also
-                            }
-
-                            else -> {
-                                e.message!!
-                            }
-                        }
-                        message.edit(error(client, event, err, commandInfo))
-                        return@also
+                    val selectorManager = ActorSelectorManager(Dispatchers.IO)
+                    val start = System.currentTimeMillis()
+                    val serverSocket = aSocket(selectorManager).tcp().connect("gateway.discord.gg", 80)
+                    val stop = System.currentTimeMillis()
+                    withContext(Dispatchers.IO) {
+                        serverSocket.close()
                     }
                     val ping = stop - start
                     message.edit(
                         MessageBuilder()
                             .appendLine(":ping_pong: Pong!")
-                            .appendLine("Target: $url")
+                            .appendLine("Target: Discord API")
                             .appendLine("Latency: ${ping}ms")
                             .build()
                     )
-                        .await().also { message -> onComplete(message, client, true) }
+                        .await().also { message -> onComplete(message, true) }
                 }
+            return
         }
+        event.message.channel.sendMessage(
+            MessageBuilder()
+                .appendLine("Pinging...")
+                .build()
+        )
+            .await().also { message ->
+                val start : Long
+                val stop : Long
+                val url = args.joinToString(" ")
+                try {
+                    val host = if (url.contains("://")) {
+                        withContext(Dispatchers.IO) {
+                            URL(url).host
+                        }
+                    } else {
+                        val selectorManager = ActorSelectorManager(Dispatchers.IO)
+                        val con = aSocket(selectorManager).tcp().connect(url, 443)
+                        con.remoteAddress.toJavaAddress().hostname
+                    }
+                    val selectorManager = ActorSelectorManager(Dispatchers.IO)
+                    start = System.currentTimeMillis()
+                    aSocket(selectorManager).tcp().connect(host, 80)
+                    stop = System.currentTimeMillis()
+                    selectorManager.close()
+                } catch (e : Exception) {
+                    val err : String = when (e) {
+                        is UnresolvedAddressException -> {
+                            "IP/URL '$url' is invalid."
+                        }
+
+                        is SocketTimeoutException -> {
+                            message.edit(
+                                MessageBuilder()
+                                    .appendLine(":pensive: Connection timed out")
+                                    .appendLine("Try a different IP or URL...")
+                                    .build()
+                            )
+                                .await().also { message -> onComplete(message, true) }
+                            return@also
+                        }
+
+                        else -> {
+                            e.message!!
+                        }
+                    }
+                    message.edit(error(client, event, err, commandInfo))
+                    return@also
+                }
+                val ping = stop - start
+                message.edit(
+                    MessageBuilder()
+                        .appendLine(":ping_pong: Pong!")
+                        .appendLine("Target: $url")
+                        .appendLine("Latency: ${ping}ms")
+                        .build()
+                )
+                    .await().also { message -> onComplete(message, true) }
+            }
+    }
 
 
 }

@@ -1,6 +1,5 @@
 package org.caffeine.chaos.commands
 
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
@@ -23,98 +22,97 @@ class Purge : Command(
         event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
-    ) =
-        coroutineScope {
-            purgeCock = false
-            val channel = when {
-                args.size < 1 -> {
-                    event.message.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))
-                        .await().also { message -> onComplete(message, client, true) }
-                    return@coroutineScope
+    ) {
+        purgeCock = false
+        val channel = when {
+            args.size < 1 -> {
+                event.message.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))
+                    .await().also { message -> onComplete(message, true) }
+                return
+            }
+
+            args.size == 1 -> {
+                event.message.channel
+            }
+
+            args.size == 2 -> {
+                val channel = client.user.fetchChannelFromId(args[1]) as TextBasedChannel
+                channel
+            }
+
+            else -> {
+                event.message.channel.sendMessage(error(client, event, "Too many arguments.", commandInfo))
+                    .await().also { message -> onComplete(message, true) }
+                return
+            }
+        }
+        val num = if (!args.last().toString().contains("[^0-9]".toRegex())) {
+            if (args.last().toInt() <= 0) {
+                event.message.channel.sendMessage(
+                    error(
+                        client,
+                        event,
+                        "Amount must be higher than 0.",
+                        commandInfo
+                    )
+                )
+                    .await().also { message -> onComplete(message, true) }
+                return
+            }
+            args.last().toInt()
+        } else {
+            when (args.last()) {
+                "max" -> {
+                    Int.MAX_VALUE
                 }
 
-                args.size == 1 -> {
-                    event.message.channel
-                }
-
-                args.size == 2 -> {
-                    val channel = client.user.fetchChannelFromId(args[1]) as TextBasedChannel
-                    channel
+                "all" -> {
+                    Int.MAX_VALUE
                 }
 
                 else -> {
-                    event.message.channel.sendMessage(error(client, event, "Too many arguments.", commandInfo))
-                        .await().also { message -> onComplete(message, client, true) }
-                    return@coroutineScope
-                }
-            }
-            val num = if (!args.last().toString().contains("[^0-9]".toRegex())) {
-                if (args.last().toInt() <= 0) {
                     event.message.channel.sendMessage(
                         error(
                             client,
                             event,
-                            "Amount must be higher than 0.",
+                            "${args.last()} is not an integer.",
                             commandInfo
                         )
                     )
-                        .await().also { message -> onComplete(message, client, true) }
-                    return@coroutineScope
-                }
-                args.last().toInt()
-            } else {
-                when (args.last()) {
-                    "max" -> {
-                        Int.MAX_VALUE
-                    }
-
-                    "all" -> {
-                        Int.MAX_VALUE
-                    }
-
-                    else -> {
-                        event.message.channel.sendMessage(
-                            error(
-                                client,
-                                event,
-                                "${args.last()} is not an integer.",
-                                commandInfo
-                            )
-                        )
-                            .await().also { message -> onComplete(message, client, true) }
-                        return@coroutineScope
-                    }
+                        .await().also { message -> onComplete(message, true) }
+                    return
                 }
             }
-            var done = 0
-            val messages = channel.fetchHistory(MessageFilters(author_id = client.user.id, needed = num))
-            if (messages.isEmpty()) {
-                event.message.channel.sendMessage(
-                    MessageBuilder()
-                        .appendLine("There is nothing to delete!")
-                        .build()
-                )
-                    .await().also { message -> onComplete(message, client, true) }
-                return@coroutineScope
-            }
-            for (message : Message in messages.filter { message -> message.author.id == client.user.id }) {
-                if (message.type == MessageType.DEFAULT) {
-                    if (done % 10 == 0 && done != 0) {
-                        delay(5000)
-                    }
-                    message.delete()
-                    delay(1000)
-                    done++
-                    if (purgeCock) break
-                    if (done == num) break
-                }
-            }
-            log("removed $done messages from ${channel.name}")
+        }
+        var done = 0
+        val messages = channel.fetchHistory(MessageFilters(author_id = client.user.id, needed = num))
+        if (messages.isEmpty()) {
             event.message.channel.sendMessage(
                 MessageBuilder()
-                    .appendLine("Removed $done message${if (done > 1) "s" else ""}!")
+                    .appendLine("There is nothing to delete!")
                     .build()
             )
-                .await().also { message -> onComplete(message, client, true) }
+                .await().also { message -> onComplete(message, true) }
+            return
         }
+        for (message : Message in messages.filter { message -> message.author.id == client.user.id }) {
+            if (message.type == MessageType.DEFAULT) {
+                if (done % 10 == 0 && done != 0) {
+                    delay(5000)
+                }
+                message.delete()
+                delay(1000)
+                done++
+                if (purgeCock) break
+                if (done == num) break
+            }
+        }
+        log("removed $done messages from ${channel.name}")
+        event.message.channel.sendMessage(
+            MessageBuilder()
+                .appendLine("Removed $done message${if (done > 1) "s" else ""}!")
+                .build()
+        )
+            .await().also { message -> onComplete(message, true) }
+    }
 }

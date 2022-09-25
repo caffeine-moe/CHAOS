@@ -1,6 +1,5 @@
 package org.caffeine.chaos.commands
 
-import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
@@ -16,14 +15,13 @@ class Dice :
         event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
-    ) : Unit =
-        coroutineScope {
-            val num = (1..6).random()
-            event.channel.sendMessage(
-                MessageBuilder()
-                    .appendLine(":game_die: $num").build()
-            ).await().also { message ->
-                onComplete(message, client, config.auto_delete.bot.content_generation)
-            }
+    ) {
+        val num = (1..6).random()
+        event.channel.sendMessage(
+            MessageBuilder()
+                .appendLine(":game_die: $num").build()
+        ).await().also { message ->
+            onComplete(message, config.auto_delete.bot.content_generation)
         }
+    }
 }

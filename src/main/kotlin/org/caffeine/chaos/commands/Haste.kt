@@ -3,7 +3,6 @@ package org.caffeine.chaos.commands
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.utils.io.charsets.*
-import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
@@ -30,7 +29,7 @@ class Haste : Command(
         event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
-    ) : Unit = coroutineScope {
+    ) {
         event.channel.sendMessage(MessageBuilder().appendLine("Creating haste...").build()).await().also { message ->
             var body = ""
             if (args.isNotEmpty()) {
@@ -48,8 +47,8 @@ class Haste : Command(
                             commandInfo
                         )
                     )
-                        .await().also { onComplete(it, client, true) }
-                    return@coroutineScope
+                        .await().also { onComplete(it, true) }
+                    return
                 }
             }
             if (args.isEmpty() && event.message.attachments.isEmpty()) {
@@ -61,8 +60,8 @@ class Haste : Command(
                         commandInfo
                     )
                 )
-                    .await().also { onComplete(it, client, true) }
-                return@coroutineScope
+                    .await().also { onComplete(it, true) }
+                return
             }
             val response = normalHTTPClient.post("https://www.toptal.com/developers/hastebin/documents") {
                 setBody(body)
@@ -72,7 +71,7 @@ class Haste : Command(
                 MessageBuilder().appendLine("https://www.toptal.com/developers/hastebin/${haste.key}")
                     .build()
             ).await().also { message ->
-                onComplete(message, client, config.auto_delete.bot.content_generation)
+                onComplete(message, config.auto_delete.bot.content_generation)
             }
         }
     }

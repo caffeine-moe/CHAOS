@@ -1,6 +1,5 @@
 package org.caffeine.chaos.commands
 
-import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
@@ -14,24 +13,23 @@ class Theme : Command(arrayOf("theme", "dth"), CommandInfo("Theme", "theme <Them
         event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
-    ) =
-        coroutineScope {
-            val err : String = if (args.isNotEmpty()) {
-                val theme = when (args.first().lowercase()) {
-                    "d", "dark" -> ThemeType.DARK
-                    "l", "light" -> ThemeType.LIGHT
-                    else -> null
-                }
-                if (theme != null) {
-                    client.user.setTheme(theme)
-                    return@coroutineScope
-                }
-                "${args.joinToString(" ")} is not a valid theme!"
-            } else {
-                "No arguments passed for theme."
+    ) {
+        val err : String = if (args.isNotEmpty()) {
+            val theme = when (args.first().lowercase()) {
+                "d", "dark" -> ThemeType.DARK
+                "l", "light" -> ThemeType.LIGHT
+                else -> null
             }
-            event.message.channel.sendMessage(error(client, event, err, commandInfo)).await().also {
-                onComplete(it, client, true)
+            if (theme != null) {
+                client.user.setTheme(theme)
+                return
             }
+            "${args.joinToString(" ")} is not a valid theme!"
+        } else {
+            "No arguments passed for theme."
         }
+        event.message.channel.sendMessage(error(client, event, err, commandInfo)).await().also {
+            onComplete(it, true)
+        }
+    }
 }

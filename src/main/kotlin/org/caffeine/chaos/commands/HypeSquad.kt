@@ -1,6 +1,5 @@
 package org.caffeine.chaos.commands
 
-import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
@@ -18,9 +17,8 @@ class HypeSquad :
         event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
-    ) =
-        coroutineScope {
-            val house = HypeSquadHouseType.valueOf(args.first().toString())
-            client.user.setHouse(house)
-        }
+    ) {
+        val house = HypeSquadHouseType.valueOf(args.first().toString())
+        client.user.setHouse(house)
+    }
 }

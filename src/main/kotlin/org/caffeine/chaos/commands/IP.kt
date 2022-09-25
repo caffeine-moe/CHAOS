@@ -6,7 +6,6 @@ import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
 import io.ktor.util.network.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
@@ -97,90 +96,89 @@ class IP : Command(arrayOf("ip"), CommandInfo("IP", "ip <IP/URL>", "Looks up inf
         event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
-    ) =
-        coroutineScope {
-            if (args.isEmpty()) {
-                event.channel.sendMessage(error(client, event, "No IP/URL specified.", commandInfo))
-                    .await().also { message -> onComplete(message, client, true) }
-                return@coroutineScope
-            }
-            event.channel.sendMessage(MessageBuilder().appendLine("Looking up IP/URL").build())
-                .await().also { message ->
-                    val url = args.joinToString(" ")
-                    try {
-                        val host = if (url.contains("://")) {
-                            withContext(Dispatchers.IO) {
-                                URL(url).host
-                            }
-                        } else {
-                            val selectorManager = ActorSelectorManager(Dispatchers.IO)
-                            val con = aSocket(selectorManager).tcp().connect(url, 443)
-                            con.remoteAddress.toJavaAddress().hostname
+    ) {
+        if (args.isEmpty()) {
+            event.channel.sendMessage(error(client, event, "No IP/URL specified.", commandInfo))
+                .await().also { message -> onComplete(message, true) }
+            return
+        }
+        event.channel.sendMessage(MessageBuilder().appendLine("Looking up IP/URL").build())
+            .await().also { message ->
+                val url = args.joinToString(" ")
+                try {
+                    val host = if (url.contains("://")) {
+                        withContext(Dispatchers.IO) {
+                            URL(url).host
                         }
-                        val ip = withContext(Dispatchers.IO) {
-                            InetAddress.getByName(host).hostAddress
-                        }
-                        val response =
-                            normalHTTPClient.request("https://ipwhois.pro/$ip?key=Sxd2AkU2ZL0YtkSR&security=1&lang=en") {
-                                headers {
-                                    append("Referer", "https://ipwhois.io/")
-                                }
-                            }
-                        val parsedResponse =
-                            json.decodeFromString<IpApiResponse>(response.bodyAsText())
-                        when (parsedResponse.success) {
-                            true -> {
-                                message.edit(
-                                    MessageBuilder()
-                                        .appendLine("**Information for IP/URL $url**")
-                                        .appendLine("**IP:** ${parsedResponse.ip}")
-                                        .appendLine("**Continent:** ${parsedResponse.continent}")
-                                        .appendLine("**Country:** ${parsedResponse.country}")
-                                        .appendLine("**Region:** ${parsedResponse.region}")
-                                        .appendLine("**City:** ${parsedResponse.city}")
-                                        .appendLine("**Zip/Postal:** ${parsedResponse.postal}")
-                                        .appendLine("**Timezone:** ${parsedResponse.timezone.id}")
-                                        .appendLine("**ISP:** ${parsedResponse.connection.isp}")
-                                        .appendLine("**Proxy:** ${parsedResponse.security.proxy}")
-                                        .appendLine("**VPN:** ${parsedResponse.security.vpn}")
-                                        .appendLine("**Hosting:** ${parsedResponse.security.hosting}")
-                                        .appendLine("**Tor:** ${parsedResponse.security.tor}")
-                                        .build()
-                                )
-                                    .await().also { message -> onComplete(message, client, true) }
-                            }
-
-                            false -> {
-                                message.edit(error(client, event, parsedResponse.message, commandInfo))
-                                    .await().also { message -> onComplete(message, client, true) }
+                    } else {
+                        val selectorManager = ActorSelectorManager(Dispatchers.IO)
+                        val con = aSocket(selectorManager).tcp().connect(url, 443)
+                        con.remoteAddress.toJavaAddress().hostname
+                    }
+                    val ip = withContext(Dispatchers.IO) {
+                        InetAddress.getByName(host).hostAddress
+                    }
+                    val response =
+                        normalHTTPClient.request("https://ipwhois.pro/$ip?key=Sxd2AkU2ZL0YtkSR&security=1&lang=en") {
+                            headers {
+                                append("Referer", "https://ipwhois.io/")
                             }
                         }
-                    } catch (e : Exception) {
-                        when (e) {
-                            is UnresolvedAddressException -> {
-                                message.edit(error(client, event, "IP/URL is invalid.", commandInfo))
-                                    .await().also { message -> onComplete(message, client, true) }
-                                return@also
-                            }
+                    val parsedResponse =
+                        json.decodeFromString<IpApiResponse>(response.bodyAsText())
+                    when (parsedResponse.success) {
+                        true -> {
+                            message.edit(
+                                MessageBuilder()
+                                    .appendLine("**Information for IP/URL $url**")
+                                    .appendLine("**IP:** ${parsedResponse.ip}")
+                                    .appendLine("**Continent:** ${parsedResponse.continent}")
+                                    .appendLine("**Country:** ${parsedResponse.country}")
+                                    .appendLine("**Region:** ${parsedResponse.region}")
+                                    .appendLine("**City:** ${parsedResponse.city}")
+                                    .appendLine("**Zip/Postal:** ${parsedResponse.postal}")
+                                    .appendLine("**Timezone:** ${parsedResponse.timezone.id}")
+                                    .appendLine("**ISP:** ${parsedResponse.connection.isp}")
+                                    .appendLine("**Proxy:** ${parsedResponse.security.proxy}")
+                                    .appendLine("**VPN:** ${parsedResponse.security.vpn}")
+                                    .appendLine("**Hosting:** ${parsedResponse.security.hosting}")
+                                    .appendLine("**Tor:** ${parsedResponse.security.tor}")
+                                    .build()
+                            )
+                                .await().also { message -> onComplete(message, true) }
+                        }
 
-                            is SocketTimeoutException -> {
-                                message.edit(
-                                    MessageBuilder()
-                                        .appendLine(":pensive: Connection timed out")
-                                        .appendLine("Try a different IP or URL...")
-                                        .build()
-                                )
-                                    .await().also { message -> onComplete(message, client, true) }
-                                return@also
-                            }
+                        false -> {
+                            message.edit(error(client, event, parsedResponse.message, commandInfo))
+                                .await().also { message -> onComplete(message, true) }
+                        }
+                    }
+                } catch (e : Exception) {
+                    when (e) {
+                        is UnresolvedAddressException -> {
+                            message.edit(error(client, event, "IP/URL is invalid.", commandInfo))
+                                .await().also { message -> onComplete(message, true) }
+                            return@also
+                        }
 
-                            else -> {
-                                message.edit(error(client, event, e.message.toString(), commandInfo))
-                                    .await().also { message -> onComplete(message, client, true) }
-                                return@also
-                            }
+                        is SocketTimeoutException -> {
+                            message.edit(
+                                MessageBuilder()
+                                    .appendLine(":pensive: Connection timed out")
+                                    .appendLine("Try a different IP or URL...")
+                                    .build()
+                            )
+                                .await().also { message -> onComplete(message, true) }
+                            return@also
+                        }
+
+                        else -> {
+                            message.edit(error(client, event, e.message.toString(), commandInfo))
+                                .await().also { message -> onComplete(message, true) }
+                            return@also
                         }
                     }
                 }
-        }
+            }
+    }
 }

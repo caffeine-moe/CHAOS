@@ -1,6 +1,5 @@
 package org.caffeine.chaos.commands
 
-import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
@@ -17,7 +16,7 @@ class IdToDate : Command(
         event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
-    ) = coroutineScope {
+    ) {
         var id : Long = 0
         val err = if (args.isEmpty()) {
             "Not enough arguments."
@@ -40,14 +39,14 @@ class IdToDate : Command(
                     .appendLine(formattedDate)
                     .build()
             ).await().also {
-                onComplete(it, client, true)
+                onComplete(it, true)
             }
-            return@coroutineScope
+            return
         }
         event.channel.sendMessage(
             error(client, event, err, commandInfo)
         ).await().also {
-            onComplete(it, client, true)
+            onComplete(it, true)
         }
     }
 }

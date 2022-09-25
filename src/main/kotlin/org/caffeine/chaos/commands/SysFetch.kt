@@ -1,6 +1,5 @@
 package org.caffeine.chaos.commands
 
-import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
@@ -19,7 +18,7 @@ class SysFetch : Command(
         event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
-    ) : Unit = coroutineScope {
+    ) {
         val sysInfo = SystemInfo()
 
         val proc = sysInfo.hardware.processor
@@ -43,7 +42,7 @@ class SysFetch : Command(
                     .appendLine("```")
                     .build()
             ).await().also {
-                onComplete(it, client, config.auto_delete.bot.content_generation)
+                onComplete(it, config.auto_delete.bot.content_generation)
             }
         }
     }

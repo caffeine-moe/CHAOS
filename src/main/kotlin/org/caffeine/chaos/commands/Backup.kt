@@ -1,7 +1,6 @@
 package org.caffeine.chaos.commands
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.Command
@@ -49,7 +48,7 @@ class Backup :
         event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
-    ) : Unit = coroutineScope {
+    ) {
         val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yy_HH:mm:ss"))
         event.message.channel.sendMessage(MessageBuilder().append("Performing backup...").build())
             .await().also { message ->
@@ -110,7 +109,7 @@ class Backup :
                                 .appendLine("Saved to: ${f.absolutePath}")
                                 .build()
                         ).await().also { message ->
-                            onComplete(message, client, true)
+                            onComplete(message, true)
                         }
                         return@also
                     } catch (e : Exception) {

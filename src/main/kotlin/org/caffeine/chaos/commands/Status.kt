@@ -1,6 +1,5 @@
 package org.caffeine.chaos.commands
 
-import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
@@ -15,13 +14,13 @@ class Status :
         event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
-    ) : Unit = coroutineScope {
+    ) {
         val err = if (args.isEmpty()) {
             "No status specified."
         } else {
             val status = StatusType.valueOf(args[0])
             if (status != StatusType.UNKNOWN) {
-                client.user.setStatus(status).also { return@coroutineScope }
+                client.user.setStatus(status).also { return }
             }
             "Invalid status '${args.joinToString(" ")}'."
         }

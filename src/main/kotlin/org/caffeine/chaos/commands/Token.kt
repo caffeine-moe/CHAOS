@@ -1,6 +1,5 @@
 package org.caffeine.chaos.commands
 
-import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
@@ -15,12 +14,11 @@ class Token : Command(arrayOf("token"), CommandInfo("Token", "token", "Logs your
         event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
-    ) : Unit =
-        coroutineScope {
-            log("${client.user.discriminatedName} : ${client.user.token}", "TOKEN:${ConsoleColours.BLUE.value}")
-            event.message.channel.sendMessage(MessageBuilder().append("Token logged to console.").build())
-                .await().also { message ->
-                    onComplete(message, client, true)
-                }
-        }
+    ) : Unit {
+        log("${client.user.discriminatedName} : ${client.user.token}", "TOKEN:${ConsoleColours.BLUE.value}")
+        event.message.channel.sendMessage(MessageBuilder().append("Token logged to console.").build())
+            .await().also { message ->
+                onComplete(message, true)
+            }
+    }
 }

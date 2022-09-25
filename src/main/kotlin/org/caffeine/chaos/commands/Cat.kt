@@ -2,7 +2,6 @@ package org.caffeine.chaos.commands
 
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
@@ -25,7 +24,7 @@ class Cat : Command(arrayOf("cat", "meow"), CommandInfo("Cat", "cat", "Sends a r
         event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
-    ) : Unit = coroutineScope {
+    ) {
         val response = normalHTTPClient.get("https://cataas.com/cat?json=true") {
             headers {
                 append("Host", "cataas.com")
@@ -50,7 +49,7 @@ class Cat : Command(arrayOf("cat", "meow"), CommandInfo("Cat", "cat", "Sends a r
                 .appendLine("https://cataas.com${cat.url}")
                 .build()
         ).await().also { message ->
-            onComplete(message, client, config.auto_delete.bot.content_generation)
+            onComplete(message, config.auto_delete.bot.content_generation)
         }
     }
 }

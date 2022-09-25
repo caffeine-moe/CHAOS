@@ -31,7 +31,7 @@ lateinit var config : Config
 var configFile = File("config.json")
 
 //main function
-suspend fun main(args : Array<String> = arrayOf()) : Unit = coroutineScope {
+suspend fun main(args : Array<String> = arrayOf()) = coroutineScope {
     //init
     clear()
     printLogo()

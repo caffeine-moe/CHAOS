@@ -1,6 +1,5 @@
 package org.caffeine.chaos.commands
 
-import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
@@ -23,7 +22,7 @@ class Uptime : Command(
         event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
-    ) : Unit = coroutineScope {
+    ) {
         val milliseconds = (programStartedTime - System.currentTimeMillis())
         val seconds = ((milliseconds / 1000).toInt() % 60).absoluteValue
         val minutes = (milliseconds / (1000 * 60) % 60).toInt().absoluteValue
@@ -35,7 +34,7 @@ class Uptime : Command(
                 .appendLine("CHAOS has been running for $days days, $hours hours, $minutes minutes and $seconds seconds.")
                 .build()
         ).await().also {
-            onComplete(it, client, true)
+            onComplete(it, true)
         }
     }
 }
