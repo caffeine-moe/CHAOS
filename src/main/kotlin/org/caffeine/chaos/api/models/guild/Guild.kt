@@ -25,7 +25,6 @@ data class Guild(
     val maxPresences : Number = 0,
     val maxMembers : Number = 0,
     val maxVideoChannelUsers : Number = 0,
-    val vanityUrl : String? = null,
     val vanityUrlCode : String? = null,
     val premiumTier : Number = 0,
     val premiumSubscriptionCount : Number = 0,
@@ -37,6 +36,9 @@ data class Guild(
     val embedChannelId : String = "",
     val client : Client,
 ) {
+
+    val vanityUrl : String? = if (vanityUrlCode != null) "https://discord.gg/${vanityUrlCode}" else null
+
     fun muteForever() {
         client.user.muteGuild(this, -1)
     }
