@@ -14,5 +14,7 @@ interface TextBasedChannel : BaseChannel {
     override val type : ChannelType
     suspend fun sendMessage(payload : MessageOptions) : CompletableDeferred<Message>
     suspend fun fetchHistory(messageFilters : MessageFilters) : List<Message>
+
+    suspend fun fetchMessageById(id: String) : Message?
     override suspend fun delete()
 }
