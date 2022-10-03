@@ -15,7 +15,6 @@ import org.caffeine.chaos.api.models.interfaces.BaseChannel
 import org.caffeine.chaos.api.models.interfaces.DiscordUser
 import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
 import org.caffeine.chaos.api.models.message.Message
-import org.caffeine.chaos.api.models.message.MessageFilters
 import org.caffeine.chaos.api.models.message.MessageSearchFilters
 import org.caffeine.chaos.api.models.users.BlockedUser
 import org.caffeine.chaos.api.models.users.Friend
@@ -186,7 +185,11 @@ class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
         return clientImpl.utils.fetchMessageById(id, channel)
     }
 
-    suspend fun fetchLastMessageInChannel(channel : TextBasedChannel, user: DiscordUser, filters : MessageSearchFilters) : Message? {
+    suspend fun fetchLastMessageInChannel(
+        channel : TextBasedChannel,
+        user : DiscordUser,
+        filters : MessageSearchFilters,
+    ) : Message? {
         return clientImpl.utils.fetchLastMessageInChannel(channel, user, filters)
     }
 }

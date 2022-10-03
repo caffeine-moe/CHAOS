@@ -17,7 +17,8 @@ abstract class Command(val commandNames : Array<String>, val commandInfo : Comma
         event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
-    ) { }
+    ) {
+    }
 
     open suspend fun error(
         client : Client,

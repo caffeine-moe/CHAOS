@@ -4,7 +4,6 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.models.guild.Guild
 import org.caffeine.chaos.api.models.interfaces.BaseChannel
-import org.caffeine.chaos.api.models.interfaces.DiscordUser
 import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
 import org.caffeine.chaos.api.models.message.Message
 import org.caffeine.chaos.api.models.message.MessageFilters
@@ -32,7 +31,10 @@ data class ClientUserImpl(
         get() = "$username#$discriminator"
 
 
-    override suspend fun fetchLastMessageInChannel(channel : TextBasedChannel, filters : MessageSearchFilters) : Message? {
+    override suspend fun fetchLastMessageInChannel(
+        channel : TextBasedChannel,
+        filters : MessageSearchFilters,
+    ) : Message? {
         return clientImpl.utils.fetchLastMessageInChannel(channel, this, filters)
     }
 

@@ -10,7 +10,6 @@ import org.caffeine.chaos.api.models.message.Message
 import org.caffeine.chaos.api.models.message.MessageFilters
 import org.caffeine.chaos.api.typedefs.MessageType
 import org.caffeine.chaos.api.utils.MessageBuilder
-import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.purgeCock
 
 class Purge : Command(

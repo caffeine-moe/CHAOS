@@ -28,7 +28,7 @@ enum class MessageType(val id : Int) {
     UNKNOWN(-1);
 
     companion object {
-        fun enumById(input: Int): MessageType {
+        fun enumById(input : Int) : MessageType {
             return enumValues<MessageType>().firstOrNull { it.id == input } ?: UNKNOWN
         }
     }

@@ -200,7 +200,7 @@ class Connection(private val client : ClientImpl) {
         try {
             disconnect()
             execute(ConnectionType.CONNECT)
-        }catch (e: Exception) {
+        } catch (e : Exception) {
             e.printStackTrace()
         }
     }

@@ -1,7 +1,6 @@
 package org.caffeine.chaos.api.models.interfaces
 
 import org.caffeine.chaos.api.models.message.Message
-import org.caffeine.chaos.api.models.message.MessageFilters
 import org.caffeine.chaos.api.models.message.MessageSearchFilters
 
 interface DiscordUser {

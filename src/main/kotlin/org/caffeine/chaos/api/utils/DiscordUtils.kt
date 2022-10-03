@@ -211,7 +211,11 @@ open class DiscordUtils {
                 val newMessages = json.decodeFromString<MutableList<SerialMessage>>(response.bodyAsText())
                 newMessages.removeIf { filters.author_id.isNotBlank() && it.author.id != filters.author_id }
                 if (newMessages.size == 0) {
-                    val lastmessage = fetchLastMessageInChannel(channel, client.user, MessageSearchFilters(before_id = filters.before_id))
+                    val lastmessage = fetchLastMessageInChannel(
+                        channel,
+                        client.user,
+                        MessageSearchFilters(before_id = filters.before_id)
+                    )
                         ?: return collection
                     collection += lastmessage
                 } else {
@@ -445,14 +449,19 @@ open class DiscordUtils {
         return null
     }
 
-    suspend fun fetchLastMessageInChannel(channel : TextBasedChannel, user : DiscordUser, filters : MessageSearchFilters) : Message? {
+    suspend fun fetchLastMessageInChannel(
+        channel : TextBasedChannel,
+        user : DiscordUser,
+        filters : MessageSearchFilters,
+    ) : Message? {
         var parameters = ""
         if (filters.before_id.isNotBlank()) parameters += "max_id=${filters.before_id}&"
         if (filters.after_id.isNotBlank()) parameters += "after=${filters.after_id}&"
         if (filters.mentioning_user_id.isNotBlank()) parameters += "mentions=${filters.mentioning_user_id}&"
         try {
             val lastMessageResponse =
-                discordHTTPClient.get("$BASE_URL/channels/${channel.id}/messages/search?author_id=${user.id}&$parameters").bodyAsText()
+                discordHTTPClient.get("$BASE_URL/channels/${channel.id}/messages/search?author_id=${user.id}&$parameters")
+                    .bodyAsText()
             json.parseToJsonElement(lastMessageResponse).jsonObject["messages"]?.jsonArray?.forEach { it ->
                 val messages = json.decodeFromJsonElement<List<SerialMessage>>(it)
                 if (messages.none { it.author.id == user.id && it.type == 0 || it.type == 19 }) {
@@ -463,7 +472,7 @@ open class DiscordUtils {
                 val message = messages.first { it.author.id == user.id && it.type == 0 || it.type == 19 }
                 return createMessage(message)
             }
-        }catch (e: Exception) {
+        } catch (e : Exception) {
             e.printStackTrace()
         }
         return null

@@ -20,24 +20,24 @@ class Pin : Command(
         args : MutableList<String>,
         cmd : String,
     ) {
-/*                if (event.message.referenced_message != null) {
-                    val refmes = event.message.referenced_message!!
-                    when (refmes.pinned) {
-                        true -> refmes.unpin()
-                        false -> refmes.pin()
-                    }
-                    return
-                }
-                if (args.isEmpty()) {
-                    log("Unable to pin message, no arguments."); return
-                }
-                event.channel.sendMessage(MessageBuilder()
-                    .appendLine(args.joinToString(" "))
-                    .build()
-                ).thenAccept {
-                    this.launch {
-                        it.pin()
-                    }
-                }*/
+        /*                if (event.message.referenced_message != null) {
+                            val refmes = event.message.referenced_message!!
+                            when (refmes.pinned) {
+                                true -> refmes.unpin()
+                                false -> refmes.pin()
+                            }
+                            return
+                        }
+                        if (args.isEmpty()) {
+                            log("Unable to pin message, no arguments."); return
+                        }
+                        event.channel.sendMessage(MessageBuilder()
+                            .appendLine(args.joinToString(" "))
+                            .build()
+                        ).thenAccept {
+                            this.launch {
+                                it.pin()
+                            }
+                        }*/
     }
 }
