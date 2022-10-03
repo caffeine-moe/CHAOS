@@ -2,6 +2,10 @@ package org.caffeine.chaos.api.models.users
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.models.interfaces.DiscordUser
+import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
+import org.caffeine.chaos.api.models.message.Message
+import org.caffeine.chaos.api.models.message.MessageFilters
+import org.caffeine.chaos.api.models.message.MessageSearchFilters
 import kotlin.math.absoluteValue
 
 data class BlockedUser(
@@ -14,6 +18,10 @@ data class BlockedUser(
 ) : DiscordUser {
 
     override val discriminatedName = "$username#$discriminator"
+    override suspend fun fetchLastMessageInChannel(channel : TextBasedChannel, filters : MessageSearchFilters) : Message? {
+        return client.user.fetchLastMessageInChannel(channel, this, filters)
+    }
+
     override fun avatarUrl() : String {
         return if (!avatar.isNullOrBlank()) {
             if (avatar.startsWith("a_")) {

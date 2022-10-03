@@ -31,6 +31,7 @@ import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
 import org.caffeine.chaos.api.models.message.Message
 import org.caffeine.chaos.api.models.message.MessageAttachment
 import org.caffeine.chaos.api.models.message.MessageFilters
+import org.caffeine.chaos.api.models.message.MessageSearchFilters
 import org.caffeine.chaos.api.models.users.User
 import org.caffeine.chaos.api.payloads.gateway.data.SerialAttachment
 import org.caffeine.chaos.api.payloads.gateway.data.SerialMessage
@@ -151,15 +152,6 @@ open class DiscordUtils {
         return StatusType.UNKNOWN
     }
 
-    fun getChannelType(type : Number) : ChannelType {
-        ChannelType.values().forEach {
-            if (it.ordinal == type) {
-                return it
-            }
-        }
-        return ChannelType.UNKNOWN
-    }
-
     fun getHouseType(type : String) : HypeSquadHouseType {
         HypeSquadHouseType.values().forEach {
             if (it.value == type.lowercase()) {
@@ -187,15 +179,6 @@ open class DiscordUtils {
         return ThemeType.UNKNOWN
     }
 
-    fun getMessageType(type : Number) : MessageType {
-        MessageType.values().forEach {
-            if (it.ordinal == type) {
-                return it
-            }
-        }
-        return MessageType.UNKNOWN
-    }
-
     private fun String.isValidSnowflake() : Boolean {
         val unix = client.user.convertIdToUnix(this)
         return unix <= System.currentTimeMillis() && unix > 1420070400000
@@ -203,22 +186,17 @@ open class DiscordUtils {
 
     suspend fun fetchMessages(channel : TextBasedChannel, filters : MessageFilters) : List<Message> {
         val collection : MutableList<Message> = arrayListOf()
-        val messagesPerRequest = 100
-
         try {
 
             if (filters.author_id == client.user.id && filters.before_id.isBlank()) {
-                val lastMessageResponse =
-                    discordHTTPClient.get("$BASE_URL/channels/${channel.id}/messages/search?author_id=${client.user.id}&limit=1") {}
-                json.parseToJsonElement(lastMessageResponse.bodyAsText()).jsonObject["messages"]?.jsonArray?.forEach {
-                    filters.before_id = json.decodeFromJsonElement<List<SerialMessage>>(it).first().id
+                fetchLastMessageInChannel(channel, client.user, MessageSearchFilters())?.let {
+                    collection.add(it)
+                    filters.before_id = it.id
                 }
             }
 
             while (true) {
                 var parameters = ""
-                parameters += if (filters.limit > 0) "limit=${messagesPerRequest.coerceAtMost(filters.limit - collection.size)}&"
-                else "limit=${messagesPerRequest}&"
                 if (filters.before_id.isNotBlank()) parameters += "before=${filters.before_id}&"
                 if (filters.after_id.isNotBlank()) parameters += "after=${filters.after_id}&"
                 if (filters.author_id.isNotBlank()) parameters += "author_id=${filters.author_id}&"
@@ -232,18 +210,20 @@ open class DiscordUtils {
                 }
                 val newMessages = json.decodeFromString<MutableList<SerialMessage>>(response.bodyAsText())
                 newMessages.removeIf { filters.author_id.isNotBlank() && it.author.id != filters.author_id }
-                newMessages.forEach { collection += createMessage(it) }
+                if (newMessages.size == 0) {
+                    val lastmessage = fetchLastMessageInChannel(channel, client.user, MessageSearchFilters(before_id = filters.before_id))
+                        ?: return collection
+                    collection += lastmessage
+                } else {
+                    newMessages.forEach { collection += createMessage(it) }
+                }
+
                 filters.before_id = collection.last().id
 
                 if (filters.needed != 0 && collection.size >= filters.needed)
                     break
 
-                if (newMessages.size < messagesPerRequest)
-                    break
-
-                println(collection.size)
-
-                delay(200)
+                delay(500)
             }
         } catch (e : Exception) {
             log("Error: ${e.message}", "API:")
@@ -368,11 +348,10 @@ open class DiscordUtils {
         return Message(
             client.client,
             message.id,
-            //TextChannel(d.channel_id, client.client),
-            (client.utils.fetchChannel(message.channel_id)
+            (fetchChannel(message.channel_id)
             //shouldn't happen ever but just in case
                 ?: TextChannel(message.channel_id)) as TextBasedChannel,
-            client.utils.fetchGuild(message.guild_id ?: ""),
+            fetchGuild(message.guild_id ?: ""),
             User(
                 message.author.username,
                 message.author.discriminator,
@@ -389,7 +368,7 @@ open class DiscordUtils {
             mentions,
             attachmeents,
             message.pinned,
-            getMessageType(message.type),
+            MessageType.enumById(message.type),
         )
     }
 
@@ -456,6 +435,38 @@ open class DiscordUtils {
 
     fun fetchTextChannel(channelId : String) : TextBasedChannel? {
         return client.user.channels.filter { it.value.type == ChannelType.TEXT }[channelId] as TextBasedChannel?
+    }
+
+    suspend fun fetchMessageById(id : String, channel : TextBasedChannel) : Message? {
+        if (id.isValidSnowflake()) {
+            val response = discordHTTPClient.get("$BASE_URL/channels/${channel.id}/messages/$id").bodyAsText()
+            return createMessage(json.decodeFromString(response))
+        }
+        return null
+    }
+
+    suspend fun fetchLastMessageInChannel(channel : TextBasedChannel, user : DiscordUser, filters : MessageSearchFilters) : Message? {
+        var parameters = ""
+        if (filters.before_id.isNotBlank()) parameters += "max_id=${filters.before_id}&"
+        if (filters.after_id.isNotBlank()) parameters += "after=${filters.after_id}&"
+        if (filters.mentioning_user_id.isNotBlank()) parameters += "mentions=${filters.mentioning_user_id}&"
+        try {
+            val lastMessageResponse =
+                discordHTTPClient.get("$BASE_URL/channels/${channel.id}/messages/search?author_id=${user.id}&$parameters").bodyAsText()
+            json.parseToJsonElement(lastMessageResponse).jsonObject["messages"]?.jsonArray?.forEach { it ->
+                val messages = json.decodeFromJsonElement<List<SerialMessage>>(it)
+                if (messages.none { it.author.id == user.id && it.type == 0 || it.type == 19 }) {
+                    filters.before_id = messages.last().id
+                    delay(500)
+                    fetchLastMessageInChannel(channel, user, filters)
+                }
+                val message = messages.first { it.author.id == user.id && it.type == 0 || it.type == 19 }
+                return createMessage(message)
+            }
+        }catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
     }
 }
 
