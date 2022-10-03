@@ -8,9 +8,6 @@ const val BASE_URL = "https://discord.com/api/v9"
 val json = Json {
     ignoreUnknownKeys = true
     encodeDefaults = true
-}
-val jsonc = Json {
-    ignoreUnknownKeys = true
     coerceInputValues = true
+    prettyPrint = true
 }
-val jsonp = Json { prettyPrint = true }

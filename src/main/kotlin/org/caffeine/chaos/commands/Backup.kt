@@ -7,7 +7,7 @@ import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
-import org.caffeine.chaos.api.jsonp
+import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.utils.MessageBuilder
 import java.io.File
 import java.nio.file.Files
@@ -88,7 +88,7 @@ class Backup :
                         )
                     }
 
-                    val textToWrite = jsonp.encodeToString(BackupStructure(blockList, friends, simpleGuilds))
+                    val textToWrite = json.encodeToString(BackupStructure(blockList, friends, simpleGuilds))
                     val p = File("Backup")
                     if (!p.exists()) {
                         p.mkdir()
@@ -108,8 +108,8 @@ class Backup :
                                 .appendLine("Backup successful!")
                                 .appendLine("Saved to: ${f.absolutePath}")
                                 .build()
-                        ).await().also { message ->
-                            onComplete(message, true)
+                        ).await().also {
+                            onComplete(it, true)
                         }
                         return@also
                     } catch (e : Exception) {
