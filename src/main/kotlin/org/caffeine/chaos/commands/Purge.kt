@@ -26,13 +26,13 @@ class Purge : Command(
         purgeCock = false
         val channel = when {
             args.size < 1 -> {
-                event.message.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))
+                event.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))
                     .await().also { message -> onComplete(message, true) }
                 return
             }
 
             args.size == 1 -> {
-                event.message.channel
+                event.channel
             }
 
             args.size == 2 -> {
@@ -41,14 +41,14 @@ class Purge : Command(
             }
 
             else -> {
-                event.message.channel.sendMessage(error(client, event, "Too many arguments.", commandInfo))
+                event.channel.sendMessage(error(client, event, "Too many arguments.", commandInfo))
                     .await().also { message -> onComplete(message, true) }
                 return
             }
         }
         val num = if (!args.last().toString().contains("[^0-9]".toRegex())) {
             if (args.last().toInt() <= 0) {
-                event.message.channel.sendMessage(
+                event.channel.sendMessage(
                     error(
                         client,
                         event,
@@ -63,11 +63,11 @@ class Purge : Command(
         } else {
             when (args.last()) {
                 "max" -> {
-                    Int.MAX_VALUE
+                    0
                 }
 
                 "all" -> {
-                    Int.MAX_VALUE
+                    0
                 }
 
                 else -> {
@@ -87,7 +87,7 @@ class Purge : Command(
         var done = 0
         val messages = channel.fetchHistory(MessageFilters(author_id = client.user.id, needed = num))
         if (messages.isEmpty()) {
-            event.message.channel.sendMessage(
+            event.channel.sendMessage(
                 MessageBuilder()
                     .appendLine("There is nothing to delete!")
                     .build()
@@ -96,19 +96,15 @@ class Purge : Command(
             return
         }
         for (message : Message in messages.filter { message -> message.author.id == client.user.id }) {
-            if (message.type == MessageType.DEFAULT) {
-                if (done % 10 == 0 && done != 0) {
-                    delay(5000)
-                }
-                message.delete()
-                delay(1000)
-                done++
-                if (purgeCock) break
-                if (done == num) break
-            }
+            if (message.type != MessageType.DEFAULT && message.type != MessageType.REPLY) continue
+            if (done % 10 == 0 && done != 0) delay(5000)
+            message.delete()
+            delay(1000)
+            done++
+            if (purgeCock) break
+            if (done == num) break
         }
-        log("removed $done messages from ${channel.name}")
-        event.message.channel.sendMessage(
+        event.channel.sendMessage(
             MessageBuilder()
                 .appendLine("Removed $done message${if (done > 1) "s" else ""}!")
                 .build()
