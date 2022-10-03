@@ -32,7 +32,7 @@ data class ClientUserSettings(
     val restrictedGuilds : List<Guild> = listOf(),
     val showCurrentGame : Boolean = false,
     val status : StatusType = StatusType.UNKNOWN,
-    val stream_notifications_enabled : Boolean = false,
+    val streamNotificationsEnabled : Boolean = false,
     val theme : ThemeType = ThemeType.UNKNOWN,
-    val timezone_offset : Int = 0,
+    val timezoneOffset : Int = 0,
 )
