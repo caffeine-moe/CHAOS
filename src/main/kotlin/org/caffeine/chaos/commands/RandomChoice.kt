@@ -19,8 +19,7 @@ class RandomChoice : Command(
         cmd : String,
     ) {
         val argj = args.joinToString(" ")
-        val regex = "[0-9:]+".toRegex()
-        val argspl = argj.split(regex)
+        val argspl = argj.split(",")
         val err = when {
             argspl.isEmpty() -> "No options provided."
             argspl.size < 2 -> "Too few options."
