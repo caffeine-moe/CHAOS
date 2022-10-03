@@ -65,7 +65,7 @@ suspend fun handleJsonRequest(payload : String, client : ClientImpl) {
         }
 
         OPCODE.HEARTBEAT_ACK.value -> {
-
+            //TODO
         }
 
         else -> {
