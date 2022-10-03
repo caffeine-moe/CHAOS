@@ -2,10 +2,7 @@ package org.caffeine.chaos
 
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
@@ -30,53 +27,25 @@ lateinit var config : Config
 
 var configFile = File("config.json")
 
-//main function
-suspend fun main(args : Array<String> = arrayOf()) = coroutineScope {
-    //init
+private suspend fun init(args : Array<String> = arrayOf()) {
     clear()
     printLogo()
     printSeparator()
     handleArgs(args)
     log("${ConsoleColours.BLUE.value}CHAOS is starting...")
-    //checks if config exists, if not, create one and exit
-    if (!configFile.exists()) {
-        val default = javaClass.classLoader.getResource("defaultconfig.json")
-        withContext(Dispatchers.IO) {
-            configFile.createNewFile()
-        }
-        configFile.writeText(default!!.readText())
-        log(
-            "Config not found, we have generated one for you at ${configFile.absolutePath}",
-            "${ConsoleColours.RED.value}ERROR:"
-        )
-        log("${ConsoleColours.BLUE.value}Please change the file accordingly. Documentation: https://caffeine.moe/CHAOS/")
-        exitProcess(0)
-    }
-    //tries to read config
-    try {
-        config = json.decodeFromString(configFile.readText())
-    } catch (e : Exception) {
-        //if it cant read the config then it logs that its invalid
-        if (e.toString().contains("JsonDecodingException")) {
-            e.printStackTrace()
-            log(
-                "Unable to interpret config, please make sure that the one you have is structured the same as the one here: https://caffeine.moe/CHAOS/config.json",
-                "\u001B[38;5;197mERROR:"
-            )
-            log("Full stacktrace here:")
-            e.printStackTrace()
-            exitProcess(69)
-        }
-    }
+}
+
+//main function
+suspend fun main(args : Array<String> = arrayOf()) = coroutineScope {
+    //init
+    init(args)
+    //load config
+    loadConfig()
     //checks if internet access is available
     checkNetwork()
     //gets antiscam links
     if (config.anti_scam.enabled) {
-        scamLinks =
-            json.decodeFromString<AntiScamResponse>(
-                normalHTTPClient.get("https://raw.githubusercontent.com/nikolaischunk/discord-phishing-links/main/domain-list.json")
-                    .bodyAsText()
-            ).domains
+        fetchAntiScam()
     }
     //makes new client
     val client = Client()
@@ -109,6 +78,39 @@ suspend fun main(args : Array<String> = arrayOf()) = coroutineScope {
     client.login(config.token)
 }
 
+private suspend fun loadConfig() = coroutineScope {
+    //checks if config exists, if not, create one and exit
+    if (!configFile.exists()) {
+        val default = javaClass.classLoader.getResource("defaultconfig.json")
+        withContext(Dispatchers.IO) {
+            configFile.createNewFile()
+        }
+        configFile.writeText(default!!.readText())
+        log(
+            "Config not found, we have generated one for you at ${configFile.absolutePath}",
+            "${ConsoleColours.RED.value}ERROR:"
+        )
+        log("${ConsoleColours.BLUE.value}Please change the file accordingly. Documentation: https://caffeine.moe/CHAOS/")
+        exitProcess(0)
+    }
+    //tries to read config
+    try {
+        config = json.decodeFromString(configFile.readText())
+    } catch (e : Exception) {
+        //if it cant read the config then it logs that its invalid
+        if (e.toString().contains("JsonDecodingException")) {
+            e.printStackTrace()
+            log(
+                "Unable to interpret config, please make sure that the one you have is structured the same as the one here: https://caffeine.moe/CHAOS/config.json",
+                "\u001B[38;5;197mERROR:"
+            )
+            log("Full stacktrace here:")
+            e.printStackTrace()
+            exitProcess(69)
+        }
+    }
+}
+
 suspend fun checkNetwork() {
     try {
         normalHTTPClient.get("https://example.com")
@@ -116,4 +118,12 @@ suspend fun checkNetwork() {
         log("Unable to connect to the internet; internet access is needed for CHAOS.")
         exitProcess(69)
     }
+}
+
+suspend fun fetchAntiScam() {
+    scamLinks =
+        json.decodeFromString<AntiScamResponse>(
+            normalHTTPClient.get("https://raw.githubusercontent.com/nikolaischunk/discord-phishing-links/main/domain-list.json")
+                .bodyAsText()
+        ).domains
 }
