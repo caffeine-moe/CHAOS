@@ -8,7 +8,7 @@ import org.caffeine.chaos.api.client.user.ClientUser
 import org.caffeine.chaos.api.client.user.ClientUserImpl
 import org.caffeine.chaos.api.client.user.ClientUserRelationships
 import org.caffeine.chaos.api.client.user.ClientUserSettings
-import org.caffeine.chaos.api.jsonc
+import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.models.channels.DMChannel
 import org.caffeine.chaos.api.models.guild.Guild
 import org.caffeine.chaos.api.models.users.BlockedUser
@@ -19,11 +19,12 @@ import org.caffeine.chaos.api.payloads.gateway.data.guild.create.GuildCreateD
 import org.caffeine.chaos.api.payloads.gateway.data.ready.ReadyD
 import org.caffeine.chaos.api.payloads.gateway.data.ready.ReadyDPrivateChannel
 import org.caffeine.chaos.api.payloads.gateway.data.ready.ReadyDRelationship
+import org.caffeine.chaos.api.typedefs.ChannelType
 import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.log
 
 suspend fun ready(client : ClientImpl, payload : String) {
-    val d = jsonc.decodeFromString<Ready>(payload).d
+    val d = json.decodeFromString<Ready>(payload).d
     client.userImpl = ClientUserImpl(
         d.user.verified,
         d.user.username,
@@ -138,7 +139,7 @@ private fun extractPrivateChannels(
         map[channel.id] = DMChannel(
             channel.id,
             client.client,
-            client.utils.getChannelType(channel.type),
+            ChannelType.enumById(channel.type),
             channel.last_message_id,
             channel.name.ifBlank { channel.recipients.first().username },
             recipients,
