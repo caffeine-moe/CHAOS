@@ -79,7 +79,7 @@ class Connection(private val client : ClientImpl) {
             }
         }
 
-    lateinit var webSocket : DefaultClientWebSocketSession
+    private lateinit var webSocket : DefaultClientWebSocketSession
 
     private var heartBeat = Job() as Job
 
@@ -137,7 +137,7 @@ class Connection(private val client : ClientImpl) {
             path = "/?v=9&encoding=json",
             port = 443
         ) {
-            webSocket = this@wss
+            webSocket = this
             log("${ConsoleColours.GREEN.value}Connected to the Discord gateway!", "API:")
             val event = this.incoming.receive().data
             val init = json.decodeFromString<Init>(event.decodeToString())
@@ -151,7 +151,6 @@ class Connection(private val client : ClientImpl) {
                     client.utils.tokenValidator(client.utils.token)
 
                     heartBeat = launch { startHeartBeat(init.d.heartbeat_interval) }
-                    heartBeat.start()
 
                     send(payload.payload)
                     log("${payload.name} sent.", "API:")
@@ -169,13 +168,17 @@ class Connection(private val client : ClientImpl) {
     }
 
     suspend fun sendHeartBeat() {
-        val heartbeat = json.encodeToString(
-            HeartBeat(
-                OPCODE.HEARTBEAT.value,
-                if (client.utils.gatewaySequence > 0) client.utils.gatewaySequence else null
+        try {
+            val heartbeat = json.encodeToString(
+                HeartBeat(
+                    OPCODE.HEARTBEAT.value,
+                    if (client.utils.gatewaySequence > 0) client.utils.gatewaySequence else null
+                )
             )
-        )
-        webSocket.send(heartbeat)
+            webSocket.send(heartbeat)
+        } catch (e : Exception) {
+            e.printStackTrace()
+        }
     }
 
     private suspend fun startHeartBeat(interval : Long) {
@@ -187,15 +190,19 @@ class Connection(private val client : ClientImpl) {
     }
 
     private suspend fun disconnect() {
-        this.heartBeat.cancel()
-        this.webSocket.close()
+        heartBeat.cancel()
+        webSocket.close()
         client.ready = false
         log("Client logged out.", "API:")
     }
 
     private suspend fun reconnect() {
-        this.disconnect()
-        execute(ConnectionType.CONNECT)
+        try {
+            disconnect()
+            execute(ConnectionType.CONNECT)
+        }catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
 }
