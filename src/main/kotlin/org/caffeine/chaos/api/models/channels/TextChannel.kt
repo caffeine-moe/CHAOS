@@ -32,6 +32,10 @@ class TextChannel(
         return client.user.fetchMessagesFromChannel(this, messageFilters)
     }
 
+    override suspend fun fetchMessageById(id : String) : Message? {
+        return client.user.fetchMessageById(id, this)
+    }
+
     override suspend fun delete() {
         client.user.deleteChannel(this)
     }
