@@ -19,7 +19,6 @@ fun clear() {
 fun log(text : String, prefix : String = "") {
     //gets current date and time
     val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss.SSS"))
-
     //prints to console
     println("${ConsoleColours.WHITE.value}[${ConsoleColours.BLUE.value}${time}${ConsoleColours.WHITE.value}] ${prefix.ifBlank { "CHAOS:" }} ${ConsoleColours.BLUE.value}$text")
 }
