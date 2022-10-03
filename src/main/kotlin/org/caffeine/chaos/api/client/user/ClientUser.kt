@@ -12,7 +12,11 @@ import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.models.channels.DMChannel
 import org.caffeine.chaos.api.models.guild.Guild
 import org.caffeine.chaos.api.models.interfaces.BaseChannel
+import org.caffeine.chaos.api.models.interfaces.DiscordUser
+import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
 import org.caffeine.chaos.api.models.message.Message
+import org.caffeine.chaos.api.models.message.MessageFilters
+import org.caffeine.chaos.api.models.message.MessageSearchFilters
 import org.caffeine.chaos.api.models.users.BlockedUser
 import org.caffeine.chaos.api.models.users.Friend
 import org.caffeine.chaos.api.models.users.User
@@ -22,7 +26,7 @@ import org.caffeine.chaos.api.utils.log
 import kotlin.math.absoluteValue
 
 class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
-
+    private val clientImpl = impl.clientImpl
     val dmChannels : Map<String, DMChannel>
         get() = impl._channels.values.filterIsInstance<DMChannel>().associateBy { it.id }
 
@@ -178,4 +182,11 @@ class ClientUser(private val impl : ClientUserImpl) : BaseClientUser by impl {
         log("NOT IMPLEMENTED // TODO")
     }
 
+    suspend fun fetchMessageById(id : String, channel : TextBasedChannel) : Message? {
+        return clientImpl.utils.fetchMessageById(id, channel)
+    }
+
+    suspend fun fetchLastMessageInChannel(channel : TextBasedChannel, user: DiscordUser, filters : MessageSearchFilters) : Message? {
+        return clientImpl.utils.fetchLastMessageInChannel(channel, user, filters)
+    }
 }
