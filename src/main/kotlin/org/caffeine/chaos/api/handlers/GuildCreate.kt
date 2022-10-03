@@ -3,7 +3,7 @@ package org.caffeine.chaos.api.handlers
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.client.ClientImpl
-import org.caffeine.chaos.api.jsonc
+import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.payloads.gateway.GuildCreate
 
 /*@kotlinx.serialization.Serializable
@@ -76,7 +76,7 @@ data class Role(
 )*/
 
 suspend fun guildCreate(payload : String, client : ClientImpl) {
-    val parsed = jsonc.decodeFromString<GuildCreate>(payload)
+    val parsed = json.decodeFromString<GuildCreate>(payload)
     val guild = client.utils.createGuild(parsed.d)
     if (guild != null) {
         client.userImpl._guilds[guild.id] = guild
