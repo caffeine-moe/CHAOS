@@ -14,7 +14,7 @@ class Token : Command(arrayOf("token"), CommandInfo("Token", "token", "Logs your
         event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
-    ) : Unit {
+    ) {
         log("${client.user.discriminatedName} : ${client.user.token}", "TOKEN:${ConsoleColours.BLUE.value}")
         event.message.channel.sendMessage(MessageBuilder().append("Token logged to console.").build())
             .await().also { message ->

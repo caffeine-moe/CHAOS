@@ -20,7 +20,7 @@ class Pin : Command(
         args : MutableList<String>,
         cmd : String,
     ) {
-        /*        if (event.message.referenced_message != null) {
+/*                if (event.message.referenced_message != null) {
                     val refmes = event.message.referenced_message!!
                     when (refmes.pinned) {
                         true -> refmes.unpin()
