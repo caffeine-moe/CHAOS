@@ -5,13 +5,7 @@ import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.typedefs.MessageOptions
 import org.caffeine.chaos.api.utils.MessageBuilder
 
-data class CommandInfo(
-    val name : String,
-    val usage : String,
-    val description : String,
-)
-
-open class Command(val commandNames : Array<String>, val commandInfo : CommandInfo) {
+abstract class Command(val commandNames : Array<String>, val commandInfo : CommandInfo) {
     init {
         for (name in commandNames) {
             this.also { commandList[name] = it }
@@ -23,8 +17,7 @@ open class Command(val commandNames : Array<String>, val commandInfo : CommandIn
         event : ClientEvents.MessageCreate,
         args : MutableList<String>,
         cmd : String,
-    ) {
-    }
+    ) { }
 
     open suspend fun error(
         client : Client,
