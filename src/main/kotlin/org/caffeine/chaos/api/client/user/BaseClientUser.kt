@@ -23,7 +23,6 @@ interface BaseClientUser : DiscordUser {
     val premium : Boolean
     val token : String
     val client : Client
-    val clientImpl : ClientImpl
     val guilds : Map<String, Guild>
 
     suspend fun fetchMessagesFromChannel(channel : TextBasedChannel, filters : MessageFilters) : List<Message>
