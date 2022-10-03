@@ -1,5 +1,9 @@
 package org.caffeine.chaos.api.models.interfaces
 
+import org.caffeine.chaos.api.models.message.Message
+import org.caffeine.chaos.api.models.message.MessageFilters
+import org.caffeine.chaos.api.models.message.MessageSearchFilters
+
 interface DiscordUser {
     val username : String
     val discriminator : String
@@ -7,5 +11,6 @@ interface DiscordUser {
     val id : String
     val avatar : String?
     val bot : Boolean
+    suspend fun fetchLastMessageInChannel(channel : TextBasedChannel, filters : MessageSearchFilters) : Message?
     fun avatarUrl() : String
 }
