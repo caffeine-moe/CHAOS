@@ -2,10 +2,7 @@ package org.caffeine.chaos
 
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
@@ -47,19 +44,11 @@ suspend fun main(args : Array<String> = arrayOf()) = coroutineScope {
     //checks if internet access is available
     checkNetwork()
     //gets antiscam links
-    if (config.anti_scam.enabled) {
-        fetchAntiScam()
-    }
     //makes new client
     val client = Client()
     //web ui benched for now
     /*         val ui = WebUI()
-            ui.init(client)*/
-    //checks if client is up to date
-    if (config.updater.enabled) {
-        update()
-    }
-
+        ui.init(client)*/
     //adds listeners
     launch {
         client.events.collect {
@@ -81,11 +70,11 @@ suspend fun main(args : Array<String> = arrayOf()) = coroutineScope {
     client.login(config.token)
 }
 
-private suspend fun loadConfig() = coroutineScope {
+suspend fun loadConfig() = coroutineScope {
     //checks if config exists, if not, create one and exit
     if (!configFile.exists()) {
         val default = javaClass.classLoader.getResource("defaultconfig.json")
-        withContext(Dispatchers.IO) {
+        this.also {
             configFile.createNewFile()
         }
         configFile.writeText(default!!.readText())
@@ -111,6 +100,16 @@ private suspend fun loadConfig() = coroutineScope {
             e.printStackTrace()
             exitProcess(69)
         }
+    }
+    runConfigTasks()
+}
+
+private suspend fun runConfigTasks() {
+    if (config.updater.enabled) {
+        update()
+    }
+    if (config.anti_scam.enabled) {
+        fetchAntiScam()
     }
 }
 
