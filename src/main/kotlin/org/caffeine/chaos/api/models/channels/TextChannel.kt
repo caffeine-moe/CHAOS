@@ -28,6 +28,10 @@ class TextChannel(
         return client.user.sendMessage(this, payload)
     }
 
+    override suspend fun sendMessage(text : String) : CompletableDeferred<Message> {
+        return client.user.sendMessage(this, MessageOptions(text))
+    }
+
     override suspend fun fetchHistory(messageFilters : MessageFilters) : List<Message> {
         return client.user.fetchMessagesFromChannel(this, messageFilters)
     }
