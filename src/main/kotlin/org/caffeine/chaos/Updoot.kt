@@ -2,10 +2,8 @@ package org.caffeine.chaos
 
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
@@ -94,11 +92,11 @@ suspend fun update() = coroutineScope {
             downloadUpdate(updateStatus.downUrl, updateStatus).thenAccept {
                 this.launch {
                     log("Downloaded latest update to ${it}!", pre)
-                    if (config.updater.exit) {
-                        exitProcess(69)
-                    }
                 }
             }
+        }
+        if (config.updater.exit) {
+            exitProcess(69)
         }
         return@coroutineScope
     }
@@ -128,9 +126,9 @@ private suspend fun updateStatus() : Updoot {
     return Updoot(clientIsOutOfDate, downUrl, gnum.joinToString("."), gver)
 }
 
-private suspend fun downloadUpdate(url : String, updoot : Updoot) : CompletableFuture<String> {
+private suspend fun downloadUpdate(url : String, updoot : Updoot) : CompletableFuture<String> = coroutineScope {
     val filename = "CHAOS-${updoot.latestVerString}.jar"
-    withContext(Dispatchers.IO) {
+    run {
         val inputStream = URL(url).openStream()
         Files.copy(
             inputStream,
@@ -139,7 +137,7 @@ private suspend fun downloadUpdate(url : String, updoot : Updoot) : CompletableF
         )
     }
     val filepath = File("CHAOS-${updoot.latestVerString}.jar").absolutePath
-    return CompletableFuture.completedFuture(filepath)
+    return@coroutineScope CompletableFuture.completedFuture(filepath)
 }
 
 private suspend fun git() : GitHubResponse {
