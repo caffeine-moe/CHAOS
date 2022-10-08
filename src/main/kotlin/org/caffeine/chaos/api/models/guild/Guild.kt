@@ -37,7 +37,7 @@ data class Guild(
     val client : Client,
 ) {
 
-    val vanityUrl : String? = if (vanityUrlCode != null) "https://discord.gg/${vanityUrlCode}" else null
+    val vanityUrl : String? = if (vanityUrlCode != null) "https://discord.gg/$vanityUrlCode" else null
 
     fun muteForever() {
         client.user.muteGuild(this, -1)

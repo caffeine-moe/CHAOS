@@ -11,7 +11,6 @@ import org.caffeine.chaos.api.typedefs.ChannelType
 import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.api.utils.log
 
-
 class LeaveGroupDms :
     Command(
         arrayOf("leavegroupdms", "lgdm", "leavegroups"),

@@ -50,6 +50,5 @@ class Avatar : Command(
                 .build()
         )
             .await().also { onComplete(it, config.auto_delete.bot.content_generation) }
-
     }
 }

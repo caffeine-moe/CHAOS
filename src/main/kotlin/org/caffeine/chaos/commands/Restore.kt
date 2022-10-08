@@ -5,7 +5,6 @@ import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
 
-
 class Restore :
     Command(arrayOf("restore"), CommandInfo("Restore", "restore", "Restores your account from a backup json.")) {
     override suspend fun onCalled(

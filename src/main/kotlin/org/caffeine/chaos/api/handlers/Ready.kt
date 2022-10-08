@@ -84,12 +84,12 @@ private fun createUserSettings(d : ReadyD, client : ClientImpl) : ClientUserSett
         d.user_settings.passwordless,
         d.user_settings.render_embeds,
         d.user_settings.render_reactions,
-        //d.user_settings.restricted_guilds,
+        // d.user_settings.restricted_guilds,
         listOf(),
         d.user_settings.show_current_game,
         client.utils.getStatusType(d.user_settings.status),
         d.user_settings.stream_notifications_enabled,
-        client.utils.getThemeType(d.user_settings.theme),
+        client.utils.getThemeType(d.user_settings.theme)
     )
 }
 
@@ -142,7 +142,7 @@ private fun extractPrivateChannels(
             ChannelType.enumById(channel.type),
             channel.last_message_id,
             channel.name.ifBlank { channel.recipients.first().username },
-            recipients,
+            recipients
         )
     }
     return map

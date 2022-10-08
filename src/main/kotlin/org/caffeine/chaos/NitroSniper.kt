@@ -7,20 +7,20 @@ import org.caffeine.chaos.api.typedefs.RedeemedCodeErrorType
 import org.caffeine.chaos.api.typedefs.RedeemedCodeStatusType
 import org.caffeine.chaos.api.utils.log
 
-//executed whenever a message is received
+// executed whenever a message is received
 suspend fun nitroSniper(event : ClientEvents.MessageCreate, client : Client) = coroutineScope {
-    //regex for a discord gift (nitro) link
+    // regex for a discord gift (nitro) link
     val regex = ("https://discord.gift/" + ".{16,24}".toRegex()).toRegex()
-    //if the message content matches the regex (contains a nitro link) then do stuff
+    // if the message content matches the regex (contains a nitro link) then do stuff
     if (regex.matches(event.message.content)) {
-        //removes the url prefix to get the code
+        // removes the url prefix to get the code
         val code = event.message.content.removePrefix("https://discord.gift/")
-        //redeems the code then on completion does stuff
+        // redeems the code then on completion does stuff
         client.user.redeemCode(code).await().also { rc ->
-            //if the nitro sniper logger is enabled then do stuff
+            // if the nitro sniper logger is enabled then do stuff
             if (config.logger.nitro_sniper) {
-                //when the redeemer function returns success, print that the code was redeemed etc.
-                //when the redeemer function returns invalid and the error is that the code is unknown, say that the code was invalid.
+                // when the redeemer function returns success, print that the code was redeemed etc.
+                // when the redeemer function returns invalid and the error is that the code is unknown, say that the code was invalid.
                 when (rc.status) {
                     RedeemedCodeStatusType.SUCCESS -> {
                         log(

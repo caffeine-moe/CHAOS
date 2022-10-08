@@ -7,7 +7,8 @@ import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.utils.MessageBuilder
 
 class ChannelName : Command(
-    arrayOf("cn"), CommandInfo(
+    arrayOf("cn"),
+    CommandInfo(
         "channel name",
         "cn",
         "cn"

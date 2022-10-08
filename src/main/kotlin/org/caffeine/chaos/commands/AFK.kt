@@ -25,7 +25,7 @@ class AFK :
             }
             oldStatus = client.user.settings.status
             oldCustomStatus = client.user.settings.customStatus.text
-            val newStatus = StatusType.DND//client.utils.getStatusType(config.afk.status)
+            val newStatus = StatusType.DND // client.utils.getStatusType(config.afk.status)
             if (newStatus != oldStatus) {
                 if (newStatus != StatusType.UNKNOWN) {
                     client.user.setStatus(newStatus)

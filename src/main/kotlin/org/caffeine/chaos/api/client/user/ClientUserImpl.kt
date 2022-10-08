@@ -30,7 +30,6 @@ data class ClientUserImpl(
     override val discriminatedName : String
         get() = "$username#$discriminator"
 
-
     override suspend fun fetchLastMessageInChannel(
         channel : TextBasedChannel,
         filters : MessageSearchFilters,
@@ -58,7 +57,6 @@ data class ClientUserImpl(
     override val guilds : Map<String, Guild>
         get() = _guilds
 
-
     override suspend fun fetchMessagesFromChannel(
         channel : TextBasedChannel,
         filters : MessageFilters,
@@ -69,5 +67,4 @@ data class ClientUserImpl(
     override suspend fun fetchChannelFromId(id : String) : BaseChannel? {
         return this._channels[id]
     }
-
 }

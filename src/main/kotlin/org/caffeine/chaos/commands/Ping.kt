@@ -12,7 +12,6 @@ import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.utils.MessageBuilder
 import java.net.URL
 
-
 class Ping : Command(
     arrayOf("ping", "latency"),
     CommandInfo(
@@ -112,6 +111,4 @@ class Ping : Command(
                     .await().also { message -> onComplete(message, true) }
             }
     }
-
-
 }

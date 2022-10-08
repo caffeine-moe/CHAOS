@@ -42,6 +42,6 @@ data class Friend(
     }
 
     suspend fun sendMessage(message : MessageOptions) {
-        //client.user.sendMessage(this, message)
+        // client.user.sendMessage(this, message)
     }
 }

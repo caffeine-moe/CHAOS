@@ -4,7 +4,6 @@ import org.caffeine.chaos.api.models.guild.Guild
 import org.caffeine.chaos.api.typedefs.StatusType
 import org.caffeine.chaos.api.typedefs.ThemeType
 
-
 data class ClientUserSettings(
     val afkTimeout : Int = 0,
     val allowAccessibilityDetection : Boolean = false,

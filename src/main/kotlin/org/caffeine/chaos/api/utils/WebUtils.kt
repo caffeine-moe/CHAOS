@@ -34,7 +34,8 @@ var clientVersion = "106.0.5249.91"
 var clientBuildNumber = 150748
 var userAgent =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.5249.91 Safari/537.36"
-//Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36
+
+// Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36
 suspend fun fetchWebClientValues() {
     val dua = json.decodeFromString<DUAProp>(
         normalHTTPClient.get("https://discord-user-api.cf/api/v1/properties/web")

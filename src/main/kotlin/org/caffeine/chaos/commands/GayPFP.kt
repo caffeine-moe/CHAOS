@@ -12,7 +12,6 @@ import java.io.FileOutputStream
 import java.net.URL
 import javax.imageio.ImageIO
 
-
 class GayPFP : Command(
     arrayOf("gaypfp"),
     CommandInfo("GayPFP", "gaypfp <@user>", "Overlays a random lgbtq flag over someones pfp.")

@@ -7,7 +7,6 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.utils.MessageBuilder
 
-
 class MuteAllServers : Command(
     arrayOf("muteallservers", "mas", "muteservers", "muteguilds", "muteallguilds", "mag"),
     CommandInfo("MuteAllServers", "mas", "Mutes all servers indefinitely.")

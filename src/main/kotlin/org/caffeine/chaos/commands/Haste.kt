@@ -13,7 +13,6 @@ import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.api.utils.normalHTTPClient
 import org.caffeine.chaos.config
 
-
 class Haste : Command(
     arrayOf("haste"),
     CommandInfo("Haste", "haste <Text> OR <file.txt>", "Uploads text OR a text document to Hastebin.")

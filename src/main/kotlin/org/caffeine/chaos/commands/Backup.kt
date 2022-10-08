@@ -63,7 +63,6 @@ class Backup :
                         simpleGuilds.add(
                             PrivateGuild(name = i.name, id = i.id, vanityUrl = i.vanityUrl)
                         )
-
                     }
 
                     for (i in client.user.relationships.friends.values.toList()) {
@@ -72,7 +71,7 @@ class Backup :
                                 username = i.username,
                                 discriminator = i.discriminator,
                                 id = i.id,
-                                avatar = i.avatar,
+                                avatar = i.avatar
                             )
                         )
                     }
@@ -83,7 +82,7 @@ class Backup :
                                 username = i.username,
                                 discriminator = i.discriminator,
                                 id = i.id,
-                                avatar = i.avatar,
+                                avatar = i.avatar
                             )
                         )
                     }
@@ -119,7 +118,5 @@ class Backup :
                     e.printStackTrace()
                 }
             }
-
-
     }
 }

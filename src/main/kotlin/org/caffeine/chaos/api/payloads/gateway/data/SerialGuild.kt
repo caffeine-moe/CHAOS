@@ -11,7 +11,7 @@ data class SerialGuild(
     val discovery_splash : String? = null,
     val explicit_content_filter : Int = 0,
     val features : List<String> = listOf(),
-    //val guild_scheduled_events: List<String> = listOf(),
+    // val guild_scheduled_events: List<String> = listOf(),
     val members : MutableList<SerialGuildMember> = mutableListOf(),
     val icon : String = "",
     val id : String = "",
@@ -37,8 +37,8 @@ data class SerialGuild(
     val splash : String? = null,
     val system_channel_flags : Int = 0,
     val system_channel_id : String? = null,
-    //val threads: List<Any> = listOf(),
+    // val threads: List<Any> = listOf(),
     val vanity_url_code : String? = null,
     val verification_level : Int = 0,
-    //val voice_states: List<Any> = listOf()
+    // val voice_states: List<Any> = listOf()
 )

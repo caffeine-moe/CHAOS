@@ -5,7 +5,6 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.utils.MessageBuilder
 
-
 class Help : Command(
     arrayOf("help", "cmds", "commands"),
     CommandInfo("Help", "help [command]", "Sends the command list URL OR Displays info about a specified command.")

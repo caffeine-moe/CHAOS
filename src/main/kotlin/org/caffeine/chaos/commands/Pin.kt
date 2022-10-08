@@ -5,7 +5,6 @@ import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
 
-
 class Pin : Command(
     arrayOf("pin", "p"),
     CommandInfo(

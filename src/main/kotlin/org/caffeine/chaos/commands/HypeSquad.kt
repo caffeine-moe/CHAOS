@@ -6,7 +6,6 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.typedefs.HypeSquadHouseType
 
-
 class HypeSquad :
     Command(
         arrayOf("hypesquad", "house", "hs"),

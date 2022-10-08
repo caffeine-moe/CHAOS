@@ -207,5 +207,4 @@ class Connection(private val client : ClientImpl) {
             e.printStackTrace()
         }
     }
-
 }

@@ -187,7 +187,6 @@ open class DiscordUtils {
     suspend fun fetchMessages(channel : TextBasedChannel, filters : MessageFilters) : List<Message> {
         val collection : MutableList<Message> = arrayListOf()
         try {
-
             if (filters.author_id == client.user.id && filters.before_id.isBlank()) {
                 fetchLastMessageInChannel(channel, client.user, MessageSearchFilters())?.let {
                     collection.add(it)
@@ -201,7 +200,7 @@ open class DiscordUtils {
                 if (filters.after_id.isNotBlank()) parameters += "after=${filters.after_id}&"
                 if (filters.author_id.isNotBlank()) parameters += "author_id=${filters.author_id}&"
                 if (filters.mentioning_user_id.isNotBlank()) parameters += "mentions=${filters.mentioning_user_id}&"
-                val response = discordHTTPClient.request("$BASE_URL/channels/${channel.id}/messages?${parameters}") {
+                val response = discordHTTPClient.request("$BASE_URL/channels/${channel.id}/messages?$parameters") {
                     method = HttpMethod.Get
                     headers {
                         append(HttpHeaders.Authorization, token)
@@ -224,8 +223,9 @@ open class DiscordUtils {
 
                 filters.before_id = collection.last().id
 
-                if (filters.needed != 0 && collection.size >= filters.needed)
+                if (filters.needed != 0 && collection.size >= filters.needed) {
                     break
+                }
 
                 delay(500)
             }
@@ -302,7 +302,7 @@ open class DiscordUtils {
                 payload.public_updates_channel_id,
                 false,
                 "",
-                client.client,
+                client.client
             )
         } catch (e : Exception) {
             log("Error creating guild: ${e.message}", "API:")
@@ -332,7 +332,6 @@ open class DiscordUtils {
     }
 
     suspend fun createMessage(message : SerialMessage) : Message {
-
         val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
 
         val editedTimestamp = if (!message.edited_timestamp.isNullOrBlank()) {
@@ -356,9 +355,11 @@ open class DiscordUtils {
         return Message(
             client.client,
             message.id,
-            (fetchChannel(message.channel_id)
-            //shouldn't happen ever but just in case
-                ?: TextChannel(message.channel_id)) as TextBasedChannel,
+            (
+                    fetchChannel(message.channel_id)
+                    // shouldn't happen ever but just in case
+                        ?: TextChannel(message.channel_id)
+                    ) as TextBasedChannel,
             fetchGuild(message.guild_id ?: ""),
             User(
                 message.author.username,
@@ -376,7 +377,7 @@ open class DiscordUtils {
             mentions,
             attachmeents,
             message.pinned,
-            MessageType.enumById(message.type),
+            MessageType.enumById(message.type)
         )
     }
 
@@ -389,7 +390,7 @@ open class DiscordUtils {
             attachment.proxy_url,
             attachment.size,
             attachment.url,
-            attachment.width,
+            attachment.width
         )
     }
 
@@ -486,7 +487,7 @@ class MessageBuilder : DiscordUtils() {
     private var sb = StringBuilder()
     private var tts = false
 
-    //private var attachments = mutableListOf<MessageAttachment>()
+    // private var attachments = mutableListOf<MessageAttachment>()
     fun build() : MessageOptions {
         return MessageOptions(sb.toString(), tts, calcNonce())
     }
@@ -506,4 +507,3 @@ class MessageBuilder : DiscordUtils() {
                 return this
             }*/
 }
-

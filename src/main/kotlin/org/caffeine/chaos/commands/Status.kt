@@ -6,7 +6,6 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.typedefs.StatusType
 
-
 class Status :
     Command(arrayOf("status", "st"), CommandInfo("Status", "status <Status>", "Changes your current status.")) {
     override suspend fun onCalled(

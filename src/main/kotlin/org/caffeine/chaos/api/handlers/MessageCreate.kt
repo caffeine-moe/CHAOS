@@ -21,4 +21,3 @@ suspend fun messageCreate(payload : String, client : ClientImpl) {
         e.printStackTrace()
     }
 }
-   

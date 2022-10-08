@@ -12,7 +12,6 @@ import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.api.utils.normalHTTPClient
 import org.caffeine.chaos.config
 
-
 class Upload :
     Command(arrayOf("upload"), CommandInfo("Upload", "upload <attachment.ext>", "Uploads a file to 0x0.st.")) {
     override suspend fun onCalled(
@@ -34,11 +33,13 @@ class Upload :
             val attachmentUrl = event.message.attachments.values.first().url
             val rsp = normalHTTPClient.request("https://0x0.st") {
                 method = HttpMethod.Post
-                setBody(MultiPartFormDataContent(
-                    formData {
-                        append("url", attachmentUrl)
-                    }
-                ))
+                setBody(
+                    MultiPartFormDataContent(
+                        formData {
+                            append("url", attachmentUrl)
+                        }
+                    )
+                )
             }
             message.edit(
                 MessageBuilder()

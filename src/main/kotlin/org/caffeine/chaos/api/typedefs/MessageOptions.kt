@@ -5,7 +5,7 @@ data class MessageOptions(
     val content : String = "",
     val tts : Boolean = false,
     val nonce : String = "",
-    //val embed: MessageEmbed;
+    // val embed: MessageEmbed;
 )
 
 interface MessageDeleteOptions {

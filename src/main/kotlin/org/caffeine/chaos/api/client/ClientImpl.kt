@@ -20,5 +20,4 @@ class ClientImpl : BaseClientImpl {
     override suspend fun login(token : String) {}
 
     override suspend fun logout() {}
-
 }

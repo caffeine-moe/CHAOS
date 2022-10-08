@@ -2,7 +2,8 @@ package org.caffeine.chaos
 
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
@@ -13,14 +14,14 @@ import java.io.File
 import java.net.ConnectException
 import kotlin.system.exitProcess
 
-//version lmao
+// version lmao
 const val versionString : String = "3.0.0"
 const val versionDouble : Double = 3.00
 
-//gets unix time in ms when program starts
+// gets unix time in ms when program starts
 val programStartedTime = System.currentTimeMillis()
 
-//scam link list
+// scam link list
 var scamLinks = listOf<String>()
 
 lateinit var config : Config
@@ -35,21 +36,21 @@ private suspend fun init(args : Array<String> = arrayOf()) {
     log("${ConsoleColours.BLUE.value}CHAOS is starting...")
 }
 
-//main function
+// main function
 suspend fun main(args : Array<String> = arrayOf()) = coroutineScope {
-    //init
+    // init
     init(args)
-    //load config
+    // load config
     loadConfig()
-    //checks if internet access is available
+    // checks if internet access is available
     checkNetwork()
-    //gets antiscam links
-    //makes new client
+    // gets antiscam links
+    // makes new client
     val client = Client()
-    //web ui benched for now
+    // web ui benched for now
     /*         val ui = WebUI()
         ui.init(client)*/
-    //adds listeners
+    // adds listeners
     launch {
         client.events.collect {
             launch {
@@ -66,12 +67,12 @@ suspend fun main(args : Array<String> = arrayOf()) = coroutineScope {
         }
     }
 
-    //logs in
+    // logs in
     client.login(config.token)
 }
 
 suspend fun loadConfig() = coroutineScope {
-    //checks if config exists, if not, create one and exit
+    // checks if config exists, if not, create one and exit
     if (!configFile.exists()) {
         val default = javaClass.classLoader.getResource("defaultconfig.json")
         this.also {
@@ -85,11 +86,11 @@ suspend fun loadConfig() = coroutineScope {
         log("${ConsoleColours.BLUE.value}Please change the file accordingly. Documentation: https://caffeine.moe/CHAOS/")
         exitProcess(0)
     }
-    //tries to read config
+    // tries to read config
     try {
         config = json.decodeFromString(configFile.readText())
     } catch (e : Exception) {
-        //if it cant read the config then it logs that its invalid
+        // if it cant read the config then it logs that its invalid
         if (e.toString().contains("JsonDecodingException")) {
             e.printStackTrace()
             log(

@@ -91,7 +91,7 @@ suspend fun update() = coroutineScope {
         if (config.updater.auto_download) {
             downloadUpdate(updateStatus.downUrl, updateStatus).thenAccept {
                 this.launch {
-                    log("Downloaded latest update to ${it}!", pre)
+                    log("Downloaded latest update to $it!", pre)
                 }
             }
         }
@@ -104,8 +104,7 @@ suspend fun update() = coroutineScope {
 }
 
 private suspend fun updateStatus() : Updoot {
-
-    //semver fucking rocks
+    // semver fucking rocks
     val git = git()
     val gnum = git.tagName.replace("[^0-9.]".toRegex(), "").split(".")
     val gmajor = gnum[0]

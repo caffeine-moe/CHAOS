@@ -8,7 +8,6 @@ import org.caffeine.chaos.api.models.interfaces.DiscordUser
 import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.config
 
-
 class UserInfo :
     Command(
         arrayOf("userinfo", "info"),

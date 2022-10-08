@@ -43,5 +43,4 @@ class TextChannel(
     override suspend fun delete() {
         client.user.deleteChannel(this)
     }
-
 }

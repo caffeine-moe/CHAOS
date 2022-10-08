@@ -8,7 +8,6 @@ import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.config
 import oshi.SystemInfo
 
-
 class SysFetch : Command(
     arrayOf("sysfetch", "sysinfo", "fetch"),
     CommandInfo("SysFetch", "sysfetch", "Sends your system information (specs).")

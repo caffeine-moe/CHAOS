@@ -7,7 +7,6 @@ import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.config
 
-
 class RandomChoice : Command(
     arrayOf("randomchoice", "rchoice", "rch"),
     CommandInfo("Random Choice", "rch <Choices>", "Picks a random option/choice out of a list you provide.")

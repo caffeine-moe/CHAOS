@@ -44,7 +44,7 @@ suspend fun handleJsonRequest(payload : String, client : ClientImpl) {
 
                 Event.GUILD_MEMBER_LIST_UPDATE.value -> {
                     if (client.ready) {
-                        //guildMemberListUpdate(payload, client)
+                        // guildMemberListUpdate(payload, client)
                     }
                 }
             }
@@ -65,7 +65,7 @@ suspend fun handleJsonRequest(payload : String, client : ClientImpl) {
         }
 
         OPCODE.HEARTBEAT_ACK.value -> {
-            //TODO
+            // TODO
         }
 
         else -> {

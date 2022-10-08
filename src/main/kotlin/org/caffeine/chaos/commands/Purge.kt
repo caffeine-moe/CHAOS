@@ -84,7 +84,7 @@ class Purge : Command(
         }
         var done = 0
         val progress = event.channel.sendMessage("Fetching messages...").await()
-        val messages  =
+        val messages =
             channel.fetchHistory(MessageFilters(author_id = client.user.id, needed = num)).filter { message ->
                 message.author.id == client.user.id && message.type == MessageType.DEFAULT || message.type == MessageType.REPLY
             }

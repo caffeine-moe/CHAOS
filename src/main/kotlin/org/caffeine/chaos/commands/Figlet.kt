@@ -8,7 +8,6 @@ import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.config
 
-
 class Figlet :
     Command(arrayOf("figlet", "fig"), CommandInfo("Figlet", "fig <Text>", "Turns your text into an ascii figlet.")) {
     override suspend fun onCalled(
