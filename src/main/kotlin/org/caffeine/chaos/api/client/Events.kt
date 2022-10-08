@@ -14,6 +14,7 @@ abstract class ClientEvents {
     class MessageCreate(val message : Message, val channel : TextBasedChannel) : ClientEvent
     class GuildCreate(val guild : Guild) : ClientEvent
     class GuildDelete(val guild : Guild) : ClientEvent
+    object LogOut : ClientEvent
 }
 
 class EventBus {
