@@ -233,7 +233,11 @@ open class DiscordUtils {
             log("Error: ${e.message}", "API:")
             e.printStackTrace()
         }
-        return collection
+        return if (collection.size <= filters.needed) {
+            collection
+        } else {
+            collection.take(filters.needed)
+        }
     }
 
     suspend fun fetchPrivateChannel(id : String) : DMChannel? {
@@ -376,10 +380,6 @@ open class DiscordUtils {
         )
     }
 
-    fun createChannel() {
-
-    }
-
     fun createAttachment(attachment : SerialAttachment) : MessageAttachment {
         return MessageAttachment(
             attachment.content_type,
@@ -464,6 +464,9 @@ open class DiscordUtils {
                     .bodyAsText()
             json.parseToJsonElement(lastMessageResponse).jsonObject["messages"]?.jsonArray?.forEach { it ->
                 val messages = json.decodeFromJsonElement<List<SerialMessage>>(it)
+                if (messages.isEmpty()) {
+                    return null
+                }
                 if (messages.none { it.author.id == user.id && it.type == 0 || it.type == 19 }) {
                     filters.before_id = messages.last().id
                     delay(500)
