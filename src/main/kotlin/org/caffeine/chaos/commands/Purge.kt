@@ -9,7 +9,6 @@ import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
 import org.caffeine.chaos.api.models.message.Message
 import org.caffeine.chaos.api.models.message.MessageFilters
 import org.caffeine.chaos.api.typedefs.MessageType
-import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.purgeCock
 
 class Purge : Command(
@@ -84,30 +83,26 @@ class Purge : Command(
             }
         }
         var done = 0
-        val messages = channel.fetchHistory(MessageFilters(author_id = client.user.id, needed = num))
+        val progress = event.channel.sendMessage("Fetching messages...").await()
+        val messages  =
+            channel.fetchHistory(MessageFilters(author_id = client.user.id, needed = num)).filter { message ->
+                message.author.id == client.user.id && message.type == MessageType.DEFAULT || message.type == MessageType.REPLY
+            }
         if (messages.isEmpty()) {
-            event.channel.sendMessage(
-                MessageBuilder()
-                    .appendLine("There is nothing to delete!")
-                    .build()
-            )
+            progress.edit("There is nothing to delete!")
                 .await().also { message -> onComplete(message, true) }
             return
         }
-        for (message : Message in messages.filter { message -> message.author.id == client.user.id }) {
-            if (message.type != MessageType.DEFAULT && message.type != MessageType.REPLY) continue
+        for (message : Message in messages) {
             if (done % 10 == 0 && done != 0) delay(5000)
             message.delete()
-            delay(1000)
             done++
-            if (purgeCock) break
-            if (done == num) break
+            progress.edit("Deleted message $done/${messages.size}...").await()
+            delay(1000)
+            if (!purgeCock || done != num) continue
+            break
         }
-        event.channel.sendMessage(
-            MessageBuilder()
-                .appendLine("Removed $done message${if (done > 1) "s" else ""}!")
-                .build()
-        )
+        progress.edit("Removed $done message${if (done > 1) "s" else ""}!")
             .await().also { message -> onComplete(message, true) }
     }
 }
