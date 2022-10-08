@@ -33,4 +33,8 @@ data class Message(
     suspend fun edit(edit : MessageOptions) : CompletableDeferred<Message> {
         return client.user.editMessage(this, edit)
     }
+
+    suspend fun edit(text : String) : CompletableDeferred<Message> {
+        return client.user.editMessage(this, MessageOptions(text))
+    }
 }
