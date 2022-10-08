@@ -8,6 +8,7 @@ import io.ktor.client.plugins.cookies.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.websocket.*
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -15,6 +16,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.GATEWAY
 import org.caffeine.chaos.api.OPCODE
+import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.payloads.client.HeartBeat
@@ -176,8 +178,8 @@ class Connection(private val client : ClientImpl) {
                 )
             )
             webSocket.send(heartbeat)
-        } catch (e : Exception) {
-            e.printStackTrace()
+        } catch (e : CancellationException) {
+            reconnect()
         }
     }
 
@@ -192,6 +194,7 @@ class Connection(private val client : ClientImpl) {
     private suspend fun disconnect() {
         heartBeat.cancel()
         webSocket.close()
+        client.eventBus.produceEvent(ClientEvents.LogOut)
         client.ready = false
         log("Client logged out.", "API:")
     }
