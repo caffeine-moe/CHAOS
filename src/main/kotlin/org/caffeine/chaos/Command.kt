@@ -4,6 +4,7 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.typedefs.MessageOptions
 import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.utils.log
 
 abstract class Command(val commandNames : Array<String>, val commandInfo : CommandInfo) {
     init {
@@ -18,6 +19,7 @@ abstract class Command(val commandNames : Array<String>, val commandInfo : Comma
         args : MutableList<String>,
         cmd : String,
     ) {
+        log("Not implemented.")
     }
 
     open suspend fun error(
