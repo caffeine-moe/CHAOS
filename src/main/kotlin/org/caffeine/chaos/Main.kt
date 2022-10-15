@@ -48,7 +48,7 @@ suspend fun main(args : Array<String> = arrayOf()) = coroutineScope {
     // gets antiscam links
     // makes new client
     val client = ClientFactory()
-        .setClientType(ClientType.BOT)
+        .setClientType(ClientType.USER)
         .setToken(config.token)
         .build()
     // web ui benched for now

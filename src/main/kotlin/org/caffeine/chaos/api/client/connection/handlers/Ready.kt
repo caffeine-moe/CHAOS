@@ -46,6 +46,7 @@ suspend fun ready(client : ClientImpl, payload : String) {
         client.user = client.userImpl.user
         client.userImpl.guilds.putAll(extractGuilds(d.guilds, client))
         client.utils.sessionId = d.session_id
+        client.socket.ready = true
         log("${ConsoleColours.GREEN.value}Client logged in!", "API:")
         client.eventBus.produceEvent(ClientEvents.Ready(client.user))
         return
@@ -74,6 +75,7 @@ suspend fun ready(client : ClientImpl, payload : String) {
     client.userImpl.channels.putAll(extractPrivateChannels(d.private_channels, client))
     client.userImpl.guilds.putAll(extractGuilds(d.guilds, client))
     client.utils.sessionId = d.session_id
+    client.socket.ready = true
     log("${ConsoleColours.GREEN.value}Client logged in!", "API:")
     client.eventBus.produceEvent(ClientEvents.Ready(client.user))
 }
