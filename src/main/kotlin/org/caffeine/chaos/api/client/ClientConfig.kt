@@ -6,5 +6,5 @@ import org.caffeine.chaos.api.typedefs.StatusType
 data class ClientConfig(
     val token : String,
     val clientType : ClientType,
-    val statusType : StatusType
+    val statusType : StatusType,
 )

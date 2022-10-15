@@ -1,8 +1,6 @@
 package org.caffeine.chaos.api.client.connection.payloads.client.user.identify
 
 import kotlinx.serialization.Serializable
-import org.caffeine.chaos.api.client.connection.payloads.client.user.identify.IdentifyDClientState
-import org.caffeine.chaos.api.client.connection.payloads.client.user.identify.IdentifyDPresence
 import org.caffeine.chaos.api.utils.DiscordUtils
 
 @Serializable

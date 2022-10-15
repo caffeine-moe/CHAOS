@@ -8,8 +8,8 @@ import org.caffeine.chaos.api.client.connection.handlers.guildCreate
 import org.caffeine.chaos.api.client.connection.handlers.guildDelete
 import org.caffeine.chaos.api.client.connection.handlers.messageCreate
 import org.caffeine.chaos.api.client.connection.handlers.ready
-import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.client.connection.payloads.gateway.Default
+import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.utils.log
 
 suspend fun handleJsonRequest(payload : String, client : ClientImpl) {

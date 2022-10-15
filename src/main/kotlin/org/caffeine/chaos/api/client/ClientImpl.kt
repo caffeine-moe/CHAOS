@@ -9,7 +9,7 @@ import org.caffeine.chaos.api.typedefs.ClientType
 import org.caffeine.chaos.api.utils.DiscordUtils
 
 class ClientImpl(
-    val configuration : ClientConfig
+    val configuration : ClientConfig,
 ) : Client {
 
     override val type : ClientType = configuration.clientType

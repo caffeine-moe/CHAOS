@@ -18,14 +18,14 @@ import org.caffeine.chaos.api.GATEWAY
 import org.caffeine.chaos.api.OPCODE
 import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.client.ClientImpl
-import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.client.connection.payloads.client.HeartBeat
 import org.caffeine.chaos.api.client.connection.payloads.client.bot.identify.IdentifyDProperties
-import org.caffeine.chaos.api.client.connection.payloads.client.user.identify.Identify
 import org.caffeine.chaos.api.client.connection.payloads.client.resume.Resume
-import org.caffeine.chaos.api.client.connection.payloads.client.user.identify.IdentifyD
 import org.caffeine.chaos.api.client.connection.payloads.client.resume.ResumeD
+import org.caffeine.chaos.api.client.connection.payloads.client.user.identify.Identify
+import org.caffeine.chaos.api.client.connection.payloads.client.user.identify.IdentifyD
 import org.caffeine.chaos.api.client.connection.payloads.gateway.init.Init
+import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.typedefs.ClientType
 import org.caffeine.chaos.api.utils.*
 
@@ -107,7 +107,7 @@ class Connection(private val client : ClientImpl) {
                             )
                         )
                     )
-                }else {
+                } else {
                     json.encodeToString(
                         org.caffeine.chaos.api.client.connection.payloads.client.bot.identify.Identify(
                             OPCODE.IDENTIFY.value,

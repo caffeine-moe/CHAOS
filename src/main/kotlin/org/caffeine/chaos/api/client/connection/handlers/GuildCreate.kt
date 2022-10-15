@@ -3,8 +3,8 @@ package org.caffeine.chaos.api.client.connection.handlers
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.client.ClientImpl
-import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.client.connection.payloads.gateway.guild.create.GuildCreate
+import org.caffeine.chaos.api.json
 
 /*@kotlinx.serialization.Serializable
 data class GuildCreateD(

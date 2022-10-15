@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class IdentifyDProperties(
     val os : String,
     val browser : String,
-    val device : String
+    val device : String,
 )

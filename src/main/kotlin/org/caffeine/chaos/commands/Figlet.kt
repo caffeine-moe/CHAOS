@@ -5,7 +5,6 @@ import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
-import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.config
 
 class Figlet :

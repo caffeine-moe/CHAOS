@@ -4,6 +4,11 @@ import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.client.ClientImpl
+import org.caffeine.chaos.api.client.connection.payloads.gateway.guild.create.GuildCreateD
+import org.caffeine.chaos.api.client.connection.payloads.gateway.user.ready.Ready
+import org.caffeine.chaos.api.client.connection.payloads.gateway.user.ready.ReadyD
+import org.caffeine.chaos.api.client.connection.payloads.gateway.user.ready.ReadyDPrivateChannel
+import org.caffeine.chaos.api.client.connection.payloads.gateway.user.ready.ReadyDRelationship
 import org.caffeine.chaos.api.client.user.ClientUserImpl
 import org.caffeine.chaos.api.client.user.ClientUserRelationships
 import org.caffeine.chaos.api.client.user.ClientUserSettings
@@ -13,11 +18,6 @@ import org.caffeine.chaos.api.models.guild.Guild
 import org.caffeine.chaos.api.models.users.BlockedUser
 import org.caffeine.chaos.api.models.users.Friend
 import org.caffeine.chaos.api.models.users.User
-import org.caffeine.chaos.api.client.connection.payloads.gateway.user.ready.Ready
-import org.caffeine.chaos.api.client.connection.payloads.gateway.guild.create.GuildCreateD
-import org.caffeine.chaos.api.client.connection.payloads.gateway.user.ready.ReadyD
-import org.caffeine.chaos.api.client.connection.payloads.gateway.user.ready.ReadyDPrivateChannel
-import org.caffeine.chaos.api.client.connection.payloads.gateway.user.ready.ReadyDRelationship
 import org.caffeine.chaos.api.typedefs.ChannelType
 import org.caffeine.chaos.api.typedefs.ClientType
 import org.caffeine.chaos.api.utils.ConsoleColours
@@ -25,7 +25,8 @@ import org.caffeine.chaos.api.utils.log
 
 suspend fun ready(client : ClientImpl, payload : String) {
     if (client.configuration.clientType == ClientType.BOT) {
-        val d = json.decodeFromString<org.caffeine.chaos.api.client.connection.payloads.gateway.bot.ready.Ready>(payload).d
+        val d =
+            json.decodeFromString<org.caffeine.chaos.api.client.connection.payloads.gateway.bot.ready.Ready>(payload).d
         client.userImpl = ClientUserImpl(
             d.user.verified,
             d.user.username,

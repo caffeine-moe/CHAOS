@@ -10,6 +10,7 @@ import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientImpl
+import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialMessage
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.models.channels.DMChannel
 import org.caffeine.chaos.api.models.guild.Guild
@@ -22,7 +23,6 @@ import org.caffeine.chaos.api.models.message.MessageSearchFilters
 import org.caffeine.chaos.api.models.users.BlockedUser
 import org.caffeine.chaos.api.models.users.Friend
 import org.caffeine.chaos.api.models.users.User
-import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialMessage
 import org.caffeine.chaos.api.typedefs.*
 import org.caffeine.chaos.api.utils.log
 import kotlin.math.absoluteValue
@@ -82,6 +82,7 @@ data class ClientUserImpl(
     override suspend fun fetchChannelFromId(id : String) : BaseChannel? {
         return this.channels[id]
     }
+
     override val dmChannels : Map<String, DMChannel>
         get() = channels.values.filterIsInstance<DMChannel>().associateBy { it.id }
 

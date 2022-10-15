@@ -20,6 +20,11 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import org.caffeine.chaos.api.BASE_URL
 import org.caffeine.chaos.api.client.ClientImpl
+import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialAttachment
+import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialMessage
+import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialUser
+import org.caffeine.chaos.api.client.connection.payloads.gateway.guild.create.GuildCreateD
+import org.caffeine.chaos.api.client.connection.payloads.gateway.guild.create.GuildCreateDChannel
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.models.channels.DMChannel
 import org.caffeine.chaos.api.models.channels.TextChannel
@@ -33,11 +38,6 @@ import org.caffeine.chaos.api.models.message.MessageAttachment
 import org.caffeine.chaos.api.models.message.MessageFilters
 import org.caffeine.chaos.api.models.message.MessageSearchFilters
 import org.caffeine.chaos.api.models.users.User
-import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialAttachment
-import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialMessage
-import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialUser
-import org.caffeine.chaos.api.client.connection.payloads.gateway.guild.create.GuildCreateD
-import org.caffeine.chaos.api.client.connection.payloads.gateway.guild.create.GuildCreateDChannel
 import org.caffeine.chaos.api.typedefs.*
 import java.text.SimpleDateFormat
 import java.util.*
