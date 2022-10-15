@@ -12,7 +12,7 @@ interface TextBasedChannel : BaseChannel {
     override val id : String
     override val name : String?
     override val type : ChannelType
-    suspend fun sendMessage(payload : MessageOptions) : CompletableDeferred<Message>
+    suspend fun sendMessage(data : MessageOptions) : CompletableDeferred<Message>
     suspend fun sendMessage(text : String) : CompletableDeferred<Message>
     suspend fun fetchHistory(messageFilters : MessageFilters) : List<Message>
 

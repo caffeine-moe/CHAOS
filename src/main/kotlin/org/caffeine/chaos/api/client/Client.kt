@@ -1,19 +1,13 @@
 package org.caffeine.chaos.api.client
 
-import org.caffeine.chaos.api.client.connection.ConnectionType
+import kotlinx.coroutines.flow.SharedFlow
+import org.caffeine.chaos.api.client.user.ClientUser
+import org.caffeine.chaos.api.typedefs.ClientType
 
-private val impl : ClientImpl = ClientImpl()
-
-class Client : BaseClient by impl {
-
-    override suspend fun login(token : String) {
-        impl.client = this
-        impl.utils.token = token
-        impl.utils.client = impl
-        impl.socket.execute(ConnectionType.CONNECT)
-    }
-
-    override suspend fun logout() {
-        impl.socket.execute(ConnectionType.DISCONNECT)
-    }
+interface Client {
+    val type : ClientType
+    val user : ClientUser
+    val events : SharedFlow<ClientEvent>
+    suspend fun login()
+    suspend fun logout()
 }

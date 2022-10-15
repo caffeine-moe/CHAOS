@@ -24,11 +24,7 @@ class Figlet :
         try {
             val textToFigletize = args.joinToString(" ")
             val figletizedText = FigletFont.convertOneLine(textToFigletize)
-            event.channel.sendMessage(
-                MessageBuilder()
-                    .appendLine("```$figletizedText```")
-                    .build()
-            ).await().also { message ->
+            event.channel.sendMessage("```$figletizedText```").await().also { message ->
                 onComplete(message, config.auto_delete.bot.content_generation)
             }
         } catch (e : ArrayIndexOutOfBoundsException) {

@@ -2,10 +2,10 @@ package org.caffeine.chaos.api
 
 import kotlinx.serialization.json.Json
 
-const val GATEWAY = "gateway.discord.gg"
-const val BASE_URL = "https://discord.com/api/v9"
+internal const val GATEWAY = "gateway.discord.gg"
+internal const val BASE_URL = "https://discord.com/api/v9"
 
-val json = Json {
+internal val json = Json {
     ignoreUnknownKeys = true
     encodeDefaults = true
     coerceInputValues = true

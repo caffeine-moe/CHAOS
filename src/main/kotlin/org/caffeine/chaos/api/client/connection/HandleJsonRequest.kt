@@ -4,12 +4,12 @@ import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.Event
 import org.caffeine.chaos.api.OPCODE
 import org.caffeine.chaos.api.client.ClientImpl
-import org.caffeine.chaos.api.handlers.guildCreate
-import org.caffeine.chaos.api.handlers.guildDelete
-import org.caffeine.chaos.api.handlers.messageCreate
-import org.caffeine.chaos.api.handlers.ready
+import org.caffeine.chaos.api.client.connection.handlers.guildCreate
+import org.caffeine.chaos.api.client.connection.handlers.guildDelete
+import org.caffeine.chaos.api.client.connection.handlers.messageCreate
+import org.caffeine.chaos.api.client.connection.handlers.ready
 import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.payloads.gateway.Default
+import org.caffeine.chaos.api.client.connection.payloads.gateway.Default
 import org.caffeine.chaos.api.utils.log
 
 suspend fun handleJsonRequest(payload : String, client : ClientImpl) {
@@ -25,25 +25,25 @@ suspend fun handleJsonRequest(payload : String, client : ClientImpl) {
                 }
 
                 Event.MESSAGE_CREATE.value -> {
-                    if (client.ready) {
+                    if (client.socket.ready) {
                         messageCreate(payload, client)
                     }
                 }
 
                 Event.GUILD_DELETE.value -> {
-                    if (client.ready) {
+                    if (client.socket.ready) {
                         guildDelete(payload, client)
                     }
                 }
 
                 Event.GUILD_CREATE.value -> {
-                    if (client.ready) {
+                    if (client.socket.ready) {
                         guildCreate(payload, client)
                     }
                 }
 
                 Event.GUILD_MEMBER_LIST_UPDATE.value -> {
-                    if (client.ready) {
+                    if (client.socket.ready) {
                         // guildMemberListUpdate(payload, client)
                     }
                 }

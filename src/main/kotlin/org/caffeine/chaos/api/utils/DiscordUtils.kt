@@ -33,11 +33,11 @@ import org.caffeine.chaos.api.models.message.MessageAttachment
 import org.caffeine.chaos.api.models.message.MessageFilters
 import org.caffeine.chaos.api.models.message.MessageSearchFilters
 import org.caffeine.chaos.api.models.users.User
-import org.caffeine.chaos.api.payloads.gateway.data.SerialAttachment
-import org.caffeine.chaos.api.payloads.gateway.data.SerialMessage
-import org.caffeine.chaos.api.payloads.gateway.data.SerialUser
-import org.caffeine.chaos.api.payloads.gateway.data.guild.create.GuildCreateD
-import org.caffeine.chaos.api.payloads.gateway.data.guild.create.GuildCreateDChannel
+import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialAttachment
+import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialMessage
+import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialUser
+import org.caffeine.chaos.api.client.connection.payloads.gateway.guild.create.GuildCreateD
+import org.caffeine.chaos.api.client.connection.payloads.gateway.guild.create.GuildCreateDChannel
 import org.caffeine.chaos.api.typedefs.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -46,7 +46,6 @@ import kotlin.system.exitProcess
 
 open class DiscordUtils {
 
-    lateinit var token : String
     lateinit var client : ClientImpl
 
     @Serializable
@@ -95,7 +94,7 @@ open class DiscordUtils {
             port = 443
             headers {
                 append("Accept-Language", "en-US")
-                append("Authorization", token)
+                append("Authorization", client.configuration.token)
                 append("Cache-Control", "no-cache")
                 append("Connection", "keep-alive")
                 append("Origin", "https://discord.com")
@@ -203,7 +202,6 @@ open class DiscordUtils {
                 val response = discordHTTPClient.request("$BASE_URL/channels/${channel.id}/messages?$parameters") {
                     method = HttpMethod.Get
                     headers {
-                        append(HttpHeaders.Authorization, token)
                         append(HttpHeaders.ContentType, "application/json")
                     }
                 }
@@ -250,11 +248,7 @@ open class DiscordUtils {
         if (id.isValidSnowflake() && client.user.guilds.containsKey(id)) {
             guild = client.user.guilds[id]
         } else if (id.isValidSnowflake()) {
-            val response = discordHTTPClient.get("$BASE_URL/guilds/$id") {
-                headers {
-                    append(HttpHeaders.Authorization, token)
-                }
-            }
+            val response = discordHTTPClient.get("$BASE_URL/guilds/$id")
             guild = createGuild(json.decodeFromString(response.bodyAsText()))
         }
         return guild
@@ -264,7 +258,7 @@ open class DiscordUtils {
         var guild : Guild?
         payload.channels.forEach {
             val channel = createGuildChannel(it)
-            client.userImpl._channels.put(
+            client.userImpl.channels.put(
                 it.id,
                 channel
             )
@@ -324,7 +318,7 @@ open class DiscordUtils {
                 )
             }
         }
-        return TextChannel()
+        return TextChannel(client = client.client)
     }
 
     fun fetchChannel(channelId : String) : BaseChannel? {
@@ -358,7 +352,7 @@ open class DiscordUtils {
             (
                     fetchChannel(message.channel_id)
                     // shouldn't happen ever but just in case
-                        ?: TextChannel(message.channel_id)
+                        ?: TextChannel(message.channel_id, client = client.client)
                     ) as TextBasedChannel,
             fetchGuild(message.guild_id ?: ""),
             User(

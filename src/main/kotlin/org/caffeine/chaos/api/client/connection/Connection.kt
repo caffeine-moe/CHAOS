@@ -19,12 +19,14 @@ import org.caffeine.chaos.api.OPCODE
 import org.caffeine.chaos.api.client.ClientEvents
 import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.payloads.client.HeartBeat
-import org.caffeine.chaos.api.payloads.client.Identify
-import org.caffeine.chaos.api.payloads.client.Resume
-import org.caffeine.chaos.api.payloads.client.data.identify.IdentifyD
-import org.caffeine.chaos.api.payloads.client.data.resume.ResumeD
-import org.caffeine.chaos.api.payloads.gateway.Init
+import org.caffeine.chaos.api.client.connection.payloads.client.HeartBeat
+import org.caffeine.chaos.api.client.connection.payloads.client.bot.identify.IdentifyDProperties
+import org.caffeine.chaos.api.client.connection.payloads.client.user.identify.Identify
+import org.caffeine.chaos.api.client.connection.payloads.client.resume.Resume
+import org.caffeine.chaos.api.client.connection.payloads.client.user.identify.IdentifyD
+import org.caffeine.chaos.api.client.connection.payloads.client.resume.ResumeD
+import org.caffeine.chaos.api.client.connection.payloads.gateway.init.Init
+import org.caffeine.chaos.api.typedefs.ClientType
 import org.caffeine.chaos.api.utils.*
 
 class Connection(private val client : ClientImpl) {
@@ -93,17 +95,34 @@ class Connection(private val client : ClientImpl) {
     suspend fun execute(type : ConnectionType) {
         val payload = when (type) {
             ConnectionType.CONNECT -> {
-                fetchWebClientValues()
-                client.utils.createSuperProperties()
-                val identify = json.encodeToString(
-                    Identify(
-                        OPCODE.IDENTIFY.value,
-                        IdentifyD(
-                            client.utils.token,
-                            client.utils.superProperties
+                val identify = if (client.configuration.clientType != ClientType.BOT) {
+                    fetchWebClientValues()
+                    client.utils.createSuperProperties()
+                    json.encodeToString(
+                        Identify(
+                            OPCODE.IDENTIFY.value,
+                            IdentifyD(
+                                client.configuration.token,
+                                client.utils.superProperties
+                            )
                         )
                     )
-                )
+                }else {
+                    json.encodeToString(
+                        org.caffeine.chaos.api.client.connection.payloads.client.bot.identify.Identify(
+                            OPCODE.IDENTIFY.value,
+                            org.caffeine.chaos.api.client.connection.payloads.client.bot.identify.IdentifyD(
+                                client.configuration.token,
+                                513,
+                                IdentifyDProperties(
+                                    "Windows",
+                                    "CHAOS",
+                                    "CHAOS"
+                                )
+                            )
+                        )
+                    )
+                }
                 PayloadDef("Identify", identify)
             }
 
@@ -127,7 +146,7 @@ class Connection(private val client : ClientImpl) {
                         ResumeD(
                             client.utils.gatewaySequence,
                             client.utils.sessionId,
-                            client.utils.token
+                            client.configuration.token
                         )
                     )
                 )
@@ -150,7 +169,7 @@ class Connection(private val client : ClientImpl) {
                         "API:"
                     )
 
-                    client.utils.tokenValidator(client.utils.token)
+                    client.utils.tokenValidator(client.configuration.token)
 
                     heartBeat = launch { startHeartBeat(init.d.heartbeat_interval) }
 
@@ -195,7 +214,7 @@ class Connection(private val client : ClientImpl) {
         heartBeat.cancel()
         webSocket.close()
         client.eventBus.produceEvent(ClientEvents.LogOut)
-        client.ready = false
+        ready = false
         log("Client logged out.", "API:")
     }
 

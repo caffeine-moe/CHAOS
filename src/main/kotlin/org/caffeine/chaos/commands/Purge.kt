@@ -98,9 +98,8 @@ class Purge : Command(
             message.delete()
             done++
             progress.edit("Deleted message $done/${messages.size}...").await()
+            if (purgeCock) break
             delay(1000)
-            if (!purgeCock || done != num) continue
-            break
         }
         progress.edit("Removed $done message${if (done > 1) "s" else ""}!")
             .await().also { message -> onComplete(message, true) }

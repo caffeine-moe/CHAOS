@@ -34,7 +34,7 @@ suspend fun configWatcher(client : Client) = coroutineScope {
                     log("Change in config detected, reloading.", "CONFIG:")
                     client.logout()
                     loadConfig()
-                    client.login(config.token)
+                    client.login()
                 }
             }
             valid = watchKey.reset()

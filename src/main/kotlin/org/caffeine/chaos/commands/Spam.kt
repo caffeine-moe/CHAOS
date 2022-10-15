@@ -1,11 +1,13 @@
 package org.caffeine.chaos.commands
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.typedefs.MessageOptions
 import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.spamCock
 
@@ -38,17 +40,13 @@ class Spam : Command(arrayOf("spam"), CommandInfo("Spam", "spam <Message> <Amoun
                 return
             }
             var done = 0
-            while (done < number && !spamCock) {
-                if (done % 10 == 0 && done != 0) {
-                    withContext(Dispatchers.IO) {
-                        Thread.sleep(5000)
-                    }
-                }
-                event.message.channel.sendMessage(MessageBuilder().appendLine(msg).build())
+            val message = MessageOptions(msg)
+            for (i in 1..number) {
+                if (done % 10 == 0 && done != 0) delay(5000)
+                event.channel.sendMessage(message).await()
                 done++
-                withContext(Dispatchers.IO) {
-                    Thread.sleep(250)
-                }
+                if (spamCock) break
+                delay(250)
             }
             if (done > 1) {
                 event.message.channel.sendMessage(

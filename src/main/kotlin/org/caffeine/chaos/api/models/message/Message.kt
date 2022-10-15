@@ -11,9 +11,9 @@ import org.caffeine.chaos.api.typedefs.MessageType
 import java.util.*
 
 data class Message(
-    val client : Client = Client(),
+    val client : Client,
     val id : String = "",
-    val channel : TextBasedChannel = TextChannel(),
+    val channel : TextBasedChannel,
     val guild : Guild? = null,
     val author : User = User(client = client),
     val content : String = "",

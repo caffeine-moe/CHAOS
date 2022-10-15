@@ -17,8 +17,8 @@ class DMChannel(
     override val name : String,
     val recipients : Map<String, User>,
 ) : TextBasedChannel {
-    override suspend fun sendMessage(payload : MessageOptions) : CompletableDeferred<Message> {
-        return client.user.sendMessage(this, payload)
+    override suspend fun sendMessage(data : MessageOptions) : CompletableDeferred<Message> {
+        return client.user.sendMessage(this, data)
     }
 
     override suspend fun sendMessage(text : String) : CompletableDeferred<Message> {

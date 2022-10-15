@@ -65,7 +65,7 @@ class Backup :
                         )
                     }
 
-                    for (i in client.user.relationships.friends.values.toList()) {
+                    for (i in client.user.relationships!!.friends.values.toList()) {
                         friends.add(
                             PrivateUser(
                                 username = i.username,
@@ -76,7 +76,7 @@ class Backup :
                         )
                     }
 
-                    for (i in client.user.relationships.blockedUsers.values.toList()) {
+                    for (i in client.user.relationships!!.blockedUsers.values.toList()) {
                         blockList.add(
                             PrivateUser(
                                 username = i.username,

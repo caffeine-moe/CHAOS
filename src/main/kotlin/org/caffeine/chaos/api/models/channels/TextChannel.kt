@@ -12,7 +12,7 @@ import java.util.*
 
 class TextChannel(
     override val id : String = "",
-    override val client : Client = Client(),
+    override val client : Client,
     override val type : ChannelType = ChannelType.TEXT,
     override val lastMessageId : String = "",
     override val lastPinTimestamp : Date = Date(),
@@ -24,8 +24,8 @@ class TextChannel(
     override val nsfw : Boolean = false,
     override val rateLimitPerUser : Number = 0,
 ) : GuildChannel, TextBasedChannel {
-    override suspend fun sendMessage(payload : MessageOptions) : CompletableDeferred<Message> {
-        return client.user.sendMessage(this, payload)
+    override suspend fun sendMessage(data : MessageOptions) : CompletableDeferred<Message> {
+        return client.user.sendMessage(this, data)
     }
 
     override suspend fun sendMessage(text : String) : CompletableDeferred<Message> {
