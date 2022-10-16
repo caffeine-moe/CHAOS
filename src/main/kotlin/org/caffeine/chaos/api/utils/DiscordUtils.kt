@@ -70,64 +70,7 @@ open class DiscordUtils {
 
     var sessionId = ""
 
-    /*
-        Http Client
-     */
 
-    val discordHTTPClient : HttpClient = HttpClient(CIO) {
-        install(WebSockets)
-        install(HttpCookies)
-        install(HttpCache)
-        install(ContentNegotiation)
-        install(DefaultRequest)
-        install(HttpRequestRetry) {
-            maxRetries = 5
-            retryIf { _, response ->
-                response.status.value == 429
-            }
-            delayMillis(respectRetryAfterHeader = true) { delay ->
-                delay * 1000L
-            }
-        }
-
-        defaultRequest {
-            port = 443
-            headers {
-                append("Accept-Language", "en-US")
-                append("Authorization", client.configuration.token)
-                append("Cache-Control", "no-cache")
-                append("Connection", "keep-alive")
-                append("Origin", "https://discord.com")
-                append("Pragma", "no-cache")
-                append("Referer", "https://discord.com/channels/@me")
-                append("Sec-CH-UA", "\"(Not(A:Brand\";v=\"8\", \"Chromium\";v=\"$clientVersion\"")
-                append("Sec-CH-UA-Mobile", "?0")
-                append("Sec-CH-UA-Platform", "Windows")
-                append("Sec-Fetch-Dest", "empty")
-                append("Sec-Fetch-Mode", "cors")
-                append("Sec-Fetch-Site", "same-origin")
-                append("User-Agent", userAgent)
-                append("X-Discord-Locale", "en-US")
-                append("X-Debug-Options", "bugReporterEnabled")
-                append("X-Super-Properties", superPropertiesB64)
-            }
-        }
-        engine {
-            pipelining = true
-        }
-        expectSuccess = true
-
-        HttpResponseValidator {
-            handleResponseExceptionWithRequest { cause, request ->
-                if (cause.localizedMessage.contains("401 Unauthorized.")) {
-                    log("Invalid token, please update your config with a valid token.", "API:")
-                    exitProcess(69)
-                }
-                log("Error: ${cause.message} Request: ${request.content}", "API:")
-                return@handleResponseExceptionWithRequest
-            }
-        }
-    }
 
     fun calcNonce(id : Long = 0) : String {
         val unixTs = if (id == 0L) System.currentTimeMillis() else id
@@ -135,11 +78,10 @@ open class DiscordUtils {
     }
 
     suspend fun tokenValidator(token : String) {
-        discordHTTPClient.get("$BASE_URL/users/@me") {
-            headers {
-                append(HttpHeaders.Authorization, token)
-            }
+        val headers = HeadersBuilder().also {
+            it.append("Authorization", token)
         }
+        client.httpClient.get("$BASE_URL/users/@me", headers)
     }
 
     fun getStatusType(type : String) : StatusType {
@@ -199,13 +141,8 @@ open class DiscordUtils {
                 if (filters.after_id.isNotBlank()) parameters += "after=${filters.after_id}&"
                 if (filters.author_id.isNotBlank()) parameters += "author_id=${filters.author_id}&"
                 if (filters.mentioning_user_id.isNotBlank()) parameters += "mentions=${filters.mentioning_user_id}&"
-                val response = discordHTTPClient.request("$BASE_URL/channels/${channel.id}/messages?$parameters") {
-                    method = HttpMethod.Get
-                    headers {
-                        append(HttpHeaders.ContentType, "application/json")
-                    }
-                }
-                val newMessages = json.decodeFromString<MutableList<SerialMessage>>(response.bodyAsText())
+                val response = client.httpClient.get("$BASE_URL/channels/${channel.id}/messages?$parameters").await()
+                val newMessages = json.decodeFromString<MutableList<SerialMessage>>(response)
                 newMessages.removeIf { filters.author_id.isNotBlank() && it.author.id != filters.author_id }
                 if (newMessages.size == 0) {
                     val lastmessage = fetchLastMessageInChannel(
@@ -248,8 +185,8 @@ open class DiscordUtils {
         if (id.isValidSnowflake() && client.user.guilds.containsKey(id)) {
             guild = client.user.guilds[id]
         } else if (id.isValidSnowflake()) {
-            val response = discordHTTPClient.get("$BASE_URL/guilds/$id")
-            guild = createGuild(json.decodeFromString(response.bodyAsText()))
+            val response = client.httpClient.get("$BASE_URL/guilds/$id").await()
+            guild = createGuild(json.decodeFromString(response))
         }
         return guild
     }
@@ -306,19 +243,23 @@ open class DiscordUtils {
     }
 
     fun createGuildChannel(channel : GuildCreateDChannel) : GuildChannel {
-        when (channel.type) {
-            ChannelType.TEXT.ordinal -> {
+        when (ChannelType.enumById(channel.type)) {
+            ChannelType.TEXT -> {
                 return TextChannel(
                     channel.id,
                     client.client,
                     ChannelType.TEXT,
                     channel.id,
                     Date(),
-                    channel.name
+                    channel.name,
+                    channel.position,
+                    channel.parent_id,
+                    channel.topic
                 )
+            } else -> {
+                return TextChannel(client = client.client)
             }
         }
-        return TextChannel(client = client.client)
     }
 
     fun fetchChannel(channelId : String) : BaseChannel? {
@@ -428,7 +369,7 @@ open class DiscordUtils {
     }
 
     suspend fun fetchUser(id : String) : DiscordUser {
-        val response = client.utils.discordHTTPClient.get("$BASE_URL/users/$id").bodyAsText()
+        val response = client.httpClient.get("$BASE_URL/users/$id").await()
         return createUser(json.decodeFromString(response))
     }
 
@@ -438,7 +379,7 @@ open class DiscordUtils {
 
     suspend fun fetchMessageById(id : String, channel : TextBasedChannel) : Message? {
         if (id.isValidSnowflake()) {
-            val response = discordHTTPClient.get("$BASE_URL/channels/${channel.id}/messages/$id").bodyAsText()
+            val response = client.httpClient.get("$BASE_URL/channels/${channel.id}/messages/$id").await()
             return createMessage(json.decodeFromString(response))
         }
         return null
@@ -455,8 +396,8 @@ open class DiscordUtils {
         if (filters.mentioning_user_id.isNotBlank()) parameters += "mentions=${filters.mentioning_user_id}&"
         try {
             val lastMessageResponse =
-                discordHTTPClient.get("$BASE_URL/channels/${channel.id}/messages/search?author_id=${user.id}&$parameters")
-                    .bodyAsText()
+                client.httpClient.get("$BASE_URL/channels/${channel.id}/messages/search?author_id=${user.id}&$parameters")
+                    .await()
             json.parseToJsonElement(lastMessageResponse).jsonObject["messages"]?.jsonArray?.forEach { it ->
                 val messages = json.decodeFromJsonElement<List<SerialMessage>>(it)
                 if (messages.isEmpty()) {

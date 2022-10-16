@@ -7,7 +7,8 @@ data class GuildCreateDChannel(
     val flags : Int = 0,
     val id : String = "",
     val name : String = "",
-    val parent_id : String? = null,
+    val parent_id : String = "",
     val position : Int = 0,
     val type : Int = 0,
+    val topic : String = ""
 )

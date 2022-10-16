@@ -5,8 +5,8 @@ import io.ktor.client.statement.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
+import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvents
-import org.caffeine.chaos.api.client.ClientFactory
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.typedefs.ClientType
 import org.caffeine.chaos.api.utils.*
@@ -47,7 +47,7 @@ suspend fun main(args : Array<String> = arrayOf()) = coroutineScope {
     checkNetwork()
     // gets antiscam links
     // makes new client
-    val client = ClientFactory()
+    val client = Client.Factory
         .setClientType(ClientType.USER)
         .setToken(config.token)
         .build()

@@ -3,9 +3,11 @@ package org.caffeine.chaos.api.client
 import kotlinx.coroutines.flow.SharedFlow
 import org.caffeine.chaos.api.client.connection.Connection
 import org.caffeine.chaos.api.client.connection.ConnectionType
+import org.caffeine.chaos.api.client.connection.http.HTTPClient
 import org.caffeine.chaos.api.client.user.ClientUser
 import org.caffeine.chaos.api.client.user.ClientUserImpl
 import org.caffeine.chaos.api.typedefs.ClientType
+import org.caffeine.chaos.api.typedefs.StatusType
 import org.caffeine.chaos.api.utils.DiscordUtils
 
 class ClientImpl(
@@ -19,6 +21,9 @@ class ClientImpl(
     val socket : Connection = Connection(this)
     val utils : DiscordUtils = DiscordUtils()
     override val events : SharedFlow<ClientEvent> = eventBus.events
+
+    val httpClient : HTTPClient = HTTPClient.build(this)
+
     override suspend fun login() {
         utils.client = this
         socket.execute(ConnectionType.CONNECT)

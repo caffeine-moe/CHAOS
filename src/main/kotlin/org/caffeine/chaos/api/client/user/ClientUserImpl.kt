@@ -99,9 +99,7 @@ data class ClientUserImpl(
         }*/
 
     override suspend fun deleteChannel(channel : BaseChannel) {
-        clientImpl.utils.discordHTTPClient.request("$BASE_URL/channels/${channel.id}") {
-            method = HttpMethod.Delete
-        }
+        clientImpl.httpClient.delete("$BASE_URL/channels/${channel.id}")
     }
 
     override fun unblock(user : BlockedUser) {
@@ -114,66 +112,37 @@ data class ClientUserImpl(
 
     override suspend fun setHouse(house : HypeSquadHouseType) {
         if (house == HypeSquadHouseType.NONE) {
-            clientImpl.utils.discordHTTPClient.request("$BASE_URL/hypesquad/online") {
-                method = HttpMethod.Delete
-            }
+            clientImpl.httpClient.delete("$BASE_URL/hypesquad/online")
         } else {
-            clientImpl.utils.discordHTTPClient.request("$BASE_URL/hypesquad/online") {
-                method = HttpMethod.Post
-                headers {
-                    append("Content-Type", "application/json")
-                }
-                setBody(json.parseToJsonElement("{\"house_id\":${house.ordinal}}").toString())
-            }
+            val data = json.parseToJsonElement("{\"house_id\":${house.ordinal}}").toString()
+            clientImpl.httpClient.post("$BASE_URL/hypesquad/online", data)
         }
     }
 
     override suspend fun setCustomStatus(status : String) {
-        clientImpl.utils.discordHTTPClient.request("$BASE_URL/users/@me/settings") {
-            method = HttpMethod.Patch
-            headers {
-                append("Content-Type", "application/json")
-            }
-            setBody(json.parseToJsonElement("{\"custom_status\":{\"text\":\"$status\"}}").toString())
-        }
+        val data = json.parseToJsonElement("{\"custom_status\":{\"text\":\"$status\"}}").toString()
+        clientImpl.httpClient.patch("$BASE_URL/users/@me/settings", data)
     }
 
     override suspend fun setTheme(theme : ThemeType) {
-        clientImpl.utils.discordHTTPClient.request("$BASE_URL/users/@me/settings") {
-            method = HttpMethod.Patch
-            headers {
-                append("Content-Type", "application/json")
-            }
-            setBody(json.parseToJsonElement("{\"theme\":\"${theme.value}\"}").toString())
-        }
+        val data = json.parseToJsonElement("{\"theme\":\"${theme.value}\"}").toString()
+        clientImpl.httpClient.patch("$BASE_URL/users/@me/settings", data)
     }
 
     override suspend fun setStatus(status : StatusType) {
-        clientImpl.utils.discordHTTPClient.request("$BASE_URL/users/@me/settings") {
-            method = HttpMethod.Patch
-            headers {
-                append("Content-Type", "application/json")
-            }
-            setBody(json.parseToJsonElement("{\"status\":\"${status.value}\"}").toString())
-        }
+        val data = json.parseToJsonElement("{\"status\":\"${status.value}\"}").toString()
+        clientImpl.httpClient.patch("$BASE_URL/users/@me/settings", data)
     }
 
     override suspend fun sendMessage(channel : BaseChannel, message : MessageOptions) : CompletableDeferred<Message> {
-        val response = clientImpl.utils.discordHTTPClient.request("$BASE_URL/channels/${channel.id}/messages") {
-            method = HttpMethod.Post
-            headers {
-                append("Content-Type", "application/json")
-            }
-            setBody(json.encodeToString(message))
-        }
-        val serial = json.decodeFromString<SerialMessage>(response.bodyAsText())
+        val data = json.encodeToString(message)
+        val response = clientImpl.httpClient.post("$BASE_URL/channels/${channel.id}/messages", data).await()
+        val serial = json.decodeFromString<SerialMessage>(response)
         return CompletableDeferred(clientImpl.utils.createMessage(serial))
     }
 
     override suspend fun deleteMessage(message : Message) {
-        clientImpl.utils.discordHTTPClient.request("$BASE_URL/channels/${message.channel.id}/messages/${message.id}") {
-            method = HttpMethod.Delete
-        }
+        clientImpl.httpClient.delete("$BASE_URL/channels/${message.channel.id}/messages/${message.id}")
     }
 
     override suspend fun redeemCode(code : String) : CompletableDeferred<RedeemedCode> {
@@ -181,10 +150,7 @@ data class ClientUserImpl(
         var la : Long
         val start = System.currentTimeMillis()
         try {
-            clientImpl.utils.discordHTTPClient.request("$BASE_URL/entitlements/gift-codes/$code/redeem") {
-                method = HttpMethod.Post
-                expectSuccess = true
-            }
+            clientImpl.httpClient.post("$BASE_URL/entitlements/gift-codes/$code/redeem")
             val end = System.currentTimeMillis()
             la = (start - end)
             rc = RedeemedCode(code, la.absoluteValue, RedeemedCodeStatusType.SUCCESS)
@@ -204,25 +170,15 @@ data class ClientUserImpl(
     }
 
     override suspend fun block(user : User) {
-        clientImpl.utils.discordHTTPClient.request("$BASE_URL/users/@me/relationships/${user.id}") {
-            method = HttpMethod.Put
-            headers {
-                append("Content-Type", "application/json")
-            }
-            setBody(json.parseToJsonElement("{\"type\":2}").toString())
-        }
+        val data = json.parseToJsonElement("{\"type\":2}").toString()
+        clientImpl.httpClient.post("$BASE_URL/users/@me/relationships/${user.id}", data)
     }
 
     override suspend fun editMessage(message : Message, edit : MessageOptions) : CompletableDeferred<Message> {
+        val data = json.encodeToString(edit)
         val response =
-            clientImpl.utils.discordHTTPClient.request("$BASE_URL/channels/${message.channel.id}/messages/${message.id}") {
-                method = HttpMethod.Patch
-                headers {
-                    append("Content-Type", "application/json")
-                }
-                setBody(json.encodeToString(edit))
-            }
-        val serial = json.decodeFromString<SerialMessage>(response.bodyAsText())
+            clientImpl.httpClient.patch("$BASE_URL/channels/${message.channel.id}/messages/${message.id}", data).await()
+        val serial = json.decodeFromString<SerialMessage>(response)
         return CompletableDeferred(clientImpl.utils.createMessage(serial))
     }
 
