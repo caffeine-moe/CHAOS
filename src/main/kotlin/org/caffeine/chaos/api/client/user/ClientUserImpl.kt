@@ -1,9 +1,5 @@
 package org.caffeine.chaos.api.client.user
 
-import io.ktor.client.plugins.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -45,6 +41,8 @@ data class ClientUserImpl(
 ) : ClientUser {
 
     var user : ClientUser = this
+
+    override val asMention : String = "<@${id}>"
 
     override val discriminatedName : String
         get() = "$username#$discriminator"

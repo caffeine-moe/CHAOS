@@ -3,10 +3,12 @@ package org.caffeine.chaos
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.typedefs.ClientType
 import org.caffeine.chaos.api.utils.*
@@ -37,17 +39,11 @@ private suspend fun init(args : Array<String> = arrayOf()) {
     log("${ConsoleColours.BLUE.value}CHAOS is starting...")
 }
 
-// main function
 suspend fun main(args : Array<String> = arrayOf()) = coroutineScope {
-    // init
     init(args)
-    // load config
     loadConfig()
-    // checks if internet access is available
     checkNetwork()
-    // gets antiscam links
-    // makes new client
-    val client = Client.Factory
+    val client = Client.Factory()
         .setClientType(ClientType.USER)
         .setToken(config.token)
         .build()
@@ -55,15 +51,15 @@ suspend fun main(args : Array<String> = arrayOf()) = coroutineScope {
     /*         val ui = WebUI()
         ui.init(client)*/
     // adds listeners
+
     launch {
-        client.events.collect {
+        client.events.takeWhile { it != ClientEvent.End }.collect {
             launch {
                 when (it) {
-                    is ClientEvents.Ready -> {
+                    is ClientEvent.Ready -> {
                         ready(client)
                     }
-
-                    is ClientEvents.MessageCreate -> {
+                    is ClientEvent.MessageCreate -> {
                         handleMessage(it, client)
                     }
                 }
@@ -75,7 +71,6 @@ suspend fun main(args : Array<String> = arrayOf()) = coroutineScope {
 }
 
 suspend fun loadConfig() = coroutineScope {
-    // checks if config exists, if not, create one and exit
     if (!configFile.exists()) {
         val default = javaClass.classLoader.getResource("defaultconfig.json")
         this.also {
@@ -89,21 +84,16 @@ suspend fun loadConfig() = coroutineScope {
         log("${ConsoleColours.BLUE.value}Please change the file accordingly. Documentation: https://caffeine.moe/CHAOS/")
         exitProcess(0)
     }
-    // tries to read config
     try {
         config = json.decodeFromString(configFile.readText())
-    } catch (e : Exception) {
-        // if it cant read the config then it logs that its invalid
-        if (e.toString().contains("JsonDecodingException")) {
-            e.printStackTrace()
-            log(
-                "Unable to interpret config, please make sure that the one you have is structured the same as the one here: https://caffeine.moe/CHAOS/config.json",
-                "\u001B[38;5;197mERROR:"
-            )
-            log("Full stacktrace here:")
-            e.printStackTrace()
-            exitProcess(69)
-        }
+    } catch (e : SerializationException) {
+        log(
+            "${ConsoleColours.BLUE.value}Unable to interpret config, please make sure that the one you have is structured the same as the one here: https://caffeine.moe/CHAOS/config.json",
+            "${ConsoleColours.RED.value}ERROR:"
+        )
+        log("Full stacktrace here:")
+        e.printStackTrace()
+        exitProcess(69)
     }
     runConfigTasks()
 }

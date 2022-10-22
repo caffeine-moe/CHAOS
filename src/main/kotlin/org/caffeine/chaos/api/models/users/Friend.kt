@@ -17,6 +17,8 @@ data class Friend(
     private val client : Client,
 ) : DiscordUser {
 
+    override val asMention : String = "<@${id}>"
+
     override val discriminatedName = "$username#$discriminator"
     override suspend fun fetchLastMessageInChannel(
         channel : TextBasedChannel,

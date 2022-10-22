@@ -3,7 +3,7 @@ package org.caffeine.chaos.commands
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.models.interfaces.DiscordUser
 import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.config
@@ -14,7 +14,7 @@ class Avatar : Command(
 ) {
     override suspend fun onCalled(
         client : Client,
-        event : ClientEvents.MessageCreate,
+        event : ClientEvent.MessageCreate,
         args : MutableList<String>,
         cmd : String,
     ) {

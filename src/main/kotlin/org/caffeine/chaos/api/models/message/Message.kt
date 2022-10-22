@@ -14,7 +14,7 @@ data class Message(
     val id : String = "",
     val channel : TextBasedChannel,
     val guild : Guild? = null,
-    val author : User = User(client = client),
+    val author : User,
     val content : String = "",
     val timestamp : Date = Date(),
     val editedAt : Date? = Date(),

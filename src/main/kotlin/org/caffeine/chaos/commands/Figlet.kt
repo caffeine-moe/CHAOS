@@ -4,14 +4,14 @@ import com.github.lalyos.jfiglet.FigletFont
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.config
 
 class Figlet :
     Command(arrayOf("figlet", "fig"), CommandInfo("Figlet", "fig <Text>", "Turns your text into an ascii figlet.")) {
     override suspend fun onCalled(
         client : Client,
-        event : ClientEvents.MessageCreate,
+        event : ClientEvent.MessageCreate,
         args : MutableList<String>,
         cmd : String,
     ) {

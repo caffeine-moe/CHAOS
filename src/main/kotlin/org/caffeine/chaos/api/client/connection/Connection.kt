@@ -8,15 +8,13 @@ import io.ktor.client.plugins.cookies.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.websocket.*
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.internal.decodeStringToJsonTree
 import org.caffeine.chaos.api.GATEWAY
 import org.caffeine.chaos.api.OPCODE
-import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.client.connection.payloads.client.HeartBeat
 import org.caffeine.chaos.api.client.connection.payloads.client.bot.identify.IdentifyDProperties
@@ -24,6 +22,8 @@ import org.caffeine.chaos.api.client.connection.payloads.client.resume.Resume
 import org.caffeine.chaos.api.client.connection.payloads.client.resume.ResumeD
 import org.caffeine.chaos.api.client.connection.payloads.client.user.identify.Identify
 import org.caffeine.chaos.api.client.connection.payloads.client.user.identify.IdentifyD
+import org.caffeine.chaos.api.client.connection.payloads.client.user.identify.IdentifyDClientState
+import org.caffeine.chaos.api.client.connection.payloads.client.user.identify.IdentifyDPresence
 import org.caffeine.chaos.api.client.connection.payloads.gateway.init.Init
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.typedefs.ClientType
@@ -32,56 +32,6 @@ import org.caffeine.chaos.api.utils.*
 class Connection(private val client : ClientImpl) {
 
     var ready = false
-
-    private val httpClient : HttpClient
-        get() = HttpClient(CIO) {
-            install(WebSockets)
-            install(HttpCookies)
-            install(HttpTimeout)
-            install(HttpCache)
-            install(DefaultRequest)
-            install(HttpRequestRetry) {
-                maxRetries = 5
-                retryIf { _, response ->
-                    response.status.value == 429
-                }
-                delayMillis(respectRetryAfterHeader = true) { delay ->
-                    delay * 1000L
-                }
-            }
-            defaultRequest {
-                headers {
-                    append("Accept-Language", "en-US")
-                    append("Cache-Control", "no-cache")
-                    append("Connection", "keep-alive")
-                    append("Origin", "https://discord.com")
-                    append("Pragma", "no-cache")
-                    append("Referer", "https://discord.com/channels/@me")
-                    append("Sec-CH-UA", "\"(Not(A:Brand\";v=\"8\", \"Chromium\";v=\"$clientVersion\"")
-                    append("Sec-CH-UA-Mobile", "?0")
-                    append("Sec-CH-UA-Platform", "Windows")
-                    append("Sec-Fetch-Dest", "empty")
-                    append("Sec-Fetch-Mode", "cors")
-                    append("Sec-Fetch-Site", "same-origin")
-                    append("User-Agent", userAgent)
-                    append("X-Discord-Locale", "en-US")
-                    append("X-Debug-Options", "bugReporterEnabled")
-                    append("X-Super-Properties", client.utils.superPropertiesB64)
-                }
-            }
-            engine {
-                pipelining = true
-                requestTimeout = 0
-            }
-            expectSuccess = true
-
-            HttpResponseValidator {
-                handleResponseExceptionWithRequest { cause, request ->
-                    log("Error: ${cause.message} Request: ${request.content}", "API:")
-                    return@handleResponseExceptionWithRequest
-                }
-            }
-        }
 
     private lateinit var webSocket : DefaultClientWebSocketSession
 
@@ -92,18 +42,45 @@ class Connection(private val client : ClientImpl) {
         val payload : String,
     )
 
+    fun generateUserIdentify() : Identify {
+        return Identify(
+            OPCODE.IDENTIFY.value,
+            IdentifyD(
+                client.configuration.token,
+                1024,
+                client.utils.superProperties,
+                IdentifyDPresence(
+                    "online",
+                    0,
+                    emptyArray(),
+                    false
+                ),
+                false,
+                IdentifyDClientState(
+
+                )
+            )
+        )
+    }
+
+/*
+    fun generateBotIdentify() : org.caffeine.chaos.api.client.connection.payloads.client.bot.identify.Identify {
+        return org.caffeine.chaos.api.client.connection.payloads.client.bot.identify.Identify(0)
+    }
+*/
+
     suspend fun execute(type : ConnectionType) {
         val payload = when (type) {
             ConnectionType.CONNECT -> {
+                fetchWebClientValues()
+                client.utils.createSuperProperties()
                 val identify = if (client.configuration.clientType != ClientType.BOT) {
-                    fetchWebClientValues()
-                    client.utils.createSuperProperties()
                     json.encodeToString(
                         Identify(
                             OPCODE.IDENTIFY.value,
                             IdentifyD(
-                                client.configuration.token,
-                                client.utils.superProperties
+                                token = client.configuration.token,
+                                properties = client.utils.superProperties
                             )
                         )
                     )
@@ -153,7 +130,10 @@ class Connection(private val client : ClientImpl) {
                 PayloadDef("Resume", resume)
             }
         }
-        httpClient.wss(
+
+        client.utils.tokenValidator(client.configuration.token)
+
+        client.httpClient.client.wss(
             host = GATEWAY,
             path = "/?v=9&encoding=json",
             port = 443
@@ -169,8 +149,6 @@ class Connection(private val client : ClientImpl) {
                         "API:"
                     )
 
-                    client.utils.tokenValidator(client.configuration.token)
-
                     heartBeat = launch { startHeartBeat(init.d.heartbeat_interval) }
 
                     send(payload.payload)
@@ -178,7 +156,7 @@ class Connection(private val client : ClientImpl) {
 
                     for (frame in incoming) {
                         frame as? Frame.Text ?: continue
-                        val receivedText = frame.readText()
+                        val receivedText : String = frame.readText()
                         launch {
                             handleJsonRequest(receivedText, client)
                         }
@@ -211,9 +189,9 @@ class Connection(private val client : ClientImpl) {
     }
 
     private suspend fun disconnect() {
-        heartBeat.cancel()
+        client.eventBus.produceEvent(ClientEvent.End)
+        heartBeat.cancelAndJoin()
         webSocket.close()
-        client.eventBus.produceEvent(ClientEvents.LogOut)
         ready = false
         log("Client logged out.", "API:")
     }

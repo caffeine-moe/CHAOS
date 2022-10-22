@@ -1,14 +1,5 @@
 package org.caffeine.chaos.api.utils
 
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.cache.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.cookies.*
-import io.ktor.client.plugins.websocket.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
@@ -42,7 +33,6 @@ import org.caffeine.chaos.api.typedefs.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.absoluteValue
-import kotlin.system.exitProcess
 
 open class DiscordUtils {
 
@@ -53,6 +43,7 @@ open class DiscordUtils {
         var os : String = "",
         var browser : String = "",
         var device : String = "",
+        var system_locale : String = "",
         var browser_user_agent : String = "",
         var browser_version : String = "",
         var os_version : String = "",
@@ -61,9 +52,8 @@ open class DiscordUtils {
         var referrer_current : String = "",
         var referring_domain_current : String = "",
         var release_channel : String = "",
-        var system_locale : String = "",
         var client_build_number : Int = 0,
-        var client_event_source : JsonObject = json.decodeFromString("{}"),
+        var client_event_source : String? = null,
     )
 
     var gatewaySequence = 0
@@ -195,10 +185,7 @@ open class DiscordUtils {
         var guild : Guild?
         payload.channels.forEach {
             val channel = createGuildChannel(it)
-            client.userImpl.channels.put(
-                it.id,
-                channel
-            )
+            client.userImpl.channels[it.id] = channel
         }
         try {
             guild = Guild(
@@ -353,6 +340,7 @@ open class DiscordUtils {
             "Windows",
             "Chrome",
             "",
+            "en-US",
             userAgent,
             clientVersion,
             "10",
@@ -361,7 +349,6 @@ open class DiscordUtils {
             "",
             "",
             "stable",
-            "en-US",
             clientBuildNumber
         )
         superPropertiesStr = json.encodeToString(superProperties)

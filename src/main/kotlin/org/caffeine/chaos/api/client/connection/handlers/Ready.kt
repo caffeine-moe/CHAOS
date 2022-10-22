@@ -1,14 +1,16 @@
 package org.caffeine.chaos.api.client.connection.handlers
 
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.client.connection.payloads.gateway.guild.create.GuildCreateD
-import org.caffeine.chaos.api.client.connection.payloads.gateway.user.ready.Ready
-import org.caffeine.chaos.api.client.connection.payloads.gateway.user.ready.ReadyD
-import org.caffeine.chaos.api.client.connection.payloads.gateway.user.ready.ReadyDPrivateChannel
-import org.caffeine.chaos.api.client.connection.payloads.gateway.user.ready.ReadyDRelationship
+import org.caffeine.chaos.api.client.connection.payloads.gateway.ready.Ready
+import org.caffeine.chaos.api.client.connection.payloads.gateway.ready.ReadyD
+import org.caffeine.chaos.api.client.connection.payloads.gateway.ready.ReadyDPrivateChannel
+import org.caffeine.chaos.api.client.connection.payloads.gateway.ready.ReadyDRelationship
 import org.caffeine.chaos.api.client.user.ClientUserImpl
 import org.caffeine.chaos.api.client.user.ClientUserRelationships
 import org.caffeine.chaos.api.client.user.ClientUserSettings
@@ -19,38 +21,10 @@ import org.caffeine.chaos.api.models.users.BlockedUser
 import org.caffeine.chaos.api.models.users.Friend
 import org.caffeine.chaos.api.models.users.User
 import org.caffeine.chaos.api.typedefs.ChannelType
-import org.caffeine.chaos.api.typedefs.ClientType
 import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.log
 
 suspend fun ready(client : ClientImpl, payload : String) {
-    if (client.configuration.clientType == ClientType.BOT) {
-        val d =
-            json.decodeFromString<org.caffeine.chaos.api.client.connection.payloads.gateway.bot.ready.Ready>(payload).d
-        client.userImpl = ClientUserImpl(
-            d.user.verified,
-            d.user.username,
-            d.user.discriminator,
-            d.user.id,
-            d.user.email,
-            null,
-            null,
-            d.user.avatar,
-            null,
-            null,
-            client.configuration.token,
-            true,
-            client.client,
-            client
-        )
-        client.user = client.userImpl.user
-        client.userImpl.guilds.putAll(extractGuilds(d.guilds, client))
-        client.utils.sessionId = d.session_id
-        client.socket.ready = true
-        log("${ConsoleColours.GREEN.value}Client logged in!", "API:")
-        client.eventBus.produceEvent(ClientEvents.Ready(client.user))
-        return
-    }
     val d = json.decodeFromString<Ready>(payload).d
     client.userImpl = ClientUserImpl(
         d.user.verified,
@@ -61,13 +35,15 @@ suspend fun ready(client : ClientImpl, payload : String) {
         d.user.bio,
         createUserSettings(d, client),
         d.user.avatar,
-        ClientUserRelationships(
-            extractFriends(d.relationships, client.client),
-            extractBlockList(d.relationships, client.client)
-        ),
+        d.relationships?.let { extractFriends(it, client.client) }?.let {
+            ClientUserRelationships(
+                it,
+                extractBlockList(d.relationships, client.client)
+            )
+        },
         d.user.premium,
         client.configuration.token,
-        false,
+        d.user.bot,
         client.client,
         client
     )
@@ -77,10 +53,11 @@ suspend fun ready(client : ClientImpl, payload : String) {
     client.utils.sessionId = d.session_id
     client.socket.ready = true
     log("${ConsoleColours.GREEN.value}Client logged in!", "API:")
-    client.eventBus.produceEvent(ClientEvents.Ready(client.user))
+    client.eventBus.produceEvent(ClientEvent.Ready(client.user))
 }
 
-private fun createUserSettings(d : ReadyD, client : ClientImpl) : ClientUserSettings {
+private fun createUserSettings(d : ReadyD, client : ClientImpl) : ClientUserSettings? {
+    if (d.user_settings == null) return null
     return ClientUserSettings(
         d.user_settings.afk_timeout,
         d.user_settings.allow_accessibility_detection,
@@ -119,7 +96,7 @@ private fun createUserSettings(d : ReadyD, client : ClientImpl) : ClientUserSett
     )
 }
 
-suspend fun extractGuilds(guilds : MutableList<GuildCreateD>, client : ClientImpl) : Map<String, Guild> {
+fun extractGuilds(guilds : MutableList<GuildCreateD>, client : ClientImpl) : Map<String, Guild> {
     val map = mutableMapOf<String, Guild>()
     for (guild in guilds) {
         map[guild.id] = client.utils.createGuild(guild) ?: continue

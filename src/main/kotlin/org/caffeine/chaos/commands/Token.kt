@@ -3,7 +3,7 @@ package org.caffeine.chaos.commands
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.utils.ConsoleColours
 import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.api.utils.log
@@ -11,7 +11,7 @@ import org.caffeine.chaos.api.utils.log
 class Token : Command(arrayOf("token"), CommandInfo("Token", "token", "Logs your token into the console.")) {
     override suspend fun onCalled(
         client : Client,
-        event : ClientEvents.MessageCreate,
+        event : ClientEvent.MessageCreate,
         args : MutableList<String>,
         cmd : String,
     ) {

@@ -33,7 +33,7 @@ private data class Ticker(
     val volume: String,
 )
 
-suspend fun exchange(client: Client, event: ClientEvents.MessageCreate)  {
+suspend fun exchange(client: Client, event: ClientEvent.MessageCreate)  {
     if (event.message.content.lowercase() == ("${client.config.prefix}exchange") || event.message.content.lowercase() == ("${client.config.prefix}crypto")) {
         val basec = client.config.exchange.base.uppercase()
         val targetc = client.config.exchange.target.uppercase()

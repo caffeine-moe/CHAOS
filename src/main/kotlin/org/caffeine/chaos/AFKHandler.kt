@@ -1,8 +1,9 @@
 package org.caffeine.chaos
 
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.models.interfaces.DiscordUser
+import org.caffeine.chaos.api.typedefs.ChannelType
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.commands.oldCustomStatus
 import org.caffeine.chaos.commands.oldStatus
@@ -15,23 +16,18 @@ var afk = false
 
 var afkMessage = ""
 
-suspend fun afkHandler(event : ClientEvents.MessageCreate, client : Client) {
+suspend fun afkHandler(event : ClientEvent.MessageCreate, client : Client) {
     val author = event.message.author
     val prefix = "AFK:"
     if (author.id == client.user.id) {
-        if (event.message.content.startsWith(afkMessage)) {
-            return
-        }
+        if (event.message.content.contains(afkMessage)) return
         cooldown.clear()
         afk = false
         log("Set AFK to $afk", prefix)
         client.user.setCustomStatus(oldCustomStatus)
         client.user.setStatus(oldStatus)
         if (todm.isNotEmpty()) {
-            for (i in todm) {
-                sb.appendLine("${i.discriminatedName} : ${i.id}")
-            }
-            log("Users who talked to you while you were away:\n${sb.trimEnd()}", prefix)
+            log("Users who talked to you while you were away:\n${todm.toString().trimEnd()}", prefix)
             sb.clear()
         }
         return
@@ -42,31 +38,23 @@ suspend fun afkHandler(event : ClientEvents.MessageCreate, client : Client) {
             }) {
             doit = true
         }*/
-    /*    if (event.channel.type() == ChannelType.DM) {
-            doit = true
-        }*/
-    if (doit) {
-        if (cooldown.contains(author)) {
-            val i = cooldown[author] ?: return
-            val cur = System.currentTimeMillis()
-            if (cur.minus(i) < config.afk.cooldown * 1000) {
-                return
-            }
-            cooldown.remove(author)
+    if (event.channel.type == ChannelType.DM) {
+        doit = true
+    }
+    if (!doit) return
+    if (cooldown.contains(author)) {
+        val i = cooldown[author] ?: return
+        val cur = System.currentTimeMillis()
+        if (cur.minus(i) < config.afk.cooldown * 1000) {
+            return
         }
-        cooldown[event.message.author] = System.currentTimeMillis()
-        if (!todm.contains(author)) {
-            todm.add(author)
-        }
-        /*
-                val message = if (event.channel.type() == DiscordChannelType.DM) {
-        */
+    }
+    cooldown[event.message.author] = System.currentTimeMillis()
+    if (!todm.contains(author)) todm.add(author)
+    val message = if (event.channel.type == ChannelType.DM) {
         afkMessage
     } else {
-        "$afkMessage <@${author.id}>"
+        "$afkMessage ${author.asMention}"
     }
-    /*        event.channel.sendMessage(MessageBuilder()
-                .appendLine(message)
-                .build()
-            )*/
+    event.channel.sendMessage(message).await()
 }

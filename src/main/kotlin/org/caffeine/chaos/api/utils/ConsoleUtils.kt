@@ -1,5 +1,6 @@
 package org.caffeine.chaos.api.utils
 
+import org.caffeine.chaos.api.typedefs.LogLevel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 

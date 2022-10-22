@@ -8,7 +8,7 @@ import kotlinx.coroutines.withContext
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.utils.MessageBuilder
 import java.net.URL
 
@@ -22,7 +22,7 @@ class Ping : Command(
 ) {
     override suspend fun onCalled(
         client : Client,
-        event : ClientEvents.MessageCreate,
+        event : ClientEvent.MessageCreate,
         args : MutableList<String>,
         cmd : String,
     ) {

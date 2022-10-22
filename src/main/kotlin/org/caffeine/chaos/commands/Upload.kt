@@ -7,7 +7,7 @@ import io.ktor.http.*
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.api.utils.normalHTTPClient
 import org.caffeine.chaos.config
@@ -16,7 +16,7 @@ class Upload :
     Command(arrayOf("upload"), CommandInfo("Upload", "upload <attachment.ext>", "Uploads a file to 0x0.st.")) {
     override suspend fun onCalled(
         client : Client,
-        event : ClientEvents.MessageCreate,
+        event : ClientEvent.MessageCreate,
         args : MutableList<String>,
         cmd : String,
     ) {

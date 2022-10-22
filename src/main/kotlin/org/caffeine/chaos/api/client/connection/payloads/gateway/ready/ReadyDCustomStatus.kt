@@ -1,4 +1,4 @@
-package org.caffeine.chaos.api.client.connection.payloads.gateway.user.ready
+package org.caffeine.chaos.api.client.connection.payloads.gateway.ready
 
 @kotlinx.serialization.Serializable
 data class ReadyDCustomStatus(

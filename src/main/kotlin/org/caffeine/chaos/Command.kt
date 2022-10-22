@@ -1,7 +1,7 @@
 package org.caffeine.chaos
 
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.typedefs.MessageOptions
 import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.api.utils.log
@@ -15,7 +15,7 @@ abstract class Command(val commandNames : Array<String>, val commandInfo : Comma
 
     open suspend fun onCalled(
         client : Client,
-        event : ClientEvents.MessageCreate,
+        event : ClientEvent.MessageCreate,
         args : MutableList<String>,
         cmd : String,
     ) {
@@ -24,7 +24,7 @@ abstract class Command(val commandNames : Array<String>, val commandInfo : Comma
 
     open suspend fun error(
         client : Client,
-        event : ClientEvents.MessageCreate,
+        event : ClientEvent.MessageCreate,
         error : String,
         info : CommandInfo,
     ) : MessageOptions {

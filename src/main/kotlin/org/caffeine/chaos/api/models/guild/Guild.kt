@@ -1,7 +1,6 @@
 package org.caffeine.chaos.api.models.guild
 
 import org.caffeine.chaos.api.client.Client
-
 data class Guild(
     val id : String = "",
     val name : String = "",
@@ -36,9 +35,7 @@ data class Guild(
     val embedChannelId : String = "",
     val client : Client,
 ) {
-
     val vanityUrl : String? = if (vanityUrlCode != null) "https://discord.gg/$vanityUrlCode" else null
-
     fun muteForever() {
         client.user.muteGuild(this, -1)
     }

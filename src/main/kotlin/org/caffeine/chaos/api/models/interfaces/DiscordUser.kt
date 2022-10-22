@@ -10,6 +10,7 @@ interface DiscordUser {
     val id : String
     val avatar : String?
     val bot : Boolean
+    val asMention : String
     suspend fun fetchLastMessageInChannel(channel : TextBasedChannel, filters : MessageSearchFilters) : Message?
     fun avatarUrl() : String
 }

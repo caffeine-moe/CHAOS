@@ -2,42 +2,33 @@ package org.caffeine.chaos
 
 import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.typedefs.RedeemedCodeErrorType
 import org.caffeine.chaos.api.typedefs.RedeemedCodeStatusType
 import org.caffeine.chaos.api.utils.log
 
-// executed whenever a message is received
-suspend fun nitroSniper(event : ClientEvents.MessageCreate, client : Client) = coroutineScope {
-    // regex for a discord gift (nitro) link
+suspend fun nitroSniper(event : ClientEvent.MessageCreate, client : Client) = coroutineScope {
     val regex = ("https://discord.gift/" + ".{16,24}".toRegex()).toRegex()
-    // if the message content matches the regex (contains a nitro link) then do stuff
-    if (regex.matches(event.message.content)) {
-        // removes the url prefix to get the code
-        val code = event.message.content.removePrefix("https://discord.gift/")
-        // redeems the code then on completion does stuff
-        client.user.redeemCode(code).await().also { rc ->
-            // if the nitro sniper logger is enabled then do stuff
-            if (config.logger.nitro_sniper) {
-                // when the redeemer function returns success, print that the code was redeemed etc.
-                // when the redeemer function returns invalid and the error is that the code is unknown, say that the code was invalid.
-                when (rc.status) {
-                    RedeemedCodeStatusType.SUCCESS -> {
-                        log(
-                            "Redeemed code ${rc.code} from ${event.message.author.discriminatedName} in ${event.message.channel.id}! (${rc.latency}ms)",
-                            "NITRO SNIPER:"
-                        )
-                    }
-
-                    RedeemedCodeStatusType.INVALID -> {
-                        if (rc.error == RedeemedCodeErrorType.UNKNOWN_CODE) {
-                            log(
-                                "Code ${rc.code} from ${event.message.author.discriminatedName} in ${event.message.channel.id} was invalid! (${rc.latency}ms)",
-                                "NITRO SNIPER:"
-                            )
-                        }
-                    }
+    if (!regex.matches(event.message.content)) return@coroutineScope
+    val code = event.message.content.removePrefix("https://discord.gift/")
+    client.user.redeemCode(code).await().also { rc ->
+        if (config.logger.nitro_sniper) {
+            when (rc.status) {
+                RedeemedCodeStatusType.SUCCESS -> {
+                    log(
+                        "Redeemed code ${rc.code} from ${event.message.author.discriminatedName} in ${event.message.channel.id}! (${rc.latency}ms)",
+                        "NITRO SNIPER:"
+                    )
+                    return@coroutineScope
                 }
+                 else -> {
+                     if (rc.error == RedeemedCodeErrorType.UNKNOWN_CODE) {
+                         log(
+                             "Code ${rc.code} from ${event.message.author.discriminatedName} in ${event.message.channel.id} was invalid! (${rc.latency}ms)",
+                             "NITRO SNIPER:"
+                         )
+                     }
+                 }
             }
         }
     }

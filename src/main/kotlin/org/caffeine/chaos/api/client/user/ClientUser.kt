@@ -33,6 +33,7 @@ interface ClientUser : DiscordUser {
     val token : String
     override val bot : Boolean
     val client : Client
+    override val asMention : String
 
     val guilds : Map<String, Guild>
     val channels : Map<String, BaseChannel>

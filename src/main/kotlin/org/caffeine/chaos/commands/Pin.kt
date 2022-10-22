@@ -3,7 +3,7 @@ package org.caffeine.chaos.commands
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.client.ClientEvent
 
 class Pin : Command(
     arrayOf("pin", "p"),
@@ -15,7 +15,7 @@ class Pin : Command(
 ) {
     override suspend fun onCalled(
         client : Client,
-        event : ClientEvents.MessageCreate,
+        event : ClientEvent.MessageCreate,
         args : MutableList<String>,
         cmd : String,
     ) {

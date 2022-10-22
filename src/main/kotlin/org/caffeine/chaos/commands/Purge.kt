@@ -4,7 +4,7 @@ import kotlinx.coroutines.delay
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
 import org.caffeine.chaos.api.models.message.Message
 import org.caffeine.chaos.api.models.message.MessageFilters
@@ -15,18 +15,17 @@ class Purge : Command(
     arrayOf("purge", "sclear"),
     CommandInfo("Purge", "purge [Channel] <Amount>", "Deletes a specified amount of YOUR messages from a channel.")
 ) {
-    override suspend fun onCalled(
+
+    suspend fun resolveChannel(
         client : Client,
-        event : ClientEvents.MessageCreate,
+        event : ClientEvent.MessageCreate,
         args : MutableList<String>,
-        cmd : String,
-    ) {
-        purgeCock = false
-        val channel = when {
+    ) : TextBasedChannel? {
+        return when {
             args.size < 1 -> {
                 event.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))
                     .await().also { message -> onComplete(message, true) }
-                return
+                null
             }
 
             args.size == 1 -> {
@@ -41,10 +40,17 @@ class Purge : Command(
             else -> {
                 event.channel.sendMessage(error(client, event, "Too many arguments.", commandInfo))
                     .await().also { message -> onComplete(message, true) }
-                return
+                null
             }
         }
-        val num = if (!args.last().toString().contains("[^0-9]".toRegex())) {
+    }
+
+    suspend fun resolveNum(
+        client : Client,
+        event : ClientEvent.MessageCreate,
+        args : MutableList<String>,
+    ) : Int? {
+        return if (!args.last().toString().contains("[^0-9]".toRegex())) {
             if (args.last().toInt() <= 0) {
                 event.channel.sendMessage(
                     error(
@@ -55,7 +61,7 @@ class Purge : Command(
                     )
                 )
                     .await().also { message -> onComplete(message, true) }
-                return
+                return null
             }
             args.last().toInt()
         } else {
@@ -78,15 +84,29 @@ class Purge : Command(
                         )
                     )
                         .await().also { message -> onComplete(message, true) }
-                    return
+                    return null
                 }
             }
         }
+    }
+
+    override suspend fun onCalled(
+        client : Client,
+        event : ClientEvent.MessageCreate,
+        args : MutableList<String>,
+        cmd : String,
+    ) {
+        purgeCock = false
+        val channel = resolveChannel(client, event, args) ?: return
+        val num = resolveNum(client, event, args) ?: return
         var done = 0
         val progress = event.channel.sendMessage("Fetching messages...").await()
         val messages =
             channel.fetchHistory(MessageFilters(author_id = client.user.id, needed = num)).filter { message ->
-                message.author.id == client.user.id && message.type == MessageType.DEFAULT || message.type == MessageType.REPLY
+                message.author.id == client.user.id
+                        && message.type == MessageType.DEFAULT
+                        || message.type == MessageType.REPLY
+                        && message.id != progress.id
             }
         if (messages.isEmpty()) {
             progress.edit("There is nothing to delete!")

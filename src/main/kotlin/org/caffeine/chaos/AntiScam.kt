@@ -1,7 +1,7 @@
 package org.caffeine.chaos
 
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvents
+import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.utils.log
 import java.net.URL
 import kotlin.math.absoluteValue
@@ -11,7 +11,7 @@ data class AntiScamResponse(
     val domains : List<String>,
 )
 
-suspend fun antiScam(client : Client, event : ClientEvents.MessageCreate) {
+suspend fun antiScam(client : Client, event : ClientEvent.MessageCreate) {
     if (event.message.author.id == client.user.id) return
     val start = System.currentTimeMillis()
     val url = event.message.content.split(" ").find { link -> link.matches("http://.*..*|https://.*..*".toRegex()) }
