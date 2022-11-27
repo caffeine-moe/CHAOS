@@ -1,7 +1,6 @@
 package org.caffeine.chaos
 
 import org.caffeine.chaos.api.utils.log
-import org.caffeine.chaos.api.utils.log
 import java.io.File
 import kotlin.system.exitProcess
 

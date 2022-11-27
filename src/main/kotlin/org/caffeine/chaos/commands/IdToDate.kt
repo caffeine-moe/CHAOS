@@ -6,7 +6,6 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.typedefs.MessageBuilder
 import org.caffeine.chaos.api.utils.convertIdToUnix
-import org.caffeine.chaos.api.utils.log
 
 class IdToDate : Command(
     arrayOf("idtodate", "idtod", "idtd"),

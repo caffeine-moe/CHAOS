@@ -5,7 +5,6 @@ import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.entities.users.User
 import org.caffeine.chaos.api.typedefs.ChannelType
 import org.caffeine.chaos.api.utils.log
-import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.commands.oldCustomStatus
 import org.caffeine.chaos.commands.oldStatus
 

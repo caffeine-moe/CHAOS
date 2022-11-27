@@ -5,13 +5,11 @@ import kotlinx.coroutines.CompletableDeferred
 import org.caffeine.chaos.api.Snowflake
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.entities.guild.Guild
-import org.caffeine.chaos.api.entities.guild.GuildImpl
 import org.caffeine.chaos.api.entities.message.Message
 import org.caffeine.chaos.api.entities.message.MessageFilters
 import org.caffeine.chaos.api.typedefs.ChannelType
 import org.caffeine.chaos.api.typedefs.MessageBuilder
 import org.caffeine.chaos.api.typedefs.MessageData
-import java.util.*
 
 class TextChannelImpl(
     override var id : Snowflake,

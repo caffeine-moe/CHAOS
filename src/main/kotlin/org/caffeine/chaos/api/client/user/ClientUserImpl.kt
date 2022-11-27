@@ -12,7 +12,10 @@ import org.caffeine.chaos.api.Snowflake
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialMessage
-import org.caffeine.chaos.api.entities.channels.*
+import org.caffeine.chaos.api.entities.channels.BaseChannel
+import org.caffeine.chaos.api.entities.channels.DMChannel
+import org.caffeine.chaos.api.entities.channels.GuildChannel
+import org.caffeine.chaos.api.entities.channels.TextBasedChannel
 import org.caffeine.chaos.api.entities.guild.Guild
 import org.caffeine.chaos.api.entities.message.Message
 import org.caffeine.chaos.api.entities.message.MessageFilters

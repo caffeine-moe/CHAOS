@@ -39,7 +39,7 @@ interface Guild {
     val client : Client
 
     val channels : Map<Snowflake, GuildChannel>
-    get() = client.user.guildChannels.filterValues { it.guild.id == id }
+        get() = client.user.guildChannels.filterValues { it.guild.id == id }
 
     val vanityUrl : String?
 

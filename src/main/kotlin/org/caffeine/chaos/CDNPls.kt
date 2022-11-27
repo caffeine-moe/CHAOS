@@ -2,7 +2,6 @@ package org.caffeine.chaos
 
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.utils.log
-import org.caffeine.chaos.api.utils.log
 
 suspend fun cdnpls(event : ClientEvent.MessageCreate) {
     // thank u sexnine

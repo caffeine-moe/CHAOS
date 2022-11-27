@@ -27,8 +27,8 @@ import org.caffeine.chaos.api.client.user.ClientUserImpl
 import org.caffeine.chaos.api.client.user.ClientUserSettings
 import org.caffeine.chaos.api.client.user.CustomStatus
 import org.caffeine.chaos.api.entities.channels.*
-import org.caffeine.chaos.api.entities.guild.GuildImpl
 import org.caffeine.chaos.api.entities.guild.Guild
+import org.caffeine.chaos.api.entities.guild.GuildImpl
 import org.caffeine.chaos.api.entities.message.*
 import org.caffeine.chaos.api.entities.users.User
 import org.caffeine.chaos.api.entities.users.UserImpl
@@ -143,7 +143,10 @@ class DiscordUtils {
                     newMessages.forEach {
                         when (val result = createMessage(it)) {
                             is Invalid -> {
-                                log("Error in messageCreate: ${result.left()}", level = LogLevel(LoggerLevel.LOW, client))
+                                log(
+                                    "Error in messageCreate: ${result.left()}",
+                                    level = LogLevel(LoggerLevel.LOW, client)
+                                )
                             }
 
                             is Valid -> {

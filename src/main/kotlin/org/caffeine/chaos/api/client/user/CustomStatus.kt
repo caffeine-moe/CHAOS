@@ -1,6 +1,5 @@
 package org.caffeine.chaos.api.client.user
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable

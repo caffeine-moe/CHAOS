@@ -4,9 +4,11 @@ import arrow.core.Either
 import kotlinx.coroutines.CompletableDeferred
 import org.caffeine.chaos.api.Snowflake
 import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.entities.channels.*
+import org.caffeine.chaos.api.entities.channels.BaseChannel
+import org.caffeine.chaos.api.entities.channels.DMChannel
+import org.caffeine.chaos.api.entities.channels.GuildChannel
+import org.caffeine.chaos.api.entities.channels.TextBasedChannel
 import org.caffeine.chaos.api.entities.guild.Guild
-import org.caffeine.chaos.api.entities.guild.GuildImpl
 import org.caffeine.chaos.api.entities.message.Message
 import org.caffeine.chaos.api.entities.message.MessageFilters
 import org.caffeine.chaos.api.entities.message.MessageSearchFilters

@@ -11,7 +11,7 @@ class ChannelCategoryImpl(
     override val name : String,
     override val type : ChannelType,
     override val position : Number,
-    override val permissionOverwrites : Array<Any> = emptyArray()
+    override val permissionOverwrites : Array<Any> = emptyArray(),
 ) : ChannelCategory {
 
     var guildId : Snowflake = Snowflake("")

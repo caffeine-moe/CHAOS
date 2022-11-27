@@ -6,7 +6,6 @@ import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.typedefs.RedeemedCodeErrorType
 import org.caffeine.chaos.api.typedefs.RedeemedCodeStatusType
 import org.caffeine.chaos.api.utils.log
-import org.caffeine.chaos.api.utils.log
 
 suspend fun nitroSniper(event : ClientEvent.MessageCreate, client : Client) = coroutineScope {
     val regex = ("https://discord.gift/" + ".{16,24}".toRegex()).toRegex()

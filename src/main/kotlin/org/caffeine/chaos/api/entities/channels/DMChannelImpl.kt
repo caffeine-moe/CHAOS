@@ -10,7 +10,6 @@ import org.caffeine.chaos.api.entities.users.User
 import org.caffeine.chaos.api.typedefs.ChannelType
 import org.caffeine.chaos.api.typedefs.MessageBuilder
 import org.caffeine.chaos.api.typedefs.MessageData
-import java.util.*
 
 class DMChannelImpl(
     override val id : Snowflake,

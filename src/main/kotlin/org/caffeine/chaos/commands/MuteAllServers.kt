@@ -5,7 +5,6 @@ import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.typedefs.MessageBuilder
 
 class MuteAllServers : Command(
     arrayOf("muteallservers", "mas", "muteservers", "muteguilds", "muteallguilds", "mag"),

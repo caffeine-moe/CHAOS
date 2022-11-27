@@ -42,12 +42,12 @@ suspend fun handleJsonRequest(payload : String, client : ClientImpl, start : Lon
 
 
         OPCODE.RECONNECT.value -> {
-            log("Gateway sent opcode 7 RECONNECT, reconnecting...", "API:",  LogLevel(LoggerLevel.LOW, client))
+            log("Gateway sent opcode 7 RECONNECT, reconnecting...", "API:", LogLevel(LoggerLevel.LOW, client))
             client.socket.execute(ConnectionType.RECONNECT)
         }
 
         OPCODE.INVALID_SESSION.value -> {
-            log("Client received OPCODE 9 INVALID SESSION, reconnecting...", "API:",  LogLevel(LoggerLevel.LOW, client))
+            log("Client received OPCODE 9 INVALID SESSION, reconnecting...", "API:", LogLevel(LoggerLevel.LOW, client))
             client.socket.execute(ConnectionType.RECONNECT)
         }
 

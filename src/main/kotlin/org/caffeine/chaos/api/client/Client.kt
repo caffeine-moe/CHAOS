@@ -13,6 +13,7 @@ interface Client : ClientConfig {
     suspend fun login()
     suspend fun logout()
     suspend fun restart()
+
     companion object Factory {
         private var statusType = StatusType.ONLINE
         private var clientType = ClientType.USER
@@ -40,12 +41,12 @@ interface Client : ClientConfig {
         }
 
         fun build() : Client =
-             ClientImpl(
-                 token,
-                 clientType,
-                 statusType,
-                 logLevel
-             )
+            ClientImpl(
+                token,
+                clientType,
+                statusType,
+                logLevel
+            )
 
     }
 

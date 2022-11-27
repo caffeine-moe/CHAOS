@@ -51,7 +51,11 @@ suspend fun fetchWebClientValues(client : Client) {
         clientBuildNumber = dua.client_build_number
         userAgent = dua.chrome_user_agent
     } catch (e : ServerResponseException) {
-        log("Discord client value api is down, falling back to default values.", "API:", LogLevel(LoggerLevel.LOW, client))
+        log(
+            "Discord client value api is down, falling back to default values.",
+            "API:",
+            LogLevel(LoggerLevel.LOW, client)
+        )
     }
 }
 

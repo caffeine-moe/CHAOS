@@ -78,7 +78,11 @@ suspend fun handleMessage(event : ClientEvent.MessageCreate, client : Client) {
 
     val command : Command = commandList[commandName] ?: return
 
-    if (config.logger.commands) log(event.message.content, "COMMAND:${ConsoleColour.BLUE.value}", LogLevel(LoggerLevel.ALL, client))
+    if (config.logger.commands) log(
+        event.message.content,
+        "COMMAND:${ConsoleColour.BLUE.value}",
+        LogLevel(LoggerLevel.ALL, client)
+    )
 
     if (config.auto_delete.user.enabled) autoDeleteUser(event)
 

@@ -2,12 +2,9 @@ package org.caffeine.chaos.api.entities.channels
 
 import arrow.core.Either
 import kotlinx.coroutines.CompletableDeferred
-import org.caffeine.chaos.api.Snowflake
-import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.entities.message.Message
 import org.caffeine.chaos.api.entities.message.MessageFilters
 import org.caffeine.chaos.api.entities.users.User
-import org.caffeine.chaos.api.typedefs.ChannelType
 import org.caffeine.chaos.api.typedefs.MessageData
 
 interface DMChannel : TextBasedChannel {

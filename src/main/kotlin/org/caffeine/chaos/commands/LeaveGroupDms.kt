@@ -10,7 +10,6 @@ import org.caffeine.chaos.api.entities.channels.BaseChannel
 import org.caffeine.chaos.api.typedefs.ChannelType
 import org.caffeine.chaos.api.typedefs.MessageBuilder
 import org.caffeine.chaos.api.utils.log
-import org.caffeine.chaos.api.utils.log
 
 class LeaveGroupDms :
     Command(

@@ -3,7 +3,6 @@ package org.caffeine.chaos.api.client
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import org.caffeine.chaos.api.client.user.ClientUser
-import org.caffeine.chaos.api.entities.guild.GuildImpl
 import org.caffeine.chaos.api.entities.channels.TextBasedChannel
 import org.caffeine.chaos.api.entities.guild.Guild
 import org.caffeine.chaos.api.entities.message.Message

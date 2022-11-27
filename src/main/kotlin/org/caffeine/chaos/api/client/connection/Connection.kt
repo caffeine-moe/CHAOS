@@ -7,7 +7,6 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.GATEWAY
 import org.caffeine.chaos.api.OPCODE
-import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.client.connection.payloads.client.HeartBeat
@@ -25,7 +24,6 @@ import org.caffeine.chaos.api.typedefs.ConnectionType
 import org.caffeine.chaos.api.typedefs.LogLevel
 import org.caffeine.chaos.api.typedefs.LoggerLevel
 import org.caffeine.chaos.api.utils.*
-import org.caffeine.chaos.api.utils.log
 
 class Connection(private val client : ClientImpl) {
 
