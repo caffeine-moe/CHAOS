@@ -9,9 +9,8 @@ import org.caffeine.chaos.api.client.connection.payloads.gateway.Default
 import org.caffeine.chaos.api.json
 suspend fun handleJsonRequest(payload : String, client : ClientImpl, start : Long) {
     val event = json.decodeFromString<Default>(payload)
-    if (event.s != null) client.utils.gatewaySequence = event.s
-    if (event.op == OPCODE.DISPATCH.value && event.t == GatewayEvent.READY.value) ready(client, payload, start)
-    if (!client.socket.ready) return
+    client.utils.gatewaySequence = event.s ?: client.utils.gatewaySequence
+    if (!isReady(event, client, payload, start)) return
     when (event.op) {
         OPCODE.DISPATCH.value -> {
             when (event.t) {
@@ -45,4 +44,9 @@ suspend fun handleJsonRequest(payload : String, client : ClientImpl, start : Lon
             println(payload)
         }
     }
+}
+
+private suspend fun isReady(event : Default, client : ClientImpl, payload : String, start : Long) : Boolean {
+    if (event.op == OPCODE.DISPATCH.value && event.t == GatewayEvent.READY.value) ready(client, payload, start)
+    return client.socket.ready
 }
