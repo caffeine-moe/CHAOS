@@ -21,18 +21,12 @@ import org.caffeine.chaos.api.typedefs.ThemeType
 interface ClientUser : User {
 
     val verified : Boolean
-    override val username : String
-    override val discriminator : String
-    override val id : Snowflake
     val email : String?
     val bio : String?
     val settings : ClientUserSettings?
-    override val avatar : String?
     val premium : Boolean?
     val token : String
-    override val bot : Boolean
     val client : Client
-    override val asMention : String
 
     val relationships : Map<Snowflake, User>
     val friends : Map<Snowflake, User>
