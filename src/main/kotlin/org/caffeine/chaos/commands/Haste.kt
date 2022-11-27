@@ -9,7 +9,7 @@ import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.typedefs.MessageBuilder
 import org.caffeine.chaos.api.utils.normalHTTPClient
 import org.caffeine.chaos.config
 
@@ -29,7 +29,7 @@ class Haste : Command(
         args : MutableList<String>,
         cmd : String,
     ) {
-        event.channel.sendMessage(MessageBuilder().appendLine("Creating haste...").build()).await().also { message ->
+        event.channel.sendMessage(MessageBuilder().appendLine("Creating haste...")).await().map { message ->
             var body = ""
             if (args.isNotEmpty()) {
                 body = args.joinToString(" ")
@@ -46,7 +46,7 @@ class Haste : Command(
                             commandInfo
                         )
                     )
-                        .await().also { onComplete(it, true) }
+                        .await().map { onComplete(it, true) }
                     return
                 }
             }
@@ -59,7 +59,7 @@ class Haste : Command(
                         commandInfo
                     )
                 )
-                    .await().also { onComplete(it, true) }
+                    .await().map { onComplete(it, true) }
                 return
             }
             val response = normalHTTPClient.post("https://www.toptal.com/developers/hastebin/documents") {
@@ -68,8 +68,7 @@ class Haste : Command(
             val haste = json.decodeFromString<HasteResponse>(response.bodyAsText())
             message.edit(
                 MessageBuilder().appendLine("https://www.toptal.com/developers/hastebin/${haste.key}")
-                    .build()
-            ).await().also { message ->
+            ).await().map { message ->
                 onComplete(message, config.auto_delete.bot.content_generation)
             }
         }

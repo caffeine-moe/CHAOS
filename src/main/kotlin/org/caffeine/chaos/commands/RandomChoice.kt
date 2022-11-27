@@ -4,7 +4,7 @@ import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.typedefs.MessageBuilder
 import org.caffeine.chaos.config
 
 class RandomChoice : Command(
@@ -32,7 +32,7 @@ class RandomChoice : Command(
                     err,
                     commandInfo
                 )
-            ).await().also {
+            ).await().map {
                 onComplete(it, true)
             }
             return
@@ -41,8 +41,7 @@ class RandomChoice : Command(
         event.channel.sendMessage(
             MessageBuilder()
                 .appendLine(argspl.random().trim())
-                .build()
-        ).await().also {
+        ).await().map {
             onComplete(it, config.auto_delete.bot.content_generation)
         }
     }

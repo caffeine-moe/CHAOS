@@ -1,19 +1,13 @@
 package org.caffeine.chaos.api.client.connection
 
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.cache.*
-import io.ktor.client.plugins.cookies.*
 import io.ktor.client.plugins.websocket.*
-import io.ktor.client.request.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.internal.decodeStringToJsonTree
 import org.caffeine.chaos.api.GATEWAY
 import org.caffeine.chaos.api.OPCODE
+import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.client.connection.payloads.client.HeartBeat
@@ -27,7 +21,11 @@ import org.caffeine.chaos.api.client.connection.payloads.client.user.identify.Id
 import org.caffeine.chaos.api.client.connection.payloads.gateway.init.Init
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.typedefs.ClientType
+import org.caffeine.chaos.api.typedefs.ConnectionType
+import org.caffeine.chaos.api.typedefs.LogLevel
+import org.caffeine.chaos.api.typedefs.LoggerLevel
 import org.caffeine.chaos.api.utils.*
+import org.caffeine.chaos.api.utils.log
 
 class Connection(private val client : ClientImpl) {
 
@@ -42,69 +40,54 @@ class Connection(private val client : ClientImpl) {
         val payload : String,
     )
 
-    fun generateUserIdentify() : Identify {
-        return Identify(
-            OPCODE.IDENTIFY.value,
-            IdentifyD(
-                client.configuration.token,
-                1024,
-                client.utils.superProperties,
-                IdentifyDPresence(
-                    "online",
-                    0,
-                    emptyArray(),
-                    false
-                ),
-                false,
-                IdentifyDClientState(
-
-                )
-            )
+    private fun generateIdentify() : String {
+        return if (client.configuration.clientType != ClientType.BOT) json.encodeToString(generateUserIdentify()) else json.encodeToString(
+            generateBotIdentify()
         )
     }
 
-/*
-    fun generateBotIdentify() : org.caffeine.chaos.api.client.connection.payloads.client.bot.identify.Identify {
-        return org.caffeine.chaos.api.client.connection.payloads.client.bot.identify.Identify(0)
-    }
-*/
+    private fun generateUserIdentify() : Identify = Identify(
+        OPCODE.IDENTIFY.value,
+        IdentifyD(
+            client.configuration.token,
+            2048,
+            client.utils.superProperties,
+            IdentifyDPresence(
+                "online",
+                0,
+                emptyArray(),
+                false
+            ),
+            false,
+            IdentifyDClientState()
+        )
+    )
+
+
+    private fun generateBotIdentify() : org.caffeine.chaos.api.client.connection.payloads.client.bot.identify.Identify =
+        org.caffeine.chaos.api.client.connection.payloads.client.bot.identify.Identify(
+            OPCODE.IDENTIFY.value,
+            org.caffeine.chaos.api.client.connection.payloads.client.bot.identify.IdentifyD(
+                client.configuration.token,
+                513,
+                IdentifyDProperties(
+                    "Windows",
+                    "CHAOS",
+                    "CHAOS"
+                )
+            )
+        )
 
     suspend fun execute(type : ConnectionType) {
         val payload = when (type) {
             ConnectionType.CONNECT -> {
-                fetchWebClientValues()
-                client.utils.createSuperProperties()
-                val identify = if (client.configuration.clientType != ClientType.BOT) {
-                    json.encodeToString(
-                        Identify(
-                            OPCODE.IDENTIFY.value,
-                            IdentifyD(
-                                token = client.configuration.token,
-                                properties = client.utils.superProperties
-                            )
-                        )
-                    )
-                } else {
-                    json.encodeToString(
-                        org.caffeine.chaos.api.client.connection.payloads.client.bot.identify.Identify(
-                            OPCODE.IDENTIFY.value,
-                            org.caffeine.chaos.api.client.connection.payloads.client.bot.identify.IdentifyD(
-                                client.configuration.token,
-                                513,
-                                IdentifyDProperties(
-                                    "Windows",
-                                    "CHAOS",
-                                    "CHAOS"
-                                )
-                            )
-                        )
-                    )
-                }
+                val identify = generateIdentify()
                 PayloadDef("Identify", identify)
             }
 
             ConnectionType.DISCONNECT -> {
                 disconnect()
+                client.eventBus.produceEvent(ClientEvent.End)
                 return
             }
 
@@ -115,7 +98,7 @@ class Connection(private val client : ClientImpl) {
 
             ConnectionType.RECONNECT_AND_RESUME -> {
                 disconnect()
-                fetchWebClientValues()
+                fetchWebClientValues(client)
                 client.utils.createSuperProperties()
                 val resume = json.encodeToString(
                     Resume(
@@ -138,27 +121,35 @@ class Connection(private val client : ClientImpl) {
             path = "/?v=9&encoding=json",
             port = 443
         ) {
+
+            val now = System.currentTimeMillis()
+
             webSocket = this
-            log("${ConsoleColours.GREEN.value}Connected to the Discord gateway!", "API:")
+            log(
+                "${ConsoleColour.GREEN.value}Connected to the Discord gateway!",
+                "API:",
+                LogLevel(LoggerLevel.LOW, client)
+            )
             val event = this.incoming.receive().data
             val init = json.decodeFromString<Init>(event.decodeToString())
             when (init.op) {
                 OPCODE.HELLO.value -> {
                     log(
                         "Client received OPCODE 10 HELLO, sending ${payload.name} payload and starting heartbeat.",
-                        "API:"
+                        "API:",
+                        LogLevel(LoggerLevel.LOW, client)
                     )
 
                     heartBeat = launch { startHeartBeat(init.d.heartbeat_interval) }
 
                     send(payload.payload)
-                    log("${payload.name} sent.", "API:")
+                    log("${payload.name} sent.", "API:", LogLevel(LoggerLevel.LOW, client))
 
                     for (frame in incoming) {
                         frame as? Frame.Text ?: continue
                         val receivedText : String = frame.readText()
                         launch {
-                            handleJsonRequest(receivedText, client)
+                            handleJsonRequest(receivedText, client, now)
                         }
                     }
                 }
@@ -181,7 +172,7 @@ class Connection(private val client : ClientImpl) {
     }
 
     private suspend fun startHeartBeat(interval : Long) {
-        log("Heartbeat started.", "API:")
+        log("Heartbeat started.", "API:", LogLevel(LoggerLevel.LOW, client))
         while (true) {
             sendHeartBeat()
             delay(interval)
@@ -189,11 +180,10 @@ class Connection(private val client : ClientImpl) {
     }
 
     private suspend fun disconnect() {
-        client.eventBus.produceEvent(ClientEvent.End)
         heartBeat.cancelAndJoin()
         webSocket.close()
         ready = false
-        log("Client logged out.", "API:")
+        log("Client logged out.", "API:", LogLevel(LoggerLevel.LOW, client))
     }
 
     private suspend fun reconnect() {

@@ -8,7 +8,7 @@ import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.typedefs.MessageBuilder
 import org.caffeine.chaos.api.utils.normalHTTPClient
 import org.caffeine.chaos.config
 
@@ -47,8 +47,7 @@ class Cat : Command(arrayOf("cat", "meow"), CommandInfo("Cat", "cat", "Sends a r
             MessageBuilder()
                 .appendLine("**Meow!!**")
                 .appendLine("https://cataas.com${cat.url}")
-                .build()
-        ).await().also { message ->
+        ).await().map { message ->
             onComplete(message, config.auto_delete.bot.content_generation)
         }
     }

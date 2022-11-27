@@ -10,5 +10,5 @@ data class GuildCreateDChannel(
     val parent_id : String = "",
     val position : Int = 0,
     val type : Int = 0,
-    val topic : String = ""
+    val topic : String = "",
 )

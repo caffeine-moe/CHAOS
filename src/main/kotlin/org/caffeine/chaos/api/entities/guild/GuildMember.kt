@@ -1,6 +1,6 @@
-package org.caffeine.chaos.api.models.guild
+package org.caffeine.chaos.api.entities.guild
 
-import org.caffeine.chaos.api.models.users.User
+import org.caffeine.chaos.api.entities.users.User
 import java.util.*
 
 data class GuildMember(

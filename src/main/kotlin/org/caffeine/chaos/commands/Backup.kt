@@ -8,7 +8,7 @@ import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.typedefs.MessageBuilder
 import java.io.File
 import java.nio.file.Files
 import java.time.LocalDateTime
@@ -50,8 +50,8 @@ class Backup :
         cmd : String,
     ) {
         val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yy_HH:mm:ss"))
-        event.message.channel.sendMessage(MessageBuilder().append("Performing backup...").build())
-            .await().also { message ->
+        event.message.channel.sendMessage(MessageBuilder().append("Performing backup..."))
+            .await().map { message ->
                 try {
                     val blockList = mutableListOf<PrivateUser>()
 
@@ -61,27 +61,27 @@ class Backup :
 
                     for (i in client.user.guilds.values.toList()) {
                         simpleGuilds.add(
-                            PrivateGuild(name = i.name, id = i.id, vanityUrl = i.vanityUrl)
+                            PrivateGuild(name = i.name, id = i.id.asString(), vanityUrl = i.vanityUrl)
                         )
                     }
 
-                    for (i in client.user.relationships!!.friends.values.toList()) {
+                    for (i in client.user.friends.values.toList()) {
                         friends.add(
                             PrivateUser(
                                 username = i.username,
                                 discriminator = i.discriminator,
-                                id = i.id,
+                                id = i.id.asString(),
                                 avatar = i.avatar
                             )
                         )
                     }
 
-                    for (i in client.user.relationships!!.blockedUsers.values.toList()) {
+                    for (i in client.user.blocked.values.toList()) {
                         blockList.add(
                             PrivateUser(
                                 username = i.username,
                                 discriminator = i.discriminator,
-                                id = i.id,
+                                id = i.id.asString(),
                                 avatar = i.avatar
                             )
                         )
@@ -106,11 +106,11 @@ class Backup :
                             MessageBuilder()
                                 .appendLine("Backup successful!")
                                 .appendLine("Saved to: ${f.absolutePath}")
-                                .build()
-                        ).await().also {
-                            onComplete(it, true)
+                        ).await().orNull().also {
+                            if (it != null) {
+                                onComplete(it, true)
+                            }
                         }
-                        return@also
                     } catch (e : Exception) {
                         e.printStackTrace()
                     }

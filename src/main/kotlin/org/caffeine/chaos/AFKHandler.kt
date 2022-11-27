@@ -2,14 +2,15 @@ package org.caffeine.chaos
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.models.interfaces.DiscordUser
+import org.caffeine.chaos.api.entities.users.User
 import org.caffeine.chaos.api.typedefs.ChannelType
+import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.commands.oldCustomStatus
 import org.caffeine.chaos.commands.oldStatus
 
-private val cooldown : HashMap<DiscordUser, Long> = HashMap()
-private val todm : MutableList<DiscordUser> = mutableListOf()
+private val cooldown : HashMap<User, Long> = HashMap()
+private val todm : MutableList<User> = mutableListOf()
 private val sb = StringBuilder()
 
 var afk = false
@@ -34,7 +35,7 @@ suspend fun afkHandler(event : ClientEvent.MessageCreate, client : Client) {
     }
     var doit = false
     /*    if (event.message.mentions.any {
-                it.id == client.user.id
+                it.id == client.autoDeleteUser.id
             }) {
             doit = true
         }*/

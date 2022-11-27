@@ -6,6 +6,7 @@ import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.typedefs.RedeemedCodeErrorType
 import org.caffeine.chaos.api.typedefs.RedeemedCodeStatusType
 import org.caffeine.chaos.api.utils.log
+import org.caffeine.chaos.api.utils.log
 
 suspend fun nitroSniper(event : ClientEvent.MessageCreate, client : Client) = coroutineScope {
     val regex = ("https://discord.gift/" + ".{16,24}".toRegex()).toRegex()
@@ -21,14 +22,15 @@ suspend fun nitroSniper(event : ClientEvent.MessageCreate, client : Client) = co
                     )
                     return@coroutineScope
                 }
-                 else -> {
-                     if (rc.error == RedeemedCodeErrorType.UNKNOWN_CODE) {
-                         log(
-                             "Code ${rc.code} from ${event.message.author.discriminatedName} in ${event.message.channel.id} was invalid! (${rc.latency}ms)",
-                             "NITRO SNIPER:"
-                         )
-                     }
-                 }
+
+                else -> {
+                    if (rc.error == RedeemedCodeErrorType.UNKNOWN_CODE) {
+                        log(
+                            "Code ${rc.code} from ${event.message.author.discriminatedName} in ${event.message.channel.id} was invalid! (${rc.latency}ms)",
+                            "NITRO SNIPER:"
+                        )
+                    }
+                }
             }
         }
     }

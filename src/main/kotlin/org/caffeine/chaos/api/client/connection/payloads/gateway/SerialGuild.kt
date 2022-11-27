@@ -1,4 +1,5 @@
-package org.caffeine.chaos.api.client.connection.payloads.gateway
+import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialGuildMember
+import org.caffeine.chaos.api.client.connection.payloads.gateway.guild.create.GuildCreateDChannel
 
 @kotlinx.serialization.Serializable
 data class SerialGuild(
@@ -40,5 +41,6 @@ data class SerialGuild(
     // val threads: List<Any> = listOf(),
     val vanity_url_code : String? = null,
     val verification_level : Int = 0,
+    val channels : List<GuildCreateDChannel> = listOf(),
     // val voice_states: List<Any> = listOf()
 )

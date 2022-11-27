@@ -2,7 +2,9 @@ package org.caffeine.chaos
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.utils.ConsoleColours
+import org.caffeine.chaos.api.typedefs.LogLevel
+import org.caffeine.chaos.api.typedefs.LoggerLevel
+import org.caffeine.chaos.api.utils.ConsoleColour
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.commands.*
 
@@ -15,7 +17,7 @@ var spamCock = false
 var purgeCock = false
 
 // autobump stopper, if true, stops autobump
-var autoBumpCock = false
+//var autoBumpCock = false
 
 // var bumping = mutableListOf<MessageChannel>()
 
@@ -56,32 +58,32 @@ fun registerCommands() {
     AFK()
     RandomChoice()
     GayPFP()
-    ChannelName()
+    ClearDMS()
 }
 
 suspend fun handleMessage(event : ClientEvent.MessageCreate, client : Client) {
-    if (config.nitro_sniper.enabled && client.user.verified) nitroSniper(event, client)
-
     if (afk) afkHandler(event, client)
 
     if (event.message.author.id != client.user.id) {
-        if (config.cdnpls.enabled) cdnpls(event)
+        if (config.nitro_sniper.enabled && client.user.verified) nitroSniper(event, client)
         if (config.anti_scam.enabled) antiScam(client, event)
+        return
     }
 
-    if (event.message.content.startsWith(config.prefix) && event.message.content != config.prefix) {
-        val commandName : String =
-            event.message.content.lowercase().replaceFirst(config.prefix, "").split(" ").first()
+    if (config.cdnpls.enabled) cdnpls(event)
 
-        val command : Command = commandList[commandName] ?: return
+    if (!event.message.content.startsWith(config.prefix) || event.message.content == config.prefix) return
+    val commandName : String =
+        event.message.content.lowercase().replaceFirst(config.prefix, "").split(" ").first()
 
-        if (config.logger.commands) log(event.message.content, "COMMAND:${ConsoleColours.BLUE.value}")
+    val command : Command = commandList[commandName] ?: return
 
-        if (config.auto_delete.user.enabled) user(event)
+    if (config.logger.commands) log(event.message.content, "COMMAND:${ConsoleColour.BLUE.value}", LogLevel(LoggerLevel.ALL, client))
 
-        val args = event.message.content.lowercase().replaceFirst(config.prefix, "").split(" ").toMutableList()
-        args.removeAt(0)
+    if (config.auto_delete.user.enabled) autoDeleteUser(event)
 
-        command.onCalled(client, event, args, commandName)
-    }
+    val args = event.message.content.lowercase().replaceFirst(config.prefix, "").split(" ").toMutableList()
+    args.removeAt(0)
+
+    command.onCalled(client, event, args, commandName)
 }

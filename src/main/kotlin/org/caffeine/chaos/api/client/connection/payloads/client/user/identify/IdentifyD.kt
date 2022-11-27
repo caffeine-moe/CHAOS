@@ -6,7 +6,7 @@ import org.caffeine.chaos.api.utils.DiscordUtils
 @Serializable
 data class IdentifyD(
     val token : String,
-    val capabilities : Int = 1024,
+    val capabilities : Int = 2048,
     val properties : DiscordUtils.SuperProperties,
     val presence : IdentifyDPresence = IdentifyDPresence(),
     val compress : Boolean = false,

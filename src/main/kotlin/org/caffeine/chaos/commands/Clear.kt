@@ -5,7 +5,6 @@ import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.utils.clear
-import org.caffeine.chaos.loginPrompt
 
 class Clear : Command(arrayOf("clear"), CommandInfo("Clear", "clear", "Clears the CHAOS console.")) {
     override suspend fun onCalled(
@@ -15,6 +14,5 @@ class Clear : Command(arrayOf("clear"), CommandInfo("Clear", "clear", "Clears th
         cmd : String,
     ) {
         clear()
-        loginPrompt(client)
     }
 }

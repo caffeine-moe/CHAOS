@@ -1,40 +1,42 @@
 package org.caffeine.chaos.api.utils
 
+import SerialGuild
+import arrow.core.Invalid
+import arrow.core.Valid
+import arrow.core.Validated
+import arrow.core.left
 import io.ktor.http.*
 import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
-import org.caffeine.chaos.api.BASE_URL
+import org.caffeine.chaos.api.*
 import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialAttachment
 import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialMessage
 import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialUser
-import org.caffeine.chaos.api.client.connection.payloads.gateway.guild.create.GuildCreateD
 import org.caffeine.chaos.api.client.connection.payloads.gateway.guild.create.GuildCreateDChannel
-import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.models.channels.DMChannel
-import org.caffeine.chaos.api.models.channels.TextChannel
-import org.caffeine.chaos.api.models.guild.Guild
-import org.caffeine.chaos.api.models.interfaces.BaseChannel
-import org.caffeine.chaos.api.models.interfaces.DiscordUser
-import org.caffeine.chaos.api.models.interfaces.GuildChannel
-import org.caffeine.chaos.api.models.interfaces.TextBasedChannel
-import org.caffeine.chaos.api.models.message.Message
-import org.caffeine.chaos.api.models.message.MessageAttachment
-import org.caffeine.chaos.api.models.message.MessageFilters
-import org.caffeine.chaos.api.models.message.MessageSearchFilters
-import org.caffeine.chaos.api.models.users.User
+import org.caffeine.chaos.api.client.connection.payloads.gateway.ready.ReadyD
+import org.caffeine.chaos.api.client.connection.payloads.gateway.ready.ReadyDCustomStatus
+import org.caffeine.chaos.api.client.connection.payloads.gateway.ready.ReadyDPrivateChannel
+import org.caffeine.chaos.api.client.connection.payloads.gateway.ready.ReadyDUserSettings
+import org.caffeine.chaos.api.client.user.ClientUserImpl
+import org.caffeine.chaos.api.client.user.ClientUserSettings
+import org.caffeine.chaos.api.client.user.CustomStatus
+import org.caffeine.chaos.api.entities.channels.*
+import org.caffeine.chaos.api.entities.guild.GuildImpl
+import org.caffeine.chaos.api.entities.guild.Guild
+import org.caffeine.chaos.api.entities.message.*
+import org.caffeine.chaos.api.entities.users.User
+import org.caffeine.chaos.api.entities.users.UserImpl
 import org.caffeine.chaos.api.typedefs.*
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.math.absoluteValue
 
-open class DiscordUtils {
+class DiscordUtils {
 
     lateinit var client : ClientImpl
 
@@ -59,13 +61,6 @@ open class DiscordUtils {
     var gatewaySequence = 0
 
     var sessionId = ""
-
-
-
-    fun calcNonce(id : Long = 0) : String {
-        val unixTs = if (id == 0L) System.currentTimeMillis() else id
-        return ((unixTs - 1420070400000) * 4194304).absoluteValue.toString()
-    }
 
     suspend fun tokenValidator(token : String) {
         val headers = HeadersBuilder().also {
@@ -110,43 +105,55 @@ open class DiscordUtils {
         return ThemeType.UNKNOWN
     }
 
-    private fun String.isValidSnowflake() : Boolean {
-        val unix = client.user.convertIdToUnix(this)
-        return unix <= System.currentTimeMillis() && unix > 1420070400000
-    }
-
     suspend fun fetchMessages(channel : TextBasedChannel, filters : MessageFilters) : List<Message> {
         val collection : MutableList<Message> = arrayListOf()
         try {
-            if (filters.author_id == client.user.id && filters.before_id.isBlank()) {
+            if (filters.authorId == client.user.id && filters.beforeId.asString().isBlank()) {
                 fetchLastMessageInChannel(channel, client.user, MessageSearchFilters())?.let {
                     collection.add(it)
-                    filters.before_id = it.id
+                    filters.beforeId = it.id
                 }
             }
 
             while (true) {
                 var parameters = ""
-                if (filters.before_id.isNotBlank()) parameters += "before=${filters.before_id}&"
-                if (filters.after_id.isNotBlank()) parameters += "after=${filters.after_id}&"
-                if (filters.author_id.isNotBlank()) parameters += "author_id=${filters.author_id}&"
-                if (filters.mentioning_user_id.isNotBlank()) parameters += "mentions=${filters.mentioning_user_id}&"
-                val response = client.httpClient.get("$BASE_URL/channels/${channel.id}/messages?$parameters").await()
+                if (filters.beforeId.asString().isNotBlank()) parameters += "before=${filters.beforeId.asString()}&"
+                if (filters.afterId.asString().isNotBlank()) parameters += "after=${filters.afterId.asString()}&"
+                if (filters.authorId.asString()
+                        .isNotBlank()
+                ) parameters += "author_id=${filters.authorId.asString()}&"
+                if (filters.mentioningUserId.asString()
+                        .isNotBlank()
+                ) parameters += "mentions=${filters.mentioningUserId.asString()}&"
+                val response =
+                    client.httpClient.get("$BASE_URL/channels/${channel.id.asString()}/messages?$parameters").await()
                 val newMessages = json.decodeFromString<MutableList<SerialMessage>>(response)
-                newMessages.removeIf { filters.author_id.isNotBlank() && it.author.id != filters.author_id }
+                newMessages.removeIf {
+                    filters.authorId.asString().isNotBlank() && it.author.id != filters.authorId.asString()
+                }
                 if (newMessages.size == 0) {
                     val lastmessage = fetchLastMessageInChannel(
                         channel,
                         client.user,
-                        MessageSearchFilters(before_id = filters.before_id)
+                        MessageSearchFilters(before_id = filters.beforeId)
                     )
                         ?: return collection
                     collection += lastmessage
                 } else {
-                    newMessages.forEach { collection += createMessage(it) }
+                    newMessages.forEach {
+                        when (val result = createMessage(it)) {
+                            is Invalid -> {
+                                log("Error in messageCreate: ${result.left()}", level = LogLevel(LoggerLevel.LOW, client))
+                            }
+
+                            is Valid -> {
+                                collection += result.value
+                            }
+                        }
+                    }
                 }
 
-                filters.before_id = collection.last().id
+                filters.beforeId = collection.last().id
 
                 if (filters.needed != 0 && collection.size >= filters.needed) {
                     break
@@ -155,7 +162,7 @@ open class DiscordUtils {
                 delay(500)
             }
         } catch (e : Exception) {
-            log("Error: ${e.message}", "API:")
+            log("Error: ${e.message}", "API:", LogLevel(LoggerLevel.LOW, client))
             e.printStackTrace()
         }
         return if (collection.size <= filters.needed) {
@@ -165,141 +172,133 @@ open class DiscordUtils {
         }
     }
 
-    suspend fun fetchPrivateChannel(id : String) : DMChannel? {
-        return client.user.dmChannels[id]
-    }
-
-    suspend fun fetchGuild(id : String) : Guild? {
-        var guild : Guild? = null
-
-        if (id.isValidSnowflake() && client.user.guilds.containsKey(id)) {
-            guild = client.user.guilds[id]
-        } else if (id.isValidSnowflake()) {
-            val response = client.httpClient.get("$BASE_URL/guilds/$id").await()
-            guild = createGuild(json.decodeFromString(response))
-        }
-        return guild
-    }
-
-    fun createGuild(payload : GuildCreateD) : Guild? {
-        var guild : Guild?
-        payload.channels.forEach {
-            val channel = createGuildChannel(it)
-            client.userImpl.channels[it.id] = channel
-        }
-        try {
-            guild = Guild(
-                payload.id,
-                payload.name,
-                payload.icon,
-                payload.description,
-                payload.splash,
-                payload.discovery_splash,
-                payload.banner,
-                payload.owner_id,
-                payload.application_id,
-                payload.region,
-                payload.afk_channel_id,
-                payload.afk_timeout,
-                payload.system_channel_id,
-                payload.widget_enabled,
-                "",
-                payload.verification_level,
-                payload.default_message_notifications,
-                payload.mfa_level,
-                payload.explicit_content_filter,
-                0,
-                payload.max_members,
-                payload.max_video_channel_users,
-                payload.vanity_url_code,
-                payload.premium_tier,
-                payload.premium_subscription_count,
-                payload.system_channel_flags,
-                payload.preferred_locale,
-                payload.rules_channel_id,
-                payload.public_updates_channel_id,
-                false,
-                "",
-                client.client
-            )
-        } catch (e : Exception) {
-            log("Error creating guild: ${e.message}", "API:")
-            guild = null
-        }
-        return guild
-    }
-
-    fun createGuildChannel(channel : GuildCreateDChannel) : GuildChannel {
-        when (ChannelType.enumById(channel.type)) {
-            ChannelType.TEXT -> {
-                return TextChannel(
-                    channel.id,
-                    client.client,
-                    ChannelType.TEXT,
-                    channel.id,
-                    Date(),
-                    channel.name,
-                    channel.position,
-                    channel.parent_id,
-                    channel.topic
-                )
-            } else -> {
-                return TextChannel(client = client.client)
-            }
+    fun createGuild(payload : SerialGuild) : Guild {
+        return GuildImpl(
+            payload.id.asSnowflake(),
+            payload.name,
+            payload.icon,
+            payload.description,
+            payload.splash,
+            payload.discovery_splash,
+            payload.banner,
+            payload.owner_id.asSnowflake(),
+            payload.application_id?.asSnowflake(),
+            payload.region,
+            payload.afk_channel_id.asSnowflake(),
+            payload.afk_timeout,
+            payload.system_channel_id?.asSnowflake(),
+            payload.widget_enabled,
+            createSnowflake(""),
+            payload.verification_level,
+            payload.default_message_notifications,
+            payload.mfa_level,
+            payload.explicit_content_filter,
+            0,
+            payload.max_members,
+            payload.max_video_channel_users,
+            payload.vanity_url_code,
+            payload.premium_tier,
+            payload.premium_subscription_count,
+            payload.system_channel_flags,
+            payload.preferred_locale,
+            payload.rules_channel_id?.asSnowflake(),
+            payload.public_updates_channel_id?.asSnowflake(),
+            false,
+            createSnowflake(""),
+            client
+        ).also { g ->
+            client.userImpl.guilds[g.id] = g
+            payload.channels.associateByTo(
+                client.userImpl.channels,
+                { it.id.asSnowflake() },
+                { createGuildChannel(it, g) })
         }
     }
 
-    fun fetchChannel(channelId : String) : BaseChannel? {
+    fun createTextChannel(channel : GuildCreateDChannel, guild : GuildImpl) =
+        TextChannelImpl(
+            channel.id.asSnowflake(),
+            client,
+            ChannelType.TEXT,
+            channel.id.asSnowflake(),
+            channel.name,
+            channel.position,
+            channel.parent_id.asSnowflake(),
+            channel.topic
+        ).apply { this.guild = guild }
+
+    fun createGuildChannel(channel : GuildCreateDChannel, guild : GuildImpl) : GuildChannel {
+        return when (ChannelType.enumById(channel.type)) {
+
+            ChannelType.TEXT -> createTextChannel(channel, guild)
+
+
+            ChannelType.CATEGORY -> createChannelCategory(channel, guild)
+
+
+            else -> createTextChannel(channel, guild)
+
+        }
+    }
+
+    fun createChannelCategory(channel : GuildCreateDChannel, guild : GuildImpl) : GuildChannel =
+        ChannelCategoryImpl(
+            client,
+            channel.id.asSnowflake(),
+            channel.name,
+            ChannelType.CATEGORY,
+            channel.position
+        ).apply { this.guild = guild }
+
+    fun fetchChannel(channelId : Snowflake) : BaseChannel? {
         return client.user.channels[channelId]
     }
 
-    suspend fun createMessage(message : SerialMessage) : Message {
+    fun createMessage(message : SerialMessage) : Validated<String, Message> {
+
+        var err = ""
+
         val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
 
-        val editedTimestamp = if (!message.edited_timestamp.isNullOrBlank()) {
+        val editedTimestamp = if (!message.edited_timestamp.isNullOrBlank())
             dateFormat.parse(message.edited_timestamp)
-        } else {
-            null
-        }
+        else null
 
-        val mentions = hashMapOf<String, User>()
+        val mentions = message.mentions.associateBy({ it.id }, { createUser(it) }) as HashMap
 
-        val attachmeents = hashMapOf<String, MessageAttachment>()
+        val attachments = message.attachments.associateBy({ it.id }, { createAttachment(it) }) as HashMap
 
-        for (mention in message.mentions) {
-            mentions[mention.id] = createUser(mention)
-        }
+        val channel : TextBasedChannel =
+            client.user.textChannels[message.channel_id.asSnowflake()] ?: run {
+                err += "Unable to resolve channel."
+                return Validated.Invalid(err)
+            }
 
-        for (attachment in message.attachments) {
-            attachmeents[attachment.id] = createAttachment(attachment)
-        }
+        val guild : Guild? =
+            if (message.guild_id == null) null else
+                client.user.guilds[message.guild_id.asSnowflake()] ?: run {
+                    err += "Unable to resolve guild."
+                    return Validated.Invalid(err)
+                }
 
-        return Message(
-            client.client,
-            message.id,
-            (
-                    fetchChannel(message.channel_id)
-                    // shouldn't happen ever but just in case
-                        ?: TextChannel(message.channel_id, client = client.client)
-                    ) as TextBasedChannel,
-            fetchGuild(message.guild_id ?: ""),
-            User(
-                message.author.username,
-                message.author.discriminator,
-                message.author.avatar,
-                message.author.id,
-                message.author.bot,
-                client.client
-            ),
-            message.content,
-            dateFormat.parse(message.timestamp),
-            editedTimestamp,
-            message.tts ?: false,
-            message.mention_everyone,
-            mentions,
-            attachmeents,
-            message.pinned,
-            MessageType.enumById(message.type)
+        return Validated.Valid(
+            MessageImpl(
+                client,
+                message.id.asSnowflake(),
+                channel,
+                guild,
+                createUser(message.author),
+                message.content,
+                dateFormat.parse(message.timestamp),
+                editedTimestamp,
+                message.tts ?: false,
+                message.mention_everyone,
+                mentions,
+                attachments,
+                message.pinned,
+                message.id,
+                MessageType.enumById(message.type)
+            )
         )
     }
 
@@ -316,16 +315,58 @@ open class DiscordUtils {
         )
     }
 
-    fun createUser(user : SerialUser) : User {
-        return User(
+    fun resolveRelationshipType(type : Int) = RelationshipType.values().elementAtOrNull(type) ?: RelationshipType.NONE
+    fun createUser(user : SerialUser, relationshipType : Int = 0) : User =
+        UserImpl(
             user.username,
             user.discriminator,
             user.avatar,
-            user.id,
+            user.id.asSnowflake(),
+            resolveRelationshipType(relationshipType),
             user.bot,
-            client.client
+            client
         )
-    }
+
+    fun createCustomStatus(cs : ReadyDCustomStatus) : CustomStatus =
+        CustomStatus(
+            cs.emoji_id,
+            cs.emoji_name,
+            cs.expires_at,
+            cs.text
+        )
+
+    private fun createUserSettings(se : ReadyDUserSettings, client : ClientImpl) : ClientUserSettings =
+        ClientUserSettings(
+            se.afk_timeout,
+            se.allow_accessibility_detection,
+            se.animate_emoji,
+            se.animate_stickers,
+            se.contact_sync_enabled,
+            se.convert_emoticons,
+            createCustomStatus(se.custom_status),
+            se.default_guilds_restricted,
+            se.detect_platform_accounts,
+            se.developer_mode,
+            se.disable_games_tab,
+            se.enable_tts_command,
+            se.explicit_content_filter,
+            se.friend_discovery_flags,
+            se.gif_auto_play,
+            se.inline_attachment_media,
+            se.inline_embed_media,
+            se.locale,
+            se.message_display_compact,
+            se.native_phone_integration_enabled,
+            se.passwordless,
+            se.render_embeds,
+            se.render_reactions,
+            // d.user_settings.restricted_guilds,
+            listOf(),
+            se.show_current_game,
+            client.utils.getStatusType(se.status),
+            se.stream_notifications_enabled,
+            client.utils.getThemeType(se.theme)
+        )
 
     /*
         Super Properties Stuff
@@ -355,77 +396,94 @@ open class DiscordUtils {
         superPropertiesB64 = Base64.getEncoder().encodeToString(superPropertiesStr.toByteArray())
     }
 
-    suspend fun fetchUser(id : String) : DiscordUser {
+    fun createDMChannel(channel : ReadyDPrivateChannel) : DMChannelImpl =
+        DMChannelImpl(
+            channel.id.asSnowflake(),
+            client,
+            ChannelType.enumById(channel.type),
+            createSnowflake(channel.last_message_id),
+            channel.name.ifBlank { channel.recipients.first().username },
+            channel.recipients.associateBy(
+                { r -> r.id },
+                { r -> client.utils.createUser(r) }
+            )
+        )
+
+    suspend fun fetchUser(id : String) : User {
         val response = client.httpClient.get("$BASE_URL/users/$id").await()
         return createUser(json.decodeFromString(response))
     }
 
-    fun fetchTextChannel(channelId : String) : TextBasedChannel? {
-        return client.user.channels.filter { it.value.type == ChannelType.TEXT }[channelId] as TextBasedChannel?
-    }
-
     suspend fun fetchMessageById(id : String, channel : TextBasedChannel) : Message? {
-        if (id.isValidSnowflake()) {
-            val response = client.httpClient.get("$BASE_URL/channels/${channel.id}/messages/$id").await()
-            return createMessage(json.decodeFromString(response))
+        val response = client.httpClient.get("$BASE_URL/channels/${channel.id.asString()}/messages/$id").await()
+        return when (val result = client.utils.createMessage(json.decodeFromString(response))) {
+            is Invalid -> {
+                log("Error in messageCreate: ${result.left()}", level = LogLevel(LoggerLevel.LOW, client))
+                null
+            }
+
+            is Valid -> {
+                result.value
+            }
         }
-        return null
     }
 
     suspend fun fetchLastMessageInChannel(
         channel : TextBasedChannel,
-        user : DiscordUser,
+        user : User,
         filters : MessageSearchFilters,
     ) : Message? {
         var parameters = ""
-        if (filters.before_id.isNotBlank()) parameters += "max_id=${filters.before_id}&"
-        if (filters.after_id.isNotBlank()) parameters += "after=${filters.after_id}&"
-        if (filters.mentioning_user_id.isNotBlank()) parameters += "mentions=${filters.mentioning_user_id}&"
+        if (filters.before_id.asString().isNotBlank()) parameters += "max_id=${filters.before_id}&"
+        if (filters.after_id.asString().isNotBlank()) parameters += "after=${filters.after_id}&"
+        if (filters.mentioning_user_id.asString().isNotBlank()) parameters += "mentions=${filters.mentioning_user_id}&"
         try {
             val lastMessageResponse =
-                client.httpClient.get("$BASE_URL/channels/${channel.id}/messages/search?author_id=${user.id}&$parameters")
+                client.httpClient.get("$BASE_URL/channels/${channel.id.asString()}/messages/search?author_id=${user.id.asString()}&$parameters")
                     .await()
             json.parseToJsonElement(lastMessageResponse).jsonObject["messages"]?.jsonArray?.forEach { it ->
                 val messages = json.decodeFromJsonElement<List<SerialMessage>>(it)
                 if (messages.isEmpty()) {
                     return null
                 }
-                if (messages.none { it.author.id == user.id && it.type == 0 || it.type == 19 }) {
-                    filters.before_id = messages.last().id
+                if (messages.none { it.author.id.asSnowflake() == user.id && it.type == 0 || it.type == 19 }) {
+                    filters.before_id = messages.last().id.asSnowflake()
                     delay(500)
                     fetchLastMessageInChannel(channel, user, filters)
                 }
-                val message = messages.first { it.author.id == user.id && it.type == 0 || it.type == 19 }
-                return createMessage(message)
+                val message = messages.first { it.author.id.asSnowflake() == user.id && it.type == 0 || it.type == 19 }
+                return when (val result = createMessage(message)) {
+                    is Invalid -> {
+                        log("Error in messageCreate: ${result.left()}", level = LogLevel(LoggerLevel.LOW, client))
+                        null
+                    }
+
+                    is Valid -> {
+                        result.value
+                    }
+                }
             }
         } catch (e : Exception) {
             e.printStackTrace()
         }
         return null
     }
-}
 
-class MessageBuilder : DiscordUtils() {
-    private var sb = StringBuilder()
-    private var tts = false
-
-    // private var attachments = mutableListOf<MessageAttachment>()
-    fun build() : MessageOptions {
-        return MessageOptions(sb.toString(), tts, calcNonce())
-    }
-
-    fun append(text : String) : MessageBuilder {
-        sb.append(text)
-        return this
-    }
-
-    fun appendLine(text : String) : MessageBuilder {
-        sb.appendLine(text)
-        return this
-    }
-
-    /*        fun addAttachment(attachment : MessageAttachment) : MessageBuilder {
-                attachments.add(attachment)
-                return this
-            }*/
+    fun createClientUserImpl(d : ReadyD) =
+        ClientUserImpl(
+            d.user.verified,
+            d.user.username,
+            d.user.discriminator,
+            d.user.id.asSnowflake(),
+            d.user.email,
+            d.user.bio,
+            createUserSettings(d.user_settings, client),
+            d.user.avatar,
+            d.user.premium,
+            client.configuration.token,
+            RelationshipType.NONE,
+            d.user.bot,
+            client,
+            client
+        )
 }

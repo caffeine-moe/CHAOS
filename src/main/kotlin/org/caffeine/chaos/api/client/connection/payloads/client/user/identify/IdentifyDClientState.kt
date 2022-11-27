@@ -1,6 +1,5 @@
 package org.caffeine.chaos.api.client.connection.payloads.client.user.identify
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -13,5 +12,5 @@ data class IdentifyDClientState(
     val read_state_version : Int = 0,
     val user_guild_settings_version : Int = -1,
     val user_settings_version : Int = -1,
-    val private_channels_version : Int = 0
+    val private_channels_version : Int = 0,
 )

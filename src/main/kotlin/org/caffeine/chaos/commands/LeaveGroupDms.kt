@@ -6,9 +6,10 @@ import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.models.interfaces.BaseChannel
+import org.caffeine.chaos.api.entities.channels.BaseChannel
 import org.caffeine.chaos.api.typedefs.ChannelType
-import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.typedefs.MessageBuilder
+import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.api.utils.log
 
 class LeaveGroupDms :
@@ -30,9 +31,8 @@ class LeaveGroupDms :
                 event.channel.sendMessage(
                     MessageBuilder()
                         .appendLine("There are no channels to delete!")
-                        .build()
                 )
-                    .await().also { message -> onComplete(message, true) }
+                    .await().map { message -> onComplete(message, true) }
                 return
             }
             for (channel : BaseChannel in list) {
@@ -49,9 +49,8 @@ class LeaveGroupDms :
                     MessageBuilder()
                         .appendLine("Done! Deleted $done channels!")
                         .appendLine("Check the console to see a list of the deleted channels.")
-                        .build()
                 )
-                    .await().also { message -> onComplete(message, true) }
+                    .await().map { message -> onComplete(message, true) }
             }
             if (done == 1) {
                 log(channels.toString(), "CHANNELS DELETED:")
@@ -59,9 +58,8 @@ class LeaveGroupDms :
                     MessageBuilder()
                         .appendLine("Done! Deleted $done channel!")
                         .appendLine("Check the console to see the name of the deleted channel.")
-                        .build()
                 )
-                    .await().also { message -> onComplete(message, true) }
+                    .await().map { message -> onComplete(message, true) }
             }
         } catch (e : Exception) {
             println(e.printStackTrace())

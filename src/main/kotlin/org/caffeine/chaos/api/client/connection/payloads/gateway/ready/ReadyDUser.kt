@@ -16,4 +16,5 @@ data class ReadyDUser(
     val premium : Boolean? = null,
     val purchased_flags : Int = 0,
     val username : String,
-    val verified : Boolean, )
+    val verified : Boolean,
+)

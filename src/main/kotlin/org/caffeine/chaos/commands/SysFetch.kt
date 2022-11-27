@@ -4,7 +4,7 @@ import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.typedefs.MessageBuilder
 import org.caffeine.chaos.config
 import oshi.SystemInfo
 
@@ -26,8 +26,8 @@ class SysFetch : Command(
         val up = sysInfo.operatingSystem.systemUptime
         event.message.channel.sendMessage(
             MessageBuilder()
-                .appendLine("Fetching info...").build()
-        ).await().also { message ->
+                .appendLine("Fetching info...")
+        ).await().map { message ->
             message.edit(
                 MessageBuilder()
                     .appendLine("```")
@@ -39,8 +39,7 @@ class SysFetch : Command(
                     .appendLine("HOST: ${sysInfo.hardware.computerSystem.baseboard.model}")
                     .appendLine("OS VER: ${sysInfo.operatingSystem.versionInfo}")
                     .appendLine("```")
-                    .build()
-            ).await().also {
+            ).await().map {
                 onComplete(it, config.auto_delete.bot.content_generation)
             }
         }

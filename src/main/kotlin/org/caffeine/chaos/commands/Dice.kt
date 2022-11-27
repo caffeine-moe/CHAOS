@@ -4,7 +4,6 @@ import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.config
 
 class Dice :
@@ -15,11 +14,7 @@ class Dice :
         args : MutableList<String>,
         cmd : String,
     ) {
-        val num = (1..6).random()
-        event.channel.sendMessage(
-            MessageBuilder()
-                .appendLine(":game_die: $num").build()
-        ).await().also { message ->
+        event.channel.sendMessage("game_die: ${(1..6).random()}").await().map { message ->
             onComplete(message, config.auto_delete.bot.content_generation)
         }
     }

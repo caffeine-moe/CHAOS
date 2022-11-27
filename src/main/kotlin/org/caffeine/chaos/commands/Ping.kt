@@ -9,7 +9,7 @@ import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.typedefs.MessageBuilder
 import java.net.URL
 
 class Ping : Command(
@@ -30,9 +30,8 @@ class Ping : Command(
             event.message.channel.sendMessage(
                 MessageBuilder()
                     .appendLine("Pinging...")
-                    .build()
             )
-                .await().also { message ->
+                .await().map { message ->
                     val selectorManager = ActorSelectorManager(Dispatchers.IO)
                     val start = System.currentTimeMillis()
                     val serverSocket = aSocket(selectorManager).tcp().connect("gateway.discord.gg", 80)
@@ -46,18 +45,13 @@ class Ping : Command(
                             .appendLine(":ping_pong: Pong!")
                             .appendLine("Target: Discord API")
                             .appendLine("Latency: ${ping}ms")
-                            .build()
                     )
-                        .await().also { message -> onComplete(message, true) }
+                        .await().map { message -> onComplete(message, true) }
                 }
             return
         }
-        event.message.channel.sendMessage(
-            MessageBuilder()
-                .appendLine("Pinging...")
-                .build()
-        )
-            .await().also { message ->
+        event.message.channel.sendMessage("Pinging...")
+            .await().map { message ->
                 val start : Long
                 val stop : Long
                 val url = args.joinToString(" ")
@@ -87,10 +81,9 @@ class Ping : Command(
                                 MessageBuilder()
                                     .appendLine(":pensive: Connection timed out")
                                     .appendLine("Try a different IP or URL...")
-                                    .build()
                             )
-                                .await().also { message -> onComplete(message, true) }
-                            return@also
+                                .await().map { message -> onComplete(message, true) }
+                            return
                         }
 
                         else -> {
@@ -98,7 +91,7 @@ class Ping : Command(
                         }
                     }
                     message.edit(error(client, event, err, commandInfo))
-                    return@also
+                    return
                 }
                 val ping = stop - start
                 message.edit(
@@ -106,9 +99,8 @@ class Ping : Command(
                         .appendLine(":ping_pong: Pong!")
                         .appendLine("Target: $url")
                         .appendLine("Latency: ${ping}ms")
-                        .build()
                 )
-                    .await().also { message -> onComplete(message, true) }
+                    .await().map { message -> onComplete(message, true) }
             }
     }
 }

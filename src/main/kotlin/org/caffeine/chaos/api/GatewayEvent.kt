@@ -1,9 +1,12 @@
 package org.caffeine.chaos.api
 
-enum class Event(val value : String) {
+enum class GatewayEvent(val value : String) {
     READY("READY"),
     MESSAGE_CREATE("MESSAGE_CREATE"),
+    CHANNEL_CREATE("CHANNEL_CREATE"),
+    CHANNEL_UPDATE("CHANNEL_UPDATE"),
     GUILD_DELETE("GUILD_DELETE"),
     GUILD_CREATE("GUILD_CREATE"),
+    GUILD_UPDATE("GUILD_UPDATE"),
     GUILD_MEMBER_LIST_UPDATE("GUILD_MEMBER_LIST_UPDATE")
 }

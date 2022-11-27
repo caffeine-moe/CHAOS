@@ -11,9 +11,12 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.client.utils.*
 import io.ktor.http.*
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.typedefs.ClientType
+import org.caffeine.chaos.api.typedefs.LogLevel
+import org.caffeine.chaos.api.typedefs.LoggerLevel
 import org.caffeine.chaos.api.utils.clientVersion
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.api.utils.userAgent
@@ -76,11 +79,15 @@ class HTTPClient(val clientImpl : ClientImpl) {
 
         HttpResponseValidator {
             handleResponseExceptionWithRequest { cause, _ ->
+                if (cause is CancellationException) {
+                    log("Error: ${cause.message}", "API:", LogLevel(LoggerLevel.LOW, clientImpl))
+                    clientImpl.restart()
+                }
                 if (cause.localizedMessage.contains("401 Unauthorized.")) {
-                    log("Invalid token!", "API:")
+                    log("Invalid token!", "API:", LogLevel(LoggerLevel.LOW, clientImpl))
                     return@handleResponseExceptionWithRequest
                 }
-                log("Error: ${cause.message}", "API:")
+                log("Error: ${cause.message}", "API:", LogLevel(LoggerLevel.LOW, clientImpl))
                 clientImpl.restart()
             }
         }

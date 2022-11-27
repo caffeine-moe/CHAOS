@@ -17,18 +17,18 @@ class Figlet :
     ) {
         if (args.isEmpty()) {
             event.channel.sendMessage(error(client, event, "No specified text to figletize.", commandInfo))
-                .await().also { message -> onComplete(message, true) }
+                .await().map { message -> onComplete(message, true) }
             return
         }
         try {
             val textToFigletize = args.joinToString(" ")
             val figletizedText = FigletFont.convertOneLine(textToFigletize)
-            event.channel.sendMessage("```$figletizedText```").await().also { message ->
+            event.channel.sendMessage("```$figletizedText```").await().map { message ->
                 onComplete(message, config.auto_delete.bot.content_generation)
             }
         } catch (e : ArrayIndexOutOfBoundsException) {
             event.channel.sendMessage(error(client, event, "Text contains non ASCII characters.", commandInfo))
-                .await().also { message -> onComplete(message, true) }
+                .await().map { message -> onComplete(message, true) }
             return
         }
     }

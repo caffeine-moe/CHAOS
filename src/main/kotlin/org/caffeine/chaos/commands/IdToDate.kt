@@ -4,7 +4,8 @@ import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.typedefs.MessageBuilder
+import org.caffeine.chaos.api.utils.convertIdToUnix
 import org.caffeine.chaos.api.utils.log
 
 class IdToDate : Command(
@@ -30,22 +31,20 @@ class IdToDate : Command(
         }
         if (err.isEmpty()) {
             val simpleDateFormat = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-            val date = java.util.Date(client.user.convertIdToUnix(id.toString()))
+            val date = java.util.Date(convertIdToUnix(id.toString()))
             val formattedDate = simpleDateFormat.format(date)
-            log("$id converted to $formattedDate")
             event.channel.sendMessage(
                 MessageBuilder()
                     .appendLine("**The id $id as a date is:**")
                     .appendLine(formattedDate)
-                    .build()
-            ).await().also {
+            ).await().map {
                 onComplete(it, true)
             }
             return
         }
         event.channel.sendMessage(
             error(client, event, err, commandInfo)
-        ).await().also {
+        ).await().map {
             onComplete(it, true)
         }
     }

@@ -14,7 +14,7 @@ import javax.imageio.ImageIO
 
 class GayPFP : Command(
     arrayOf("gaypfp"),
-    CommandInfo("GayPFP", "gaypfp <@user>", "Overlays a random lgbtq flag over someones pfp.")
+    CommandInfo("GayPFP", "gaypfp <@autoDeleteUser>", "Overlays a random lgbtq flag over someones pfp.")
 ) {
     override suspend fun onCalled(
         client : Client,

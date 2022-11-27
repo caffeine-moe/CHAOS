@@ -3,7 +3,7 @@ package org.caffeine.chaos.commands
 import org.caffeine.chaos.*
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.typedefs.MessageBuilder
 
 class Help : Command(
     arrayOf("help", "cmds", "commands"),
@@ -20,8 +20,7 @@ class Help : Command(
                 MessageBuilder()
                     .appendLine("**CHAOS v$versionString**")
                     .appendLine("**Commands:** https://caffeine.moe/CHAOS/commands/")
-                    .build()
-            ).await().also { message ->
+            ).await().map { message ->
                 onComplete(message, config.auto_delete.bot.content_generation)
             }
             return
@@ -29,25 +28,22 @@ class Help : Command(
         val command : Command? = commandList[args.first().replace(config.prefix, "")]
         if (command != null) {
             val msg = MessageBuilder()
-                .appendLine("__**${command.commandInfo.name}**__")
-            val sb = StringBuilder()
+                .append("```asciidoc")
+                .appendLine(command.commandInfo.name)
+                .appendLine("".padStart(command.commandInfo.name.length, '-'))
             if (command.commandNames.size > 1) {
-                for (i : String in command.commandNames) {
-                    sb.append("$i ")
-                }
-                if (sb.isNotBlank()) {
-                    msg.appendLine("**Aliases:** $sb")
-                }
+                msg.appendLine("- Aliases: ${command.commandNames.joinToString(", ")}")
             }
-            msg.appendLine("**Usage:** ${config.prefix}${command.commandInfo.usage}")
-            msg.appendLine("**Description:** ${command.commandInfo.description}")
-            event.channel.sendMessage(msg.build()).await().also { message ->
+            msg.appendLine("- Usage: ${config.prefix}${command.commandInfo.usage}")
+            msg.appendLine("- Description: ${command.commandInfo.description}")
+            msg.appendLine("```")
+            event.channel.sendMessage(msg).await().map { message ->
                 onComplete(message, config.auto_delete.bot.content_generation)
             }
             return
         }
         event.channel.sendMessage(error(client, event, "${args.joinToString(" ")} is not a command.", commandInfo))
-            .await().also {
+            .await().map {
                 onComplete(it, true)
             }
     }

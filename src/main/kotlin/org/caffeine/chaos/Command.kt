@@ -2,15 +2,15 @@ package org.caffeine.chaos
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.typedefs.MessageOptions
-import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.typedefs.LogLevel
+import org.caffeine.chaos.api.typedefs.LoggerLevel
+import org.caffeine.chaos.api.typedefs.MessageBuilder
+import org.caffeine.chaos.api.typedefs.MessageData
 import org.caffeine.chaos.api.utils.log
 
 abstract class Command(val commandNames : Array<String>, val commandInfo : CommandInfo) {
     init {
-        for (name in commandNames) {
-            this.also { commandList[name] = it }
-        }
+        commandList.putAll(commandNames.associateBy({ it }, { this }))
     }
 
     open suspend fun onCalled(
@@ -19,7 +19,7 @@ abstract class Command(val commandNames : Array<String>, val commandInfo : Comma
         args : MutableList<String>,
         cmd : String,
     ) {
-        log("Not implemented.")
+        log("Not implemented.", level = LogLevel(LoggerLevel.MEDIUM, client))
     }
 
     open suspend fun error(
@@ -27,11 +27,10 @@ abstract class Command(val commandNames : Array<String>, val commandInfo : Comma
         event : ClientEvent.MessageCreate,
         error : String,
         info : CommandInfo,
-    ) : MessageOptions {
+    ) : MessageData {
         return MessageBuilder()
             .appendLine("**Incorrect usage** '${event.message.content}'")
             .appendLine("**Error:** $error")
             .appendLine("**Correct usage:** `${config.prefix}${info.usage}`")
-            .build()
     }
 }

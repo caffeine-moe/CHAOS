@@ -1,5 +1,6 @@
-package org.caffeine.chaos.api.models.interfaces
+package org.caffeine.chaos.api.entities.channels
 
+import org.caffeine.chaos.api.Snowflake
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.typedefs.ChannelType
 
@@ -7,7 +8,7 @@ interface BaseChannel {
     suspend fun delete()
 
     val client : Client
-    val id : String
-    val name : String?
+    val id : Snowflake
+    val name : String
     val type : ChannelType
 }

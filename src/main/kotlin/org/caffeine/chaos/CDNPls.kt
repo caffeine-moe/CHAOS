@@ -1,7 +1,7 @@
 package org.caffeine.chaos
 
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.api.utils.log
 
 suspend fun cdnpls(event : ClientEvent.MessageCreate) {
@@ -10,7 +10,7 @@ suspend fun cdnpls(event : ClientEvent.MessageCreate) {
     val url = regex.findAll(event.message.content)
     if (url.toList().isNotEmpty()) {
         val cdnpls = url.first().value.replace("media.discordapp.net", "cdn.discordapp.com")
-        event.message.edit(MessageBuilder().append(event.message.content.replace(url.first().value, cdnpls)).build())
+        event.message.edit(event.message).await()
         if (config.logger.cdnpls) {
             log(cdnpls, "CDNPLS:")
         }

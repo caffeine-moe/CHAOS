@@ -1,6 +1,6 @@
 package org.caffeine.chaos.api.client.user
 
-import org.caffeine.chaos.api.models.guild.Guild
+import org.caffeine.chaos.api.entities.guild.GuildImpl
 import org.caffeine.chaos.api.typedefs.StatusType
 import org.caffeine.chaos.api.typedefs.ThemeType
 
@@ -28,7 +28,7 @@ data class ClientUserSettings(
     val passwordless : Boolean = false,
     val renderEmbeds : Boolean = false,
     val renderReactions : Boolean = false,
-    val restrictedGuilds : List<Guild> = listOf(),
+    val restrictedGuilds : List<GuildImpl> = listOf(),
     val showCurrentGame : Boolean = false,
     val status : StatusType = StatusType.UNKNOWN,
     val streamNotificationsEnabled : Boolean = false,

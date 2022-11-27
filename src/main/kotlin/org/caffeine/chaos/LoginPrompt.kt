@@ -1,21 +1,20 @@
 package org.caffeine.chaos
 
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.utils.ConsoleColours
+import org.caffeine.chaos.api.client.user.ClientUser
+import org.caffeine.chaos.api.utils.ConsoleColour
 import org.caffeine.chaos.api.utils.clear
 import org.caffeine.chaos.api.utils.printLogo
 import org.caffeine.chaos.api.utils.printSeparator
 
-// executed whenever the client is logged in successfully
-fun loginPrompt(client : Client) {
-    val friends = client.user.relationships?.friends?.size
-    val guilds = client.user.guilds.size
+fun loginPrompt(user : ClientUser) {
+    val friends = user.friends.size
+    val guilds = user.guilds.size
     clear()
     printLogo()
-    println("${ConsoleColours.WHITE.value}Version: ${ConsoleColours.BLUE.value}$versionString")
-    println("${ConsoleColours.WHITE.value}Prefix: ${ConsoleColours.BLUE.value}${config.prefix}")
-    println("${ConsoleColours.WHITE.value}Logged in as: ${client.user.username}${ConsoleColours.BLUE.value}#${client.user.discriminator}")
-    println("${ConsoleColours.WHITE.value}Friends: ${ConsoleColours.BLUE.value}$friends")
-    println("${ConsoleColours.WHITE.value}Guilds: ${ConsoleColours.BLUE.value}$guilds")
+    println("${ConsoleColour.WHITE.value}Version: ${ConsoleColour.BLUE.value}$versionString")
+    println("${ConsoleColour.WHITE.value}Prefix: ${ConsoleColour.BLUE.value}${config.prefix}")
+    println("${ConsoleColour.WHITE.value}Logged in as: ${user.username}${ConsoleColour.BLUE.value}#${user.discriminator}")
+    println("${ConsoleColour.WHITE.value}Friends: ${ConsoleColour.BLUE.value}$friends")
+    println("${ConsoleColour.WHITE.value}Guilds: ${ConsoleColour.BLUE.value}$guilds")
     printSeparator()
 }

@@ -1,21 +1,12 @@
 package org.caffeine.chaos.api.client.connection.payloads.gateway.ready
 
+import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialUser
+
 @kotlinx.serialization.Serializable
 data class ReadyDPrivateChannel(
     val id : String = "",
     val last_message_id : String = "",
-    val recipients : List<Recipient> = listOf(),
+    val recipients : List<SerialUser> = emptyList(),
     val name : String = "",
     val type : Int = 0,
-)
-
-@kotlinx.serialization.Serializable
-data class Recipient(
-    val avatar : String = "",
-    val avatar_decoration : String? = null,
-    val bot : Boolean = false,
-    val discriminator : String = "",
-    val id : String = "",
-    val public_flags : Int = 0,
-    val username : String = "",
 )

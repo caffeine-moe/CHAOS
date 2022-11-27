@@ -2,6 +2,7 @@ package org.caffeine.chaos.api.utils
 
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.*
 import io.ktor.client.plugins.cache.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.cookies.*
@@ -10,7 +11,11 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
+import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.json
+import org.caffeine.chaos.api.typedefs.LogLevel
+import org.caffeine.chaos.api.typedefs.LoggerLevel
+import kotlin.math.absoluteValue
 
 val normalHTTPClient : HttpClient = HttpClient(CIO) {
     install(WebSockets)
@@ -31,19 +36,23 @@ data class DUAProp(
 )
 
 var clientVersion = "106.0.5249.91"
-var clientBuildNumber = 150748
+var clientBuildNumber = 158183
 var userAgent =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.5249.91 Safari/537.36"
 
 // Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36
-suspend fun fetchWebClientValues() {
-    val dua = json.decodeFromString<DUAProp>(
-        normalHTTPClient.get("https://discord-user-api.cf/api/v1/properties/web")
-            .bodyAsText()
-    )
-    clientVersion = dua.chrome_version
-    clientBuildNumber = dua.client_build_number
-    userAgent = dua.chrome_user_agent
+suspend fun fetchWebClientValues(client : Client) {
+    try {
+        val dua = json.decodeFromString<DUAProp>(
+            normalHTTPClient.get("https://discord-user-api.cf/api/v1/properties/web")
+                .bodyAsText()
+        )
+        clientVersion = dua.chrome_version
+        clientBuildNumber = dua.client_build_number
+        userAgent = dua.chrome_user_agent
+    } catch (e : ServerResponseException) {
+        log("Discord client value api is down, falling back to default values.", "API:", LogLevel(LoggerLevel.LOW, client))
+    }
 }
 
 fun webkitBoundary() : String {
@@ -52,4 +61,17 @@ fun webkitBoundary() : String {
         .map { charset.random() }
         .joinToString("")
     return "WebKitFormBoundary$random"
+}
+
+fun calcNonce(id : Long = 0) : String {
+    val unixTs = if (id == 0L) System.currentTimeMillis() else id
+    return ((unixTs - 1420070400000) * 4194304).absoluteValue.toString()
+}
+
+fun convertIdToUnix(id : String) : Long {
+    return if (id.isNotBlank()) {
+        (id.toLong() / 4194304 + 1420070400000).absoluteValue
+    } else {
+        0
+    }
 }

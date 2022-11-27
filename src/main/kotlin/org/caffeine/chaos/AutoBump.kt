@@ -46,13 +46,13 @@ class AutoBump : Command(arrayOf("bump", "autobump", "sbump"), CommandInfo("Auto
 
             if (guild != null) {
                 for (i in guild.members) {
-                    println(i.user.username)
+                    println(i.autoDeleteUser.username)
                 }
             }
 
-            if (guild != null && !guild.members.stream().filter { x -> x.user.bot }
-                    .anyMatch { y -> y.user.id == "302050872383242240" }) {
-                err = "DISBOARD bot not found in server."
+            if (guild != null && !guild.members.stream().filter { x -> x.autoDeleteUser.autoDeleteBot }
+                    .anyMatch { y -> y.autoDeleteUser.id == "302050872383242240" }) {
+                err = "DISBOARD autoDeleteBot not found in server."
             }
 
             if (bumping.isNotEmpty() && bumping.any { it.id == event.channel.id }) {

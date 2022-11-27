@@ -78,8 +78,6 @@ data class Role(
 suspend fun guildCreate(payload : String, client : ClientImpl) {
     val parsed = json.decodeFromString<GuildCreate>(payload)
     val guild = client.utils.createGuild(parsed.d)
-    if (guild != null) {
-        client.userImpl.guilds[guild.id] = guild
-        client.eventBus.produceEvent(ClientEvent.GuildCreate(guild))
-    }
+    client.userImpl.guilds[guild.id] = guild
+    client.eventBus.produceEvent(ClientEvent.GuildCreate(guild))
 }

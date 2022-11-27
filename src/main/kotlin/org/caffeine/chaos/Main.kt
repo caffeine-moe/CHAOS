@@ -11,6 +11,7 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.typedefs.ClientType
+import org.caffeine.chaos.api.typedefs.LoggerLevel
 import org.caffeine.chaos.api.utils.*
 import org.caffeine.chaos.config.Config
 import java.io.File
@@ -36,16 +37,17 @@ private suspend fun init(args : Array<String> = arrayOf()) {
     printLogo()
     printSeparator()
     handleArgs(args)
-    log("${ConsoleColours.BLUE.value}CHAOS is starting...")
+    log("${ConsoleColour.BLUE.value}CHAOS is starting...")
 }
 
 suspend fun main(args : Array<String> = arrayOf()) = coroutineScope {
     init(args)
     loadConfig()
     checkNetwork()
-    val client = Client.Factory()
+    val client = Client
         .setClientType(ClientType.USER)
         .setToken(config.token)
+        .setLogLevel(LoggerLevel.ALL)
         .build()
     // web ui benched for now
     /*         val ui = WebUI()
@@ -59,6 +61,7 @@ suspend fun main(args : Array<String> = arrayOf()) = coroutineScope {
                     is ClientEvent.Ready -> {
                         ready(client)
                     }
+
                     is ClientEvent.MessageCreate -> {
                         handleMessage(it, client)
                     }
@@ -71,6 +74,7 @@ suspend fun main(args : Array<String> = arrayOf()) = coroutineScope {
 }
 
 suspend fun loadConfig() = coroutineScope {
+
     if (!configFile.exists()) {
         val default = javaClass.classLoader.getResource("defaultconfig.json")
         this.also {
@@ -79,17 +83,17 @@ suspend fun loadConfig() = coroutineScope {
         configFile.writeText(default!!.readText())
         log(
             "Config not found, we have generated one for you at ${configFile.absolutePath}",
-            "${ConsoleColours.RED.value}ERROR:"
+            "${ConsoleColour.RED.value}ERROR:"
         )
-        log("${ConsoleColours.BLUE.value}Please change the file accordingly. Documentation: https://caffeine.moe/CHAOS/")
+        log("${ConsoleColour.BLUE.value}Please change the file accordingly. Documentation: https://caffeine.moe/CHAOS/")
         exitProcess(0)
     }
     try {
         config = json.decodeFromString(configFile.readText())
     } catch (e : SerializationException) {
         log(
-            "${ConsoleColours.BLUE.value}Unable to interpret config, please make sure that the one you have is structured the same as the one here: https://caffeine.moe/CHAOS/config.json",
-            "${ConsoleColours.RED.value}ERROR:"
+            "Unable to interpret config, please make sure that the one you have is structured the same as the one here: https://caffeine.moe/CHAOS/config.json",
+            "ERROR:",
         )
         log("Full stacktrace here:")
         e.printStackTrace()

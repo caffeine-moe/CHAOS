@@ -4,13 +4,13 @@ import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.models.interfaces.DiscordUser
-import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.entities.users.User
+import org.caffeine.chaos.api.typedefs.MessageBuilder
 import org.caffeine.chaos.config
 
 class Avatar : Command(
     arrayOf("avatar", "pfp", "av"),
-    CommandInfo("Avatar", "av [@user]", "Sends your avatar or a mentioned users avatar.")
+    CommandInfo("Avatar", "av [@autoDeleteUser]", "Sends your avatar or a mentioned users avatar.")
 ) {
     override suspend fun onCalled(
         client : Client,
@@ -23,16 +23,16 @@ class Avatar : Command(
                 error(
                     client,
                     event,
-                    "'${args.joinToString(" ")}}' is not a mentioned user.",
+                    "'${args.joinToString(" ")}}' is not a mentioned autoDeleteUser.",
                     commandInfo
                 )
-            ).await().also { message ->
+            ).await().map { message ->
                 onComplete(message, true)
             }
             return
         }
 
-        val user : DiscordUser
+        val user : User
         val avatarURL : String
 
         if (args.isEmpty()) {
@@ -47,8 +47,7 @@ class Avatar : Command(
             MessageBuilder()
                 .appendLine("${user.discriminatedName}'s Avatar")
                 .appendLine(avatarURL)
-                .build()
         )
-            .await().also { onComplete(it, config.auto_delete.bot.content_generation) }
+            .await().map { onComplete(it, config.auto_delete.bot.content_generation) }
     }
 }

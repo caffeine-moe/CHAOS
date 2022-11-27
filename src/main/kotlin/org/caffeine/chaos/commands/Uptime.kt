@@ -4,7 +4,8 @@ import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.typedefs.MessageBuilder
+import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.programStartedTime
 import kotlin.math.absoluteValue
@@ -32,8 +33,7 @@ class Uptime : Command(
         event.message.channel.sendMessage(
             MessageBuilder()
                 .appendLine("CHAOS has been running for $days days, $hours hours, $minutes minutes and $seconds seconds.")
-                .build()
-        ).await().also {
+        ).await().map {
             onComplete(it, true)
         }
     }

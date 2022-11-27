@@ -46,7 +46,7 @@ private data class Presence(
     val client_status : ClientStatus = ClientStatus(),
     val game : String? = "",
     val status : String = "",
-    val user : User = User(),
+    val autoDeleteUser : User = User(),
 )
 
 @kotlinx.serialization.Serializable
@@ -83,7 +83,7 @@ private data class Timestamps(
 
 fun guildMemberListUpdate(payload : String, client : Client) {
     /*    val decoded = jsonc.decodeFromString<GuildMemberListUpdate>(payload)
-        val guild = client.user.guilds.find { it.id == decoded.d.guild_id } ?: return
+        val guild = client.autoDeleteUser.guilds.find { it.id == decoded.d.guild_id } ?: return
         for (op in decoded.d.ops) {
             when (op.op) {
                 "DELETE" -> {
@@ -94,7 +94,7 @@ fun guildMemberListUpdate(payload : String, client : Client) {
                 "UPDATE" -> {
                     for (i in op.items) {
                         val member = i.member
-                        val rep = guild.members.withIndex().find { it.value.user.id == member.user.id } ?: return
+                        val rep = guild.members.withIndex().find { it.value.autoDeleteUser.id == member.autoDeleteUser.id } ?: return
                         guild.members[rep.index] = rep.value
                     }
                 }
