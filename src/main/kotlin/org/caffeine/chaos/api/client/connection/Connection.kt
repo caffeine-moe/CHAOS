@@ -185,11 +185,7 @@ class Connection(private val client : ClientImpl) {
     }
 
     private suspend fun reconnect() {
-        try {
-            disconnect()
-            execute(ConnectionType.CONNECT)
-        } catch (e : Exception) {
-            e.printStackTrace()
-        }
+        disconnect()
+        execute(ConnectionType.CONNECT)
     }
 }
