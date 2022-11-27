@@ -87,10 +87,6 @@ class Connection(private val client : ClientImpl) {
             )
         )
 
-    fun generateIdentifyDef() : PayloadDef = PayloadDef("Identify", generateIdentify())
-
-    fun generateResumeDef() : PayloadDef = PayloadDef("Resume", generateResume())
-
     suspend fun execute(type : ConnectionType) {
         val payload = when (type) {
             ConnectionType.CONNECT -> {
@@ -181,7 +177,7 @@ class Connection(private val client : ClientImpl) {
     suspend fun connect() : PayloadDef {
         fetchWebClientValues(client)
         client.utils.createSuperProperties()
-        return generateIdentifyDef()
+        return PayloadDef("Identify", generateIdentify())
     }
 
     private suspend fun disconnect() {
@@ -195,7 +191,7 @@ class Connection(private val client : ClientImpl) {
         disconnect()
         fetchWebClientValues(client)
         client.utils.createSuperProperties()
-        return generateResumeDef()
+        return PayloadDef("Resume", generateResume())
     }
 
     private suspend fun reconnect() {
