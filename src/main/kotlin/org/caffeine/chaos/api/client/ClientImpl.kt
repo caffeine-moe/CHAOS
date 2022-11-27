@@ -20,7 +20,7 @@ class ClientImpl(
     override val type : ClientType = configuration.clientType
     val eventBus : EventBus = EventBus()
     val socket : Connection = Connection(this)
-    val utils : DiscordUtils = DiscordUtils().apply { client = this@ClientImpl }
+    val utils : DiscordUtils = DiscordUtils(this)
     override val events : SharedFlow<ClientEvent> = eventBus.flow
 
     val httpClient : HTTPClient = HTTPClient.build(this)

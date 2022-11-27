@@ -36,9 +36,7 @@ import org.caffeine.chaos.api.typedefs.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class DiscordUtils {
-
-    lateinit var client : ClientImpl
+class DiscordUtils(val client : ClientImpl) {
 
     @Serializable
     data class SuperProperties(
