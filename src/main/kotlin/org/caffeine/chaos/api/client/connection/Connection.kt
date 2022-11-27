@@ -33,7 +33,7 @@ class Connection(private val client : ClientImpl) {
 
     private var heartBeat = Job() as Job
 
-    private data class PayloadDef(
+    data class PayloadDef(
         val name : String,
         val payload : String,
     )
@@ -43,6 +43,17 @@ class Connection(private val client : ClientImpl) {
             generateBotIdentify()
         )
     }
+
+    private fun generateResume() : String = json.encodeToString(
+        Resume(
+            OPCODE.RESUME.value,
+            ResumeD(
+                client.utils.gatewaySequence,
+                client.utils.sessionId,
+                client.token
+            )
+        )
+    )
 
     private fun generateUserIdentify() : Identify = Identify(
         OPCODE.IDENTIFY.value,
@@ -76,11 +87,14 @@ class Connection(private val client : ClientImpl) {
             )
         )
 
+    fun generateIdentifyDef() : PayloadDef = PayloadDef("Identify", generateIdentify())
+
+    fun generateResumeDef() : PayloadDef = PayloadDef("Resume", generateResume())
+
     suspend fun execute(type : ConnectionType) {
         val payload = when (type) {
             ConnectionType.CONNECT -> {
-                val identify = generateIdentify()
-                PayloadDef("Identify", identify)
+                connect()
             }
 
             ConnectionType.DISCONNECT -> {
@@ -95,20 +109,7 @@ class Connection(private val client : ClientImpl) {
             }
 
             ConnectionType.RECONNECT_AND_RESUME -> {
-                disconnect()
-                fetchWebClientValues(client)
-                client.utils.createSuperProperties()
-                val resume = json.encodeToString(
-                    Resume(
-                        OPCODE.RESUME.value,
-                        ResumeD(
-                            client.utils.gatewaySequence,
-                            client.utils.sessionId,
-                            client.configuration.token
-                        )
-                    )
-                )
-                PayloadDef("Resume", resume)
+                reconnectResume()
             }
         }
 
@@ -177,11 +178,24 @@ class Connection(private val client : ClientImpl) {
         }
     }
 
+    suspend fun connect() : PayloadDef {
+        fetchWebClientValues(client)
+        client.utils.createSuperProperties()
+        return generateIdentifyDef()
+    }
+
     private suspend fun disconnect() {
         heartBeat.cancelAndJoin()
         webSocket.close()
         ready = false
         log("Client logged out.", "API:", LogLevel(LoggerLevel.LOW, client))
+    }
+
+    suspend fun reconnectResume() : PayloadDef {
+        disconnect()
+        fetchWebClientValues(client)
+        client.utils.createSuperProperties()
+        return generateResumeDef()
     }
 
     private suspend fun reconnect() {
