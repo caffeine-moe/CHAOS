@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
+import org.caffeine.chaos.api.asSnowflake
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.json

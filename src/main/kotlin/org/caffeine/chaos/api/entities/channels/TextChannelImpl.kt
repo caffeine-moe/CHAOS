@@ -8,8 +8,8 @@ import org.caffeine.chaos.api.entities.guild.Guild
 import org.caffeine.chaos.api.entities.message.Message
 import org.caffeine.chaos.api.entities.message.MessageFilters
 import org.caffeine.chaos.api.typedefs.ChannelType
-import org.caffeine.chaos.api.typedefs.MessageBuilder
-import org.caffeine.chaos.api.typedefs.MessageData
+import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.utils.MessageData
 
 class TextChannelImpl(
     override var id : Snowflake,

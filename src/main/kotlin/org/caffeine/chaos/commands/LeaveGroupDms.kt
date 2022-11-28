@@ -8,7 +8,7 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.entities.channels.BaseChannel
 import org.caffeine.chaos.api.typedefs.ChannelType
-import org.caffeine.chaos.api.typedefs.MessageBuilder
+import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.api.utils.log
 
 class LeaveGroupDms :

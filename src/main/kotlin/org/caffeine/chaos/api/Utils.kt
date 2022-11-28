@@ -4,8 +4,8 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
-import org.caffeine.chaos.api.typedefs.MessageBuilder
-import org.caffeine.chaos.api.typedefs.MessageData
+import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.utils.MessageData
 import org.caffeine.chaos.api.utils.convertIdToUnix
 
 internal const val GATEWAY = "gateway.discord.gg"

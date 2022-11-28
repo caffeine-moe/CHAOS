@@ -4,7 +4,7 @@ import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.typedefs.MessageBuilder
+import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.programStartedTime
 import kotlin.math.absoluteValue

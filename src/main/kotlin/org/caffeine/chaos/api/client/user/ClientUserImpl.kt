@@ -23,6 +23,9 @@ import org.caffeine.chaos.api.entities.message.MessageSearchFilters
 import org.caffeine.chaos.api.entities.users.User
 import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.typedefs.*
+import org.caffeine.chaos.api.utils.MessageData
+import org.caffeine.chaos.api.utils.MessageReference
+import org.caffeine.chaos.api.utils.MessageReply
 import org.caffeine.chaos.api.utils.log
 import kotlin.math.absoluteValue
 
@@ -91,6 +94,33 @@ data class ClientUserImpl(
 
     override suspend fun fetchChannelFromId(id : Snowflake) : BaseChannel? {
         return this.channels[id]
+    }
+
+    override suspend fun replyMessage(message : Message, messageData : MessageData) : CompletableDeferred<Either<String, Message>> {
+        val reply = MessageReply(
+            messageData.content,
+            messageData.tts,
+            messageData.nonce,
+            MessageReference(
+                message.guild?.id?.asString(),
+                message.channel.id.asString(),
+                message.id.asString()
+            )
+        )
+        val data = json.encodeToString(reply)
+        val response = clientImpl.httpClient.post("$BASE_URL/channels/${message.channel.id.asString()}/messages", data).await()
+        val serial = json.decodeFromString<SerialMessage>(response)
+        return when (val result = clientImpl.utils.createMessage(serial)) {
+            is Invalid -> {
+                val err = "Error in messageCreate: ${result.left()}"
+                log(err, "API:", LogLevel(LoggerLevel.LOW, client))
+                CompletableDeferred(Either.Left(err))
+            }
+
+            is Valid -> {
+                CompletableDeferred(Either.Right(result.value))
+            }
+        }
     }
 
     /*    fun getGuild(channel : MessageChannel) : ClientGuild? {

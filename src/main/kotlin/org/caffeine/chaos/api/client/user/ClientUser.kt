@@ -11,12 +11,14 @@ import org.caffeine.chaos.api.entities.channels.TextBasedChannel
 import org.caffeine.chaos.api.entities.guild.Guild
 import org.caffeine.chaos.api.entities.message.Message
 import org.caffeine.chaos.api.entities.message.MessageFilters
+import org.caffeine.chaos.api.entities.message.MessageImpl
 import org.caffeine.chaos.api.entities.message.MessageSearchFilters
 import org.caffeine.chaos.api.entities.users.User
 import org.caffeine.chaos.api.typedefs.HypeSquadHouseType
-import org.caffeine.chaos.api.typedefs.MessageData
 import org.caffeine.chaos.api.typedefs.StatusType
 import org.caffeine.chaos.api.typedefs.ThemeType
+import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.utils.MessageData
 
 interface ClientUser : User {
 
@@ -76,4 +78,5 @@ interface ClientUser : User {
     ) : List<Message>
 
     suspend fun fetchChannelFromId(id : Snowflake) : BaseChannel?
+    suspend fun replyMessage(message : Message, data : MessageData) : CompletableDeferred<Either<String, Message>>
 }

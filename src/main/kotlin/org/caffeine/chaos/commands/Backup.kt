@@ -8,7 +8,7 @@ import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.typedefs.MessageBuilder
+import org.caffeine.chaos.api.utils.MessageBuilder
 import java.io.File
 import java.nio.file.Files
 import java.time.LocalDateTime

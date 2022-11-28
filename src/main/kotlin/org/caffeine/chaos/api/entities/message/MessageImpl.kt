@@ -7,9 +7,9 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.entities.channels.TextBasedChannel
 import org.caffeine.chaos.api.entities.guild.Guild
 import org.caffeine.chaos.api.entities.users.User
-import org.caffeine.chaos.api.typedefs.MessageBuilder
-import org.caffeine.chaos.api.typedefs.MessageData
 import org.caffeine.chaos.api.typedefs.MessageType
+import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.utils.MessageData
 import java.util.*
 
 data class MessageImpl(
@@ -40,5 +40,13 @@ data class MessageImpl(
 
     override suspend fun edit(text : String) : CompletableDeferred<Either<String, Message>> {
         return client.user.editMessage(this, MessageBuilder().append(text))
+    }
+
+    override suspend fun reply(text : MessageData) : CompletableDeferred<Either<String, Message>> {
+        return client.user.replyMessage(this, text)
+    }
+
+    override suspend fun reply(text : String) : CompletableDeferred<Either<String, Message>> {
+        return client.user.replyMessage(this, MessageBuilder().append(text))
     }
 }

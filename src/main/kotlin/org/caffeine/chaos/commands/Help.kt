@@ -3,7 +3,7 @@ package org.caffeine.chaos.commands
 import org.caffeine.chaos.*
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.typedefs.MessageBuilder
+import org.caffeine.chaos.api.utils.MessageBuilder
 
 class Help : Command(
     arrayOf("help", "cmds", "commands"),

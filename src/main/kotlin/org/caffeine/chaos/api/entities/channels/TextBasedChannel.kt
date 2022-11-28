@@ -5,7 +5,7 @@ import kotlinx.coroutines.CompletableDeferred
 import org.caffeine.chaos.api.Snowflake
 import org.caffeine.chaos.api.entities.message.Message
 import org.caffeine.chaos.api.entities.message.MessageFilters
-import org.caffeine.chaos.api.typedefs.MessageData
+import org.caffeine.chaos.api.utils.MessageData
 
 interface TextBasedChannel : BaseChannel {
     val lastMessageId : Snowflake

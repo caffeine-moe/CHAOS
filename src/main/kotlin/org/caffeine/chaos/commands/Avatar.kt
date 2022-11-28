@@ -5,7 +5,7 @@ import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.entities.users.User
-import org.caffeine.chaos.api.typedefs.MessageBuilder
+import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.config
 
 class Avatar : Command(

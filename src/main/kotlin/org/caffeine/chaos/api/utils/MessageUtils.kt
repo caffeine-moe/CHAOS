@@ -1,7 +1,8 @@
-package org.caffeine.chaos.api.typedefs
+package org.caffeine.chaos.api.utils
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.caffeine.chaos.api.utils.calcNonce
+import kotlinx.serialization.Transient
 
 interface MessageData {
     val content : String
@@ -14,6 +15,25 @@ interface MessageDeleteOptions {
     val timeout : Number?
     val reason : String?
 }
+
+@Serializable
+data class MessageReference (
+    @Transient
+    val guild_id : String? = null,
+    val channel_id : String,
+    val message_id : String
+)
+
+@Serializable
+data class MessageReply(
+    override val content : String,
+    override val tts : Boolean,
+    override val nonce : String,
+    @SerialName("message_reference")
+    val messageReference : MessageReference
+) : MessageData
+
+
 
 @Serializable
 class MessageBuilder : MessageData {
