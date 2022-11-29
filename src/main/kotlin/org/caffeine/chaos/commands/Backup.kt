@@ -2,6 +2,7 @@ package org.caffeine.chaos.commands
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.Transient
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo
@@ -25,7 +26,7 @@ class Backup :
         val username : String,
         val discriminator : String,
         val id : String,
-        val avatar : String?,
+        val avatar : String,
         val discriminatedName : String = "$username#$discriminator",
     )
 
@@ -33,7 +34,7 @@ class Backup :
     private data class PrivateGuild(
         val id : String,
         val name : String,
-        val vanityUrl : String?,
+        @Transient val vanityUrl : String? = null,
     )
 
     @kotlinx.serialization.Serializable
@@ -71,7 +72,7 @@ class Backup :
                                 username = i.username,
                                 discriminator = i.discriminator,
                                 id = i.id.asString(),
-                                avatar = i.avatar
+                                avatar = i.avatarUrl()
                             )
                         )
                     }
@@ -82,7 +83,7 @@ class Backup :
                                 username = i.username,
                                 discriminator = i.discriminator,
                                 id = i.id.asString(),
-                                avatar = i.avatar
+                                avatar = i.avatarUrl()
                             )
                         )
                     }
