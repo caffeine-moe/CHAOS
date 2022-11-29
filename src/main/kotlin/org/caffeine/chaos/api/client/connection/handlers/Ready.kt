@@ -29,6 +29,7 @@ suspend fun ready(client : ClientImpl, payload : String, start : Long) {
     client.userImpl.guilds.putAll(extractGuilds(d.guilds, client))
 
     client.utils.sessionId = d.session_id
+    client.utils.resumeGatewayUrl = d.resume_gateway_url
     client.socket.ready = true
 
     val time = System.currentTimeMillis() - start

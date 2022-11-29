@@ -8,5 +8,5 @@ import org.caffeine.chaos.api.utils.log
 
 suspend fun reconnect(client : ClientImpl) {
     log("Gateway sent opcode 7 RECONNECT, reconnecting...", "API:", LogLevel(LoggerLevel.LOW, client))
-    client.socket.execute(ConnectionType.RECONNECT)
+    client.socket.execute(ConnectionType.RECONNECT_AND_RESUME)
 }

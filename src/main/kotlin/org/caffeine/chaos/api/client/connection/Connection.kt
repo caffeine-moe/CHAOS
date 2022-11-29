@@ -35,25 +35,36 @@ class Connection(private val client : ClientImpl) {
 
     data class PayloadDef(
         val name : String,
+        val type : PayloadType,
         val payload : String,
     )
 
-    private fun generateIdentify() : String {
-        return if (client.configuration.clientType != ClientType.BOT) json.encodeToString(generateUserIdentify()) else json.encodeToString(
-            generateBotIdentify()
-        )
+    enum class PayloadType {
+        IDENTIFY,
+        RESUME;
     }
 
-    private fun generateResume() : String = json.encodeToString(
-        Resume(
-            OPCODE.RESUME.value,
-            ResumeD(
-                client.utils.gatewaySequence,
-                client.utils.sessionId,
-                client.token
+    private fun generateIdentify() : PayloadDef {
+        val payload = if (client.configuration.clientType != ClientType.BOT) json.encodeToString(generateUserIdentify()) else json.encodeToString(
+            generateBotIdentify()
+        )
+        return PayloadDef("Identify", PayloadType.IDENTIFY, payload)
+    }
+
+    private fun generateResume() : PayloadDef {
+        val payload = json.encodeToString(
+            Resume(
+                OPCODE.RESUME.value,
+                ResumeD(
+                    client.utils.gatewaySequence,
+                    client.utils.sessionId,
+                    client.token
+                )
             )
         )
-    )
+        return PayloadDef("Resume", PayloadType.RESUME, payload)
+
+    }
 
     private fun generateUserIdentify() : Identify = Identify(
         OPCODE.IDENTIFY.value,
@@ -88,9 +99,9 @@ class Connection(private val client : ClientImpl) {
         )
 
     suspend fun execute(type : ConnectionType) {
-        val payload = when (type) {
+        when (type) {
             ConnectionType.CONNECT -> {
-                connect()
+                connect(generateIdentify())
             }
 
             ConnectionType.DISCONNECT -> {
@@ -108,11 +119,38 @@ class Connection(private val client : ClientImpl) {
                 reconnectResume()
             }
         }
+    }
 
+    suspend fun sendHeartBeat() {
+        try {
+            val heartbeat = json.encodeToString(
+                HeartBeat(
+                    OPCODE.HEARTBEAT.value,
+                    if (client.utils.gatewaySequence > 0) client.utils.gatewaySequence else null
+                )
+            )
+            webSocket.send(heartbeat)
+        } catch (e : CancellationException) {
+            reconnect()
+        }
+    }
+
+    private suspend fun startHeartBeat(interval : Long) {
+        log("Heartbeat started.", "API:", LogLevel(LoggerLevel.LOW, client))
+        while (true) {
+            sendHeartBeat()
+            delay(interval)
+        }
+    }
+
+    suspend fun connect(payload : PayloadDef) {
+        fetchWebClientValues(client)
+        client.utils.createSuperProperties()
         client.utils.tokenValidator(client.configuration.token)
 
         client.httpClient.client.wss(
-            host = GATEWAY,
+            host = if (payload.type != PayloadType.RESUME) GATEWAY
+            else client.utils.resumeGatewayUrl.removePrefix("wss://").ifBlank { GATEWAY },
             path = "/?v=9&encoding=json",
             port = 443
         ) {
@@ -152,34 +190,6 @@ class Connection(private val client : ClientImpl) {
         }
     }
 
-    suspend fun sendHeartBeat() {
-        try {
-            val heartbeat = json.encodeToString(
-                HeartBeat(
-                    OPCODE.HEARTBEAT.value,
-                    if (client.utils.gatewaySequence > 0) client.utils.gatewaySequence else null
-                )
-            )
-            webSocket.send(heartbeat)
-        } catch (e : CancellationException) {
-            reconnect()
-        }
-    }
-
-    private suspend fun startHeartBeat(interval : Long) {
-        log("Heartbeat started.", "API:", LogLevel(LoggerLevel.LOW, client))
-        while (true) {
-            sendHeartBeat()
-            delay(interval)
-        }
-    }
-
-    suspend fun connect() : PayloadDef {
-        fetchWebClientValues(client)
-        client.utils.createSuperProperties()
-        return PayloadDef("Identify", generateIdentify())
-    }
-
     private suspend fun disconnect() {
         heartBeat.cancelAndJoin()
         webSocket.close()
@@ -187,11 +197,11 @@ class Connection(private val client : ClientImpl) {
         log("Client logged out.", "API:", LogLevel(LoggerLevel.LOW, client))
     }
 
-    suspend fun reconnectResume() : PayloadDef {
+    suspend fun reconnectResume() {
         disconnect()
         fetchWebClientValues(client)
         client.utils.createSuperProperties()
-        return PayloadDef("Resume", generateResume())
+        connect(generateResume())
     }
 
     private suspend fun reconnect() {

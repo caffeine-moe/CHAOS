@@ -57,7 +57,7 @@ class DiscordUtils(val client : ClientImpl) {
     )
 
     var gatewaySequence = 0
-
+    var resumeGatewayUrl : String = ""
     var sessionId = ""
 
     suspend fun tokenValidator(token : String) {
