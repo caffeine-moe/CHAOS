@@ -17,10 +17,8 @@ interface Message : MessageData {
     val channel : TextBasedChannel
     val guild : Guild?
     val author : User
-    override val content : String
     val timestamp : Date
     val editedAt : Date?
-    override val tts : Boolean
     val mentionedEveryone : Boolean
     val mentions : Map<String, User>
     val attachments : Map<String, MessageAttachment>

@@ -14,5 +14,4 @@ interface TextBasedChannel : BaseChannel {
     suspend fun fetchHistory(messageFilters : MessageFilters) : List<Message>
 
     suspend fun fetchMessageById(id : String) : Message?
-    override suspend fun delete()
 }

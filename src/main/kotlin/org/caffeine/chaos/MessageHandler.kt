@@ -2,6 +2,7 @@ package org.caffeine.chaos
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
+import org.caffeine.chaos.api.entities.message.MessageImpl
 import org.caffeine.chaos.api.typedefs.LogLevel
 import org.caffeine.chaos.api.typedefs.LoggerLevel
 import org.caffeine.chaos.api.utils.ConsoleColour
@@ -62,6 +63,9 @@ fun registerCommands() {
 }
 
 suspend fun handleMessage(event : ClientEvent.MessageCreate, client : Client) {
+
+    event.message
+
     if (afk) afkHandler(event, client)
 
     if (event.message.author.id != client.user.id) {
