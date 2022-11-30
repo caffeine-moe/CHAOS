@@ -25,7 +25,7 @@ class Spam : Command(arrayOf("spam"), CommandInfo("Spam", "spam <Message> <Amoun
         val msg = event.message.content.removeSurrounding(
             "${config.prefix}$cmd",
             args.last()
-        )
+        ).trim()
         try {
             val number = args.last().toLong()
             if (number <= 0) {
