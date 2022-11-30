@@ -17,7 +17,7 @@ class HypeSquad :
         args : MutableList<String>,
         cmd : String,
     ) {
-        val house = HypeSquadHouseType.valueOf(args.first().toString())
+        val house = HypeSquadHouseType.valueOf(args.first())
         client.user.setHouse(house)
     }
 }
