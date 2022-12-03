@@ -28,7 +28,7 @@ class UserInfo :
         }
         if (error.isNotBlank()) {
             event.message.channel.sendMessage(error(client, event, error, commandInfo))
-                .await().map { message ->
+                .await().also { message ->
                     onComplete(message, true)
                 }
             return
@@ -45,7 +45,7 @@ class UserInfo :
                 .appendLine("**Discriminator:** ${usrInfo.discriminator}")
                 .appendLine("**Avatar:** <${usrInfo.avatarUrl()}>")
                 .appendLine("**Account Creation Date:** $acd")
-        ).await().map { message ->
+        ).await().also { message ->
             onComplete(message, config.auto_delete.bot.content_generation)
         }
         return

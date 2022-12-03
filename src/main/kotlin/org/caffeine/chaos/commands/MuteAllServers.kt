@@ -17,7 +17,7 @@ class MuteAllServers : Command(
         cmd : String,
     ) {
         val mas = "Muting all servers..."
-        event.channel.sendMessage(mas).await().map { message ->
+        event.channel.sendMessage(mas).await().also { message ->
             val list = client.user.guilds.values
             val max = list.size
             var done = 0
@@ -29,7 +29,7 @@ class MuteAllServers : Command(
                 ).await()
                 delay(500)
             }
-            message.edit("Muted all servers!").await().map {
+            message.edit("Muted all servers!").await().also {
                 onComplete(it, true)
             }
         }

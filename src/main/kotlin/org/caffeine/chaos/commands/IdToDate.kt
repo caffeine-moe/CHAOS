@@ -36,14 +36,14 @@ class IdToDate : Command(
                 MessageBuilder()
                     .appendLine("**The id $id as a date is:**")
                     .appendLine(formattedDate)
-            ).await().map {
+            ).await().also {
                 onComplete(it, true)
             }
             return
         }
         event.channel.sendMessage(
             error(client, event, err, commandInfo)
-        ).await().map {
+        ).await().also {
             onComplete(it, true)
         }
     }

@@ -27,7 +27,7 @@ class SysFetch : Command(
         event.message.channel.sendMessage(
             MessageBuilder()
                 .appendLine("Fetching info...")
-        ).await().map { message ->
+        ).await().also { message ->
             message.edit(
                 MessageBuilder()
                     .appendLine("```")
@@ -39,7 +39,7 @@ class SysFetch : Command(
                     .appendLine("HOST: ${sysInfo.hardware.computerSystem.baseboard.model}")
                     .appendLine("OS VER: ${sysInfo.operatingSystem.versionInfo}")
                     .appendLine("```")
-            ).await().map {
+            ).await().also {
                 onComplete(it, config.auto_delete.bot.content_generation)
             }
         }

@@ -31,7 +31,7 @@ class Ping : Command(
                 MessageBuilder()
                     .appendLine("Pinging...")
             )
-                .await().map { message ->
+                .await().also { message ->
                     val selectorManager = ActorSelectorManager(Dispatchers.IO)
                     val start = System.currentTimeMillis()
                     val serverSocket = aSocket(selectorManager).tcp().connect("gateway.discord.gg", 80)
@@ -46,12 +46,12 @@ class Ping : Command(
                             .appendLine("Target: Discord API")
                             .appendLine("Latency: ${ping}ms")
                     )
-                        .await().map { message -> onComplete(message, true) }
+                        .await().also { message -> onComplete(message, true) }
                 }
             return
         }
         event.message.channel.sendMessage("Pinging...")
-            .await().map { message ->
+            .await().also { message ->
                 val start : Long
                 val stop : Long
                 val url = args.joinToString(" ")
@@ -82,7 +82,7 @@ class Ping : Command(
                                     .appendLine(":pensive: Connection timed out")
                                     .appendLine("Try a different IP or URL...")
                             )
-                                .await().map { message -> onComplete(message, true) }
+                                .await().also { message -> onComplete(message, true) }
                             return
                         }
 
@@ -100,7 +100,7 @@ class Ping : Command(
                         .appendLine("Target: $url")
                         .appendLine("Latency: ${ping}ms")
                 )
-                    .await().map { message -> onComplete(message, true) }
+                    .await().also { message -> onComplete(message, true) }
             }
     }
 }

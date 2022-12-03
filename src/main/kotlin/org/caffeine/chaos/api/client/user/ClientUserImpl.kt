@@ -96,7 +96,7 @@ data class ClientUserImpl(
         return this.channels[id]
     }
 
-    override suspend fun replyMessage(message : Message, messageData : MessageData) : CompletableDeferred<Either<String, Message>> {
+    override suspend fun replyMessage(message : Message, messageData : MessageData) : CompletableDeferred<Message> {
         val reply = MessageReply(
             messageData.content,
             messageData.tts,
@@ -110,17 +110,7 @@ data class ClientUserImpl(
         val data = json.encodeToString(reply)
         val response = clientImpl.httpClient.post("$BASE_URL/channels/${message.channel.id.asString()}/messages", data).await()
         val serial = json.decodeFromString<SerialMessage>(response)
-        return when (val result = clientImpl.utils.createMessage(serial)) {
-            is Invalid -> {
-                val err = "Error in messageCreate: ${result.left()}"
-                log(err, "API:", LogLevel(LoggerLevel.LOW, client))
-                CompletableDeferred(Either.Left(err))
-            }
-
-            is Valid -> {
-                CompletableDeferred(Either.Right(result.value))
-            }
-        }
+        return CompletableDeferred(clientImpl.utils.createMessage(serial))
     }
 
     /*    fun getGuild(channel : MessageChannel) : ClientGuild? {
@@ -176,21 +166,11 @@ data class ClientUserImpl(
     override suspend fun sendMessage(
         channel : BaseChannel,
         message : MessageData,
-    ) : CompletableDeferred<Either<String, Message>> {
+    ) : CompletableDeferred<Message> {
         val data = json.encodeToString(message)
         val response = clientImpl.httpClient.post("$BASE_URL/channels/${channel.id.asString()}/messages", data).await()
         val serial = json.decodeFromString<SerialMessage>(response)
-        return when (val result = clientImpl.utils.createMessage(serial)) {
-            is Invalid -> {
-                val err = "Error in messageCreate: ${result.left()}"
-                log(err, "API:", LogLevel(LoggerLevel.LOW, client))
-                CompletableDeferred(Either.Left(err))
-            }
-
-            is Valid -> {
-                CompletableDeferred(Either.Right(result.value))
-            }
-        }
+        return CompletableDeferred(clientImpl.utils.createMessage(serial))
     }
 
     override suspend fun deleteMessage(message : Message) {
@@ -229,7 +209,7 @@ data class ClientUserImpl(
     override suspend fun editMessage(
         message : Message,
         edit : MessageData,
-    ) : CompletableDeferred<Either<String, Message>> {
+    ) : CompletableDeferred<Message> {
         val data = json.encodeToString(edit)
         val response =
             clientImpl.httpClient.patch(
@@ -237,16 +217,7 @@ data class ClientUserImpl(
                 data
             ).await()
         val serial = json.decodeFromString<SerialMessage>(response)
-        return when (val result = clientImpl.utils.createMessage(serial)) {
-            is Invalid -> {
-                log("Error in messageCreate: ${result.left()}", level = LogLevel(LoggerLevel.LOW, client))
-                CompletableDeferred(Either.Left(result.value))
-            }
-
-            is Valid -> {
-                CompletableDeferred(Either.Right(result.value))
-            }
-        }
+        return CompletableDeferred(clientImpl.utils.createMessage(serial))
     }
 
     override fun muteGuild(guild : Guild, i : Int) {
@@ -264,4 +235,7 @@ data class ClientUserImpl(
     ) : Message? {
         return clientImpl.utils.fetchLastMessageInChannel(channel, user, filters)
     }
+
+    override suspend fun fetchGuild(guildId : Snowflake) : Guild = clientImpl.utils.fetchGuild(guildId)
+
 }

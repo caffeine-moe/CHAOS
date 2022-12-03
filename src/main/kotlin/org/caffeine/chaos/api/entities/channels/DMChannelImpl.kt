@@ -19,11 +19,11 @@ class DMChannelImpl(
     override val name : String,
     override val recipients : Map<String, User>,
 ) : DMChannel {
-    override suspend fun sendMessage(data : MessageData) : CompletableDeferred<Either<String, Message>> {
+    override suspend fun sendMessage(data : MessageData) : CompletableDeferred<Message> {
         return client.user.sendMessage(this, data)
     }
 
-    override suspend fun sendMessage(text : String) : CompletableDeferred<Either<String, Message>> {
+    override suspend fun sendMessage(text : String) : CompletableDeferred<Message> {
         return client.user.sendMessage(this, MessageBuilder().append(text))
     }
 

@@ -31,7 +31,7 @@ class LeaveGroupDms :
                     MessageBuilder()
                         .appendLine("There are no channels to delete!")
                 )
-                    .await().map { message -> onComplete(message, true) }
+                    .await().also { message -> onComplete(message, true) }
                 return
             }
             for (channel : BaseChannel in list) {
@@ -49,7 +49,7 @@ class LeaveGroupDms :
                         .appendLine("Done! Deleted $done channels!")
                         .appendLine("Check the console to see a list of the deleted channels.")
                 )
-                    .await().map { message -> onComplete(message, true) }
+                    .await().also { message -> onComplete(message, true) }
             }
             if (done == 1) {
                 log(channels.toString(), "CHANNELS DELETED:")
@@ -58,7 +58,7 @@ class LeaveGroupDms :
                         .appendLine("Done! Deleted $done channel!")
                         .appendLine("Check the console to see the name of the deleted channel.")
                 )
-                    .await().map { message -> onComplete(message, true) }
+                    .await().also { message -> onComplete(message, true) }
             }
         } catch (e : Exception) {
             println(e.printStackTrace())

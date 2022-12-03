@@ -32,7 +32,7 @@ class Uptime : Command(
         event.message.channel.sendMessage(
             MessageBuilder()
                 .appendLine("CHAOS has been running for $days days, $hours hours, $minutes minutes and $seconds seconds.")
-        ).await().map {
+        ).await().also {
             onComplete(it, true)
         }
     }

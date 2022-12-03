@@ -52,7 +52,7 @@ class Backup :
     ) {
         val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yy_HH:mm:ss"))
         event.message.channel.sendMessage(MessageBuilder().append("Performing backup..."))
-            .await().map { message ->
+            .await().also { message ->
                 try {
                     val blockList = mutableListOf<PrivateUser>()
 
@@ -107,10 +107,8 @@ class Backup :
                             MessageBuilder()
                                 .appendLine("Backup successful!")
                                 .appendLine("Saved to: ${f.absolutePath}")
-                        ).await().orNull().also {
-                            if (it != null) {
-                                onComplete(it, true)
-                            }
+                        ).await().also {
+                            onComplete(it, true)
                         }
                     } catch (e : Exception) {
                         e.printStackTrace()

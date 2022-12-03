@@ -47,7 +47,7 @@ class Cat : Command(arrayOf("cat", "meow"), CommandInfo("Cat", "cat", "Sends a r
             MessageBuilder()
                 .appendLine("**Meow!!**")
                 .appendLine("https://cataas.com${cat.url}")
-        ).await().map { message ->
+        ).await().also { message ->
             onComplete(message, config.auto_delete.bot.content_generation)
         }
     }

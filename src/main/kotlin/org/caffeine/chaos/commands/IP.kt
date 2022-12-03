@@ -98,11 +98,11 @@ class IP : Command(arrayOf("ip"), CommandInfo("IP", "ip <IP/URL>", "Looks up inf
     ) {
         if (args.isEmpty()) {
             event.channel.sendMessage(error(client, event, "No IP/URL specified.", commandInfo))
-                .await().map { message -> onComplete(message, true) }
+                .await().also { message -> onComplete(message, true) }
             return
         }
         event.channel.sendMessage(MessageBuilder().appendLine("Looking up IP/URL"))
-            .await().map { message ->
+            .await().also { message ->
                 val url = args.joinToString(" ")
                 try {
                     val host = if (url.contains("://")) {
@@ -143,19 +143,19 @@ class IP : Command(arrayOf("ip"), CommandInfo("IP", "ip <IP/URL>", "Looks up inf
                                     .appendLine("**Hosting:** ${parsedResponse.security.hosting}")
                                     .appendLine("**Tor:** ${parsedResponse.security.tor}")
                             )
-                                .await().map { message -> onComplete(message, true) }
+                                .await().also { message -> onComplete(message, true) }
                         }
 
                         false -> {
                             message.edit(error(client, event, parsedResponse.message, commandInfo))
-                                .await().map { message -> onComplete(message, true) }
+                                .await().also { message -> onComplete(message, true) }
                         }
                     }
                 } catch (e : Exception) {
                     when (e) {
                         is UnresolvedAddressException -> {
                             message.edit(error(client, event, "IP/URL is invalid.", commandInfo))
-                                .await().map { message -> onComplete(message, true) }
+                                .await().also { message -> onComplete(message, true) }
                             return
                         }
 
@@ -165,13 +165,13 @@ class IP : Command(arrayOf("ip"), CommandInfo("IP", "ip <IP/URL>", "Looks up inf
                                     .appendLine(":pensive: Connection timed out")
                                     .appendLine("Try a different IP or URL...")
                             )
-                                .await().map { message -> onComplete(message, true) }
+                                .await().also { message -> onComplete(message, true) }
                             return
                         }
 
                         else -> {
                             message.edit(error(client, event, e.message.toString(), commandInfo))
-                                .await().map { message -> onComplete(message, true) }
+                                .await().also { message -> onComplete(message, true) }
                             return
                         }
                     }

@@ -59,6 +59,7 @@ fun registerCommands() {
     RandomChoice()
     GayPFP()
     ClearDMS()
+    ReplyLatency()
 }
 
 suspend fun handleMessage(event : ClientEvent.MessageCreate, client : Client) {

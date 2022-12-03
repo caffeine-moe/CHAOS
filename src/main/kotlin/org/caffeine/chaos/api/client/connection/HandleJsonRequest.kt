@@ -10,9 +10,9 @@ import org.caffeine.chaos.api.json
 suspend fun handleJsonRequest(payload : String, client : ClientImpl, start : Long) {
     val event = json.decodeFromString<Default>(payload)
     client.utils.gatewaySequence = event.s ?: client.utils.gatewaySequence
-    if (!isReady(event, client, payload, start)) return
     when (event.op) {
         OPCODE.DISPATCH.value -> {
+            if (!isReady(event, client, payload, start)) return
             when (event.t) {
 
                 GatewayEvent.MESSAGE_CREATE.value -> messageCreate(payload, client)

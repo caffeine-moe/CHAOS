@@ -1,6 +1,7 @@
 package org.caffeine.chaos.api.client.connection.payloads.gateway.ready
 
 import SerialGuild
+import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialPrivateChannel
 
 @kotlinx.serialization.Serializable
 data class ReadyD(
@@ -11,7 +12,7 @@ data class ReadyD(
     val v : Int,
     val relationships : List<ReadyDRelationship> = emptyList(),
     val guilds : MutableList<SerialGuild>,
-    val private_channels : MutableList<ReadyDPrivateChannel>,
+    val private_channels : MutableList<SerialPrivateChannel>,
     val session_id : String,
     val resume_gateway_url : String
 )

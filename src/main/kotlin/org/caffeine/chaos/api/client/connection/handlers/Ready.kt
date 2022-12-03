@@ -7,7 +7,7 @@ import org.caffeine.chaos.api.asSnowflake
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.client.connection.payloads.gateway.ready.Ready
-import org.caffeine.chaos.api.client.connection.payloads.gateway.ready.ReadyDPrivateChannel
+import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialPrivateChannel
 import org.caffeine.chaos.api.client.connection.payloads.gateway.ready.ReadyDRelationship
 import org.caffeine.chaos.api.entities.channels.DMChannelImpl
 import org.caffeine.chaos.api.entities.guild.Guild
@@ -48,7 +48,7 @@ private fun extractRelationships(
     relationships.associateBy({ it.user.id.asSnowflake() }, { client.utils.createUser(it.user, it.type) }) as HashMap
 
 private fun extractPrivateChannels(
-    channels : List<ReadyDPrivateChannel>,
+    channels : List<SerialPrivateChannel>,
     client : ClientImpl,
 ) : Map<Snowflake, DMChannelImpl> =
     channels.associateBy({ it.id.asSnowflake() }, { client.utils.createDMChannel(it) })

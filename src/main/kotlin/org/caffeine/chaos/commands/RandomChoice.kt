@@ -32,7 +32,7 @@ class RandomChoice : Command(
                     err,
                     commandInfo
                 )
-            ).await().map {
+            ).await().also {
                 onComplete(it, true)
             }
             return
@@ -41,7 +41,7 @@ class RandomChoice : Command(
         event.channel.sendMessage(
             MessageBuilder()
                 .appendLine(argspl.random().trim())
-        ).await().map {
+        ).await().also {
             onComplete(it, config.auto_delete.bot.content_generation)
         }
     }

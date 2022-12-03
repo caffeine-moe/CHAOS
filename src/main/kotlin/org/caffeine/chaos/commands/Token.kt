@@ -17,7 +17,7 @@ class Token : Command(arrayOf("token"), CommandInfo("Token", "token", "Logs your
     ) {
         log("${client.user.discriminatedName} : ${client.user.token}", "TOKEN:${ConsoleColour.BLUE.value}")
         event.message.channel.sendMessage(MessageBuilder().append("Token logged to console."))
-            .await().map { message ->
+            .await().also { message ->
                 onComplete(message, true)
             }
     }

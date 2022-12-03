@@ -34,19 +34,19 @@ data class MessageImpl(
         client.user.deleteMessage(this)
     }
 
-    override suspend fun edit(edit : MessageData) : CompletableDeferred<Either<String, Message>> {
+    override suspend fun edit(edit : MessageData) : CompletableDeferred<Message> {
         return client.user.editMessage(this, edit)
     }
 
-    override suspend fun edit(text : String) : CompletableDeferred<Either<String, Message>> {
+    override suspend fun edit(text : String) : CompletableDeferred<Message> {
         return client.user.editMessage(this, MessageBuilder().append(text))
     }
 
-    override suspend fun reply(text : MessageData) : CompletableDeferred<Either<String, Message>> {
+    override suspend fun reply(text : MessageData) : CompletableDeferred<Message> {
         return client.user.replyMessage(this, text)
     }
 
-    override suspend fun reply(text : String) : CompletableDeferred<Either<String, Message>> {
+    override suspend fun reply(text : String) : CompletableDeferred<Message> {
         return client.user.replyMessage(this, MessageBuilder().append(text))
     }
 }

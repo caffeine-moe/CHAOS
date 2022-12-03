@@ -19,7 +19,7 @@ class Spam : Command(arrayOf("spam"), CommandInfo("Spam", "spam <Message> <Amoun
         spamCock = false
         if (args.isEmpty()) {
             event.message.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))
-                .await().map { message -> onComplete(message, true) }
+                .await().also { message -> onComplete(message, true) }
             return
         }
         val msg = event.message.content.removeSurrounding(
@@ -37,7 +37,7 @@ class Spam : Command(arrayOf("spam"), CommandInfo("Spam", "spam <Message> <Amoun
                         commandInfo
                     )
                 )
-                    .await().map { message -> onComplete(message, true) }
+                    .await().also { message -> onComplete(message, true) }
                 return
             }
             var done = 0
@@ -53,11 +53,11 @@ class Spam : Command(arrayOf("spam"), CommandInfo("Spam", "spam <Message> <Amoun
                 event.message.channel.sendMessage(
                     MessageBuilder().appendLine("Done spamming '$msg' $done times.")
                 )
-                    .await().map { message -> onComplete(message, true) }
+                    .await().also { message -> onComplete(message, true) }
             }
             if (done == 1) {
                 event.message.channel.sendMessage(MessageBuilder().appendLine("Done spamming '$msg' once."))
-                    .await().map { message -> onComplete(message, true) }
+                    .await().also { message -> onComplete(message, true) }
             }
         } catch (e : Exception) {
             when (e) {
@@ -70,12 +70,12 @@ class Spam : Command(arrayOf("spam"), CommandInfo("Spam", "spam <Message> <Amoun
                             commandInfo
                         )
                     )
-                        .await().map { message -> onComplete(message, true) }
+                        .await().also { message -> onComplete(message, true) }
                 }
 
                 is IndexOutOfBoundsException -> {
                     event.message.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))
-                        .await().map { message -> onComplete(message, true) }
+                        .await().also { message -> onComplete(message, true) }
                 }
             }
         }

@@ -52,7 +52,7 @@ interface ClientUser : User {
 
     suspend fun setStatus(status : StatusType)
 
-    suspend fun sendMessage(channel : BaseChannel, message : MessageData) : CompletableDeferred<Either<String, Message>>
+    suspend fun sendMessage(channel : BaseChannel, message : MessageData) : CompletableDeferred<Message>
 
     suspend fun deleteMessage(message : Message)
 
@@ -60,7 +60,7 @@ interface ClientUser : User {
 
     suspend fun block(user : User)
 
-    suspend fun editMessage(message : Message, edit : MessageData) : CompletableDeferred<Either<String, Message>>
+    suspend fun editMessage(message : Message, edit : MessageData) : CompletableDeferred<Message>
 
     fun muteGuild(guild : Guild, i : Int)
 
@@ -78,5 +78,6 @@ interface ClientUser : User {
     ) : List<Message>
 
     suspend fun fetchChannelFromId(id : Snowflake) : BaseChannel?
-    suspend fun replyMessage(message : Message, data : MessageData) : CompletableDeferred<Either<String, Message>>
+    suspend fun replyMessage(message : Message, data : MessageData) : CompletableDeferred<Message>
+    suspend fun fetchGuild(guildId : Snowflake) : Guild
 }

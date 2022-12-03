@@ -26,7 +26,7 @@ class Avatar : Command(
                     "'${args.joinToString(" ")}}' is not a mentioned autoDeleteUser.",
                     commandInfo
                 )
-            ).await().map { message ->
+            ).await().also { message ->
                 onComplete(message, true)
             }
             return
@@ -48,6 +48,6 @@ class Avatar : Command(
                 .appendLine("${user.discriminatedName}'s Avatar")
                 .appendLine(avatarURL)
         )
-            .await().map { onComplete(it, config.auto_delete.bot.content_generation) }
+            .await().also { onComplete(it, config.auto_delete.bot.content_generation) }
     }
 }

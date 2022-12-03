@@ -25,7 +25,7 @@ class Purge : Command(
         return when {
             args.size < 1 -> {
                 event.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))
-                    .await().map { message -> onComplete(message, true) }
+                    .await().also { message -> onComplete(message, true) }
                 null
             }
 
@@ -40,7 +40,7 @@ class Purge : Command(
 
             else -> {
                 event.channel.sendMessage(error(client, event, "Too many arguments.", commandInfo))
-                    .await().map { message -> onComplete(message, true) }
+                    .await().also { message -> onComplete(message, true) }
                 null
             }
         }
@@ -61,7 +61,7 @@ class Purge : Command(
                         commandInfo
                     )
                 )
-                    .await().map { message -> onComplete(message, true) }
+                    .await().also { message -> onComplete(message, true) }
                 return null
             }
             args.last().toInt()
@@ -84,7 +84,7 @@ class Purge : Command(
                             commandInfo
                         )
                     )
-                        .await().map { message -> onComplete(message, true) }
+                        .await().also { message -> onComplete(message, true) }
                     return null
                 }
             }
@@ -101,10 +101,10 @@ class Purge : Command(
         val channel = resolveChannel(client, event, args) ?: return
         val num = resolveNum(client, event, args) ?: return
         var done = 0
-        val progress = event.channel.sendMessage("Fetching messages...").await().getOrHandle { return }
+        val progress = event.channel.sendMessage("Fetching messages...").await()
         val messages = channel.fetchHistory(MessageFilters(authorId = client.user.id, needed = num))
         if (messages.isEmpty()) {
-            progress.edit("There is nothing to delete!").await().map { message -> onComplete(message, true) }
+            progress.edit("There is nothing to delete!").await().also { message -> onComplete(message, true) }
             return
         }
         messages
@@ -123,6 +123,6 @@ class Purge : Command(
                 delay(1000)
             }
         progress.edit("Removed $done message${if (done > 1) "s" else ""}!")
-            .await().map { message -> onComplete(message, true) }
+            .await().also { message -> onComplete(message, true) }
     }
 }

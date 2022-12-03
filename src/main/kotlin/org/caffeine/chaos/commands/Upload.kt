@@ -25,7 +25,7 @@ class Upload :
     ) {
         if (event.message.attachments.isEmpty()) {
             event.message.channel.sendMessage(error(client, event, "Message has no attachments!", commandInfo))
-                .await().map { message ->
+                .await().also { message ->
                     onComplete(message, config.auto_delete.bot.content_generation)
                 }
             return
@@ -33,7 +33,7 @@ class Upload :
         event.message.channel.sendMessage(
             MessageBuilder()
                 .appendLine("Uploading...")
-        ).await().map { message ->
+        ).await().also { message ->
             val attachmentUrl = event.message.attachments.values.first().url
             val rsp = normalHTTPClient.request("https://0x0.st") {
                 method = HttpMethod.Post
@@ -48,7 +48,7 @@ class Upload :
             message.edit(
                 MessageBuilder()
                     .appendLine(rsp.bodyAsText())
-            ).await().map { message ->
+            ).await().also { message ->
                 onComplete(message, config.auto_delete.bot.content_generation)
             }
         }

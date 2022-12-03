@@ -14,7 +14,7 @@ class Dice :
         args : MutableList<String>,
         cmd : String,
     ) {
-        event.channel.sendMessage("game_die: ${(1..6).random()}").await().map { message ->
+        event.channel.sendMessage("game_die: ${(1..6).random()}").await().also { message ->
             onComplete(message, config.auto_delete.bot.content_generation)
         }
     }

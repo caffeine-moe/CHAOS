@@ -27,7 +27,7 @@ class Theme : Command(arrayOf("theme", "dth"), CommandInfo("Theme", "theme <Them
         } else {
             "No arguments passed for theme."
         }
-        event.message.channel.sendMessage(error(client, event, err, commandInfo)).await().map {
+        event.message.channel.sendMessage(error(client, event, err, commandInfo)).await().also {
             onComplete(it, true)
         }
     }

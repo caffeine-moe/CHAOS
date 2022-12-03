@@ -14,18 +14,10 @@ import org.caffeine.chaos.api.utils.log
 
 suspend fun messageCreate(payload : String, client : ClientImpl) {
     val d = json.decodeFromString<MessageCreate>(payload).d
-    when (val result = client.utils.createMessage(d)) {
-        is Invalid -> {
-            log("Error in messageCreate: ${result.left().map { it }}", level = LogLevel(LoggerLevel.LOW, client))
-            return
-        }
-
-        is Valid -> {
-            val event = ClientEvent.MessageCreate(
-                result.value,
-                result.value.channel
-            )
-            client.eventBus.produceEvent(event)
-        }
-    }
+    val result = client.utils.createMessage(d)
+    val event = ClientEvent.MessageCreate(
+        result,
+        result.channel
+    )
+    client.eventBus.produceEvent(event)
 }

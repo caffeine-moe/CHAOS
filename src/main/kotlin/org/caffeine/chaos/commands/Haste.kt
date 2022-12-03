@@ -29,7 +29,7 @@ class Haste : Command(
         args : MutableList<String>,
         cmd : String,
     ) {
-        event.channel.sendMessage(MessageBuilder().appendLine("Creating haste...")).await().map { message ->
+        event.channel.sendMessage(MessageBuilder().appendLine("Creating haste...")).await().also { message ->
             var body = ""
             if (args.isNotEmpty()) {
                 body = args.joinToString(" ")
@@ -46,7 +46,7 @@ class Haste : Command(
                             commandInfo
                         )
                     )
-                        .await().map { onComplete(it, true) }
+                        .await().also { onComplete(it, true) }
                     return
                 }
             }
@@ -59,7 +59,7 @@ class Haste : Command(
                         commandInfo
                     )
                 )
-                    .await().map { onComplete(it, true) }
+                    .await().also { onComplete(it, true) }
                 return
             }
             val response = normalHTTPClient.post("https://www.toptal.com/developers/hastebin/documents") {
@@ -68,7 +68,7 @@ class Haste : Command(
             val haste = json.decodeFromString<HasteResponse>(response.bodyAsText())
             message.edit(
                 MessageBuilder().appendLine("https://www.toptal.com/developers/hastebin/${haste.key}")
-            ).await().map { message ->
+            ).await().also { message ->
                 onComplete(message, config.auto_delete.bot.content_generation)
             }
         }

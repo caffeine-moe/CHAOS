@@ -20,7 +20,7 @@ class Help : Command(
                 MessageBuilder()
                     .appendLine("**CHAOS v$versionString**")
                     .appendLine("**Commands:** https://caffeine.moe/CHAOS/commands/")
-            ).await().map { message ->
+            ).await().also { message ->
                 onComplete(message, config.auto_delete.bot.content_generation)
             }
             return
@@ -37,13 +37,13 @@ class Help : Command(
             msg.appendLine("- Usage: ${config.prefix}${command.commandInfo.usage}")
             msg.appendLine("- Description: ${command.commandInfo.description}")
             msg.appendLine("```")
-            event.channel.sendMessage(msg).await().map { message ->
+            event.channel.sendMessage(msg).await().also { message ->
                 onComplete(message, config.auto_delete.bot.content_generation)
             }
             return
         }
         event.channel.sendMessage(error(client, event, "${args.joinToString(" ")} is not a command.", commandInfo))
-            .await().map {
+            .await().also {
                 onComplete(it, true)
             }
     }

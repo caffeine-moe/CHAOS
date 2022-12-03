@@ -45,9 +45,10 @@ class Connection(private val client : ClientImpl) {
     }
 
     private fun generateIdentify() : PayloadDef {
-        val payload = if (client.configuration.clientType != ClientType.BOT) json.encodeToString(generateUserIdentify()) else json.encodeToString(
-            generateBotIdentify()
-        )
+        val payload =
+            if (client.configuration.clientType != ClientType.BOT) json.encodeToString(generateUserIdentify()) else json.encodeToString(
+                generateBotIdentify()
+            )
         return PayloadDef("Identify", PayloadType.IDENTIFY, payload)
     }
 
@@ -172,22 +173,27 @@ class Connection(private val client : ClientImpl) {
                         "API:",
                         LogLevel(LoggerLevel.LOW, client)
                     )
-
                     heartBeat = launch { startHeartBeat(init.d.heartbeat_interval) }
 
                     send(payload.payload)
+
                     log("${payload.name} sent.", "API:", LogLevel(LoggerLevel.LOW, client))
 
                     for (frame in incoming) {
                         frame as? Frame.Text ?: continue
                         val receivedText : String = frame.readText()
                         launch {
+                            if (payload.type == PayloadType.RESUME) { println(receivedText) }
                             handleJsonRequest(receivedText, client, now)
                         }
                     }
                 }
+                else -> {
+                    println(init)
+                }
             }
         }
+
     }
 
     private suspend fun disconnect() {
@@ -199,8 +205,6 @@ class Connection(private val client : ClientImpl) {
 
     suspend fun reconnectResume() {
         disconnect()
-        fetchWebClientValues(client)
-        client.utils.createSuperProperties()
         connect(generateResume())
     }
 

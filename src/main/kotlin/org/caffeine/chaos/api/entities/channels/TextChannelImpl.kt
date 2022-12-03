@@ -2,6 +2,7 @@ package org.caffeine.chaos.api.entities.channels
 
 import arrow.core.Either
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.runBlocking
 import org.caffeine.chaos.api.Snowflake
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.entities.guild.Guild
@@ -28,16 +29,16 @@ class TextChannelImpl(
     var guildId : Snowflake = Snowflake("")
 
     override var guild : Guild
-        get() = client.user.guilds[guildId] ?: throw Exception("FUCK YOU")
+        get() = client.user.guilds[guildId] ?: runBlocking { client.user.fetchGuild(guildId) }
         set(value) {
             guildId = value.id
         }
 
-    override suspend fun sendMessage(data : MessageData) : CompletableDeferred<Either<String, Message>> {
+    override suspend fun sendMessage(data : MessageData) : CompletableDeferred<Message> {
         return client.user.sendMessage(this, data)
     }
 
-    override suspend fun sendMessage(text : String) : CompletableDeferred<Either<String, Message>> {
+    override suspend fun sendMessage(text : String) : CompletableDeferred<Message> {
         return client.user.sendMessage(this, MessageBuilder().append(text))
     }
 

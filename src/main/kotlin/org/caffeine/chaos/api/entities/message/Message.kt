@@ -27,11 +27,11 @@ interface Message : MessageData {
 
     suspend fun delete()
 
-    suspend fun edit(edit : MessageData) : CompletableDeferred<Either<String, Message>>
+    suspend fun edit(edit : MessageData) : CompletableDeferred<Message>
 
-    suspend fun edit(text : String) : CompletableDeferred<Either<String, Message>>
+    suspend fun edit(text : String) : CompletableDeferred<Message>
 
-    suspend fun reply(text : MessageData) : CompletableDeferred<Either<String, Message>>
+    suspend fun reply(text : MessageData) : CompletableDeferred<Message>
 
-    suspend fun reply(text : String) :  CompletableDeferred<Either<String, Message>>
+    suspend fun reply(text : String) : CompletableDeferred<Message>
 }

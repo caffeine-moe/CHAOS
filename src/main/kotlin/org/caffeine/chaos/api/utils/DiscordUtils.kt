@@ -3,7 +3,6 @@ package org.caffeine.chaos.api.utils
 import SerialGuild
 import arrow.core.Invalid
 import arrow.core.Valid
-import arrow.core.Validated
 import arrow.core.left
 import io.ktor.http.*
 import kotlinx.coroutines.delay
@@ -15,13 +14,9 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import org.caffeine.chaos.api.*
 import org.caffeine.chaos.api.client.ClientImpl
-import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialAttachment
-import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialMessage
-import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialUser
-import org.caffeine.chaos.api.client.connection.payloads.gateway.guild.create.GuildCreateDChannel
+import org.caffeine.chaos.api.client.connection.payloads.gateway.*
 import org.caffeine.chaos.api.client.connection.payloads.gateway.ready.ReadyD
 import org.caffeine.chaos.api.client.connection.payloads.gateway.ready.ReadyDCustomStatus
-import org.caffeine.chaos.api.client.connection.payloads.gateway.ready.ReadyDPrivateChannel
 import org.caffeine.chaos.api.client.connection.payloads.gateway.ready.ReadyDUserSettings
 import org.caffeine.chaos.api.client.user.ClientUserImpl
 import org.caffeine.chaos.api.client.user.ClientUserSettings
@@ -139,18 +134,7 @@ class DiscordUtils(val client : ClientImpl) {
                     collection += lastmessage
                 } else {
                     newMessages.forEach {
-                        when (val result = createMessage(it)) {
-                            is Invalid -> {
-                                log(
-                                    "Error in messageCreate: ${result.left()}",
-                                    level = LogLevel(LoggerLevel.LOW, client)
-                                )
-                            }
-
-                            is Valid -> {
-                                collection += result.value
-                            }
-                        }
+                         collection += createMessage(it)
                     }
                 }
 
@@ -216,7 +200,7 @@ class DiscordUtils(val client : ClientImpl) {
         }
     }
 
-    fun createTextChannel(channel : GuildCreateDChannel, guild : GuildImpl) =
+    fun createTextChannel(channel : SerialGuildChannel, guild : GuildImpl) =
         TextChannelImpl(
             channel.id.asSnowflake(),
             client,
@@ -228,7 +212,7 @@ class DiscordUtils(val client : ClientImpl) {
             channel.topic
         ).apply { this.guild = guild }
 
-    fun createGuildChannel(channel : GuildCreateDChannel, guild : GuildImpl) : GuildChannel {
+    fun createGuildChannel(channel : SerialGuildChannel, guild : GuildImpl) : GuildChannel {
         return when (ChannelType.enumById(channel.type)) {
 
             ChannelType.TEXT -> createTextChannel(channel, guild)
@@ -242,7 +226,7 @@ class DiscordUtils(val client : ClientImpl) {
         }
     }
 
-    fun createChannelCategory(channel : GuildCreateDChannel, guild : GuildImpl) : GuildChannel =
+    fun createChannelCategory(channel : SerialGuildChannel, guild : GuildImpl) : GuildChannel =
         ChannelCategoryImpl(
             client,
             channel.id.asSnowflake(),
@@ -251,14 +235,27 @@ class DiscordUtils(val client : ClientImpl) {
             channel.position
         ).apply { this.guild = guild }
 
-    fun fetchChannel(channelId : Snowflake) : BaseChannel? {
-        return client.user.channels[channelId]
+    suspend fun createTextBasedChannel(channel : SerialTextBasedChannel, data : String) : TextBasedChannel {
+        return when (ChannelType.enumById(channel.type)) {
+            ChannelType.DM -> {
+                val parsedData = json.decodeFromString<SerialPrivateChannel>(data)
+                createDMChannel(parsedData)
+            }
+
+            else -> {
+                val parsedData = json.decodeFromString<SerialGuildChannel>(data)
+                createGuildChannel(parsedData, fetchGuild(parsedData.id.asSnowflake()) as GuildImpl) as TextBasedChannel
+            }
+        }
     }
 
-    fun createMessage(message : SerialMessage) : Validated<String, Message> {
+    suspend fun fetchTextBasedChannel(channelId : Snowflake) : TextBasedChannel {
+        val data = client.httpClient.get("$BASE_URL/channels/$channelId").await()
+        val parsedData = json.decodeFromString<SerialTextBasedChannel>(data)
+        return createTextBasedChannel(parsedData, data)
+    }
 
-        var err = ""
-
+    suspend fun createMessage(message : SerialMessage) : Message {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
 
         val editedTimestamp = if (!message.edited_timestamp.isNullOrBlank())
@@ -270,20 +267,12 @@ class DiscordUtils(val client : ClientImpl) {
         val attachments = message.attachments.associateBy({ it.id }, { createAttachment(it) }) as HashMap
 
         val channel : TextBasedChannel =
-            client.user.textChannels[message.channel_id.asSnowflake()] ?: run {
-                err += "Unable to resolve channel."
-                return Validated.Invalid(err)
-            }
+            client.user.textChannels[message.channel_id.asSnowflake()] ?: fetchTextBasedChannel(message.channel_id.asSnowflake())
 
         val guild : Guild? =
-            if (message.guild_id == null) null else
-                client.user.guilds[message.guild_id.asSnowflake()] ?: run {
-                    err += "Unable to resolve guild."
-                    return Validated.Invalid(err)
-                }
+            if (message.guild_id == null) null else fetchGuild(message.guild_id.asSnowflake())
 
-        return Validated.Valid(
-            MessageImpl(
+        return MessageImpl(
                 client,
                 message.id.asSnowflake(),
                 channel,
@@ -300,7 +289,6 @@ class DiscordUtils(val client : ClientImpl) {
                 message.id,
                 MessageType.enumById(message.type)
             )
-        )
     }
 
     fun createAttachment(attachment : SerialAttachment) : MessageAttachment {
@@ -397,7 +385,7 @@ class DiscordUtils(val client : ClientImpl) {
         superPropertiesB64 = Base64.getEncoder().encodeToString(superPropertiesStr.toByteArray())
     }
 
-    fun createDMChannel(channel : ReadyDPrivateChannel) : DMChannelImpl =
+    fun createDMChannel(channel : SerialPrivateChannel) : DMChannelImpl =
         DMChannelImpl(
             channel.id.asSnowflake(),
             client,
@@ -415,18 +403,9 @@ class DiscordUtils(val client : ClientImpl) {
         return createUser(json.decodeFromString(response))
     }
 
-    suspend fun fetchMessageById(id : String, channel : TextBasedChannel) : Message? {
+    suspend fun fetchMessageById(id : String, channel : TextBasedChannel) : Message {
         val response = client.httpClient.get("$BASE_URL/channels/${channel.id.asString()}/messages/$id").await()
-        return when (val result = client.utils.createMessage(json.decodeFromString(response))) {
-            is Invalid -> {
-                log("Error in messageCreate: ${result.left()}", level = LogLevel(LoggerLevel.LOW, client))
-                null
-            }
-
-            is Valid -> {
-                result.value
-            }
-        }
+        return client.utils.createMessage(json.decodeFromString(response))
     }
 
     suspend fun fetchLastMessageInChannel(
@@ -453,16 +432,7 @@ class DiscordUtils(val client : ClientImpl) {
                     fetchLastMessageInChannel(channel, user, filters)
                 }
                 val message = messages.first { it.author.id.asSnowflake() == user.id && it.type == 0 || it.type == 19 }
-                return when (val result = createMessage(message)) {
-                    is Invalid -> {
-                        log("Error in messageCreate: ${result.left()}", level = LogLevel(LoggerLevel.LOW, client))
-                        null
-                    }
-
-                    is Valid -> {
-                        result.value
-                    }
-                }
+                return createMessage(message)
             }
         } catch (e : Exception) {
             e.printStackTrace()
@@ -487,4 +457,9 @@ class DiscordUtils(val client : ClientImpl) {
             client,
             client
         )
+
+    suspend fun fetchGuild(guildId : Snowflake) : Guild {
+        val data = client.httpClient.get("$BASE_URL/guilds/${guildId.asString()}").await()
+        return client.user.guilds[guildId] ?: createGuild(json.decodeFromString(data))
+    }
 }

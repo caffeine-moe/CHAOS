@@ -14,7 +14,7 @@ class Coin : Command(arrayOf("coin"), CommandInfo("Coin", "coin", "Flips a coin 
         cmd : String,
     ) {
         val face = arrayOf("Heads", "Tails").random()
-        event.channel.sendMessage(":coin: $face!").await().map { message ->
+        event.channel.sendMessage(":coin: $face!").await().also { message ->
             onComplete(message, config.auto_delete.bot.content_generation)
         }
     }
