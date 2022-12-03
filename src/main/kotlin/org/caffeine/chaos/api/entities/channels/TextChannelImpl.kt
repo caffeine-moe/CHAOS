@@ -33,23 +33,20 @@ class TextChannelImpl(
             guildId = value.id
         }
 
-    override suspend fun sendMessage(data : MessageData) : CompletableDeferred<Message> {
-        return client.user.sendMessage(this, data)
-    }
+    override suspend fun sendMessage(data : MessageData) : CompletableDeferred<Message> =
+        client.user.sendMessage(this, data)
 
-    override suspend fun sendMessage(text : String) : CompletableDeferred<Message> {
-        return client.user.sendMessage(this, MessageBuilder().append(text))
-    }
+    override suspend fun sendMessage(text : String) : CompletableDeferred<Message> =
+        client.user.sendMessage(this, MessageBuilder().append(text))
 
-    override suspend fun fetchHistory(messageFilters : MessageFilters) : List<Message> {
-        return client.user.fetchMessagesFromChannel(this, messageFilters)
-    }
 
-    override suspend fun fetchMessageById(id : String) : Message? {
-        return client.user.fetchMessageById(id, this)
-    }
+    override suspend fun fetchHistory(messageFilters : MessageFilters) : List<Message> =
+        client.user.fetchMessagesFromChannel(this, messageFilters)
 
-    override suspend fun delete() {
+
+    override suspend fun fetchMessageById(id : String) : Message? =
+        client.user.fetchMessageById(id, this)
+
+    override suspend fun delete() =
         client.user.deleteChannel(this)
-    }
 }
