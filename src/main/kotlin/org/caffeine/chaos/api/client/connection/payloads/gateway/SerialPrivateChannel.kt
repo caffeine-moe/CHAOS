@@ -1,7 +1,5 @@
 package org.caffeine.chaos.api.client.connection.payloads.gateway
 
-import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialUser
-
 @kotlinx.serialization.Serializable
 data class SerialPrivateChannel(
     override val id : String = "",

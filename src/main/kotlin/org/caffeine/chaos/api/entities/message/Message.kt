@@ -1,6 +1,5 @@
 package org.caffeine.chaos.api.entities.message
 
-import arrow.core.Either
 import kotlinx.coroutines.CompletableDeferred
 import org.caffeine.chaos.api.Snowflake
 import org.caffeine.chaos.api.client.Client

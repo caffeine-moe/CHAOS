@@ -1,9 +1,5 @@
 package org.caffeine.chaos.api.client.user
 
-import arrow.core.Either
-import arrow.core.Invalid
-import arrow.core.Valid
-import arrow.core.left
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -108,7 +104,8 @@ data class ClientUserImpl(
             )
         )
         val data = json.encodeToString(reply)
-        val response = clientImpl.httpClient.post("$BASE_URL/channels/${message.channel.id.asString()}/messages", data).await()
+        val response =
+            clientImpl.httpClient.post("$BASE_URL/channels/${message.channel.id.asString()}/messages", data).await()
         val serial = json.decodeFromString<SerialMessage>(response)
         return CompletableDeferred(clientImpl.utils.createMessage(serial))
     }
@@ -224,7 +221,7 @@ data class ClientUserImpl(
         log("NOT IMPLEMENTED // TODO")
     }
 
-    override suspend fun fetchMessageById(id : String, channel : TextBasedChannel) : Message? {
+    override suspend fun fetchMessageById(id : String, channel : TextBasedChannel) : Message {
         return clientImpl.utils.fetchMessageById(id, channel)
     }
 

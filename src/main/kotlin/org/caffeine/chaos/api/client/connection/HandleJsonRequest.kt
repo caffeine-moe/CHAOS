@@ -7,6 +7,7 @@ import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.client.connection.handlers.*
 import org.caffeine.chaos.api.client.connection.payloads.gateway.Default
 import org.caffeine.chaos.api.json
+
 suspend fun handleJsonRequest(payload : String, client : ClientImpl, start : Long) {
     val event = json.decodeFromString<Default>(payload)
     client.utils.gatewaySequence = event.s ?: client.utils.gatewaySequence

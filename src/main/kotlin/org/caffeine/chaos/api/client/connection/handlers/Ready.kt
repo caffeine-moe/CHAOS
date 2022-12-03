@@ -6,8 +6,8 @@ import org.caffeine.chaos.api.Snowflake
 import org.caffeine.chaos.api.asSnowflake
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.client.ClientImpl
-import org.caffeine.chaos.api.client.connection.payloads.gateway.ready.Ready
 import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialPrivateChannel
+import org.caffeine.chaos.api.client.connection.payloads.gateway.ready.Ready
 import org.caffeine.chaos.api.client.connection.payloads.gateway.ready.ReadyDRelationship
 import org.caffeine.chaos.api.entities.channels.DMChannelImpl
 import org.caffeine.chaos.api.entities.guild.Guild

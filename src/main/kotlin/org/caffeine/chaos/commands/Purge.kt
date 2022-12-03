@@ -1,6 +1,5 @@
 package org.caffeine.chaos.commands
 
-import arrow.core.getOrHandle
 import kotlinx.coroutines.delay
 import org.caffeine.chaos.Command
 import org.caffeine.chaos.CommandInfo

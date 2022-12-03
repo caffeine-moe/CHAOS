@@ -1,6 +1,5 @@
 package org.caffeine.chaos.api.entities.channels
 
-import arrow.core.Either
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.runBlocking
 import org.caffeine.chaos.api.Snowflake

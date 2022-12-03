@@ -1,6 +1,5 @@
 package org.caffeine.chaos.api.client.user
 
-import arrow.core.Either
 import kotlinx.coroutines.CompletableDeferred
 import org.caffeine.chaos.api.Snowflake
 import org.caffeine.chaos.api.client.Client
@@ -11,13 +10,11 @@ import org.caffeine.chaos.api.entities.channels.TextBasedChannel
 import org.caffeine.chaos.api.entities.guild.Guild
 import org.caffeine.chaos.api.entities.message.Message
 import org.caffeine.chaos.api.entities.message.MessageFilters
-import org.caffeine.chaos.api.entities.message.MessageImpl
 import org.caffeine.chaos.api.entities.message.MessageSearchFilters
 import org.caffeine.chaos.api.entities.users.User
 import org.caffeine.chaos.api.typedefs.HypeSquadHouseType
 import org.caffeine.chaos.api.typedefs.StatusType
 import org.caffeine.chaos.api.typedefs.ThemeType
-import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.api.utils.MessageData
 
 interface ClientUser : User {

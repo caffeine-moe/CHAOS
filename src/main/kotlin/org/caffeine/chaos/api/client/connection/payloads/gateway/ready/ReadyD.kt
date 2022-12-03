@@ -14,5 +14,5 @@ data class ReadyD(
     val guilds : MutableList<SerialGuild>,
     val private_channels : MutableList<SerialPrivateChannel>,
     val session_id : String,
-    val resume_gateway_url : String
+    val resume_gateway_url : String,
 )

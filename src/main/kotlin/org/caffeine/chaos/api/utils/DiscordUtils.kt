@@ -1,9 +1,6 @@
 package org.caffeine.chaos.api.utils
 
 import SerialGuild
-import arrow.core.Invalid
-import arrow.core.Valid
-import arrow.core.left
 import io.ktor.http.*
 import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
@@ -134,7 +131,7 @@ class DiscordUtils(val client : ClientImpl) {
                     collection += lastmessage
                 } else {
                     newMessages.forEach {
-                         collection += createMessage(it)
+                        collection += createMessage(it)
                     }
                 }
 
@@ -267,28 +264,29 @@ class DiscordUtils(val client : ClientImpl) {
         val attachments = message.attachments.associateBy({ it.id }, { createAttachment(it) }) as HashMap
 
         val channel : TextBasedChannel =
-            client.user.textChannels[message.channel_id.asSnowflake()] ?: fetchTextBasedChannel(message.channel_id.asSnowflake())
+            client.user.textChannels[message.channel_id.asSnowflake()]
+                ?: fetchTextBasedChannel(message.channel_id.asSnowflake())
 
         val guild : Guild? =
             if (message.guild_id == null) null else fetchGuild(message.guild_id.asSnowflake())
 
         return MessageImpl(
-                client,
-                message.id.asSnowflake(),
-                channel,
-                guild,
-                createUser(message.author),
-                message.content,
-                dateFormat.parse(message.timestamp),
-                editedTimestamp,
-                message.tts ?: false,
-                message.mention_everyone,
-                mentions,
-                attachments,
-                message.pinned,
-                message.id,
-                MessageType.enumById(message.type)
-            )
+            client,
+            message.id.asSnowflake(),
+            channel,
+            guild,
+            createUser(message.author),
+            message.content,
+            dateFormat.parse(message.timestamp),
+            editedTimestamp,
+            message.tts ?: false,
+            message.mention_everyone,
+            mentions,
+            attachments,
+            message.pinned,
+            message.id,
+            MessageType.enumById(message.type)
+        )
     }
 
     fun createAttachment(attachment : SerialAttachment) : MessageAttachment {

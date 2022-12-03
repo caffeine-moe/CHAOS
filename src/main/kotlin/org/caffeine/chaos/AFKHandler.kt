@@ -33,12 +33,12 @@ suspend fun afkHandler(event : ClientEvent.MessageCreate, client : Client) {
         return
     }
     var doit = false
-        if (event.message.mentions.values.any {
-                it.id == client.user.id
-            }
-        ) {
-            doit = true
+    if (event.message.mentions.values.any {
+            it.id == client.user.id
         }
+    ) {
+        doit = true
+    }
     if (event.channel.type == ChannelType.DM) {
         doit = true
     }

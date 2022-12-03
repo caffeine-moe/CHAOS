@@ -1,5 +1,5 @@
-import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialGuildMember
 import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialGuildChannel
+import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialGuildMember
 
 @kotlinx.serialization.Serializable
 data class SerialGuild(

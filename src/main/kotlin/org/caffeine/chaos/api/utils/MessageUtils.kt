@@ -11,17 +11,12 @@ interface MessageData {
     // val embed: MessageEmbed;
 }
 
-interface MessageDeleteOptions {
-    val timeout : Number?
-    val reason : String?
-}
-
 @Serializable
-data class MessageReference (
+data class MessageReference(
     @Transient
     val guild_id : String? = null,
     val channel_id : String,
-    val message_id : String
+    val message_id : String,
 )
 
 @Serializable
@@ -30,9 +25,8 @@ data class MessageReply(
     override val tts : Boolean,
     override val nonce : String,
     @SerialName("message_reference")
-    val messageReference : MessageReference
+    val messageReference : MessageReference,
 ) : MessageData
-
 
 
 @Serializable
