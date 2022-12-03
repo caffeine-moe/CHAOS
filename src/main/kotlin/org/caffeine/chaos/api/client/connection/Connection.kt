@@ -183,9 +183,6 @@ class Connection(private val client : ClientImpl) {
                         frame as? Frame.Text ?: continue
                         val receivedText : String = frame.readText()
                         launch {
-                            if (payload.type == PayloadType.RESUME) {
-                                println(receivedText)
-                            }
                             handleJsonRequest(receivedText, client, now)
                         }
                     }
