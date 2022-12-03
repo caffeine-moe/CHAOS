@@ -457,7 +457,9 @@ class DiscordUtils(val client : ClientImpl) {
         )
 
     suspend fun fetchGuild(guildId : Snowflake) : Guild {
-        val data = client.httpClient.get("$BASE_URL/guilds/${guildId.asString()}").await()
-        return client.user.guilds[guildId] ?: createGuild(json.decodeFromString(data))
+        return client.user.guilds[guildId] ?: run {
+            val data = client.httpClient.get("$BASE_URL/guilds/${guildId.asString()}").await()
+            createGuild(json.decodeFromString(data))
+        }
     }
 }
