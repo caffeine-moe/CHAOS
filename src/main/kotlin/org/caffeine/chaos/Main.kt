@@ -5,6 +5,7 @@ import io.ktor.client.statement.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
@@ -40,7 +41,7 @@ private suspend fun init(args : Array<String> = arrayOf()) {
     log("${ConsoleColour.BLUE.value}CHAOS is starting...")
 }
 
-suspend fun main(args : Array<String> = arrayOf()) = coroutineScope {
+fun main(args : Array<String> = arrayOf()) = runBlocking {
     init(args)
     loadConfig()
     checkNetwork()
