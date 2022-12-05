@@ -2,10 +2,8 @@ package org.caffeine.chaos
 
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.takeWhile
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
@@ -42,6 +40,10 @@ private suspend fun init(args : Array<String> = arrayOf()) {
 }
 
 fun main(args : Array<String> = arrayOf()) = runBlocking {
+
+    val dispatcher: CoroutineDispatcher = Dispatchers.Default
+    val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+
     init(args)
     loadConfig()
     checkNetwork()
@@ -55,19 +57,9 @@ fun main(args : Array<String> = arrayOf()) = runBlocking {
         ui.init(client)*/
     // adds listeners
 
-    launch {
+    launch(dispatcher) {
         client.events.takeWhile { it != ClientEvent.End }.collect {
-            launch {
-                when (it) {
-                    is ClientEvent.Ready -> {
-                        ready(client)
-                    }
-
-                    is ClientEvent.MessageCreate -> {
-                        handleMessage(it, client)
-                    }
-                }
-            }
+            launch(ioDispatcher) { handleEvent(client, it) }
         }
     }
 
