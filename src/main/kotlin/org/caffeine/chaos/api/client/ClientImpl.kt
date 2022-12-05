@@ -12,10 +12,10 @@ class ClientImpl(
     override val token : String,
     override val clientType : ClientType,
     override val statusType : StatusType,
-    override val logLevelLevel : LoggerLevel,
+    override val loggerLevel : LoggerLevel,
 ) : Client {
 
-    override val logLevel : LogLevel = LogLevel(logLevelLevel, this)
+    override val logLevel : LogLevel = LogLevel(loggerLevel, this)
     val configuration : ClientConfig = this
     override val type : ClientType = configuration.clientType
     val eventBus : EventBus = EventBus()
