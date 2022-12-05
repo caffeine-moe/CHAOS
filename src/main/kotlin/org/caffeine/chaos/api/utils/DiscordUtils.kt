@@ -247,7 +247,7 @@ class DiscordUtils(val client : ClientImpl) {
     }
 
     suspend fun fetchTextBasedChannel(channelId : Snowflake) : TextBasedChannel {
-        val data = client.httpClient.get("$BASE_URL/channels/$channelId").await()
+        val data = client.httpClient.get("$BASE_URL/channels/${channelId.asString()}").await()
         val parsedData = json.decodeFromString<SerialTextBasedChannel>(data)
         return createTextBasedChannel(parsedData, data)
     }
