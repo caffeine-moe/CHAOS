@@ -9,6 +9,6 @@ interface ClientConfig {
     val token : String
     val clientType : ClientType
     val statusType : StatusType
-    val logLevelLevel : LoggerLevel
+    val loggerLevel : LoggerLevel
     val logLevel : LogLevel
 }
