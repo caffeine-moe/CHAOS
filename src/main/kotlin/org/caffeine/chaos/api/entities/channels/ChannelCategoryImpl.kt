@@ -1,5 +1,6 @@
 package org.caffeine.chaos.api.entities.channels
 
+import kotlinx.coroutines.runBlocking
 import org.caffeine.chaos.api.Snowflake
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.entities.guild.Guild
@@ -17,7 +18,7 @@ class ChannelCategoryImpl(
     var guildId : Snowflake = Snowflake("")
 
     override var guild : Guild
-        get() = client.user.guilds[guildId] ?: throw Exception("FUCK YOU")
+        get() = client.user.guilds[guildId] ?: runBlocking { client.user.fetchGuild(guildId) }
         set(value) {
             guildId = value.id
         }
