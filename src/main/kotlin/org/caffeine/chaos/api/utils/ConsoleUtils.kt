@@ -23,10 +23,10 @@ fun log(text : String, prefix : String = "", level : LogLevel? = null) {
     when {
         level != null -> {
             when {
-                level.client.logLevelLevel.ordinal == 3 && level.level.ordinal > 3 -> return
-                level.client.logLevelLevel.ordinal == 2 && level.level.ordinal > 2 -> return
-                level.client.logLevelLevel.ordinal == 1 && level.level.ordinal > 1 -> return
-                level.client.logLevelLevel.ordinal == 0 -> return
+                level.client.loggerLevel.ordinal == 3 && level.level.ordinal > 3 -> return
+                level.client.loggerLevel.ordinal == 2 && level.level.ordinal > 2 -> return
+                level.client.loggerLevel.ordinal == 1 && level.level.ordinal > 1 -> return
+                level.client.loggerLevel.ordinal == 0 -> return
             }
         }
     }
