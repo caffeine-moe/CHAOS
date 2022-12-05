@@ -40,10 +40,6 @@ private suspend fun init(args : Array<String> = arrayOf()) {
 }
 
 fun main(args : Array<String> = arrayOf()) = runBlocking {
-
-    val dispatcher: CoroutineDispatcher = Dispatchers.Default
-    val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
-
     init(args)
     loadConfig()
     checkNetwork()
@@ -57,9 +53,9 @@ fun main(args : Array<String> = arrayOf()) = runBlocking {
         ui.init(client)*/
     // adds listeners
 
-    launch(dispatcher) {
+    launch(Dispatchers.Default) {
         client.events.takeWhile { it != ClientEvent.End }.collect {
-            launch(ioDispatcher) { handleEvent(client, it) }
+            launch { handleEvent(client, it) }
         }
     }
 
