@@ -12,7 +12,6 @@ data class Config(
     val afk : AFK,
     val auto_delete : AutoDelete,
     val anti_scam : AntiScam,
-    val exchange : Exchange,
     val backup : Backup,
     val restore : Restore,
     val nitro_sniper : NitroSniper,

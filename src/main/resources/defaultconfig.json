@@ -38,10 +38,6 @@
     "enabled": true,
     "block": true
   },
-  "exchange": {
-    "base": "XMR",
-    "target": "GBP"
-  },
   "backup": {
     "servers": true,
     "dmed_users": true,
