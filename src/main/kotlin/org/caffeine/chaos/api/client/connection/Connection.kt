@@ -127,7 +127,7 @@ class Connection(private val client : ClientImpl) {
             val heartbeat = json.encodeToString(
                 HeartBeat(
                     OPCODE.HEARTBEAT.value,
-                    if (client.utils.gatewaySequence > 0) client.utils.gatewaySequence else null
+                    client.utils.gatewaySequence
                 )
             )
             webSocket.send(heartbeat)
@@ -152,7 +152,7 @@ class Connection(private val client : ClientImpl) {
         client.httpClient.client.wss(
             host = if (payload.type != PayloadType.RESUME) GATEWAY
             else client.utils.resumeGatewayUrl.removePrefix("wss://").ifBlank { GATEWAY },
-            path = "/?v=9&encoding=json",
+            path = "/?encoding=json&v=9",
             port = 443
         ) {
 
