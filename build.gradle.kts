@@ -34,6 +34,5 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.4.5")
     implementation("com.github.lalyos:jfiglet:0.0.9")
     implementation("com.github.oshi:oshi-core:6.3.2")
-    implementation("io.arrow-kt:arrow-fx-coroutines:1.1.2")
     implementation("com.github.sealedtx:java-youtube-downloader:3.1.0")
 }
