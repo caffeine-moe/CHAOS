@@ -144,7 +144,7 @@ class Connection(private val client : ClientImpl) {
         }
     }
 
-    suspend fun connect(payload : PayloadDef) {
+    private suspend fun connect(payload : PayloadDef) {
         fetchWebClientValues(client)
         client.utils.createSuperProperties()
         client.utils.tokenValidator(client.configuration.token)
@@ -203,7 +203,7 @@ class Connection(private val client : ClientImpl) {
         log("Client logged out.", "API:", LogLevel(LoggerLevel.LOW, client))
     }
 
-    suspend fun reconnectResume() {
+    private suspend fun reconnectResume() {
         disconnect()
         connect(generateResume())
     }
