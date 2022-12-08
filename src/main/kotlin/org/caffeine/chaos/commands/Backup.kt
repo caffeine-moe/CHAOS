@@ -34,7 +34,7 @@ class Backup :
     private data class PrivateGuild(
         val id : String,
         val name : String,
-        @Transient val vanityUrl : String? = null,
+        val vanityUrl : String? = null,
     )
 
     @kotlinx.serialization.Serializable
@@ -93,15 +93,12 @@ class Backup :
                     if (!p.exists()) {
                         p.mkdir()
                     }
-                    var f : File
-                    f = File("${p.absolutePath}\\$time.json")
-                    if (p.absolutePath.startsWith("/")) {
-                        f = File("${p.absolutePath}/$time.json")
+                    val f : File = if (p.absolutePath.startsWith("/")) {
+                       File("${p.absolutePath}/$time.json")
+                    } else {
+                        File("${p.absolutePath}\\$time.json")
                     }
-                    withContext(Dispatchers.IO) {
-                        Files.createFile(f.toPath())
-                    }
-                    File(f.toPath().toString()).writeText(textToWrite)
+                    f.writeText(textToWrite)
                     try {
                         message.edit(
                             MessageBuilder()
