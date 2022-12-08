@@ -14,7 +14,6 @@ import org.caffeine.chaos.api.typedefs.LoggerLevel
 import org.caffeine.chaos.api.utils.*
 import org.caffeine.chaos.config.Config
 import java.io.File
-import java.net.ConnectException
 import kotlin.system.exitProcess
 
 // version lmao
@@ -37,21 +36,16 @@ private suspend fun init(args : Array<String> = arrayOf()) {
     printSeparator()
     handleArgs(args)
     log("${ConsoleColour.BLUE.value}CHAOS is starting...")
+    loadConfig()
 }
 
 fun main(args : Array<String> = arrayOf()) = runBlocking {
     init(args)
-    loadConfig()
-    checkNetwork()
     val client = Client
         .setClientType(ClientType.USER)
         .setToken(config.token)
         .setLogLevel(LoggerLevel.ALL)
         .build()
-    // web ui benched for now
-    /*         val ui = WebUI()
-        ui.init(client)*/
-    // adds listeners
 
     launch(Dispatchers.Default) {
         client.events.takeWhile { it != ClientEvent.End }.collect {
@@ -67,10 +61,12 @@ suspend fun loadConfig() = coroutineScope {
     val prefix = "ERROR:"
 
     if (!configFile.exists()) {
-        val default = javaClass.classLoader.getResource("defaultconfig.json") ?: run { log(
-            "Config not found, and we were unable to generate one for you, please create a config file and put this in it https://caffeine.moe/CHAOS/config.json",
-            prefix
-        ); return@coroutineScope }
+        val default = javaClass.classLoader.getResource("defaultconfig.json") ?: run {
+            log(
+                "Config not found, and we were unable to generate one for you, please create a config file and put this in it https://caffeine.moe/CHAOS/config.json",
+                prefix
+            ); return@coroutineScope
+        }
         this.also {
             configFile.createNewFile()
         }
@@ -102,15 +98,6 @@ private suspend fun runConfigTasks() {
     }
     if (config.anti_scam.enabled) {
         fetchAntiScam()
-    }
-}
-
-suspend fun checkNetwork() {
-    try {
-        normalHTTPClient.get("https://example.com")
-    } catch (e : ConnectException) {
-        log("Unable to connect to the internet; internet access is needed for CHAOS.")
-        exitProcess(69)
     }
 }
 
