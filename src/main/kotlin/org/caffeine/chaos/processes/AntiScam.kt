@@ -1,8 +1,10 @@
-package org.caffeine.chaos
+package org.caffeine.chaos.processes
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.utils.log
+import org.caffeine.chaos.config
+import org.caffeine.chaos.scamLinks
 import java.net.URL
 import kotlin.math.absoluteValue
 

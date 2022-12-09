@@ -3,7 +3,7 @@ package org.caffeine.chaos
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.takeWhile
+import kotlinx.coroutines.flow.*
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
@@ -13,6 +13,8 @@ import org.caffeine.chaos.api.typedefs.ClientType
 import org.caffeine.chaos.api.typedefs.LoggerLevel
 import org.caffeine.chaos.api.utils.*
 import org.caffeine.chaos.config.Config
+import org.caffeine.chaos.processes.AntiScamResponse
+import org.caffeine.chaos.processes.update
 import java.io.File
 import kotlin.system.exitProcess
 

@@ -1,8 +1,9 @@
-package org.caffeine.chaos
+package org.caffeine.chaos.processes
 
 import kotlinx.coroutines.delay
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.entities.message.Message
+import org.caffeine.chaos.config
 
 suspend fun autoDeleteUser(event : ClientEvent.MessageCreate) {
     if (!config.auto_delete.user.enabled) return

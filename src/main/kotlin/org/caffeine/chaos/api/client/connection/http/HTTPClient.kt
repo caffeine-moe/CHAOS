@@ -78,7 +78,7 @@ class HTTPClient(val clientImpl : ClientImpl) {
         expectSuccess = true
 
         HttpResponseValidator {
-            handleResponseExceptionWithRequest { cause, _ ->
+            handleResponseExceptionWithRequest { cause, _ ->1
                 if (cause is CancellationException) {
                     log("Error: ${cause.message}", "API:", LogLevel(LoggerLevel.LOW, clientImpl))
                     clientImpl.restart()

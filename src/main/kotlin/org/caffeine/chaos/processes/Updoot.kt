@@ -1,4 +1,4 @@
-package org.caffeine.chaos
+package org.caffeine.chaos.processes
 
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -11,6 +11,9 @@ import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.utils.ConsoleColour
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.api.utils.normalHTTPClient
+import org.caffeine.chaos.config
+import org.caffeine.chaos.versionDouble
+import org.caffeine.chaos.versionString
 import java.io.File
 import java.net.URL
 import java.nio.file.Files

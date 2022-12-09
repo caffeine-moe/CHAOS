@@ -7,6 +7,10 @@ import org.caffeine.chaos.api.typedefs.LoggerLevel
 import org.caffeine.chaos.api.utils.ConsoleColour
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.commands.*
+import org.caffeine.chaos.processes.antiScam
+import org.caffeine.chaos.processes.autoDeleteUser
+import org.caffeine.chaos.processes.cdnpls
+import org.caffeine.chaos.processes.nitroSniper
 
 var commandList : HashMap<String, Command> = HashMap()
 

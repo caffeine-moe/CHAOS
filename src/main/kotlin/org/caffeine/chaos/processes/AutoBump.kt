@@ -1,4 +1,4 @@
-package org.caffeine.chaos
+package org.caffeine.chaos.processes
 /*
 import kotlinx.coroutines.coroutineScope
 import org.caffeine.chaos.api.client.Client

@@ -181,11 +181,13 @@ class Connection(private val client : ClientImpl) {
             val now = System.currentTimeMillis()
 
             webSocket = this
+
             log(
                 "${ConsoleColour.GREEN.value}Connected to the Discord gateway!",
                 "API:",
                 LogLevel(LoggerLevel.LOW, client)
             )
+
             val event = incoming.receive().deflateData()
             val init = json.decodeFromString<Init>(event)
             when (init.op) {
@@ -213,7 +215,6 @@ class Connection(private val client : ClientImpl) {
     }
 
     private fun Frame.deflateData(): String {
-
         val outputStream = ByteArrayOutputStream()
         InflaterOutputStream(outputStream, inflater).use {
             it.write(data)

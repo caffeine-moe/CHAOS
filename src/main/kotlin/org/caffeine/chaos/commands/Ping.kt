@@ -5,8 +5,6 @@ import io.ktor.network.sockets.*
 import io.ktor.util.network.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.caffeine.chaos.Command
-import org.caffeine.chaos.CommandInfo
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.utils.MessageBuilder

@@ -6,7 +6,7 @@ import org.caffeine.chaos.api.client.ClientEvent
 suspend fun handleEvent(client : Client, event : ClientEvent) {
     when (event) {
         is ClientEvent.Ready -> {
-            ready(client)
+            handleReady(client)
         }
 
         is ClientEvent.MessageCreate -> {

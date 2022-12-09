@@ -1,4 +1,4 @@
-package org.caffeine.chaos
+package org.caffeine.chaos.commands
 
 data class CommandInfo(
     val name : String,
