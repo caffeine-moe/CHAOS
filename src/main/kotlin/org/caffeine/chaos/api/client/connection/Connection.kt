@@ -1,8 +1,12 @@
 package org.caffeine.chaos.api.client.connection
 
 import io.ktor.client.plugins.websocket.*
+import io.ktor.utils.io.core.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.GATEWAY
@@ -24,10 +28,17 @@ import org.caffeine.chaos.api.typedefs.ConnectionType
 import org.caffeine.chaos.api.typedefs.LogLevel
 import org.caffeine.chaos.api.typedefs.LoggerLevel
 import org.caffeine.chaos.api.utils.*
+import java.io.ByteArrayOutputStream
+import java.util.zip.Inflater
+import java.util.zip.InflaterOutputStream
+import kotlin.text.Charsets.UTF_8
+
 
 class Connection(private val client : ClientImpl) {
 
     var ready = false
+
+    private lateinit var inflater: Inflater
 
     private lateinit var webSocket : DefaultClientWebSocketSession
 
@@ -144,15 +155,26 @@ class Connection(private val client : ClientImpl) {
         }
     }
 
+    private suspend fun readSocket(start : Long) {
+        webSocket.incoming.receiveAsFlow().buffer(Channel.UNLIMITED).collect {
+            when (it) {
+                is Frame.Binary, is Frame.Text -> handleJsonRequest(it.deflateData(), client, start)
+                else -> { /*ignore*/ }
+            }
+        }
+    }
+
     private suspend fun connect(payload : PayloadDef) {
         fetchWebClientValues(client)
         client.utils.createSuperProperties()
         client.utils.tokenValidator(client.configuration.token)
 
+        inflater = Inflater()
+
         client.httpClient.client.wss(
             host = if (payload.type != PayloadType.RESUME) GATEWAY
             else client.utils.resumeGatewayUrl.removePrefix("wss://").ifBlank { GATEWAY },
-            path = "/?encoding=json&v=9",
+            path = "/?encoding=json&v=9&compress=zlib-stream",
             port = 443
         ) {
 
@@ -164,8 +186,8 @@ class Connection(private val client : ClientImpl) {
                 "API:",
                 LogLevel(LoggerLevel.LOW, client)
             )
-            val event = this.incoming.receive().data
-            val init = json.decodeFromString<Init>(event.decodeToString())
+            val event = incoming.receive().deflateData()
+            val init = json.decodeFromString<Init>(event)
             when (init.op) {
                 OPCODE.HELLO.value -> {
                     log(
@@ -175,17 +197,11 @@ class Connection(private val client : ClientImpl) {
                     )
                     heartBeat = launch { startHeartBeat(init.d.heartbeat_interval) }
 
-                    send(payload.payload)
+                    send(Frame.Text(payload.payload))
 
                     log("${payload.name} sent.", "API:", LogLevel(LoggerLevel.LOW, client))
 
-                    for (frame in incoming) {
-                        frame as? Frame.Text ?: continue
-                        val receivedText : String = frame.readText()
-                        launch {
-                            handleJsonRequest(receivedText, client, now)
-                        }
-                    }
+                    readSocket(now)
                 }
 
                 else -> {
@@ -195,6 +211,19 @@ class Connection(private val client : ClientImpl) {
         }
 
     }
+
+    private fun Frame.deflateData(): String {
+
+        val outputStream = ByteArrayOutputStream()
+        InflaterOutputStream(outputStream, inflater).use {
+            it.write(data)
+        }
+
+        return outputStream.use {
+            String(outputStream.toByteArray(), 0, outputStream.size(), UTF_8)
+        }
+    }
+
 
     private suspend fun disconnect() {
         heartBeat.cancelAndJoin()
