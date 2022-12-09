@@ -13,5 +13,5 @@ data class IdentifyDClientState(
     val user_guild_settings_version : Int = -1,
     val user_settings_version : Int = -1,
     val private_channels_version : Int = 0,
-    val api_code_version : Int = 0
+    val api_code_version : Int = 0,
 )

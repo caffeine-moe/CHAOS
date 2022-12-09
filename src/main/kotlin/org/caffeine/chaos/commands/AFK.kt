@@ -1,12 +1,14 @@
 package org.caffeine.chaos.commands
 
-import org.caffeine.chaos.*
+import org.caffeine.chaos.afk
+import org.caffeine.chaos.afkMessage
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.client.user.CustomStatus
 import org.caffeine.chaos.api.typedefs.StatusType
 import org.caffeine.chaos.api.utils.log
+import org.caffeine.chaos.config
 
 var oldCustomStatus = CustomStatus()
 var oldStatus = StatusType.DND

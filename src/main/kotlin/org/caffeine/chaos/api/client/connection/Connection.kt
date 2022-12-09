@@ -27,7 +27,9 @@ import org.caffeine.chaos.api.typedefs.ClientType
 import org.caffeine.chaos.api.typedefs.ConnectionType
 import org.caffeine.chaos.api.typedefs.LogLevel
 import org.caffeine.chaos.api.typedefs.LoggerLevel
-import org.caffeine.chaos.api.utils.*
+import org.caffeine.chaos.api.utils.ConsoleColour
+import org.caffeine.chaos.api.utils.fetchWebClientValues
+import org.caffeine.chaos.api.utils.log
 import java.io.ByteArrayOutputStream
 import java.util.zip.Inflater
 import java.util.zip.InflaterOutputStream
@@ -38,7 +40,7 @@ class Connection(private val client : ClientImpl) {
 
     var ready = false
 
-    private lateinit var inflater: Inflater
+    private lateinit var inflater : Inflater
 
     private lateinit var webSocket : DefaultClientWebSocketSession
 
@@ -159,7 +161,8 @@ class Connection(private val client : ClientImpl) {
         webSocket.incoming.receiveAsFlow().buffer(Channel.UNLIMITED).collect {
             when (it) {
                 is Frame.Binary, is Frame.Text -> handleJsonRequest(it.deflateData(), client, start)
-                else -> { /*ignore*/ }
+                else -> { /*ignore*/
+                }
             }
         }
     }
@@ -214,7 +217,7 @@ class Connection(private val client : ClientImpl) {
 
     }
 
-    private fun Frame.deflateData(): String {
+    private fun Frame.deflateData() : String {
         val outputStream = ByteArrayOutputStream()
         InflaterOutputStream(outputStream, inflater).use {
             it.write(data)

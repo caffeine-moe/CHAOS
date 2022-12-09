@@ -88,7 +88,7 @@ class Backup :
                         p.mkdir()
                     }
                     val f : File = if (p.absolutePath.startsWith("/")) {
-                       File("${p.absolutePath}/$time.json")
+                        File("${p.absolutePath}/$time.json")
                     } else {
                         File("${p.absolutePath}\\$time.json")
                     }
