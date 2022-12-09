@@ -13,6 +13,6 @@ class ReplyLatency : Command(arrayOf("rl"), CommandInfo("", "", "")) {
         cmd : String,
     ) {
         val m = event.channel.sendMessage("replied").await()
-        m.also { println("${it.id.asUnixTs() - event.message.id.asUnixTs()}ms") }
+        m.also { println("${System.currentTimeMillis() - event.message.id.asUnixTs()}ms") }
     }
 }
