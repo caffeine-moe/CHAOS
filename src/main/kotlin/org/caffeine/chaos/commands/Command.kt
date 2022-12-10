@@ -7,8 +7,8 @@ import org.caffeine.chaos.api.typedefs.LoggerLevel
 import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.api.utils.MessageData
 import org.caffeine.chaos.api.utils.log
-import org.caffeine.chaos.handlers.commandList
 import org.caffeine.chaos.config
+import org.caffeine.chaos.handlers.commandList
 
 abstract class Command(val commandNames : Array<String>, val commandInfo : CommandInfo) {
     init {

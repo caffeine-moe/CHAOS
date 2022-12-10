@@ -43,7 +43,7 @@ suspend fun loadConfig() = coroutineScope {
         exitProcess(69)
     }
     if (config.updater.enabled) {
-            update()
+        update()
     }
     if (config.anti_scam.enabled) {
         fetchAntiScam()

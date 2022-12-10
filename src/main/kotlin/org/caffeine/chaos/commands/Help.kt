@@ -3,8 +3,8 @@ package org.caffeine.chaos.commands
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.utils.MessageBuilder
-import org.caffeine.chaos.handlers.commandList
 import org.caffeine.chaos.config
+import org.caffeine.chaos.handlers.commandList
 import org.caffeine.chaos.versionString
 
 class Help : Command(

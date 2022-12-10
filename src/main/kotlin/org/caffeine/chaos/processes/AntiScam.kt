@@ -25,6 +25,7 @@ suspend fun fetchAntiScam() {
                 .bodyAsText()
         ).domains
 }
+
 suspend fun antiScam(client : Client, event : ClientEvent.MessageCreate) {
     if (event.message.author.id == client.user.id) return
     val start = System.currentTimeMillis()
