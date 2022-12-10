@@ -5,7 +5,7 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.config
-import org.caffeine.chaos.spamCock
+import org.caffeine.chaos.handlers.spamCock
 
 class Spam : Command(arrayOf("spam"), CommandInfo("Spam", "spam <Message> <Amount>", "Spams messages in a channel.")) {
     override suspend fun onCalled(

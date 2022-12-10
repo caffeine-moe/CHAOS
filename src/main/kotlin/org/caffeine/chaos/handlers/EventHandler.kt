@@ -1,4 +1,4 @@
-package org.caffeine.chaos
+package org.caffeine.chaos.handlers
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent

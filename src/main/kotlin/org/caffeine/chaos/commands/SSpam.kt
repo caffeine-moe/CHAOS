@@ -2,7 +2,7 @@ package org.caffeine.chaos.commands
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.spamCock
+import org.caffeine.chaos.handlers.spamCock
 
 class SSpam : Command(arrayOf("sspam"), CommandInfo("SSpam", "sspam", "Stops the spammer.")) {
     override suspend fun onCalled(

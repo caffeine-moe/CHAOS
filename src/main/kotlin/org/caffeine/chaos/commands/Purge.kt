@@ -7,7 +7,7 @@ import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.entities.channels.TextBasedChannel
 import org.caffeine.chaos.api.entities.message.MessageFilters
 import org.caffeine.chaos.api.typedefs.MessageType
-import org.caffeine.chaos.purgeCock
+import org.caffeine.chaos.handlers.purgeCock
 
 class Purge : Command(
     arrayOf("purge", "sclear"),

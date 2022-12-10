@@ -1,7 +1,9 @@
-package org.caffeine.chaos
+package org.caffeine.chaos.handlers
 
 import org.caffeine.chaos.api.utils.log
+import org.caffeine.chaos.configFile
 import org.caffeine.chaos.processes.checkUpdates
+import org.caffeine.chaos.versionString
 import java.io.File
 import kotlin.system.exitProcess
 

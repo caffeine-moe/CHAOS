@@ -1,7 +1,7 @@
 package org.caffeine.chaos.commands
 
-import org.caffeine.chaos.afk
-import org.caffeine.chaos.afkMessage
+import org.caffeine.chaos.handlers.afk
+import org.caffeine.chaos.handlers.afkMessage
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.client.ClientImpl
