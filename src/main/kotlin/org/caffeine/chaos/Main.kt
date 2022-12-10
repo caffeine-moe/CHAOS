@@ -1,17 +1,16 @@
 package org.caffeine.chaos
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.takeWhile
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
+import org.caffeine.chaos.api.client.on
 import org.caffeine.chaos.api.typedefs.ClientType
 import org.caffeine.chaos.api.typedefs.LoggerLevel
 import org.caffeine.chaos.api.utils.*
 import org.caffeine.chaos.config.Config
 import org.caffeine.chaos.handlers.handleArgs
-import org.caffeine.chaos.handlers.handleEvent
+import org.caffeine.chaos.handlers.handleMessage
+import org.caffeine.chaos.handlers.handleReady
 import org.caffeine.chaos.processes.loadConfig
 import java.io.File
 
@@ -46,11 +45,8 @@ fun main(args : Array<String> = arrayOf()) = runBlocking {
         .setLogLevel(LoggerLevel.ALL)
         .build()
 
-    launch(Dispatchers.Default) {
-        client.events.takeWhile { it != ClientEvent.End }.collect {
-            launch { handleEvent(client, it) }
-        }
-    }
+    client.on<ClientEvent.Ready> { handleReady(client) }
+    client.on<ClientEvent.MessageCreate> { handleMessage(this, client) }
 
     client.login()
 }
