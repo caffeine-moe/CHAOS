@@ -3,6 +3,7 @@ package org.caffeine.chaos.commands
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.utils.awaitThen
 import org.caffeine.chaos.config
 import org.caffeine.chaos.handlers.commandList
 import org.caffeine.chaos.versionString
@@ -22,8 +23,8 @@ class Help : Command(
                 MessageBuilder()
                     .appendLine("**CHAOS v$versionString**")
                     .appendLine("**Commands:** https://caffeine.moe/CHAOS/commands/")
-            ).await().also { message ->
-                onComplete(message, config.auto_delete.bot.content_generation)
+            ).awaitThen { message ->
+                onComplete(message, true)
             }
             return
         }
@@ -39,13 +40,13 @@ class Help : Command(
             msg.appendLine("- Usage: ${config.prefix}${command.commandInfo.usage}")
             msg.appendLine("- Description: ${command.commandInfo.description}")
             msg.appendLine("```")
-            event.channel.sendMessage(msg).await().also { message ->
-                onComplete(message, config.auto_delete.bot.content_generation)
+            event.channel.sendMessage(msg).awaitThen { message ->
+                onComplete(message, true)
             }
             return
         }
         event.channel.sendMessage(error(client, event, "${args.joinToString(" ")} is not a command.", commandInfo))
-            .await().also {
+            .awaitThen {
                 onComplete(it, true)
             }
     }

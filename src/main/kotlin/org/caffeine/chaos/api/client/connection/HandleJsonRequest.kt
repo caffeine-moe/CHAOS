@@ -1,22 +1,23 @@
 package org.caffeine.chaos.api.client.connection
 
-import kotlinx.serialization.decodeFromString
-import org.caffeine.chaos.api.GatewayEvent
-import org.caffeine.chaos.api.OPCODE
 import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.client.connection.handlers.*
 import org.caffeine.chaos.api.client.connection.payloads.gateway.Default
-import org.caffeine.chaos.api.json
+import org.caffeine.chaos.api.utils.tryDecodeFromString
 
 suspend fun handleJsonRequest(payload : String, client : ClientImpl, start : Long) {
-    val event = json.decodeFromString<Default>(payload)
-    client.utils.gatewaySequence = event.s ?: client.utils.gatewaySequence
+    val event = tryDecodeFromString<Default>(payload) ?: return
+    client.socket.gatewaySequence = event.s ?: client.socket.gatewaySequence
     when (event.op) {
         OPCODE.DISPATCH.value -> {
             if (!isReady(event, client, payload, start)) return
             when (event.t) {
 
                 GatewayEvent.MESSAGE_CREATE.value -> messageCreate(payload, client)
+
+                GatewayEvent.MESSAGE_UPDATE.value -> messageUpdate(payload, client)
+
+                GatewayEvent.MESSAGE_DELETE.value -> messageDelete(payload, client)
 
                 GatewayEvent.CHANNEL_CREATE.value -> channelCreate(payload, client)
 

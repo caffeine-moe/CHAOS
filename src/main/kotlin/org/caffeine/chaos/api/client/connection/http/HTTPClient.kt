@@ -69,7 +69,7 @@ class HTTPClient(val clientImpl : ClientImpl) {
 
         defaultRequest {
             port = 443
-            headers.appendAll(defaultHeaders)
+            headers.appendMissing(defaultHeaders)
         }
 
         engine {
@@ -79,7 +79,6 @@ class HTTPClient(val clientImpl : ClientImpl) {
 
         HttpResponseValidator {
             handleResponseExceptionWithRequest { cause, _ ->
-                1
                 if (cause is CancellationException) {
                     log("Error: ${cause.message}", "API:", LogLevel(LoggerLevel.LOW, clientImpl))
                     clientImpl.restart()
@@ -143,11 +142,5 @@ class HTTPClient(val clientImpl : ClientImpl) {
         return client.request {
             takeFrom(data)
         }.bodyAsText()
-    }
-
-    companion object Factory {
-        fun build(client : ClientImpl) : HTTPClient {
-            return HTTPClient(client)
-        }
     }
 }

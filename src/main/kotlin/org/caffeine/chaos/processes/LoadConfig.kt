@@ -3,7 +3,7 @@ package org.caffeine.chaos.processes
 import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
-import org.caffeine.chaos.api.json
+import org.caffeine.chaos.api.utils.json
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.config
 import org.caffeine.chaos.configFile
@@ -20,7 +20,7 @@ suspend fun loadConfig() = coroutineScope {
                 prefix
             ); return@coroutineScope
         }
-        this.also {
+        also {
             configFile.createNewFile()
         }
         configFile.writeText(default.readText())
@@ -45,7 +45,7 @@ suspend fun loadConfig() = coroutineScope {
     if (config.updater.enabled) {
         update()
     }
-    if (config.anti_scam.enabled) {
+    if (config.antiScam.enabled) {
         fetchAntiScam()
     }
 }

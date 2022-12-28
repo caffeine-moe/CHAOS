@@ -16,12 +16,12 @@ suspend fun handleArgs(args : Array<String>) {
                 log("  -v, --version: Show version information and exit")
                 log("  -c, --config: Load a config file")
                 log("  -u, --update: Check for updates")
-                exitProcess(69)
+                exitProcess(0)
             }
 
             "-v", "--version" -> {
-                log("CHAOS v$versionString")
-                exitProcess(69)
+                log(versionString)
+                exitProcess(0)
             }
 
             "-c", "--config" -> {
@@ -29,19 +29,19 @@ suspend fun handleArgs(args : Array<String>) {
                     log("Loading config file ${args[1]}")
                     configFile = File(args[1])
                 } else {
-                    log("No config file specified.")
-                    exitProcess(69)
+                    log("No or Invalid config file path specified.")
+                    exitProcess(1)
                 }
             }
 
             "-u", "--update" -> {
                 checkUpdates()
-                exitProcess(69)
+                exitProcess(0)
             }
 
             else -> {
                 log("Unknown argument: ${args.first()}")
-                exitProcess(69)
+                exitProcess(1)
             }
         }
     }

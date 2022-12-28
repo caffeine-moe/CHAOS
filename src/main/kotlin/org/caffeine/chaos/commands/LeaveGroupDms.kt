@@ -7,6 +7,7 @@ import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.entities.channels.BaseChannel
 import org.caffeine.chaos.api.typedefs.ChannelType
 import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.utils.awaitThen
 import org.caffeine.chaos.api.utils.log
 
 class LeaveGroupDms :
@@ -25,11 +26,8 @@ class LeaveGroupDms :
         try {
             val list = client.user.channels.values.filter { it.type == ChannelType.GROUP }
             if (list.isEmpty()) {
-                event.channel.sendMessage(
-                    MessageBuilder()
-                        .appendLine("There are no channels to delete!")
-                )
-                    .await().also { message -> onComplete(message, true) }
+                event.channel.sendMessage("There are no channels to delete!")
+                    .awaitThen { message -> onComplete(message, true) }
                 return
             }
             for (channel : BaseChannel in list) {
@@ -47,7 +45,7 @@ class LeaveGroupDms :
                         .appendLine("Done! Deleted $done channels!")
                         .appendLine("Check the console to see a list of the deleted channels.")
                 )
-                    .await().also { message -> onComplete(message, true) }
+                    .awaitThen { message -> onComplete(message, true) }
             }
             if (done == 1) {
                 log(channels.toString(), "CHANNELS DELETED:")
@@ -56,7 +54,7 @@ class LeaveGroupDms :
                         .appendLine("Done! Deleted $done channel!")
                         .appendLine("Check the console to see the name of the deleted channel.")
                 )
-                    .await().also { message -> onComplete(message, true) }
+                    .awaitThen { message -> onComplete(message, true) }
             }
         } catch (e : Exception) {
             println(e.printStackTrace())

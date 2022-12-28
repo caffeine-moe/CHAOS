@@ -1,12 +1,13 @@
 package org.caffeine.chaos.api.client.user
 
 import kotlinx.coroutines.CompletableDeferred
-import org.caffeine.chaos.api.Snowflake
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.entities.Snowflake
 import org.caffeine.chaos.api.entities.channels.BaseChannel
 import org.caffeine.chaos.api.entities.channels.DMChannel
 import org.caffeine.chaos.api.entities.channels.GuildChannel
 import org.caffeine.chaos.api.entities.channels.TextBasedChannel
+import org.caffeine.chaos.api.entities.guild.Emoji
 import org.caffeine.chaos.api.entities.guild.Guild
 import org.caffeine.chaos.api.entities.message.Message
 import org.caffeine.chaos.api.entities.message.MessageFilters
@@ -31,10 +32,13 @@ interface ClientUser : User {
     val friends : Map<Snowflake, User>
     val blocked : Map<Snowflake, User>
     val guilds : Map<Snowflake, Guild>
+    val emojis : Map<Snowflake, Emoji>
     val channels : Map<Snowflake, BaseChannel>
     val guildChannels : Map<Snowflake, GuildChannel>
     val textChannels : Map<Snowflake, TextBasedChannel>
     val dmChannels : Map<Snowflake, DMChannel>
+
+    val messageCache : Map<Snowflake, Message>
 
     suspend fun deleteChannel(channel : BaseChannel)
 
@@ -77,4 +81,6 @@ interface ClientUser : User {
     suspend fun fetchChannelFromId(id : Snowflake) : BaseChannel?
     suspend fun replyMessage(message : Message, data : MessageData) : CompletableDeferred<Message>
     suspend fun fetchGuild(guildId : Snowflake) : Guild
+
+    suspend fun openDMWith(id : Snowflake) : DMChannel?
 }

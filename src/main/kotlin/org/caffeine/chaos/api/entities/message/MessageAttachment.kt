@@ -1,5 +1,8 @@
 package org.caffeine.chaos.api.entities.message
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class MessageAttachment(
     val contentType : String = "",
     val filename : String = "",

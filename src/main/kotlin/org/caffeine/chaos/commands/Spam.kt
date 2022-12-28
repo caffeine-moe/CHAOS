@@ -4,7 +4,7 @@ import kotlinx.coroutines.delay
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.utils.MessageBuilder
-import org.caffeine.chaos.config
+import org.caffeine.chaos.api.utils.awaitThen
 import org.caffeine.chaos.handlers.spamCock
 
 class Spam : Command(arrayOf("spam"), CommandInfo("Spam", "spam <Message> <Amount>", "Spams messages in a channel.")) {
@@ -17,13 +17,9 @@ class Spam : Command(arrayOf("spam"), CommandInfo("Spam", "spam <Message> <Amoun
         spamCock = false
         if (args.isEmpty()) {
             event.message.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))
-                .await().also { message -> onComplete(message, true) }
+                .awaitThen { message -> onComplete(message, false) }
             return
         }
-        val msg = event.message.content.removeSurrounding(
-            "${config.prefix}$cmd",
-            args.last()
-        ).trim()
         try {
             val number = args.last().toLong()
             if (number <= 0) {
@@ -35,9 +31,10 @@ class Spam : Command(arrayOf("spam"), CommandInfo("Spam", "spam <Message> <Amoun
                         commandInfo
                     )
                 )
-                    .await().also { message -> onComplete(message, true) }
+                    .awaitThen { message -> onComplete(message, false) }
                 return
             }
+            val msg = args.joinToString(" ").removeSuffix(number.toString()).trim()
             var done = 0
             val message = MessageBuilder().append(msg)
             for (i in 1..number) {
@@ -51,11 +48,11 @@ class Spam : Command(arrayOf("spam"), CommandInfo("Spam", "spam <Message> <Amoun
                 event.message.channel.sendMessage(
                     MessageBuilder().appendLine("Done spamming '$msg' $done times.")
                 )
-                    .await().also { message -> onComplete(message, true) }
+                    .awaitThen { message -> onComplete(message, false) }
             }
             if (done == 1) {
                 event.message.channel.sendMessage(MessageBuilder().appendLine("Done spamming '$msg' once."))
-                    .await().also { message -> onComplete(message, true) }
+                    .awaitThen { message -> onComplete(message, false) }
             }
         } catch (e : Exception) {
             when (e) {
@@ -68,12 +65,12 @@ class Spam : Command(arrayOf("spam"), CommandInfo("Spam", "spam <Message> <Amoun
                             commandInfo
                         )
                     )
-                        .await().also { message -> onComplete(message, true) }
+                        .awaitThen { message -> onComplete(message, false) }
                 }
 
                 is IndexOutOfBoundsException -> {
                     event.message.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))
-                        .await().also { message -> onComplete(message, true) }
+                        .awaitThen { message -> onComplete(message, false) }
                 }
             }
         }

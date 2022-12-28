@@ -9,36 +9,26 @@ import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
-import org.caffeine.chaos.api.GATEWAY
-import org.caffeine.chaos.api.OPCODE
-import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.client.connection.payloads.client.HeartBeat
-import org.caffeine.chaos.api.client.connection.payloads.client.bot.identify.IdentifyDProperties
-import org.caffeine.chaos.api.client.connection.payloads.client.resume.Resume
-import org.caffeine.chaos.api.client.connection.payloads.client.resume.ResumeD
-import org.caffeine.chaos.api.client.connection.payloads.client.user.identify.Identify
-import org.caffeine.chaos.api.client.connection.payloads.client.user.identify.IdentifyD
-import org.caffeine.chaos.api.client.connection.payloads.client.user.identify.IdentifyDClientState
-import org.caffeine.chaos.api.client.connection.payloads.client.user.identify.IdentifyDPresence
 import org.caffeine.chaos.api.client.connection.payloads.gateway.init.Init
-import org.caffeine.chaos.api.json
-import org.caffeine.chaos.api.typedefs.ClientType
 import org.caffeine.chaos.api.typedefs.ConnectionType
 import org.caffeine.chaos.api.typedefs.LogLevel
 import org.caffeine.chaos.api.typedefs.LoggerLevel
-import org.caffeine.chaos.api.utils.ConsoleColour
-import org.caffeine.chaos.api.utils.fetchWebClientValues
-import org.caffeine.chaos.api.utils.log
+import org.caffeine.chaos.api.utils.*
 import java.io.ByteArrayOutputStream
 import java.util.zip.Inflater
 import java.util.zip.InflaterOutputStream
 import kotlin.text.Charsets.UTF_8
+import kotlin.time.Duration.Companion.milliseconds
 
 
 class Connection(private val client : ClientImpl) {
 
     var ready = false
+    var gatewaySequence = 0
+    var resumeGatewayUrl : String = ""
+    var sessionId = ""
 
     private lateinit var inflater : Inflater
 
@@ -46,81 +36,14 @@ class Connection(private val client : ClientImpl) {
 
     private var heartBeat = Job() as Job
 
-    data class PayloadDef(
-        val name : String,
-        val type : PayloadType,
-        val payload : String,
-    )
-
-    enum class PayloadType {
-        IDENTIFY,
-        RESUME;
-    }
-
-    private fun generateIdentify() : PayloadDef {
-        val payload =
-            if (client.configuration.clientType != ClientType.BOT) json.encodeToString(generateUserIdentify()) else json.encodeToString(
-                generateBotIdentify()
-            )
-        return PayloadDef("Identify", PayloadType.IDENTIFY, payload)
-    }
-
-    private fun generateResume() : PayloadDef {
-        val payload = json.encodeToString(
-            Resume(
-                OPCODE.RESUME.value,
-                ResumeD(
-                    client.utils.gatewaySequence,
-                    client.utils.sessionId,
-                    client.token
-                )
-            )
-        )
-        return PayloadDef("Resume", PayloadType.RESUME, payload)
-
-    }
-
-    private fun generateUserIdentify() : Identify = Identify(
-        OPCODE.IDENTIFY.value,
-        IdentifyD(
-            client.configuration.token,
-            2048,
-            client.utils.superProperties,
-            IdentifyDPresence(
-                "online",
-                0,
-                emptyArray(),
-                false
-            ),
-            false,
-            IdentifyDClientState()
-        )
-    )
-
-
-    private fun generateBotIdentify() : org.caffeine.chaos.api.client.connection.payloads.client.bot.identify.Identify =
-        org.caffeine.chaos.api.client.connection.payloads.client.bot.identify.Identify(
-            OPCODE.IDENTIFY.value,
-            org.caffeine.chaos.api.client.connection.payloads.client.bot.identify.IdentifyD(
-                client.configuration.token,
-                513,
-                IdentifyDProperties(
-                    "Windows",
-                    "CHAOS",
-                    "CHAOS"
-                )
-            )
-        )
-
     suspend fun execute(type : ConnectionType) {
         when (type) {
             ConnectionType.CONNECT -> {
-                connect(generateIdentify())
+                connect(client.utils.generateIdentify())
             }
 
             ConnectionType.DISCONNECT -> {
                 disconnect()
-                client.eventBus.produceEvent(ClientEvent.End)
                 return
             }
 
@@ -140,7 +63,7 @@ class Connection(private val client : ClientImpl) {
             val heartbeat = json.encodeToString(
                 HeartBeat(
                     OPCODE.HEARTBEAT.value,
-                    client.utils.gatewaySequence
+                    gatewaySequence
                 )
             )
             webSocket.send(heartbeat)
@@ -153,7 +76,7 @@ class Connection(private val client : ClientImpl) {
         log("Heartbeat started.", "API:", LogLevel(LoggerLevel.LOW, client))
         while (true) {
             sendHeartBeat()
-            delay(interval)
+            delay(interval.milliseconds)
         }
     }
 
@@ -167,7 +90,7 @@ class Connection(private val client : ClientImpl) {
         }
     }
 
-    private suspend fun connect(payload : PayloadDef) {
+    private suspend fun connect(payload : DiscordUtils.PayloadDef) {
         fetchWebClientValues(client)
         client.utils.createSuperProperties()
         client.utils.tokenValidator(client.configuration.token)
@@ -175,12 +98,11 @@ class Connection(private val client : ClientImpl) {
         inflater = Inflater()
 
         client.httpClient.client.wss(
-            host = if (payload.type != PayloadType.RESUME) GATEWAY
-            else client.utils.resumeGatewayUrl.removePrefix("wss://").ifBlank { GATEWAY },
+            host = if (payload.type != DiscordUtils.PayloadType.RESUME) GATEWAY
+            else resumeGatewayUrl.removePrefix("wss://").ifBlank { GATEWAY },
             path = "/?encoding=json&v=9&compress=zlib-stream",
             port = 443
         ) {
-
             val now = System.currentTimeMillis()
 
             webSocket = this
@@ -202,6 +124,8 @@ class Connection(private val client : ClientImpl) {
                     )
                     heartBeat = launch { startHeartBeat(init.d.heartbeat_interval) }
 
+                    if (payload.type == DiscordUtils.PayloadType.RESUME) delay((6000).milliseconds)
+
                     send(Frame.Text(payload.payload))
 
                     log("${payload.name} sent.", "API:", LogLevel(LoggerLevel.LOW, client))
@@ -214,7 +138,6 @@ class Connection(private val client : ClientImpl) {
                 }
             }
         }
-
     }
 
     private fun Frame.deflateData() : String {
@@ -238,7 +161,7 @@ class Connection(private val client : ClientImpl) {
 
     private suspend fun reconnectResume() {
         disconnect()
-        connect(generateResume())
+        connect(client.utils.generateResume())
     }
 
     private suspend fun reconnect() {

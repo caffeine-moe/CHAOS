@@ -4,6 +4,5 @@ import org.caffeine.chaos.api.entities.guild.Guild
 
 interface GuildChannel : BaseChannel {
     val guild : Guild
-    val position : Number
-    val permissionOverwrites : Array<Any>
+    val position : Int
 }

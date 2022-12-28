@@ -3,6 +3,7 @@ package org.caffeine.chaos.commands
 import kotlinx.coroutines.delay
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
+import org.caffeine.chaos.api.utils.awaitThen
 
 class MuteAllServers : Command(
     arrayOf("muteallservers", "mas", "muteservers", "muteguilds", "muteallguilds", "mag"),
@@ -15,7 +16,7 @@ class MuteAllServers : Command(
         cmd : String,
     ) {
         val mas = "Muting all servers..."
-        event.channel.sendMessage(mas).await().also { message ->
+        event.channel.sendMessage(mas).awaitThen { message ->
             val list = client.user.guilds.values
             val max = list.size
             var done = 0
@@ -27,7 +28,7 @@ class MuteAllServers : Command(
                 ).await()
                 delay(500)
             }
-            message.edit("Muted all servers!").await().also {
+            message.edit("Muted all servers!").awaitThen {
                 onComplete(it, true)
             }
         }

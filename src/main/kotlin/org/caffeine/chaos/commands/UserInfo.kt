@@ -4,7 +4,7 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.entities.users.User
 import org.caffeine.chaos.api.utils.MessageBuilder
-import org.caffeine.chaos.config
+import org.caffeine.chaos.api.utils.awaitThen
 
 class UserInfo :
     Command(
@@ -26,25 +26,24 @@ class UserInfo :
         }
         if (error.isNotBlank()) {
             event.message.channel.sendMessage(error(client, event, error, commandInfo))
-                .await().also { message ->
-                    onComplete(message, true)
+                .awaitThen { message ->
+                    onComplete(message, false)
                 }
             return
         }
         val usrInfo = usr
         val sdf = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        val date = java.util.Date(usrInfo.id.asUnixTs())
-        val acd = sdf.format(date)
+        val acd = sdf.format(usrInfo.id.value)
         event.message.channel.sendMessage(
             MessageBuilder()
                 .appendLine("**User info for ${usr.discriminatedName}**")
-                .appendLine("**Id:** ${usrInfo.id.asString()}")
+                .appendLine("**Id:** ${usrInfo.id}")
                 .appendLine("**Username:** ${usrInfo.username}")
                 .appendLine("**Discriminator:** ${usrInfo.discriminator}")
                 .appendLine("**Avatar:** <${usrInfo.avatarUrl()}>")
                 .appendLine("**Account Creation Date:** $acd")
-        ).await().also { message ->
-            onComplete(message, config.auto_delete.bot.content_generation)
+        ).awaitThen { message ->
+            onComplete(message, true)
         }
         return
     }

@@ -1,6 +1,7 @@
 package org.caffeine.chaos.api.utils
 
 import org.caffeine.chaos.api.typedefs.LogLevel
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -23,24 +24,45 @@ fun log(text : String, prefix : String = "", level : LogLevel? = null) {
     when {
         level != null -> {
             when {
-                level.client.loggerLevel.ordinal == 3 && level.level.ordinal > 3 -> return
-                level.client.loggerLevel.ordinal == 2 && level.level.ordinal > 2 -> return
-                level.client.loggerLevel.ordinal == 1 && level.level.ordinal > 1 -> return
-                level.client.loggerLevel.ordinal == 0 -> return
+                level.client.configuration.loggerLevel.ordinal == 3 && level.level.ordinal > 3 -> return
+                level.client.configuration.loggerLevel.ordinal == 2 && level.level.ordinal > 2 -> return
+                level.client.configuration.loggerLevel.ordinal == 1 && level.level.ordinal > 1 -> return
+                level.client.configuration.loggerLevel.ordinal == 0 -> return
             }
         }
     }
+    val padLength = (time.length + prefix.length) - 5
+    val contentInline = text.replace("\n", "\n".padEnd(padLength, " ".first()))
     println(
         ConsoleColour.WHITE.value +
                 "[${ConsoleColour.BLUE.value}" +
                 "${time}${ConsoleColour.WHITE.value}] " +
                 "${prefix.ifBlank { "CHAOS:" }} " +
-                "${ConsoleColour.BLUE.value}$text"
+                "${ConsoleColour.BLUE.value}$contentInline"
     )
 }
 
+fun christmasLogo() {
+    println(
+        ConsoleColour.GREEN.value +
+                "8                                   o    o                     8      8             8      \n" +
+                "8                                   8    8                     8      8             8      \n" +
+                "8oPYo. .oPYo. .oPYo. .oPYo. o    o o8oooo8 .oPYo. odYo. o    o 8  .o  8  .o  .oPYo. 8oPYo. \n" +
+                "8    8 .oooo8 8    8 8    8 8    8  8    8 .oooo8 8' `8 8    8 8oP'   8oP'   .oooo8 8    8 \n" +
+                "8    8 8    8 8    8 8    8 8    8  8    8 8    8 8   8 8    8 8 `b.  8 `b.  8    8 8    8 \n" +
+                "8    8 `YooP8 8YooP' 8YooP' `YooP8  8    8 `YooP8 8   8 `YooP' 8  `o. 8  `o. `YooP8 8    8 \n" +
+                "..:::..:.....:8 ....:8 ....::....8 :..:::..:.....:..::..:.....:..::.....::...:.....:..:::..\n" +
+                "::::::::::::::8 :::::8 :::::::ooP'.::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n" +
+                "::::::::::::::..:::::..:::::::...::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n"
+    )
+}
+
+
 // prints edgy hackerman logo
 fun printLogo() {
+    if (LocalDate.now().monthValue == 12 && LocalDate.now().dayOfMonth == 24) {
+        christmasLogo(); return
+    }
     println(
         ConsoleColour.WHITE.value +
                 " ▄████▄   ██░ ██  ▄▄▄       ▒█████    ██████ \n" +

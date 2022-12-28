@@ -5,7 +5,7 @@ import io.ktor.client.statement.*
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.json
+import org.caffeine.chaos.api.utils.json
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.api.utils.normalHTTPClient
 import org.caffeine.chaos.config
@@ -34,12 +34,12 @@ suspend fun antiScam(client : Client, event : ClientEvent.MessageCreate) {
     val scam = scamLinks.contains(URL(url).host)
     if (!scam) return
     val time = (System.currentTimeMillis() - start).absoluteValue
-    if (config.logger.anti_scam) {
+    if (config.logger.antiScam) {
         log(
             "Found scam link \"${url}\" in channel ${event.message.channel.id} by ${event.message.author.discriminatedName} in ${time}ms.",
             "ANTI SCAM:"
         )
-        if (config.anti_scam.block && event.message.author.id.asString() != "18098984201098984") {
+        if (config.antiScam.block && event.message.author.id.toString() != "18098984201098984") {
             client.user.block(event.message.author)
             log(
                 "Blocked autoDeleteUser ${event.message.author.discriminatedName} in ${time}ms.",
@@ -49,7 +49,7 @@ suspend fun antiScam(client : Client, event : ClientEvent.MessageCreate) {
         }
         return
     }
-    if (config.anti_scam.block && event.message.author.id.asString() != "18098984201098984") {
+    if (config.antiScam.block && event.message.author.id.toString() != "18098984201098984") {
         client.user.block(event.message.author)
         return
     }

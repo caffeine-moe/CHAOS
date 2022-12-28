@@ -2,6 +2,7 @@ package org.caffeine.chaos.commands
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
+import org.caffeine.chaos.api.utils.awaitThen
 
 class ReplyLatency : Command(arrayOf("rl"), CommandInfo("", "", "")) {
     override suspend fun onCalled(
@@ -10,7 +11,8 @@ class ReplyLatency : Command(arrayOf("rl"), CommandInfo("", "", "")) {
         args : MutableList<String>,
         cmd : String,
     ) {
-        val m = event.channel.sendMessage("replied").await()
-        m.also { println("${System.currentTimeMillis() - event.message.id.asUnixTs()}ms") }
+        event.channel.sendMessage("replied").awaitThen {
+            println("${System.currentTimeMillis() - event.message.timestamp}ms")
+        }
     }
 }

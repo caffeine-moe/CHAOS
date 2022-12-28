@@ -7,8 +7,8 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
-import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.utils.ConsoleColour
+import org.caffeine.chaos.api.utils.json
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.api.utils.normalHTTPClient
 import org.caffeine.chaos.config
@@ -87,11 +87,11 @@ suspend fun update() = coroutineScope {
                 "Your version of CHAOS is outdated, please update to the latest version. Current version: $versionString, latest version: ${updateStatus.latestVerString}",
                 pre
             )
-            if (!config.updater.auto_download) {
+            if (!config.updater.autoDownload) {
                 log("Please visit https://caffeine.moe/CHAOS/ to download the latest version.", pre)
             }
         }
-        if (config.updater.auto_download) {
+        if (config.updater.autoDownload) {
             downloadUpdate(updateStatus.downUrl, updateStatus).thenAccept {
                 this.launch {
                     log("Downloaded latest update to $it!", pre)

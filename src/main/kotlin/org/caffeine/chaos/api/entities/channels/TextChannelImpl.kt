@@ -2,8 +2,8 @@ package org.caffeine.chaos.api.entities.channels
 
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.runBlocking
-import org.caffeine.chaos.api.Snowflake
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.entities.Snowflake
 import org.caffeine.chaos.api.entities.guild.Guild
 import org.caffeine.chaos.api.entities.message.Message
 import org.caffeine.chaos.api.entities.message.MessageFilters
@@ -17,15 +17,13 @@ class TextChannelImpl(
     override var type : ChannelType = ChannelType.TEXT,
     override var lastMessageId : Snowflake,
     override var name : String = "",
-    override var position : Number = 0,
+    override var position : Int = 0,
     override var parentId : Snowflake,
     override var topic : String = "",
-    override var permissionOverwrites : Array<Any> = arrayOf(),
     override var nsfw : Boolean = false,
-    override var rateLimitPerUser : Number = 0,
 ) : TextChannel {
 
-    var guildId : Snowflake = Snowflake("")
+    var guildId : Snowflake = Snowflake(0)
 
     override var guild : Guild
         get() = client.user.guilds[guildId] ?: runBlocking { client.user.fetchGuild(guildId) }

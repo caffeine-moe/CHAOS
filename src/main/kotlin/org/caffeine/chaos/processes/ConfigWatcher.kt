@@ -4,7 +4,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.utils.log
-import org.caffeine.chaos.main
+import org.caffeine.chaos.config
 import java.nio.file.FileSystems
 import java.nio.file.Paths
 import java.nio.file.StandardWatchEventKinds
@@ -26,7 +26,9 @@ suspend fun configWatcher(client : Client) = coroutineScope {
                 ) {
                     log("Change in config detected, reloading.", "CONFIG:")
                     client.logout()
-                    main()
+                    loadConfig()
+                    client.configuration.token = config.token
+                    client.login()
                 }
             }
             valid = watchKey.reset()

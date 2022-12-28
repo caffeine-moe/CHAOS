@@ -3,8 +3,9 @@ package org.caffeine.chaos.commands
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.utils.awaitThen
+import org.caffeine.chaos.api.utils.json
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -46,7 +47,7 @@ class Backup :
     ) {
         val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yy_HH:mm:ss"))
         event.message.channel.sendMessage(MessageBuilder().append("Performing backup..."))
-            .await().also { message ->
+            .awaitThen { message ->
                 try {
                     val blockList = mutableListOf<PrivateUser>()
 
@@ -56,7 +57,7 @@ class Backup :
 
                     for (i in client.user.guilds.values.toList()) {
                         simpleGuilds.add(
-                            PrivateGuild(name = i.name, id = i.id.asString(), vanityUrl = i.vanityUrl)
+                            PrivateGuild(name = i.name, id = i.id.toString(), vanityUrl = i.vanityUrl)
                         )
                     }
 
@@ -65,7 +66,7 @@ class Backup :
                             PrivateUser(
                                 username = i.username,
                                 discriminator = i.discriminator,
-                                id = i.id.asString(),
+                                id = i.id.toString(),
                                 avatar = i.avatarUrl()
                             )
                         )
@@ -76,7 +77,7 @@ class Backup :
                             PrivateUser(
                                 username = i.username,
                                 discriminator = i.discriminator,
-                                id = i.id.asString(),
+                                id = i.id.toString(),
                                 avatar = i.avatarUrl()
                             )
                         )
@@ -98,7 +99,7 @@ class Backup :
                             MessageBuilder()
                                 .appendLine("Backup successful!")
                                 .appendLine("Saved to: ${f.absolutePath}")
-                        ).await().also {
+                        ).awaitThen {
                             onComplete(it, true)
                         }
                     } catch (e : Exception) {

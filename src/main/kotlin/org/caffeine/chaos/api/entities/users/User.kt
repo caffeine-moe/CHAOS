@@ -1,6 +1,7 @@
 package org.caffeine.chaos.api.entities.users
 
-import org.caffeine.chaos.api.Snowflake
+import org.caffeine.chaos.api.entities.Snowflake
+import org.caffeine.chaos.api.entities.channels.DMChannel
 import org.caffeine.chaos.api.entities.channels.TextBasedChannel
 import org.caffeine.chaos.api.entities.message.Message
 import org.caffeine.chaos.api.entities.message.MessageSearchFilters
@@ -17,4 +18,6 @@ interface User {
     val asMention : String
     suspend fun fetchLastMessageInChannel(channel : TextBasedChannel, filters : MessageSearchFilters) : Message?
     fun avatarUrl() : String
+
+    suspend fun openDM() : DMChannel?
 }

@@ -5,10 +5,10 @@ import io.ktor.client.statement.*
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.utils.awaitThen
+import org.caffeine.chaos.api.utils.json
 import org.caffeine.chaos.api.utils.normalHTTPClient
-import org.caffeine.chaos.config
 
 class Cat : Command(arrayOf("cat", "meow"), CommandInfo("Cat", "cat", "Sends a random cat from cataas.com.")) {
 
@@ -45,8 +45,8 @@ class Cat : Command(arrayOf("cat", "meow"), CommandInfo("Cat", "cat", "Sends a r
             MessageBuilder()
                 .appendLine("**Meow!!**")
                 .appendLine("https://cataas.com${cat.url}")
-        ).await().also { message ->
-            onComplete(message, config.auto_delete.bot.content_generation)
+        ).awaitThen {
+            onComplete(it, true)
         }
     }
 }

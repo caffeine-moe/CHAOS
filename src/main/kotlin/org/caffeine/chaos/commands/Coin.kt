@@ -2,7 +2,7 @@ package org.caffeine.chaos.commands
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.config
+import org.caffeine.chaos.api.utils.awaitThen
 
 class Coin : Command(arrayOf("coin"), CommandInfo("Coin", "coin", "Flips a coin (Sends heads or tails).")) {
     override suspend fun onCalled(
@@ -12,8 +12,8 @@ class Coin : Command(arrayOf("coin"), CommandInfo("Coin", "coin", "Flips a coin 
         cmd : String,
     ) {
         val face = arrayOf("Heads", "Tails").random()
-        event.channel.sendMessage(":coin: $face!").await().also { message ->
-            onComplete(message, config.auto_delete.bot.content_generation)
+        event.channel.sendMessage(":coin: $face!").awaitThen {
+            onComplete(it, true)
         }
     }
 }

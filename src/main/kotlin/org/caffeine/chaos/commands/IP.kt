@@ -13,8 +13,9 @@ import kotlinx.serialization.Transient
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.utils.awaitThen
+import org.caffeine.chaos.api.utils.json
 import org.caffeine.chaos.api.utils.normalHTTPClient
 import java.net.InetAddress
 import java.net.URL
@@ -55,11 +56,11 @@ class IP : Command(arrayOf("ip"), CommandInfo("IP", "ip <IP/URL>", "Looks up inf
     ) {
         if (args.isEmpty()) {
             event.channel.sendMessage(error(client, event, "No IP/URL specified.", commandInfo))
-                .await().also { message -> onComplete(message, true) }
+                .awaitThen { message -> onComplete(message, true) }
             return
         }
         event.channel.sendMessage(MessageBuilder().appendLine("Looking up IP/URL"))
-            .await().also { message ->
+            .awaitThen { message ->
                 val url = args.joinToString(" ")
                 try {
                     val host = if (url.contains("://")) {
@@ -94,19 +95,19 @@ class IP : Command(arrayOf("ip"), CommandInfo("IP", "ip <IP/URL>", "Looks up inf
                                     .appendLine("**Proxy:** ${parsedResponse.proxy}")
                                     .appendLine("**Hosting:** ${parsedResponse.hosting}")
                             )
-                                .await().also { message -> onComplete(message, true) }
+                                .awaitThen { message -> onComplete(message, true) }
                         }
 
                         false -> {
                             message.edit(error(client, event, parsedResponse.message, commandInfo))
-                                .await().also { message -> onComplete(message, true) }
+                                .awaitThen { message -> onComplete(message, true) }
                         }
                     }
                 } catch (e : Exception) {
                     when (e) {
                         is UnresolvedAddressException -> {
                             message.edit(error(client, event, "IP/URL is invalid.", commandInfo))
-                                .await().also { message -> onComplete(message, true) }
+                                .awaitThen { message -> onComplete(message, true) }
                             return
                         }
 
@@ -116,13 +117,13 @@ class IP : Command(arrayOf("ip"), CommandInfo("IP", "ip <IP/URL>", "Looks up inf
                                     .appendLine(":pensive: Connection timed out")
                                     .appendLine("Try a different IP or URL...")
                             )
-                                .await().also { message -> onComplete(message, true) }
+                                .awaitThen { message -> onComplete(message, true) }
                             return
                         }
 
                         else -> {
                             message.edit(error(client, event, e.message.toString(), commandInfo))
-                                .await().also { message -> onComplete(message, true) }
+                                .awaitThen { message -> onComplete(message, true) }
                             return
                         }
                     }

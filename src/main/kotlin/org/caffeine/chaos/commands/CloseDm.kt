@@ -24,6 +24,6 @@ class CloseDm : Command(arrayOf("closedm"), CommandInfo("CloseDM", "closedm", "C
                 "is not a DM Channel!"
             }
         }
-        log("Channel ${event.channel.id.asString()} $message", "RESPONSE:")
+        log("Channel ${event.channel.id} $message", "RESPONSE:")
     }
 }

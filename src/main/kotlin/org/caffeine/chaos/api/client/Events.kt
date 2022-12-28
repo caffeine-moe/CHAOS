@@ -15,7 +15,9 @@ interface ClientEvent {
     class GuildUpdate(val old : Guild, val new : Guild) : ClientEvent
 
     class GuildDelete(val guild : Guild) : ClientEvent
-    object End : ClientEvent
+    class MessageEdit(val message : Message) : ClientEvent
+    class MessageDelete(val message : Message) : ClientEvent
+    object Close : ClientEvent
 }
 
 class EventBus {

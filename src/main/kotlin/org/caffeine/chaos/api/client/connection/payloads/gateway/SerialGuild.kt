@@ -1,3 +1,4 @@
+import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialEmoji
 import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialGuildChannel
 import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialGuildMember
 
@@ -42,5 +43,6 @@ data class SerialGuild(
     val vanity_url_code : String? = null,
     val verification_level : Int = 0,
     val channels : List<SerialGuildChannel> = listOf(),
+    val emojis : List<SerialEmoji> = listOf(),
     // val voice_states: List<Any> = listOf()
 )

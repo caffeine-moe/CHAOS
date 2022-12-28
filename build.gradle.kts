@@ -12,12 +12,6 @@ application {
     mainClass.set("org.caffeine.chaos.MainKt")
 }
 
-tasks.jar {
-    manifest {
-        attributes["Main-Class"] = "org.caffeine.chaos.MainKt"
-    }
-}
-
 repositories {
     mavenCentral()
     maven(url = "https://jitpack.io")
@@ -25,6 +19,8 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.21")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4")
     implementation("commons-validator:commons-validator:1.7")
@@ -33,6 +29,6 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:2.1.3")
     implementation("ch.qos.logback:logback-classic:1.4.5")
     implementation("com.github.lalyos:jfiglet:0.0.9")
-    implementation("com.github.oshi:oshi-core:6.3.2")
+    implementation("com.github.oshi:oshi-core:6.4.0")
     implementation("com.github.sealedtx:java-youtube-downloader:3.1.0")
 }

@@ -4,7 +4,7 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.entities.users.User
 import org.caffeine.chaos.api.utils.MessageBuilder
-import org.caffeine.chaos.config
+import org.caffeine.chaos.api.utils.awaitThen
 
 class Avatar : Command(
     arrayOf("avatar", "pfp", "av"),
@@ -21,11 +21,11 @@ class Avatar : Command(
                 error(
                     client,
                     event,
-                    "'${args.joinToString(" ")}}' is not a mentioned autoDeleteUser.",
+                    "'${args.joinToString(" ")}}' is not a mention.",
                     commandInfo
                 )
-            ).await().also { message ->
-                onComplete(message, true)
+            ).awaitThen {
+                onComplete(it, false)
             }
             return
         }
@@ -45,7 +45,6 @@ class Avatar : Command(
             MessageBuilder()
                 .appendLine("${user.discriminatedName}'s Avatar")
                 .appendLine(avatarURL)
-        )
-            .await().also { onComplete(it, config.auto_delete.bot.content_generation) }
+        ).awaitThen { onComplete(it, true) }
     }
 }

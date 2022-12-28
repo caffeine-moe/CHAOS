@@ -1,7 +1,7 @@
 package org.caffeine.chaos.api.entities.guild
 
-import org.caffeine.chaos.api.Snowflake
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.entities.Snowflake
 import org.caffeine.chaos.api.entities.channels.GuildChannel
 
 interface Guild {
@@ -36,6 +36,7 @@ interface Guild {
     val publicUpdatesChannelId : Snowflake?
     val embedEnabled : Boolean
     val embedChannelId : Snowflake
+    val emojis : Map<Snowflake, Emoji>
     val client : Client
 
     val channels : Map<Snowflake, GuildChannel>

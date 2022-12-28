@@ -10,6 +10,7 @@ import org.caffeine.chaos.api.utils.*
 import org.caffeine.chaos.config.Config
 import org.caffeine.chaos.handlers.handleArgs
 import org.caffeine.chaos.handlers.handleMessage
+import org.caffeine.chaos.handlers.handleMessageDelete
 import org.caffeine.chaos.handlers.handleReady
 import org.caffeine.chaos.processes.loadConfig
 import java.io.File
@@ -28,25 +29,28 @@ lateinit var config : Config
 
 var configFile = File("config.json")
 
-private suspend fun init(args : Array<String> = arrayOf()) {
+suspend fun init(args : Array<String> = arrayOf()) {
     clear()
     printLogo()
     printSeparator()
     handleArgs(args)
-    log("${ConsoleColour.BLUE.value}CHAOS is starting...")
     loadConfig()
 }
 
 fun main(args : Array<String> = arrayOf()) = runBlocking {
     init(args)
-    val client = Client
-        .setClientType(ClientType.USER)
-        .setToken(config.token)
-        .setLogLevel(LoggerLevel.ALL)
-        .build()
+    log("${ConsoleColour.BLUE.value}CHAOS is starting...")
+    val client = Client.build {
+        config {
+            token = config.token
+            clientType = ClientType.USER
+            loggerLevel = LoggerLevel.ALL
+        }
+    }
 
     client.on<ClientEvent.Ready> { handleReady(client) }
     client.on<ClientEvent.MessageCreate> { handleMessage(this, client) }
+    client.on<ClientEvent.MessageDelete> { handleMessageDelete(this, client) }
 
     client.login()
 }

@@ -2,8 +2,7 @@ package org.caffeine.chaos.commands
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.utils.MessageBuilder
-import org.caffeine.chaos.config
+import org.caffeine.chaos.api.utils.awaitThen
 
 class RandomChoice : Command(
     arrayOf("randomchoice", "rchoice", "rch"),
@@ -30,17 +29,16 @@ class RandomChoice : Command(
                     err,
                     commandInfo
                 )
-            ).await().also {
+            ).awaitThen {
                 onComplete(it, true)
             }
             return
         }
 
-        event.channel.sendMessage(
-            MessageBuilder()
-                .appendLine(argspl.random().trim())
-        ).await().also {
-            onComplete(it, config.auto_delete.bot.content_generation)
-        }
+        event.channel.sendMessage(argspl.random().trim())
+            .awaitThen {
+                onComplete(it, true)
+            }
+            .reply("yuh")
     }
 }

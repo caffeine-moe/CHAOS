@@ -10,7 +10,7 @@ import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.config
 import org.caffeine.chaos.handlers.commandList
 
-abstract class Command(val commandNames : Array<String>, val commandInfo : CommandInfo) {
+sealed class Command(val commandNames : Array<String>, val commandInfo : CommandInfo) {
     init {
         commandList.putAll(commandNames.associateBy({ it }, { this }))
     }
@@ -21,7 +21,7 @@ abstract class Command(val commandNames : Array<String>, val commandInfo : Comma
         args : MutableList<String>,
         cmd : String,
     ) {
-        log("Not implemented.", level = LogLevel(LoggerLevel.MEDIUM, client))
+        log("Not implemented.", level = LogLevel(LoggerLevel.LOW, client))
     }
 
     open suspend fun error(

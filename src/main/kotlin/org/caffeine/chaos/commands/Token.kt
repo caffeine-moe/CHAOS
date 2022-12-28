@@ -4,6 +4,7 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.utils.ConsoleColour
 import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.utils.awaitThen
 import org.caffeine.chaos.api.utils.log
 
 class Token : Command(arrayOf("token"), CommandInfo("Token", "token", "Logs your token into the console.")) {
@@ -15,7 +16,7 @@ class Token : Command(arrayOf("token"), CommandInfo("Token", "token", "Logs your
     ) {
         log("${client.user.discriminatedName} : ${client.user.token}", "TOKEN:${ConsoleColour.BLUE.value}")
         event.message.channel.sendMessage(MessageBuilder().append("Token logged to console."))
-            .await().also { message ->
+            .awaitThen { message ->
                 onComplete(message, true)
             }
     }

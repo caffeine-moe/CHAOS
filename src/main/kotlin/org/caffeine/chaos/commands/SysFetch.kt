@@ -3,7 +3,7 @@ package org.caffeine.chaos.commands
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.utils.MessageBuilder
-import org.caffeine.chaos.config
+import org.caffeine.chaos.api.utils.awaitThen
 import oshi.SystemInfo
 
 class SysFetch : Command(
@@ -25,20 +25,35 @@ class SysFetch : Command(
         event.message.channel.sendMessage(
             MessageBuilder()
                 .appendLine("Fetching info...")
-        ).await().also { message ->
+        ).awaitThen { message ->
             message.edit(
                 MessageBuilder()
+                    .appendLine("```asciidoc")
+                    .appendLine("•Platform:\n----------")
+                    .appendLine("    •Family:: ${sysInfo.operatingSystem.family}")
+                    .appendLine("    •Manufacturer:: ${sysInfo.operatingSystem.manufacturer}")
+                    .appendLine("    •Uptime:: ${up / (60 * 60 * 24)}d ${(up % 86400) / (60 * 60)}h ${(up / 60) % 60}m ${up % 60}s")
+                    .appendLine("•CPU:\n-----")
+                    .appendLine("    •Name:: ${proc.processorIdentifier.name}")
+                    .appendLine("    •Family:: ${proc.processorIdentifier.microarchitecture}")
+                    .appendLine("    •Vendor:: ${proc.processorIdentifier.vendor}")
+                    .appendLine("    •Cores:: ${proc.physicalProcessorCount}")
+                    .appendLine("    •Threads:: ${proc.logicalProcessorCount}")
+                    .appendLine("    •Speed:: ${proc.maxFreq / 1000000000}GHz")
+                    .appendLine("•RAM:\n-----")
+                    .appendLine("    •Total Memory:: ${(ram.total / 1073741824) + 1}GB")
+                    .appendLine("    •Free Memory:: ${(ram.available / 1073741824) + 1}GB")
+                    .appendLine("    •Used Memory:: ${((ram.total - ram.available) / 1073741824) + 1}GB")
+                    .appendLine("    •Virtual Memory:: ${((ram.virtualMemory.virtualMax) / 1073741824) + 1}GB")
+                    .appendLine("•GPU:\n-----")
+                    .appendLine("    •Model:: ${gpu.name}")
+                    .appendLine("    •Vendor:: ${gpu.vendor}")
+                    .appendLine("•Motherboard:\n-------------")
+                    .appendLine("    •Model:: ${sysInfo.hardware.computerSystem.baseboard.model}")
+                    .appendLine("    •Manufacturer:: ${sysInfo.hardware.computerSystem.baseboard.manufacturer}")
                     .appendLine("```")
-                    .appendLine("OS: ${sysInfo.operatingSystem.family}")
-                    .appendLine("UPTIME: ${up / (60 * 60 * 24)}d ${(up % 86400) / (60 * 60)}h ${(up / 60) % 60}m ${up % 60}s")
-                    .appendLine("CPU: ${proc.processorIdentifier.name} (${proc.physicalProcessorCount}C ${proc.logicalProcessorCount}T)")
-                    .appendLine("RAM: ${(ram.total / 1073741824) + 1}GB")
-                    .appendLine("GPU: ${gpu.name}")
-                    .appendLine("HOST: ${sysInfo.hardware.computerSystem.baseboard.model}")
-                    .appendLine("OS VER: ${sysInfo.operatingSystem.versionInfo}")
-                    .appendLine("```")
-            ).await().also {
-                onComplete(it, config.auto_delete.bot.content_generation)
+            ).awaitThen {
+                onComplete(it, true)
             }
         }
     }

@@ -6,12 +6,11 @@ import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.config
 import org.caffeine.chaos.processes.autoDeleteBot
 
-suspend fun onComplete(msg : Message, autoDelete : Boolean) {
+suspend fun onComplete(msg : Message, contentGeneration : Boolean) {
     if (config.logger.responses) {
-        val contentInline = msg.content.replace("\n", "\n                                  ")
-        log(contentInline, "RESPONSE:${ConsoleColour.BLUE.value}")
+        log(msg.content, "RESPONSE:${ConsoleColour.BLUE.value}")
     }
-    if (autoDelete && config.auto_delete.bot.enabled) {
-        autoDeleteBot(msg)
-    }
+    if (!config.autoDelete.bot.enabled) return
+    if (contentGeneration && !config.autoDelete.bot.contentGeneration) return
+    autoDeleteBot(msg)
 }

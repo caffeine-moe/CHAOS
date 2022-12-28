@@ -3,6 +3,7 @@ package org.caffeine.chaos.commands
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.utils.MessageBuilder
+import org.caffeine.chaos.api.utils.awaitThen
 import org.caffeine.chaos.api.utils.convertIdToUnix
 
 class IdToDate : Command(
@@ -34,14 +35,14 @@ class IdToDate : Command(
                 MessageBuilder()
                     .appendLine("**The id $id as a date is:**")
                     .appendLine(formattedDate)
-            ).await().also {
+            ).awaitThen {
                 onComplete(it, true)
             }
             return
         }
         event.channel.sendMessage(
             error(client, event, err, commandInfo)
-        ).await().also {
+        ).awaitThen {
             onComplete(it, true)
         }
     }

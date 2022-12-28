@@ -3,6 +3,7 @@ package org.caffeine.chaos.commands
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.typedefs.ThemeType
+import org.caffeine.chaos.api.utils.awaitThen
 
 class Theme : Command(arrayOf("theme", "dth"), CommandInfo("Theme", "theme <Theme>", "Changes your discord theme.")) {
     override suspend fun onCalled(
@@ -25,7 +26,7 @@ class Theme : Command(arrayOf("theme", "dth"), CommandInfo("Theme", "theme <Them
         } else {
             "No arguments passed for theme."
         }
-        event.message.channel.sendMessage(error(client, event, err, commandInfo)).await().also {
+        event.message.channel.sendMessage(error(client, event, err, commandInfo)).awaitThen {
             onComplete(it, true)
         }
     }

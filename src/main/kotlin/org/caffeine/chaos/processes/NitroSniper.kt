@@ -13,7 +13,7 @@ suspend fun nitroSniper(event : ClientEvent.MessageCreate, client : Client) = co
     if (!regex.matches(event.message.content)) return@coroutineScope
     val code = event.message.content.removePrefix("https://discord.gift/")
     client.user.redeemCode(code).await().also { rc ->
-        if (config.logger.nitro_sniper) {
+        if (config.logger.nitroSniper) {
             when (rc.status) {
                 RedeemedCodeStatusType.SUCCESS -> {
                     log(

@@ -2,6 +2,7 @@ package org.caffeine.chaos.commands
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
+import org.caffeine.chaos.api.utils.log
 import java.util.*
 
 class ClearDMS : Command(
@@ -16,7 +17,9 @@ class ClearDMS : Command(
     ) {
         val oneMonthEarlier = Calendar.getInstance().apply { add(Calendar.MONTH, -1) }.toInstant().toEpochMilli()
         client.user.dmChannels.values
-            .filter { it.lastMessageId.asUnixTs() <= oneMonthEarlier }
-            .forEach { it.delete() }
+            .filter { it.lastMessageId.timestamp.toEpochMilliseconds() <= oneMonthEarlier }
+            .map { it.delete(); it.name }
+            .ifEmpty { return }
+            .also { log("Deleted channels : ${it.joinToString(", ")}") }
     }
 }

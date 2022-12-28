@@ -1,10 +1,11 @@
 package org.caffeine.chaos.api.entities.message
 
-import org.caffeine.chaos.api.Snowflake
+import org.caffeine.chaos.api.entities.Snowflake
+
 
 data class MessageSearchFilters(
-    var mentioning_user_id : Snowflake = Snowflake(""),
-    var author_id : Snowflake = Snowflake(""),
-    var before_id : Snowflake = Snowflake(""),
-    var after_id : Snowflake = Snowflake(""),
+    var mentioningUserId : Snowflake = Snowflake(0),
+    var authorId : Snowflake = Snowflake(0),
+    var beforeId : Snowflake = Snowflake(0),
+    var afterId : Snowflake = Snowflake(0),
 )

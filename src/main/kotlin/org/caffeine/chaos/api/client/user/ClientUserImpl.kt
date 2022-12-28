@@ -3,26 +3,23 @@ package org.caffeine.chaos.api.client.user
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
-import org.caffeine.chaos.api.BASE_URL
-import org.caffeine.chaos.api.Snowflake
-import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientImpl
+import org.caffeine.chaos.api.client.connection.payloads.client.DMCreateRequest
 import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialMessage
+import org.caffeine.chaos.api.client.connection.payloads.gateway.SerialPrivateChannel
+import org.caffeine.chaos.api.entities.Snowflake
 import org.caffeine.chaos.api.entities.channels.BaseChannel
 import org.caffeine.chaos.api.entities.channels.DMChannel
 import org.caffeine.chaos.api.entities.channels.GuildChannel
 import org.caffeine.chaos.api.entities.channels.TextBasedChannel
+import org.caffeine.chaos.api.entities.guild.Emoji
 import org.caffeine.chaos.api.entities.guild.Guild
 import org.caffeine.chaos.api.entities.message.Message
 import org.caffeine.chaos.api.entities.message.MessageFilters
 import org.caffeine.chaos.api.entities.message.MessageSearchFilters
 import org.caffeine.chaos.api.entities.users.User
-import org.caffeine.chaos.api.json
 import org.caffeine.chaos.api.typedefs.*
-import org.caffeine.chaos.api.utils.MessageData
-import org.caffeine.chaos.api.utils.MessageReference
-import org.caffeine.chaos.api.utils.MessageReply
-import org.caffeine.chaos.api.utils.log
+import org.caffeine.chaos.api.utils.*
 import kotlin.math.absoluteValue
 
 data class ClientUserImpl(
@@ -38,8 +35,7 @@ data class ClientUserImpl(
     override var token : String,
     override var relation : RelationshipType,
     override var bot : Boolean,
-    override var client : Client,
-    var clientImpl : ClientImpl,
+    override var client : ClientImpl,
 ) : ClientUser {
 
     override var relationships : HashMap<Snowflake, User> = HashMap()
@@ -55,7 +51,7 @@ data class ClientUserImpl(
         channel : TextBasedChannel,
         filters : MessageSearchFilters,
     ) : Message? {
-        return clientImpl.utils.fetchLastMessageInChannel(channel, this, filters)
+        return client.utils.fetchLastMessageInChannel(channel, this, filters)
     }
 
     override fun avatarUrl() : String {
@@ -72,6 +68,8 @@ data class ClientUserImpl(
 
     override var channels = HashMap<Snowflake, BaseChannel>()
     override var guilds = HashMap<Snowflake, Guild>()
+    override var emojis = HashMap<Snowflake, Emoji>()
+
     override val dmChannels : Map<Snowflake, DMChannel>
         get() = channels.values.filterIsInstance<DMChannel>().associateBy { it.id }
 
@@ -81,11 +79,13 @@ data class ClientUserImpl(
     override val guildChannels : Map<Snowflake, GuildChannel>
         get() = channels.values.filterIsInstance<GuildChannel>().associateBy { it.id }
 
+    override val messageCache : HashMap<Snowflake, Message> = HashMap()
+
     override suspend fun fetchMessagesFromChannel(
         channel : TextBasedChannel,
         filters : MessageFilters,
     ) : List<Message> {
-        return clientImpl.utils.fetchMessages(channel, filters)
+        return client.utils.fetchMessages(channel, filters)
     }
 
     override suspend fun fetchChannelFromId(id : Snowflake) : BaseChannel? {
@@ -98,16 +98,16 @@ data class ClientUserImpl(
             messageData.tts,
             messageData.nonce,
             MessageReference(
-                message.guild?.id?.asString(),
-                message.channel.id.asString(),
-                message.id.asString()
+                message.guild?.id.toString(),
+                message.channel.id.toString(),
+                message.id.toString()
             )
         )
         val data = json.encodeToString(reply)
         val response =
-            clientImpl.httpClient.post("$BASE_URL/channels/${message.channel.id.asString()}/messages", data).await()
+            client.httpClient.post("$BASE_URL/channels/${message.channel.id}/messages", data).await()
         val serial = json.decodeFromString<SerialMessage>(response)
-        return CompletableDeferred(clientImpl.utils.createMessage(serial))
+        return CompletableDeferred(client.utils.createMessage(serial))
     }
 
     /*    fun getGuild(channel : MessageChannel) : ClientGuild? {
@@ -123,7 +123,7 @@ data class ClientUserImpl(
         }*/
 
     override suspend fun deleteChannel(channel : BaseChannel) {
-        clientImpl.httpClient.delete("$BASE_URL/channels/${channel.id.asString()}")
+        client.httpClient.delete("$BASE_URL/channels/${channel.id}")
     }
 
     override fun unblock(user : User) {
@@ -136,28 +136,27 @@ data class ClientUserImpl(
 
     override suspend fun setHouse(house : HypeSquadHouseType) {
         if (house == HypeSquadHouseType.NONE) {
-            clientImpl.httpClient.delete("$BASE_URL/hypesquad/online")
+            client.httpClient.delete("$BASE_URL/hypesquad/online")
         } else {
             val data = json.parseToJsonElement("{\"house_id\":${house.ordinal}}").toString()
-            clientImpl.httpClient.post("$BASE_URL/hypesquad/online", data)
+            client.httpClient.post("$BASE_URL/hypesquad/online", data)
         }
     }
 
     override suspend fun setCustomStatus(status : CustomStatus) {
         val text = json.encodeToString(status)
         val data = "{ \"custom_status\" : $text }"
-        println(data)
-        clientImpl.httpClient.patch("$BASE_URL/users/@me/settings", data)
+        client.httpClient.patch("$BASE_URL/users/@me/settings", data)
     }
 
     override suspend fun setTheme(theme : ThemeType) {
         val data = json.parseToJsonElement("{\"theme\":\"${theme.value}\"}").toString()
-        clientImpl.httpClient.patch("$BASE_URL/users/@me/settings", data)
+        client.httpClient.patch("$BASE_URL/users/@me/settings", data)
     }
 
     override suspend fun setStatus(status : StatusType) {
         val data = json.parseToJsonElement("{\"status\":\"${status.value}\"}").toString()
-        clientImpl.httpClient.patch("$BASE_URL/users/@me/settings", data)
+        client.httpClient.patch("$BASE_URL/users/@me/settings", data)
     }
 
     override suspend fun sendMessage(
@@ -165,13 +164,13 @@ data class ClientUserImpl(
         message : MessageData,
     ) : CompletableDeferred<Message> {
         val data = json.encodeToString(message)
-        val response = clientImpl.httpClient.post("$BASE_URL/channels/${channel.id.asString()}/messages", data).await()
+        val response = client.httpClient.post("$BASE_URL/channels/${channel.id}/messages", data).await()
         val serial = json.decodeFromString<SerialMessage>(response)
-        return CompletableDeferred(clientImpl.utils.createMessage(serial))
+        return CompletableDeferred(client.utils.createMessage(serial))
     }
 
     override suspend fun deleteMessage(message : Message) {
-        clientImpl.httpClient.delete("$BASE_URL/channels/${message.channel.id.asString()}/messages/${message.id.asString()}")
+        client.httpClient.delete("$BASE_URL/channels/${message.channel.id}/messages/${message.id}").await()
     }
 
     override suspend fun redeemCode(code : String) : CompletableDeferred<RedeemedCode> {
@@ -179,7 +178,7 @@ data class ClientUserImpl(
         var la : Long
         val start = System.currentTimeMillis()
         try {
-            clientImpl.httpClient.post("$BASE_URL/entitlements/gift-codes/$code/redeem")
+            client.httpClient.post("$BASE_URL/entitlements/gift-codes/$code/redeem")
             val end = System.currentTimeMillis()
             la = (start - end)
             rc = RedeemedCode(code, la.absoluteValue, RedeemedCodeStatusType.SUCCESS)
@@ -200,7 +199,7 @@ data class ClientUserImpl(
 
     override suspend fun block(user : User) {
         val data = json.parseToJsonElement("{\"type\":2}").toString()
-        clientImpl.httpClient.post("$BASE_URL/users/@me/relationships/${user.id}", data)
+        client.httpClient.post("$BASE_URL/users/@me/relationships/${user.id}", data)
     }
 
     override suspend fun editMessage(
@@ -209,12 +208,12 @@ data class ClientUserImpl(
     ) : CompletableDeferred<Message> {
         val data = json.encodeToString(edit)
         val response =
-            clientImpl.httpClient.patch(
-                "$BASE_URL/channels/${message.channel.id.asString()}/messages/${message.id.asString()}",
+            client.httpClient.patch(
+                "$BASE_URL/channels/${message.channel.id}/messages/${message.id}",
                 data
             ).await()
         val serial = json.decodeFromString<SerialMessage>(response)
-        return CompletableDeferred(clientImpl.utils.createMessage(serial))
+        return CompletableDeferred(client.utils.createMessage(serial))
     }
 
     override fun muteGuild(guild : Guild, i : Int) {
@@ -222,7 +221,7 @@ data class ClientUserImpl(
     }
 
     override suspend fun fetchMessageById(id : String, channel : TextBasedChannel) : Message {
-        return clientImpl.utils.fetchMessageById(id, channel)
+        return client.utils.fetchMessageById(id, channel)
     }
 
     override suspend fun fetchLastMessageInChannel(
@@ -230,9 +229,25 @@ data class ClientUserImpl(
         user : User,
         filters : MessageSearchFilters,
     ) : Message? {
-        return clientImpl.utils.fetchLastMessageInChannel(channel, user, filters)
+        return client.utils.fetchLastMessageInChannel(channel, user, filters)
     }
 
-    override suspend fun fetchGuild(guildId : Snowflake) : Guild = clientImpl.utils.fetchGuild(guildId)
+    override suspend fun fetchGuild(guildId : Snowflake) : Guild = client.utils.fetchGuild(guildId)
+
+    override suspend fun openDM() : DMChannel? = null
+
+    override suspend fun openDMWith(id : Snowflake) : DMChannel {
+        return dmChannels.values.firstOrNull { it.recipients.contains(id.toString()) && it.recipients.size == 1 }
+            ?: kotlin.run {
+                val response = client.httpClient.post(
+                    "$BASE_URL/users/@me/channels",
+                    json.encodeToString(
+                        DMCreateRequest(id.toString())
+                    )
+                ).await()
+                val serial = json.decodeFromString<SerialPrivateChannel>(response)
+                return client.utils.createDMChannel(serial)
+            }
+    }
 
 }

@@ -3,11 +3,15 @@ package org.caffeine.chaos.api.utils
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import org.caffeine.chaos.api.entities.Snowflake
+import org.caffeine.chaos.api.entities.asSnowflake
+import org.caffeine.chaos.api.entities.message.MessageAttachment
 
 interface MessageData {
     val content : String
     val tts : Boolean
     val nonce : String
+    val attachments : Map<Snowflake, MessageAttachment>
     // val embed: MessageEmbed;
 }
 
@@ -26,7 +30,9 @@ data class MessageReply(
     override val nonce : String,
     @SerialName("message_reference")
     val messageReference : MessageReference,
-) : MessageData
+) : MessageData {
+    override val attachments : Map<Snowflake, MessageAttachment> = emptyMap()
+}
 
 
 @Serializable
@@ -37,7 +43,7 @@ class MessageBuilder : MessageData {
     override var content : String = ""
     override val nonce : String get() = calcNonce()
 
-    //private var attachments = mutableListOf<MessageAttachment>()
+    override var attachments : HashMap<Snowflake, MessageAttachment> = hashMapOf()
 
     fun append(text : String) : MessageBuilder {
         content += text
@@ -48,8 +54,9 @@ class MessageBuilder : MessageData {
         content += if (content.isBlank()) text else "\n$text"
         return this
     }
-    /*    fun addAttachment(attachment : MessageAttachment) : MessageBuilder {
-                    attachments.add(attachment)
-                    return this
-        }*/
+
+    fun addAttachment(attachment : MessageAttachment) : MessageBuilder {
+        attachments[attachment.id.asSnowflake()] = attachment
+        return this
+    }
 }

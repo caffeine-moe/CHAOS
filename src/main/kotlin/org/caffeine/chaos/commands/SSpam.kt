@@ -10,7 +10,5 @@ class SSpam : Command(arrayOf("sspam"), CommandInfo("SSpam", "sspam", "Stops the
         event : ClientEvent.MessageCreate,
         args : MutableList<String>,
         cmd : String,
-    ) {
-        spamCock = true
-    }
+    ) = run { spamCock = true }
 }

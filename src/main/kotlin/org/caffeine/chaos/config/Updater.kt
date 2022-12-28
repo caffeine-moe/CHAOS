@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 data class Updater(
     val enabled : Boolean = false,
     val notify : Boolean = false,
-    val auto_download : Boolean = false,
+    val autoDownload : Boolean = false,
     val exit : Boolean = false,
 )

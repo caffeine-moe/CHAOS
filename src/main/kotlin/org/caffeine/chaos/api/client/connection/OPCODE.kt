@@ -1,4 +1,4 @@
-package org.caffeine.chaos.api
+package org.caffeine.chaos.api.client.connection
 
 enum class OPCODE(val value : Int) {
     DISPATCH(0),

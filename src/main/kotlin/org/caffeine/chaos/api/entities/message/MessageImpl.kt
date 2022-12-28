@@ -1,15 +1,14 @@
 package org.caffeine.chaos.api.entities.message
 
 import kotlinx.coroutines.CompletableDeferred
-import org.caffeine.chaos.api.Snowflake
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.entities.Snowflake
 import org.caffeine.chaos.api.entities.channels.TextBasedChannel
 import org.caffeine.chaos.api.entities.guild.Guild
 import org.caffeine.chaos.api.entities.users.User
 import org.caffeine.chaos.api.typedefs.MessageType
 import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.api.utils.MessageData
-import java.util.*
 
 data class MessageImpl(
     override var client : Client,
@@ -18,16 +17,17 @@ data class MessageImpl(
     override val guild : Guild?,
     override var author : User,
     override var content : String = "",
-    override var timestamp : Date = Date(),
-    override var editedAt : Date? = Date(),
+    override var editedAt : Long? = null,
     override var tts : Boolean = false,
     override var mentionedEveryone : Boolean = false,
     override var mentions : HashMap<String, User> = hashMapOf(),
-    override var attachments : HashMap<String, MessageAttachment> = hashMapOf(),
+    override var attachments : Map<Snowflake, MessageAttachment> = hashMapOf(),
     override var pinned : Boolean = false,
     override var nonce : String,
     override var type : MessageType = MessageType.DEFAULT,
 ) : Message {
+
+    override var timestamp : Long = id.timestamp.toEpochMilliseconds()
 
     override suspend fun delete() {
         client.user.deleteMessage(this)

@@ -1,7 +1,7 @@
 package org.caffeine.chaos.api.entities.guild
 
-import org.caffeine.chaos.api.Snowflake
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.entities.Snowflake
 import org.caffeine.chaos.api.entities.channels.GuildChannel
 
 data class GuildImpl(
@@ -40,6 +40,9 @@ data class GuildImpl(
 ) : Guild {
     override val channels : Map<Snowflake, GuildChannel>
         get() = client.user.guildChannels.filterValues { it.guild.id == id }
+
+    override val emojis : Map<Snowflake, Emoji>
+        get() = client.user.emojis.filterValues { it.guild.id == id }
 
     override val vanityUrl : String? = if (vanityUrlCode != null) "https://discord.gg/$vanityUrlCode" else null
     override fun muteForever() {

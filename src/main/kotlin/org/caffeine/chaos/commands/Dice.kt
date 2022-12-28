@@ -2,7 +2,7 @@ package org.caffeine.chaos.commands
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.config
+import org.caffeine.chaos.api.utils.awaitThen
 
 class Dice :
     Command(arrayOf("dice", "d6"), CommandInfo("Dice", "dice", "Rolls a dice (Sends a random number from 1 - 6).")) {
@@ -12,8 +12,9 @@ class Dice :
         args : MutableList<String>,
         cmd : String,
     ) {
-        event.channel.sendMessage("game_die: ${(1..6).random()}").await().also { message ->
-            onComplete(message, config.auto_delete.bot.content_generation)
-        }
+        (1..6).random().toString()
+            .map { ":game_die: $it" }
+            .first()
+            .also { event.channel.sendMessage(it).awaitThen { message -> onComplete(message, true) } }
     }
 }

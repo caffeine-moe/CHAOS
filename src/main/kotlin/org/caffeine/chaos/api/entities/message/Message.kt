@@ -1,14 +1,13 @@
 package org.caffeine.chaos.api.entities.message
 
 import kotlinx.coroutines.CompletableDeferred
-import org.caffeine.chaos.api.Snowflake
 import org.caffeine.chaos.api.client.Client
+import org.caffeine.chaos.api.entities.Snowflake
 import org.caffeine.chaos.api.entities.channels.TextBasedChannel
 import org.caffeine.chaos.api.entities.guild.Guild
 import org.caffeine.chaos.api.entities.users.User
 import org.caffeine.chaos.api.typedefs.MessageType
 import org.caffeine.chaos.api.utils.MessageData
-import java.util.*
 
 interface Message : MessageData {
     val client : Client
@@ -16,11 +15,10 @@ interface Message : MessageData {
     val channel : TextBasedChannel
     val guild : Guild?
     val author : User
-    val timestamp : Date
-    val editedAt : Date?
+    val timestamp : Long
+    val editedAt : Long?
     val mentionedEveryone : Boolean
     val mentions : Map<String, User>
-    val attachments : Map<String, MessageAttachment>
     val pinned : Boolean
     val type : MessageType
 
