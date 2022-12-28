@@ -11,8 +11,6 @@ suspend fun handleMessage(event : ClientEvent.MessageCreate, client : Client) {
     if (afk) afkHandler(event, client)
     if (event.message.author.id == client.user.id) handleCommand(event, client)
     if (config.nitroSniper.enabled && client.user.verified) nitroSniper(event, client)
-    if (config.antiScam.enabled) antiScam(client, event)
     if (config.cdnpls.enabled) cdnpls(event)
-
-    handleCommand(event, client)
+    if (config.antiScam.enabled) antiScam(client, event)
 }
