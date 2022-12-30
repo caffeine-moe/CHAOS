@@ -2,13 +2,13 @@ package org.caffeine.chaos.api.utils
 
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.*
 import io.ktor.client.plugins.cache.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.cookies.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import io.ktor.utils.io.errors.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
@@ -49,9 +49,9 @@ suspend fun fetchWebClientValues(client : Client) {
         clientVersion = dua.chrome_version
         clientBuildNumber = dua.client_build_number
         userAgent = dua.chrome_user_agent
-    } catch (e : ServerResponseException) {
+    } catch (e : IOException) {
         log(
-            "Discord client value api is down, falling back to default values.",
+            "Unable to fetch client values, falling back to default values.",
             "API:",
             LogLevel(LoggerLevel.LOW, client)
         )
