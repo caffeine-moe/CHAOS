@@ -60,7 +60,7 @@ fun christmasLogo() {
 
 // prints edgy hackerman logo
 fun printLogo() {
-    if (LocalDate.now().monthValue == 12 && LocalDate.now().dayOfMonth == 24) {
+    if (LocalDate.now().monthValue == 12 && LocalDate.now().dayOfMonth == 25) {
         christmasLogo(); return
     }
     println(
