@@ -43,7 +43,7 @@ var userAgent =
 suspend fun fetchWebClientValues(client : Client) {
     try {
         val dua = json.decodeFromString<DUAProp>(
-            normalHTTPClient.get("https://discord-user-api.cf/api/v1/properties/web")
+            normalHTTPClient.get("https://cordapi.dolfi.es/api/v1/properties/web")
                 .bodyAsText()
         )
         clientVersion = dua.chrome_version
