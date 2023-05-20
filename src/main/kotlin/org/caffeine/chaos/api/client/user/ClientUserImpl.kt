@@ -237,12 +237,12 @@ data class ClientUserImpl(
     override suspend fun openDM() : DMChannel? = null
 
     override suspend fun openDMWith(id : Snowflake) : DMChannel {
-        return dmChannels.values.firstOrNull { it.recipients.contains(id.toString()) && it.recipients.size == 1 }
+        return dmChannels.values.firstOrNull { it.recipients.containsKey(id) && it.recipients.size == 1 }
             ?: kotlin.run {
                 val response = client.httpClient.post(
                     "$BASE_URL/users/@me/channels",
                     json.encodeToString(
-                        DMCreateRequest(id.toString())
+                        DMCreateRequest(id)
                     )
                 ).await()
                 val serial = json.decodeFromString<SerialPrivateChannel>(response)
