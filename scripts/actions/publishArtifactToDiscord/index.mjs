@@ -13,7 +13,7 @@ const path = core.getInput("path"),
 const files = fs
     .readdirSync(path)
     .filter((x) => x.endsWith(".jar") && fs.statSync(path + x).isFile())
-    .map((x) => [x, new Blob([fs.readFileSync(path + x)])]);
+    .map((x) => [x, fs.readFileSync(path + x)]);
 
 files.forEach(([filename, file]) => {
     formData.append("file", file, filename);
