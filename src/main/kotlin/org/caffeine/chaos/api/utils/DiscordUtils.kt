@@ -258,10 +258,14 @@ class DiscordUtils(val client : ClientImpl) {
 
             else -> {
                 val parsedData = json.decodeFromString<SerialGuildChannel>(data)
-                createGuildChannel(parsedData, fetchGuild(Snowflake(parsedData.id)) as GuildImpl) as TextBasedChannel
+                val g = resolveGuildFromSerialGuildChannel(parsedData)
+                createGuildChannel(parsedData, fetchGuild(g?.id) as GuildImpl) as TextBasedChannel
             }
         }
     }
+
+    suspend fun resolveGuildFromSerialGuildChannel(c : SerialGuildChannel) : Guild? =
+        client.user.guildChannels[c.parent_id.asSnowflake()]?.guild
 
     suspend fun fetchTextBasedChannel(channelId : Snowflake) : TextBasedChannel {
         val data = client.httpClient.get("$BASE_URL/channels/${channelId}").await()
@@ -406,11 +410,15 @@ class DiscordUtils(val client : ClientImpl) {
             client,
             ChannelType.enumById(channel.type),
             channel.last_message_id.asSnowflake(),
-            channel.name.ifBlank { channel.recipients.first().username },
-            channel.recipients.associateBy(
-                { r -> r.id },
-                { r -> client.utils.createUser(r) }
-            )
+            channel.name.ifBlank { channel.recipients.firstOrNull()?.username ?: client.user.username },
+            if (channel.recipients.isNotEmpty()) {
+                channel.recipients.associateBy(
+                    { r -> r.id.asSnowflake() },
+                    { r -> client.utils.createUser(r) }
+                )
+            } else {
+                mapOf(Pair(client.user.id, client.user))
+            }
         )
 
     suspend fun fetchUser(id : String) : User {
@@ -474,7 +482,7 @@ class DiscordUtils(val client : ClientImpl) {
             client
         )
 
-    suspend fun fetchGuild(guildId : Snowflake) : Guild {
+    suspend fun fetchGuild(guildId : Snowflake?) : Guild {
         return client.user.guilds[guildId] ?: run {
             val data = client.httpClient.get("$BASE_URL/guilds/$guildId").await()
             createGuild(json.decodeFromString(data))

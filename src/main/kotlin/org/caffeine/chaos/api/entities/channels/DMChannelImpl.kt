@@ -16,7 +16,7 @@ class DMChannelImpl(
     override val type : ChannelType,
     override val lastMessageId : Snowflake,
     override val name : String,
-    override val recipients : Map<String, User>,
+    override val recipients : Map<Snowflake, User>,
 ) : DMChannel {
     override suspend fun sendMessage(data : MessageData) : CompletableDeferred<Message> {
         return client.user.sendMessage(this, data)

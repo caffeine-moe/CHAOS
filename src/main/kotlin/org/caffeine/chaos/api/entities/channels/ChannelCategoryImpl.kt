@@ -17,7 +17,7 @@ class ChannelCategoryImpl(
     var guildId : Snowflake = Snowflake(0)
 
     override var guild : Guild
-        get() = client.user.guilds[guildId] ?: runBlocking { client.user.fetchGuild(guildId) }
+        get() = runBlocking(client.coroutineContext) { client.user.fetchGuild(guildId) }
         set(value) {
             guildId = value.id
         }
