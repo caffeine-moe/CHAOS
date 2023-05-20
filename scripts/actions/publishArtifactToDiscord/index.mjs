@@ -6,7 +6,7 @@ import core from "@actions/core";
 import github from "@actions/github";
 
 const path = core.getInput("path"),
-    webhookUrl = core.getInput("webhookUrl"),
+    webhookUrl = core.getInput("webhook_url"),
     { runId, ref, repo } = github.context,
     formData = new FormData();
 
