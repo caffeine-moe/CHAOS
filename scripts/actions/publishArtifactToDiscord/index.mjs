@@ -1,5 +1,4 @@
 import fs from "fs";
-import { Blob } from "buffer";
 import fetch from "node-fetch";
 import FormData from "form-data";
 import core from "@actions/core";
@@ -15,10 +14,6 @@ const files = fs
     .filter((x) => x.endsWith(".jar") && fs.statSync(path + x).isFile())
     .map((x) => [x, fs.readFileSync(path + x)]);
 
-files.forEach(([filename, file]) => {
-    formData.append("file", file, filename);
-});
-
 const payload = {
     embeds: [
         {
@@ -29,6 +24,10 @@ const payload = {
 };
 
 formData.append("payload_json", JSON.stringify(payload));
+
+files.forEach(([filename, file], i) => {
+    formData.append(`files[${i}]`, file, filename);
+});
 
 await fetch(webhookUrl, {
     method: "POST",
