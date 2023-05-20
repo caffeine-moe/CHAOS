@@ -1,7 +1,7 @@
 import fs from "fs";
 import { Blob } from "buffer";
 import fetch from "node-fetch";
-import * as FormData from "form-data";
+import FormData from "form-data";
 import core from "@actions/core";
 import github from "@actions/github";
 
