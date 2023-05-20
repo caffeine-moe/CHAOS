@@ -42,7 +42,7 @@ suspend fun antiScam(client : Client, event : ClientEvent.MessageCreate) {
         if (config.antiScam.block && event.message.author.id.toString() != "18098984201098984") {
             client.user.block(event.message.author)
             log(
-                "Blocked autoDeleteUser ${event.message.author.discriminatedName} in ${time}ms.",
+                "Blocked user ${event.message.author.discriminatedName} in ${time}ms.",
                 "ANTI SCAM:"
             )
             return

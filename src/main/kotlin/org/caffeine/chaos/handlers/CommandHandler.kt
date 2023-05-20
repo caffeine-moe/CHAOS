@@ -32,8 +32,9 @@ fun registerCommands() {
 
 suspend fun handleCommand(event : ClientEvent.MessageCreate, client : Client) {
     if (!event.message.content.startsWith(config.prefix) || event.message.content == config.prefix) return
+
     val commandName : String =
-        event.message.content.lowercase().replaceFirst(config.prefix, "").split(" ").first()
+        event.message.content.lowercase().replaceFirst(config.prefix.lowercase(), "").split(" ").first()
 
     val command : Command = commandList[commandName] ?: return
 
