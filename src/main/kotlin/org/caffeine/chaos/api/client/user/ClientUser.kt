@@ -9,7 +9,7 @@ import org.caffeine.chaos.api.entities.channels.GuildChannel
 import org.caffeine.chaos.api.entities.channels.TextBasedChannel
 import org.caffeine.chaos.api.entities.guild.Emoji
 import org.caffeine.chaos.api.entities.guild.Guild
-import org.caffeine.chaos.api.entities.guild.GuildMember
+import org.caffeine.chaos.api.entities.guild.GuildMemberData
 import org.caffeine.chaos.api.entities.guild.Role
 import org.caffeine.chaos.api.entities.message.Message
 import org.caffeine.chaos.api.entities.message.MessageFilters
@@ -28,13 +28,12 @@ interface ClientUser : User {
     val settings : ClientUserSettings?
     val premium : Boolean?
     val token : String
-    val client : Client
 
     val relationships : Map<Snowflake, User>
     val friends : Map<Snowflake, User>
     val blocked : Map<Snowflake, User>
     val guilds : Map<Snowflake, Guild>
-    val guildMembers : Map<Snowflake, GuildMember>
+    val guildMembers : Map<Snowflake, GuildMemberData>
     val guildRoles : Map<Snowflake, Role>
     val emojis : Map<Snowflake, Emoji>
     val channels : Map<Snowflake, BaseChannel>
@@ -83,7 +82,7 @@ interface ClientUser : User {
         filters : MessageFilters,
     ) : List<Message>
 
-    suspend fun fetchGuildMember(user : User, guild : Guild) : GuildMember?
+    suspend fun fetchGuildMember(user : User, guild : Guild) : GuildMemberData
     suspend fun fetchChannelFromId(id : Snowflake) : BaseChannel?
     suspend fun replyMessage(message : Message, data : MessageData) : CompletableDeferred<Message>
     suspend fun fetchGuild(guildId : Snowflake) : Guild

@@ -14,7 +14,7 @@ import org.caffeine.chaos.api.entities.channels.GuildChannel
 import org.caffeine.chaos.api.entities.channels.TextBasedChannel
 import org.caffeine.chaos.api.entities.guild.Emoji
 import org.caffeine.chaos.api.entities.guild.Guild
-import org.caffeine.chaos.api.entities.guild.GuildMember
+import org.caffeine.chaos.api.entities.guild.GuildMemberData
 import org.caffeine.chaos.api.entities.guild.Role
 import org.caffeine.chaos.api.entities.message.Message
 import org.caffeine.chaos.api.entities.message.MessageFilters
@@ -70,7 +70,7 @@ data class ClientUserImpl(
 
     override var channels = HashMap<Snowflake, BaseChannel>()
     override var guilds = HashMap<Snowflake, Guild>()
-    override var guildMembers = HashMap<Snowflake, GuildMember>()
+    override var guildMembers = HashMap<Snowflake, GuildMemberData>()
     override val guildRoles = HashMap<Snowflake, Role>()
     override var emojis = HashMap<Snowflake, Emoji>()
 
@@ -230,8 +230,8 @@ data class ClientUserImpl(
 
     override suspend fun fetchGuild(guildId : Snowflake) : Guild = client.utils.fetchGuild(guildId)
 
-    override suspend fun fetchGuildMember(user : User, guild : Guild) : GuildMember? =
-        client.utils.fetchGuildMember(user.id, guild)
+    override suspend fun fetchGuildMember(user : User, guild : Guild) : GuildMemberData? =
+        client.utils.fetchGuildMemberData(user.id, guild)
 
     override suspend fun openDM() : DMChannel? = null
 

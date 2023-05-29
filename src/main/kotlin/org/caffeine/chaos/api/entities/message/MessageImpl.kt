@@ -6,7 +6,7 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.entities.Snowflake
 import org.caffeine.chaos.api.entities.channels.TextBasedChannel
 import org.caffeine.chaos.api.entities.guild.Guild
-import org.caffeine.chaos.api.entities.guild.GuildMember
+import org.caffeine.chaos.api.entities.guild.GuildMemberData
 import org.caffeine.chaos.api.entities.users.User
 import org.caffeine.chaos.api.typedefs.MessageType
 import org.caffeine.chaos.api.utils.MessageBuilder
@@ -40,7 +40,7 @@ data class MessageImpl(
             guildId = value?.id ?: Snowflake(0)
         }
 
-    override val guildMember : GuildMember?
+    override val guildMember : GuildMemberData?
         get() = runBlocking(client.coroutineContext) {
             (guild)?.let { client.user.fetchGuildMember(author, it) }
         }

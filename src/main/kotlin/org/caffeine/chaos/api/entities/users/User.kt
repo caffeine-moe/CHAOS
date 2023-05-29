@@ -1,5 +1,6 @@
 package org.caffeine.chaos.api.entities.users
 
+import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.entities.Snowflake
 import org.caffeine.chaos.api.entities.channels.DMChannel
 import org.caffeine.chaos.api.entities.channels.TextBasedChannel
@@ -16,6 +17,7 @@ interface User {
     val bot : Boolean
     val relation : RelationshipType
     val asMention : String
+    val client : Client
     suspend fun fetchLastMessageInChannel(channel : TextBasedChannel, filters : MessageSearchFilters) : Message?
     fun avatarUrl() : String
 

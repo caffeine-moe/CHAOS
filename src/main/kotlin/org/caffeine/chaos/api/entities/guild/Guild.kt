@@ -39,7 +39,7 @@ interface Guild {
     val emojis : Map<Snowflake, Emoji>
     val client : Client
 
-    val members : Map<Snowflake, GuildMember>
+    val members : Map<Snowflake, GuildMemberData>
         get() = client.user.guildMembers.filterValues { it.guild.id == id }
 
     val channels : Map<Snowflake, GuildChannel>

@@ -9,14 +9,14 @@ import org.caffeine.chaos.api.entities.message.MessageSearchFilters
 import org.caffeine.chaos.api.typedefs.RelationshipType
 import kotlin.math.absoluteValue
 
-data class UserImpl(
+open class UserImpl(
     override val username : String = "",
     override val discriminator : String = "",
     override val avatar : String? = "",
     override val id : Snowflake = Snowflake(0),
     override val relation : RelationshipType,
     override val bot : Boolean = false,
-    val client : Client,
+    override val client : Client,
 ) : User {
 
     override val asMention : String = "<@${id}>"
@@ -31,7 +31,7 @@ data class UserImpl(
 
     override fun avatarUrl() : String {
         return if (!avatar.isNullOrBlank()) {
-            val ext = if (avatar.startsWith("a_")) "gif" else "png"
+            val ext = if (avatar!!.startsWith("a_")) "gif" else "png"
             "https://cdn.discordapp.com/avatars/${id}/$avatar.$ext?size=4096"
         } else
             "https://cdn.discordapp.com/embed/avatars/${discriminator.toInt().absoluteValue % 5}.png"
