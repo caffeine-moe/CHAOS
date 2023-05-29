@@ -2,19 +2,19 @@ package org.caffeine.chaos.api.entities.guild
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.entities.Snowflake
-import org.caffeine.chaos.api.entities.users.User
 import org.caffeine.chaos.api.typedefs.PermissionType
 
-interface GuildMember {
+interface Role {
+    val color : Int
+    val hoisted : Boolean
+    val icon : String?
     val id : Snowflake
-    val user : User
-    val nickname : String
-    val roles : Map<Snowflake, Role>
+    val managed : Boolean
+    val mentionable : Boolean
+    val name : String
     val permissions : List<PermissionType>
-    val joinedAt : Snowflake
-    val premiumSince : Snowflake?
-    val deafened : Boolean
-    val muted : Boolean
+    val position : Int
+    val unicodeEmoji : String?
     val guild : Guild
     val client : Client
 }

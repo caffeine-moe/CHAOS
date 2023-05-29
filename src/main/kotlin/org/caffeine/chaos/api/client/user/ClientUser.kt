@@ -9,6 +9,8 @@ import org.caffeine.chaos.api.entities.channels.GuildChannel
 import org.caffeine.chaos.api.entities.channels.TextBasedChannel
 import org.caffeine.chaos.api.entities.guild.Emoji
 import org.caffeine.chaos.api.entities.guild.Guild
+import org.caffeine.chaos.api.entities.guild.GuildMember
+import org.caffeine.chaos.api.entities.guild.Role
 import org.caffeine.chaos.api.entities.message.Message
 import org.caffeine.chaos.api.entities.message.MessageFilters
 import org.caffeine.chaos.api.entities.message.MessageSearchFilters
@@ -32,6 +34,8 @@ interface ClientUser : User {
     val friends : Map<Snowflake, User>
     val blocked : Map<Snowflake, User>
     val guilds : Map<Snowflake, Guild>
+    val guildMembers : Map<Snowflake, GuildMember>
+    val guildRoles : Map<Snowflake, Role>
     val emojis : Map<Snowflake, Emoji>
     val channels : Map<Snowflake, BaseChannel>
     val guildChannels : Map<Snowflake, GuildChannel>
@@ -54,6 +58,7 @@ interface ClientUser : User {
     suspend fun setStatus(status : StatusType)
 
     suspend fun sendMessage(channel : BaseChannel, message : MessageData) : CompletableDeferred<Message>
+    suspend fun sendMessage(channel : BaseChannel, message : String) : CompletableDeferred<Message>
 
     suspend fun deleteMessage(message : Message)
 
@@ -78,6 +83,7 @@ interface ClientUser : User {
         filters : MessageFilters,
     ) : List<Message>
 
+    suspend fun fetchGuildMember(user : User, guild : Guild) : GuildMember?
     suspend fun fetchChannelFromId(id : Snowflake) : BaseChannel?
     suspend fun replyMessage(message : Message, data : MessageData) : CompletableDeferred<Message>
     suspend fun fetchGuild(guildId : Snowflake) : Guild

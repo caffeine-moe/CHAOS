@@ -25,6 +25,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 class Connection(private val client : ClientImpl) {
 
+    var startTime : Long = 0
     var ready = false
     var gatewaySequence = 0
     var resumeGatewayUrl : String = ""
@@ -43,7 +44,7 @@ class Connection(private val client : ClientImpl) {
             }
 
             ConnectionType.DISCONNECT -> {
-                disconnect()
+                disconnect(false)
                 return
             }
 
@@ -80,10 +81,10 @@ class Connection(private val client : ClientImpl) {
         }
     }
 
-    private suspend fun readSocket(start : Long) {
+    private suspend fun readSocket() {
         webSocket.incoming.receiveAsFlow().buffer(Channel.UNLIMITED).collect {
             when (it) {
-                is Frame.Binary, is Frame.Text -> handleJsonRequest(it.deflateData(), client, start)
+                is Frame.Binary, is Frame.Text -> handleJsonRequest(it.deflateData(), client)
                 else -> { /*ignore*/
                 }
             }
@@ -103,7 +104,7 @@ class Connection(private val client : ClientImpl) {
             path = "/?encoding=json&v=9&compress=zlib-stream",
             port = 443
         ) {
-            val now = System.currentTimeMillis()
+            startTime = System.currentTimeMillis()
 
             webSocket = this
 
@@ -130,7 +131,7 @@ class Connection(private val client : ClientImpl) {
 
                     log("${payload.name} sent.", "API:", LogLevel(LoggerLevel.LOW, client))
 
-                    readSocket(now)
+                    readSocket()
                 }
 
                 else -> {
@@ -151,8 +152,7 @@ class Connection(private val client : ClientImpl) {
         }
     }
 
-
-    private suspend fun disconnect() {
+    private suspend fun disconnect(keepAlive : Boolean) {
         heartBeat.cancelAndJoin()
         webSocket.close()
         ready = false
@@ -160,12 +160,12 @@ class Connection(private val client : ClientImpl) {
     }
 
     private suspend fun reconnectResume() {
-        disconnect()
+        disconnect(true)
         connect(client.utils.generateResume())
     }
 
     private suspend fun reconnect() {
-        disconnect()
+        disconnect(true)
         execute(ConnectionType.CONNECT)
     }
 }

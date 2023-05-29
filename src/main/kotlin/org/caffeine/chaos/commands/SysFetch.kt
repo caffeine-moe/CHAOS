@@ -17,7 +17,6 @@ class SysFetch : Command(
         cmd : String,
     ) {
         val sysInfo = SystemInfo()
-
         val proc = sysInfo.hardware.processor
         val gpu = sysInfo.hardware.graphicsCards.first()
         val ram = sysInfo.hardware.memory
@@ -31,6 +30,7 @@ class SysFetch : Command(
                     .appendLine("```asciidoc")
                     .appendLine("•Platform:\n----------")
                     .appendLine("    •Family:: ${sysInfo.operatingSystem.family}")
+                    .appendLine("    •Version:: ${sysInfo.operatingSystem.versionInfo}")
                     .appendLine("    •Manufacturer:: ${sysInfo.operatingSystem.manufacturer}")
                     .appendLine("    •Uptime:: ${up / (60 * 60 * 24)}d ${(up % 86400) / (60 * 60)}h ${(up / 60) % 60}m ${up % 60}s")
                     .appendLine("•CPU:\n-----")
@@ -46,8 +46,8 @@ class SysFetch : Command(
                     .appendLine("    •Used Memory:: ${((ram.total - ram.available) / 1073741824) + 1}GB")
                     .appendLine("    •Virtual Memory:: ${((ram.virtualMemory.virtualMax) / 1073741824) + 1}GB")
                     .appendLine("•GPU:\n-----")
-                    .appendLine("    •Model:: ${gpu.name}")
                     .appendLine("    •Vendor:: ${gpu.vendor}")
+                    .appendLine("    •Model:: ${gpu.name}")
                     .appendLine("•Motherboard:\n-------------")
                     .appendLine("    •Model:: ${sysInfo.hardware.computerSystem.baseboard.model}")
                     .appendLine("    •Manufacturer:: ${sysInfo.hardware.computerSystem.baseboard.manufacturer}")

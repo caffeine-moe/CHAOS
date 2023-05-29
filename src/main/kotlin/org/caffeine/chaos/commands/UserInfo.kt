@@ -9,7 +9,7 @@ import org.caffeine.chaos.api.utils.awaitThen
 class UserInfo :
     Command(
         arrayOf("userinfo", "info"),
-        CommandInfo("UserInfo", "info <@autoDeleteUser>", "Displays information about a mentioned autoDeleteUser.")
+        CommandInfo("UserInfo", "info <@user>", "Displays information about a mentioned user.")
     ) {
     override suspend fun onCalled(
         client : Client,
@@ -33,7 +33,7 @@ class UserInfo :
         }
         val usrInfo = usr
         val sdf = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        val acd = sdf.format(usrInfo.id.value)
+        val acd = sdf.format(usrInfo.id.timestamp.toEpochMilliseconds())
         event.message.channel.sendMessage(
             MessageBuilder()
                 .appendLine("**User info for ${usr.discriminatedName}**")
@@ -45,6 +45,7 @@ class UserInfo :
         ).awaitThen { message ->
             onComplete(message, true)
         }
+
         return
     }
 }

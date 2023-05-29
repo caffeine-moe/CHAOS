@@ -14,6 +14,8 @@ import org.caffeine.chaos.api.entities.channels.GuildChannel
 import org.caffeine.chaos.api.entities.channels.TextBasedChannel
 import org.caffeine.chaos.api.entities.guild.Emoji
 import org.caffeine.chaos.api.entities.guild.Guild
+import org.caffeine.chaos.api.entities.guild.GuildMember
+import org.caffeine.chaos.api.entities.guild.Role
 import org.caffeine.chaos.api.entities.message.Message
 import org.caffeine.chaos.api.entities.message.MessageFilters
 import org.caffeine.chaos.api.entities.message.MessageSearchFilters
@@ -68,6 +70,8 @@ data class ClientUserImpl(
 
     override var channels = HashMap<Snowflake, BaseChannel>()
     override var guilds = HashMap<Snowflake, Guild>()
+    override var guildMembers = HashMap<Snowflake, GuildMember>()
+    override val guildRoles = HashMap<Snowflake, Role>()
     override var emojis = HashMap<Snowflake, Emoji>()
 
     override val dmChannels : Map<Snowflake, DMChannel>
@@ -92,35 +96,23 @@ data class ClientUserImpl(
         return this.channels[id]
     }
 
-    override suspend fun replyMessage(message : Message, messageData : MessageData) : CompletableDeferred<Message> {
+    override suspend fun replyMessage(message : Message, data : MessageData) : CompletableDeferred<Message> {
         val reply = MessageReply(
-            messageData.content,
-            messageData.tts,
-            messageData.nonce,
+            data.content,
+            data.tts,
+            data.nonce,
             MessageReference(
                 message.guild?.id.toString(),
                 message.channel.id.toString(),
                 message.id.toString()
             )
         )
-        val data = json.encodeToString(reply)
+        val jsondata = json.encodeToString(reply)
         val response =
-            client.httpClient.post("$BASE_URL/channels/${message.channel.id}/messages", data).await()
+            client.httpClient.post("$BASE_URL/channels/${message.channel.id}/messages", jsondata).await()
         val serial = json.decodeFromString<SerialMessage>(response)
         return CompletableDeferred(client.utils.createMessage(serial))
     }
-
-    /*    fun getGuild(channel : MessageChannel) : ClientGuild? {
-            var guild : ClientGuild? = null
-            for (g in client.autoDeleteUser.guilds) {
-                for (c in g.channels) {
-                    if (c.id == channel.id) {
-                        guild = g
-                    }
-                }
-            }
-            return guild
-        }*/
 
     override suspend fun deleteChannel(channel : BaseChannel) {
         client.httpClient.delete("$BASE_URL/channels/${channel.id}")
@@ -158,6 +150,10 @@ data class ClientUserImpl(
         val data = json.parseToJsonElement("{\"status\":\"${status.value}\"}").toString()
         client.httpClient.patch("$BASE_URL/users/@me/settings", data)
     }
+
+    override suspend fun sendMessage(channel : BaseChannel, message : String) : CompletableDeferred<Message> =
+        sendMessage(channel, MessageBuilder().append(message))
+
 
     override suspend fun sendMessage(
         channel : BaseChannel,
@@ -233,6 +229,9 @@ data class ClientUserImpl(
     }
 
     override suspend fun fetchGuild(guildId : Snowflake) : Guild = client.utils.fetchGuild(guildId)
+
+    override suspend fun fetchGuildMember(user : User, guild : Guild) : GuildMember? =
+        client.utils.fetchGuildMember(user.id, guild)
 
     override suspend fun openDM() : DMChannel? = null
 

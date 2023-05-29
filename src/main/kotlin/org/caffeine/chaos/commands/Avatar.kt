@@ -43,7 +43,7 @@ class Avatar : Command(
 
         event.message.channel.sendMessage(
             MessageBuilder()
-                .appendLine("${user.discriminatedName}'s Avatar")
+                .appendLine("`${user.discriminatedName}`'s Avatar")
                 .appendLine(avatarURL)
         ).awaitThen { onComplete(it, true) }
     }

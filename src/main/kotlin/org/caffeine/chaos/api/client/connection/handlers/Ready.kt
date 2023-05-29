@@ -18,7 +18,7 @@ import org.caffeine.chaos.api.utils.ConsoleColour
 import org.caffeine.chaos.api.utils.json
 import org.caffeine.chaos.api.utils.log
 
-suspend fun ready(client : ClientImpl, payload : String, start : Long) {
+suspend fun ready(client : ClientImpl, payload : String) {
     val d = json.decodeFromString<Ready>(payload).d
 
     client.user = client.utils.createClientUserImpl(d)
@@ -30,7 +30,7 @@ suspend fun ready(client : ClientImpl, payload : String, start : Long) {
     client.socket.resumeGatewayUrl = d.resume_gateway_url
     client.socket.ready = true
 
-    val time = System.currentTimeMillis() - start
+    val time = System.currentTimeMillis() - client.socket.startTime
 
     log("${ConsoleColour.GREEN.value}Client logged in! ${time}ms", "API:", LogLevel(LoggerLevel.LOW, client))
     client.eventBus.produceEvent(ClientEvent.Ready(client.user, time))

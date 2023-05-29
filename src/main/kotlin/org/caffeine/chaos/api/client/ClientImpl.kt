@@ -1,7 +1,10 @@
 package org.caffeine.chaos.api.client
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import org.caffeine.chaos.api.client.config.ClientConfig
 import org.caffeine.chaos.api.client.connection.Connection
 import org.caffeine.chaos.api.client.connection.http.HTTPClient
@@ -27,17 +30,13 @@ class ClientImpl(
     val httpClient : HTTPClient = HTTPClient(this)
 
     override suspend fun login() = socket.execute(ConnectionType.CONNECT)
-    override suspend fun logout() = socket.execute(ConnectionType.DISCONNECT)
 
-    override suspend fun destroy() {
-        logout()
-        eventBus.produceEvent(ClientEvent.Close)
-        cancel()
-    }
+    override suspend fun logout() = socket.execute(ConnectionType.DISCONNECT)
 
     override suspend fun restart() = socket.execute(ConnectionType.RECONNECT)
 
     override lateinit var user : ClientUserImpl
+
 }
 
 /*

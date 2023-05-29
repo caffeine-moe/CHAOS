@@ -8,7 +8,7 @@ class Pin : Command(
     CommandInfo(
         "Pin",
         "pin <Message OR Reply>",
-        "Pins text that you put after the command OR a message that you reply to."
+        "Pins text that you put after the command"
     )
 ) {
     override suspend fun onCalled(

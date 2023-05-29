@@ -5,6 +5,7 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.entities.Snowflake
 import org.caffeine.chaos.api.entities.channels.TextBasedChannel
 import org.caffeine.chaos.api.entities.guild.Guild
+import org.caffeine.chaos.api.entities.guild.GuildMember
 import org.caffeine.chaos.api.entities.users.User
 import org.caffeine.chaos.api.typedefs.MessageType
 import org.caffeine.chaos.api.utils.MessageData
@@ -14,6 +15,7 @@ interface Message : MessageData {
     val id : Snowflake
     val channel : TextBasedChannel
     val guild : Guild?
+    val guildMember : GuildMember?
     val author : User
     val timestamp : Long
     val editedAt : Long?

@@ -1,5 +1,7 @@
 package org.caffeine.chaos.api.client.connection.payloads.gateway
 
+import org.caffeine.chaos.api.entities.Snowflake
+
 @kotlinx.serialization.Serializable
 data class SerialGuildMember(
     val avatar : String? = null,
@@ -11,6 +13,6 @@ data class SerialGuildMember(
     val nick : String = "",
     val pending : Boolean = false,
     val premium_since : String? = null,
-    val roles : List<String> = listOf(),
+    val roles : List<Snowflake> = listOf(),
     val user : SerialUser,
 )

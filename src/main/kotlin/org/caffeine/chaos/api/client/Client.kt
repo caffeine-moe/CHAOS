@@ -16,7 +16,6 @@ interface Client : CoroutineScope {
     suspend fun login()
     suspend fun logout()
     suspend fun restart()
-    suspend fun destroy()
 
     companion object Builder {
 
