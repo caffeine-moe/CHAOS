@@ -36,7 +36,7 @@ class Backup :
     private data class BackupStructure(
         val blockList : List<PrivateUser>,
         val friends : List<PrivateUser>,
-        val guilds : MutableList<PrivateGuild>,
+        val guilds : List<PrivateGuild>,
     )
 
     override suspend fun onCalled(
@@ -45,65 +45,48 @@ class Backup :
         args : MutableList<String>,
         cmd : String,
     ) {
-        val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yy_HH:mm:ss"))
-        event.message.channel.sendMessage(MessageBuilder().append("Performing backup..."))
+        val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd_MM_yy_HH_mm_ss"))
+        event.message.channel.sendMessage("Performing backup...")
             .awaitThen { message ->
                 try {
-                    val blockList = mutableListOf<PrivateUser>()
+                    val simpleGuilds =
+                        client.user.guilds.values.map { PrivateGuild(it.name, it.id.toString(), it.vanityUrl) }
 
-                    val friends = mutableListOf<PrivateUser>()
-
-                    val simpleGuilds = mutableListOf<PrivateGuild>()
-
-                    for (i in client.user.guilds.values.toList()) {
-                        simpleGuilds.add(
-                            PrivateGuild(name = i.name, id = i.id.toString(), vanityUrl = i.vanityUrl)
+                    val friends = client.user.friends.values.map {
+                        PrivateUser(
+                            it.username,
+                            it.discriminator,
+                            it.id.toString(),
+                            it.avatarUrl()
                         )
                     }
 
-                    for (i in client.user.friends.values.toList()) {
-                        friends.add(
-                            PrivateUser(
-                                username = i.username,
-                                discriminator = i.discriminator,
-                                id = i.id.toString(),
-                                avatar = i.avatarUrl()
-                            )
-                        )
-                    }
-
-                    for (i in client.user.blocked.values.toList()) {
-                        blockList.add(
-                            PrivateUser(
-                                username = i.username,
-                                discriminator = i.discriminator,
-                                id = i.id.toString(),
-                                avatar = i.avatarUrl()
-                            )
+                    val blockList = client.user.blocked.values.map {
+                        PrivateUser(
+                            it.username,
+                            it.discriminator,
+                            it.id.toString(),
+                            it.avatarUrl()
                         )
                     }
 
                     val textToWrite = json.encodeToString(BackupStructure(blockList, friends, simpleGuilds))
+
                     val p = File("Backup")
-                    if (!p.exists()) {
-                        p.mkdir()
-                    }
+                    if (!p.exists()) p.mkdir()
+
                     val f : File = if (p.absolutePath.startsWith("/")) {
                         File("${p.absolutePath}/$time.json")
                     } else {
                         File("${p.absolutePath}\\$time.json")
                     }
                     f.writeText(textToWrite)
-                    try {
-                        message.edit(
-                            MessageBuilder()
-                                .appendLine("Backup successful!")
-                                .appendLine("Saved to: ${f.absolutePath}")
-                        ).awaitThen {
-                            onComplete(it, true)
-                        }
-                    } catch (e : Exception) {
-                        e.printStackTrace()
+                    message.edit(
+                        MessageBuilder()
+                            .appendLine("Backup successful!")
+                            .appendLine("Saved to: ${f.absolutePath}")
+                    ).awaitThen {
+                        onComplete(it, true)
                     }
                 } catch (e : Exception) {
                     e.printStackTrace()
