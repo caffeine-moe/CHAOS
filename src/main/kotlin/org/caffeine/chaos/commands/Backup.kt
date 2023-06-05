@@ -27,8 +27,8 @@ class Backup :
 
     @kotlinx.serialization.Serializable
     private data class PrivateGuild(
-        val id : String,
         val name : String,
+        val id : String,
         val vanityUrl : String? = null,
     )
 
