@@ -23,7 +23,7 @@ class Purge : Command(
         return when {
             args.size < 1 -> {
                 event.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))
-                    .awaitThen { message -> onComplete(message, true) }
+                    .awaitThen { message -> onComplete(message, false) }
                 null
             }
 
@@ -38,7 +38,7 @@ class Purge : Command(
 
             else -> {
                 event.channel.sendMessage(error(client, event, "Too many arguments.", commandInfo))
-                    .awaitThen { message -> onComplete(message, true) }
+                    .awaitThen { message -> onComplete(message, false) }
                 null
             }
         }
@@ -59,7 +59,7 @@ class Purge : Command(
                         commandInfo
                     )
                 )
-                    .awaitThen { message -> onComplete(message, true) }
+                    .awaitThen { message -> onComplete(message, false) }
                 return null
             }
             args.last().toInt()
@@ -82,7 +82,7 @@ class Purge : Command(
                             commandInfo
                         )
                     )
-                        .awaitThen { message -> onComplete(message, true) }
+                        .awaitThen { message -> onComplete(message, false) }
                     return null
                 }
             }
@@ -101,7 +101,7 @@ class Purge : Command(
         var done = 0
         val messages = channel.fetchHistory(MessageFilters(authorId = client.user.id, needed = num))
         if (messages.isEmpty()) {
-            event.channel.sendMessage("There is nothing to delete!").awaitThen { message -> onComplete(message, true) }
+            event.channel.sendMessage("There is nothing to delete!").awaitThen { message -> onComplete(message, false) }
             return
         }
         messages
@@ -118,6 +118,6 @@ class Purge : Command(
                 delay(500)
             }
         event.channel.sendMessage("Removed $done message${if (done > 1) "s" else ""}!")
-            .awaitThen { message -> onComplete(message, true) }
+            .awaitThen { message -> onComplete(message, false) }
     }
 }
