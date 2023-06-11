@@ -2,13 +2,13 @@ package org.caffeine.chaos.api.utils
 
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.*
 import io.ktor.client.plugins.cache.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.cookies.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import io.ktor.utils.io.errors.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import org.caffeine.chaos.api.client.Client
@@ -34,12 +34,11 @@ data class DUAProp(
     val client_build_number : Int,
 )
 
-var clientVersion = "106.0.5249.91"
-var clientBuildNumber = 158183
+var clientVersion = "114.0.0.0"
+var clientBuildNumber = 203670
 var userAgent =
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.5249.91 Safari/537.36"
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.3"
 
-// Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36
 suspend fun fetchWebClientValues(client : Client) {
     try {
         val dua = json.decodeFromString<DUAProp>(
@@ -49,7 +48,7 @@ suspend fun fetchWebClientValues(client : Client) {
         clientVersion = dua.chrome_version
         clientBuildNumber = dua.client_build_number
         userAgent = dua.chrome_user_agent
-    } catch (e : IOException) {
+    } catch (e : ResponseException) {
         log(
             "Unable to fetch client values, falling back to default values.",
             "API:",
