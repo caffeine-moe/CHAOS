@@ -14,7 +14,6 @@ class Theme : Command(arrayOf("theme", "dth"), CommandInfo("Theme", "theme <Them
         cmd : String,
     ) {
         if (client.user !is ClientUser) return
-        print("gel")
         val err : String = if (args.isNotEmpty()) {
             val theme = when (args.first().lowercase()) {
                 "d", "dark" -> ThemeType.DARK

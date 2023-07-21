@@ -24,8 +24,7 @@ interface User {
             else
                 "avatars/$id/$avatar.png"
         else
-        //fix later
-            "embed/avatars/${5 % 5}.png"
+            "embed/avatars/${(id.value shr 22) % 6u}.png"
 
         return "https://cdn.discordapp.com/$bit?size=4096"
     }
