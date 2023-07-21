@@ -5,7 +5,7 @@ import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.typedefs.LogLevel
 import org.caffeine.chaos.api.typedefs.LoggerLevel
 import org.caffeine.chaos.api.utils.MessageBuilder
-import org.caffeine.chaos.api.utils.MessageData
+import org.caffeine.chaos.api.utils.MessageSendData
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.config
 import org.caffeine.chaos.handlers.commandList
@@ -18,7 +18,7 @@ sealed class Command(val commandNames : Array<String>, val commandInfo : Command
     open suspend fun onCalled(
         client : Client,
         event : ClientEvent.MessageCreate,
-        args : MutableList<String>,
+        args : List<String>,
         cmd : String,
     ) {
         log("Not implemented.", level = LogLevel(LoggerLevel.LOW, client))
@@ -29,7 +29,7 @@ sealed class Command(val commandNames : Array<String>, val commandInfo : Command
         event : ClientEvent.MessageCreate,
         error : String,
         info : CommandInfo,
-    ) : MessageData {
+    ) : MessageSendData {
         return MessageBuilder()
             .appendLine("**Incorrect usage** '${event.message.content}'")
             .appendLine("**Error:** $error")

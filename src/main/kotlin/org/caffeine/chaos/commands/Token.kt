@@ -11,10 +11,10 @@ class Token : Command(arrayOf("token"), CommandInfo("Token", "token", "Logs your
     override suspend fun onCalled(
         client : Client,
         event : ClientEvent.MessageCreate,
-        args : MutableList<String>,
+        args : List<String>,
         cmd : String,
     ) {
-        log("${client.user.discriminatedName} : ${client.user.token}", "TOKEN:${ConsoleColour.BLUE.value}")
+        log("${client.user.username} : ${client.user.token}", "TOKEN:${ConsoleColour.BLUE.value}")
         event.message.channel.sendMessage(MessageBuilder().append("Token logged to console."))
             .awaitThen { message ->
                 onComplete(message, true)

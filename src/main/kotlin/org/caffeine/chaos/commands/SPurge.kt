@@ -8,7 +8,7 @@ class SPurge : Command(arrayOf("spurge"), CommandInfo("SPurge", "spurge", "Stops
     override suspend fun onCalled(
         client : Client,
         event : ClientEvent.MessageCreate,
-        args : MutableList<String>,
+        args : List<String>,
         cmd : String,
     ) {
         purgeCock = true

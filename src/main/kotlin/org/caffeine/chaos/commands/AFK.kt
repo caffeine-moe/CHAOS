@@ -3,6 +3,7 @@ package org.caffeine.chaos.commands
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.client.ClientImpl
+import org.caffeine.chaos.api.client.user.ClientUser
 import org.caffeine.chaos.api.client.user.CustomStatus
 import org.caffeine.chaos.api.typedefs.StatusType
 import org.caffeine.chaos.api.utils.log
@@ -18,29 +19,31 @@ class AFK :
     override suspend fun onCalled(
         client : Client,
         event : ClientEvent.MessageCreate,
-        args : MutableList<String>,
+        args : List<String>,
         cmd : String,
     ) {
+        if (client.user !is ClientUser) return
+        val cu = client.user as ClientUser
         val prefix = "AFK:"
         if (afk) return
         afkMessage = config.afk.message
         if (args.isNotEmpty()) {
             afkMessage = args.joinToString(" ")
         }
-        oldStatus = client.user.settings?.status ?: return
-        oldCustomStatus = client.user.settings?.customStatus ?: return
+        oldStatus = cu.settings.status
+        oldCustomStatus = cu.settings.customStatus
         client as ClientImpl
-        val newStatus = client.utils.getStatusType(config.afk.status)
+        val newStatus = StatusType.enumById(config.afk.status)
         if (newStatus != oldStatus) {
             if (newStatus != StatusType.UNKNOWN) {
-                client.user.setStatus(newStatus)
+                cu.setStatus(newStatus)
             } else {
                 log("Invalid status type: ${config.afk.status}", prefix)
                 log("Using default status: ${StatusType.DND}", prefix)
-                client.user.setStatus(StatusType.DND)
+                cu.setStatus(StatusType.DND)
             }
         }
-        client.user.setCustomStatus(CustomStatus(text = afkMessage))
+        cu.setCustomStatus(CustomStatus(text = afkMessage))
         afk = afk.not()
         log("Set AFK to $afk", prefix)
     }

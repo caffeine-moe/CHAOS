@@ -9,10 +9,11 @@ suspend fun cdnpls(event : ClientEvent.MessageCreate) {
     val regex = Regex(pattern = "https?://media\\.discordapp\\.net/attachments/\\d{18,19}/\\d{18,19}/\\S*")
     val url = regex.findAll(event.message.content)
     if (url.toList().isNotEmpty()) {
-        val cdnpls = url.first().value.replace("media.discordapp.net", "cdn.discordapp.com")
-        event.message.edit(event.message).await()
+        val cdnpls = url.map { it.value.replace("media.discordapp.net", "cdn.discordapp.com") }
+        val new = event.message.content.replaceFirst(url.first().value, cdnpls.first())
+        event.message.edit(new).await()
         if (config.logger.cdnpls) {
-            log(cdnpls, "CDNPLS:")
+            log(new, "CDNPLS:")
         }
     }
 }

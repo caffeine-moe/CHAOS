@@ -19,9 +19,9 @@ suspend fun handleJsonRequest(payload : String, client : ClientImpl) {
 
                 GatewayEvent.MESSAGE_DELETE.value -> messageDelete(payload, client)
 
-                GatewayEvent.CHANNEL_CREATE.value -> channelMod(payload, client)
+                //GatewayEvent.CHANNEL_CREATE.value -> channelMod(payload, client)
 
-                GatewayEvent.CHANNEL_UPDATE.value -> channelMod(payload, client)
+                //GatewayEvent.CHANNEL_UPDATE.value -> channelMod(payload, client)
 
                 GatewayEvent.GUILD_DELETE.value -> guildDelete(payload, client)
 

@@ -81,14 +81,12 @@ class HTTPClient(val clientImpl : ClientImpl) {
             handleResponseExceptionWithRequest { cause, _ ->
                 if (cause is CancellationException) {
                     log("Error: ${cause.message}", "API:", LogLevel(LoggerLevel.LOW, clientImpl))
-                    clientImpl.restart()
                 }
                 if (cause.localizedMessage.contains("401 Unauthorized.")) {
                     log("Invalid token!", "API:", LogLevel(LoggerLevel.LOW, clientImpl))
                     return@handleResponseExceptionWithRequest
                 }
                 log("Error: ${cause.message}", "API:", LogLevel(LoggerLevel.LOW, clientImpl))
-                clientImpl.restart()
             }
         }
     }
@@ -102,9 +100,23 @@ class HTTPClient(val clientImpl : ClientImpl) {
         return CompletableDeferred(request)
     }
 
-    suspend fun post(
+    suspend fun put(
         url : String,
         data : String = "",
+        headersBuilder : HeadersBuilder = HeadersBuilder(),
+    ) : CompletableDeferred<String> {
+        val request = sendRequest(request {
+            url(url)
+            method = HttpMethod.Put
+            headers.appendAll(headersBuilder.build())
+            setBody(data)
+        })
+        return CompletableDeferred(request)
+    }
+
+    suspend fun post(
+        url : String,
+        data : Any = EmptyContent,
         headersBuilder : HeadersBuilder = HeadersBuilder(),
     ) : CompletableDeferred<String> {
         val request = sendRequest(request {
@@ -138,7 +150,7 @@ class HTTPClient(val clientImpl : ClientImpl) {
         return CompletableDeferred(request)
     }
 
-    suspend fun sendRequest(data : HttpRequestBuilder) : String {
+    private suspend fun sendRequest(data : HttpRequestBuilder) : String {
         return client.request {
             takeFrom(data)
         }.bodyAsText()

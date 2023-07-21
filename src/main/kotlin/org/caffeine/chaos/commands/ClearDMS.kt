@@ -12,7 +12,7 @@ class ClearDMS : Command(
     override suspend fun onCalled(
         client : Client,
         event : ClientEvent.MessageCreate,
-        args : MutableList<String>,
+        args : List<String>,
         cmd : String,
     ) {
         val oneMonthEarlier = Calendar.getInstance().apply { add(Calendar.MONTH, -1) }.toInstant().toEpochMilli()

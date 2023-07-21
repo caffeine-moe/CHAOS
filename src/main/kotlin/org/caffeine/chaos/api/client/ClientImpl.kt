@@ -8,7 +8,8 @@ import kotlinx.coroutines.launch
 import org.caffeine.chaos.api.client.config.ClientConfig
 import org.caffeine.chaos.api.client.connection.Connection
 import org.caffeine.chaos.api.client.connection.http.HTTPClient
-import org.caffeine.chaos.api.client.user.ClientUserImpl
+import org.caffeine.chaos.api.client.user.BaseClientUser
+import org.caffeine.chaos.api.client.user.BaseClientUserImpl
 import org.caffeine.chaos.api.typedefs.ClientType
 import org.caffeine.chaos.api.typedefs.ConnectionType
 import org.caffeine.chaos.api.utils.DiscordUtils
@@ -20,10 +21,17 @@ class ClientImpl(
     override val coroutineContext : CoroutineContext = Dispatchers.IO,
 ) : Client {
 
+    init {
+        if (configuration.clientType == ClientType.BOT && !configuration.token.startsWith("Bot ")) {
+            configuration.token =
+                "Bot ${configuration.token}"
+        }
+    }
+
     override val token : String = configuration.token
-    override val type : ClientType = configuration.clientType
+    val type : ClientType = configuration.clientType
     val eventBus : EventBus = EventBus()
-    val socket : Connection = Connection(this)
+    var socket : Connection = Connection(this)
     val utils : DiscordUtils = DiscordUtils(this)
     override val events : SharedFlow<ClientEvent> = eventBus.flow
 
@@ -35,8 +43,9 @@ class ClientImpl(
 
     override suspend fun restart() = socket.execute(ConnectionType.RECONNECT)
 
-    override lateinit var user : ClientUserImpl
+    override lateinit var user : BaseClientUser
 
+    val userImpl : BaseClientUserImpl get() = user as BaseClientUserImpl
 }
 
 /*

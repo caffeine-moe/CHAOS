@@ -24,10 +24,10 @@ class Haste : Command(
     override suspend fun onCalled(
         client : Client,
         event : ClientEvent.MessageCreate,
-        args : MutableList<String>,
+        args : List<String>,
         cmd : String,
     ) {
-        event.channel.sendMessage(MessageBuilder().appendLine("Creating haste...")).awaitThen { message ->
+        event.channel.sendMessage("Creating haste...").awaitThen { message ->
             var body = ""
             if (args.isNotEmpty()) {
                 body = args.joinToString(" ")

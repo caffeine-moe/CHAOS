@@ -9,7 +9,7 @@ class CloseDm : Command(arrayOf("closedm"), CommandInfo("CloseDM", "closedm", "C
     override suspend fun onCalled(
         client : Client,
         event : ClientEvent.MessageCreate,
-        args : MutableList<String>,
+        args : List<String>,
         cmd : String,
     ) {
         val message : String = when (event.channel.type) {

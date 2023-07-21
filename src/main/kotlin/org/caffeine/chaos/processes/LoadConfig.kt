@@ -16,7 +16,7 @@ suspend fun loadConfig() = coroutineScope {
     if (!configFile.exists()) {
         val default = javaClass.classLoader.getResource("defaultconfig.json") ?: run {
             log(
-                "Config not found, and we were unable to generate one for you, please create a config file and put this in it https://caffeine.moe/CHAOS/config.json",
+                "Config not found, and we were unable to generate one for you, please create a config.json file and put this in it https://caffeine.moe/CHAOS/config.json",
                 prefix
             ); return@coroutineScope
         }

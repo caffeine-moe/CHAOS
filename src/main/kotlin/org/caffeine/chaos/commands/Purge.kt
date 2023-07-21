@@ -15,13 +15,13 @@ class Purge : Command(
     CommandInfo("Purge", "purge [Channel] <Amount>", "Deletes a specified amount of YOUR messages from a channel.")
 ) {
 
-    suspend fun resolveChannel(
+    private suspend fun resolveChannel(
         client : Client,
         event : ClientEvent.MessageCreate,
-        args : MutableList<String>,
+        args : List<String>,
     ) : TextBasedChannel? {
         return when {
-            args.size < 1 -> {
+            args.isEmpty() -> {
                 event.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))
                     .awaitThen { message -> onComplete(message, false) }
                 null
@@ -44,10 +44,10 @@ class Purge : Command(
         }
     }
 
-    suspend fun resolveNum(
+    private suspend fun resolveNum(
         client : Client,
         event : ClientEvent.MessageCreate,
-        args : MutableList<String>,
+        args : List<String>,
     ) : Int? {
         return if (!args.last().toString().contains("[^0-9]".toRegex())) {
             if (args.last().toInt() <= 0) {
@@ -92,7 +92,7 @@ class Purge : Command(
     override suspend fun onCalled(
         client : Client,
         event : ClientEvent.MessageCreate,
-        args : MutableList<String>,
+        args : List<String>,
         cmd : String,
     ) {
         purgeCock = false
@@ -106,8 +106,7 @@ class Purge : Command(
         }
         messages
             .filter { message ->
-                message.author.id == client.user.id
-                        && message.type == MessageType.DEFAULT
+                message.type == MessageType.DEFAULT
                         || message.type == MessageType.REPLY
             }
             .forEach { message ->

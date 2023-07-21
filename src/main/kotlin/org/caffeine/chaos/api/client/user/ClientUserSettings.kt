@@ -1,5 +1,6 @@
 package org.caffeine.chaos.api.client.user
 
+import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.entities.guild.GuildImpl
 import org.caffeine.chaos.api.typedefs.StatusType
 import org.caffeine.chaos.api.typedefs.ThemeType
@@ -34,4 +35,5 @@ data class ClientUserSettings(
     val streamNotificationsEnabled : Boolean = false,
     val theme : ThemeType = ThemeType.UNKNOWN,
     val timezoneOffset : Int = 0,
+    val client : Client,
 )

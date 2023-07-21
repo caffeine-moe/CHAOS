@@ -6,4 +6,10 @@ enum class HypeSquadHouseType(val value : String) {
     BRILLIANCE("brilliance"),
     BALANCE("balance"),
     UNKNOWN("unknown");
+
+    companion object {
+        fun enumById(input : String) : HypeSquadHouseType {
+            return enumValues<HypeSquadHouseType>().firstOrNull { it.value == input } ?: UNKNOWN
+        }
+    }
 }

@@ -14,6 +14,6 @@ fun handleMessageDelete(event : ClientEvent.MessageDelete, client : Client) {
     } else ""
     log(
         "\"${event.message.content}\" in$guild Channel : \"${event.message.channel.name}\"",
-        "${event.message.author.discriminatedName} DELETED:"
+        "${event.message.author.username} DELETED:"
     )
 }

@@ -8,7 +8,7 @@ class SelfDestruct : Command(arrayOf("quit", "q", "selfdestruct"), CommandInfo("
     override suspend fun onCalled(
         client : Client,
         event : ClientEvent.MessageCreate,
-        args : MutableList<String>,
+        args : List<String>,
         cmd : String,
     ) {
         client.logout()

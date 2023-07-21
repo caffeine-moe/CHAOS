@@ -2,6 +2,7 @@ package org.caffeine.chaos.commands
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
+import org.caffeine.chaos.api.client.user.ClientUser
 import org.caffeine.chaos.api.typedefs.HypeSquadHouseType
 
 class HypeSquad :
@@ -12,10 +13,11 @@ class HypeSquad :
     override suspend fun onCalled(
         client : Client,
         event : ClientEvent.MessageCreate,
-        args : MutableList<String>,
+        args : List<String>,
         cmd : String,
     ) {
+        if (client.user !is ClientUser) return
         val house = HypeSquadHouseType.valueOf(args.first())
-        client.user.setHouse(house)
+        (client.user as ClientUser).setHouse(house)
     }
 }

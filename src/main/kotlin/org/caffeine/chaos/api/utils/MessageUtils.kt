@@ -1,18 +1,25 @@
 package org.caffeine.chaos.api.utils
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
-import org.caffeine.chaos.api.entities.Snowflake
-import org.caffeine.chaos.api.entities.asSnowflake
-import org.caffeine.chaos.api.entities.message.MessageAttachment
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import kotlinx.serialization.*
+import org.caffeine.chaos.api.entities.message.PartialAttachment
+import java.io.File
 
 interface MessageData {
     val content : String
     val tts : Boolean
     val nonce : String
-    val attachments : Map<Snowflake, MessageAttachment>
     // val embed: MessageEmbed;
+}
+
+interface MessageSendData : MessageData {
+
+    var attachments : List<PartialAttachment>
+
+    @Transient
+    var byteAttachments : HashMap<String, ByteArray>
 }
 
 @Serializable
@@ -30,20 +37,20 @@ data class MessageReply(
     override val nonce : String,
     @SerialName("message_reference")
     val messageReference : MessageReference,
-) : MessageData {
-    override val attachments : Map<Snowflake, MessageAttachment> = emptyMap()
-}
-
+) : MessageData
 
 @Serializable
-class MessageBuilder : MessageData {
+class MessageBuilder : MessageSendData {
 
     override var tts = false
 
     override var content : String = ""
     override val nonce : String get() = calcNonce()
+    override var attachments : List<PartialAttachment> = emptyList()
 
-    override var attachments : HashMap<Snowflake, MessageAttachment> = hashMapOf()
+    @Transient
+    override var byteAttachments : HashMap<String, ByteArray> = hashMapOf()
+
 
     fun append(text : String) : MessageBuilder {
         content += text
@@ -51,12 +58,25 @@ class MessageBuilder : MessageData {
     }
 
     fun appendLine(text : String) : MessageBuilder {
-        content += if (content.isBlank()) text else "\n$text"
+        content += "\n$text"
         return this
     }
 
-    fun addAttachment(attachment : MessageAttachment) : MessageBuilder {
-        attachments[attachment.id.asSnowflake()] = attachment
+    fun addAttachment(attachment : File) : MessageBuilder {
+        byteAttachments[attachment.name] = attachment.readBytes()
         return this
     }
+
+    suspend fun addAttachmentFromURL(attachment : String) : MessageBuilder {
+        val url = URLBuilder(urlString = attachment).build()
+        val body = normalHTTPClient.get(url).readBytes()
+        byteAttachments[url.pathSegments.last().toString()] = body
+        return this
+    }
+
+    fun addAttachment(attachment : ByteArray, name : String) : MessageBuilder {
+        byteAttachments[name] = attachment
+        return this
+    }
+
 }

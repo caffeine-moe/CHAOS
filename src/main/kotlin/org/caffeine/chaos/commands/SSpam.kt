@@ -8,7 +8,7 @@ class SSpam : Command(arrayOf("sspam"), CommandInfo("SSpam", "sspam", "Stops the
     override suspend fun onCalled(
         client : Client,
         event : ClientEvent.MessageCreate,
-        args : MutableList<String>,
+        args : List<String>,
         cmd : String,
     ) {
         spamCock = true

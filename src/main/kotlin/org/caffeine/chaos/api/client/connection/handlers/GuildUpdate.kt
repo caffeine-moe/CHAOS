@@ -10,6 +10,6 @@ suspend fun guildUpdate(payload : String, client : ClientImpl) {
     val parsed = json.decodeFromString<GuildCreate>(payload)
     val guild = client.utils.createGuild(parsed.d)
     val oldGuild = client.user.guilds[guild.id] ?: return
-    client.user.guilds[guild.id] = guild
+    client.userImpl.guilds[guild.id] = guild
     client.eventBus.produceEvent(ClientEvent.GuildUpdate(oldGuild, guild))
 }

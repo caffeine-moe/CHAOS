@@ -16,7 +16,7 @@ suspend fun messageUpdate(payload : String, client : ClientImpl) {
         content = d.content ?: old.content,
         editedAt = client.utils.timestampResolver(d.edited_timestamp)
     )
-    client.user.messageCache[old.id] = new
+    client.userImpl.messageCache[old.id] = new
     val event = ClientEvent.MessageEdit(
         new
     )

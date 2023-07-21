@@ -3,6 +3,7 @@ package org.caffeine.chaos.commands
 import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
+import org.caffeine.chaos.api.client.user.ClientUser
 import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.api.utils.awaitThen
 import org.caffeine.chaos.api.utils.json
@@ -19,10 +20,8 @@ class Backup :
     @kotlinx.serialization.Serializable
     private data class PrivateUser(
         val username : String,
-        val discriminator : String,
         val id : String,
         val avatar : String,
-        val discriminatedName : String = "$username#$discriminator",
     )
 
     @kotlinx.serialization.Serializable
@@ -42,29 +41,28 @@ class Backup :
     override suspend fun onCalled(
         client : Client,
         event : ClientEvent.MessageCreate,
-        args : MutableList<String>,
+        args : List<String>,
         cmd : String,
     ) {
         val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd_MM_yy_HH_mm_ss"))
         event.message.channel.sendMessage("Performing backup...")
             .awaitThen { message ->
                 try {
+                    if (client.user !is ClientUser) return
+                    val cu = (client.user as ClientUser)
                     val simpleGuilds =
                         client.user.guilds.values.map { PrivateGuild(it.name, it.id.toString(), it.vanityUrl) }
-
-                    val friends = client.user.friends.values.map {
+                    val friends = cu.friends.values.map {
                         PrivateUser(
                             it.username,
-                            it.discriminator,
                             it.id.toString(),
                             it.avatarUrl()
                         )
                     }
 
-                    val blockList = client.user.blocked.values.map {
+                    val blockList = cu.blocked.values.map {
                         PrivateUser(
                             it.username,
-                            it.discriminator,
                             it.id.toString(),
                             it.avatarUrl()
                         )

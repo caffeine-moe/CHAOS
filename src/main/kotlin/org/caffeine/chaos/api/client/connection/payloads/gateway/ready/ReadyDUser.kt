@@ -6,7 +6,6 @@ data class ReadyDUser(
     val bio : String = "",
     val bot : Boolean = false,
     val desktop : Boolean? = null,
-    val discriminator : String,
     val email : String?,
     val flags : Int,
     val id : String,

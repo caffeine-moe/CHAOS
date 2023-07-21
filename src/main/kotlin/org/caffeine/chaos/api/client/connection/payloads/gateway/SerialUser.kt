@@ -7,8 +7,8 @@ data class SerialUser(
     val avatar_decoration : String? = null,
     val banner : String? = null,
     val banner_color : String = "",
-    val discriminator : String = "",
     val id : String = "",
     val bot : Boolean = false,
     val username : String = "",
+    val global_name : String = "",
 )

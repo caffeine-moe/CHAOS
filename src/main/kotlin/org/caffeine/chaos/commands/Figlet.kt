@@ -10,7 +10,7 @@ class Figlet :
     override suspend fun onCalled(
         client : Client,
         event : ClientEvent.MessageCreate,
-        args : MutableList<String>,
+        args : List<String>,
         cmd : String,
     ) {
         if (args.isEmpty()) {

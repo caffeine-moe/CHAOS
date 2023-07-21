@@ -9,7 +9,7 @@ class Dice :
     override suspend fun onCalled(
         client : Client,
         event : ClientEvent.MessageCreate,
-        args : MutableList<String>,
+        args : List<String>,
         cmd : String,
     ) {
         (1..6).random().toString()

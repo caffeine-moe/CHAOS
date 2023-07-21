@@ -8,7 +8,7 @@ class ReplyLatency : Command(arrayOf("rl"), CommandInfo("", "", "")) {
     override suspend fun onCalled(
         client : Client,
         event : ClientEvent.MessageCreate,
-        args : MutableList<String>,
+        args : List<String>,
         cmd : String,
     ) {
         event.channel.sendMessage("replied").awaitThen {

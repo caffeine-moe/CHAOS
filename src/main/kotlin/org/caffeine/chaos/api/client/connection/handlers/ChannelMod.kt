@@ -21,6 +21,7 @@ fun channelMod(payload : String, client : ClientImpl) {
         }
 
         ChannelType.DM -> {
+            println(payload)
             client.utils.createDMChannel(tryDecodeFromString<SerialPrivateChannel>(payload) ?: return)
         }
 
@@ -30,5 +31,5 @@ fun channelMod(payload : String, client : ClientImpl) {
         }
     }
     print("created guild channel ${channel.name}")
-    client.user.channels[channel.id] = channel
+    client.userImpl.channels[channel.id] = channel
 }

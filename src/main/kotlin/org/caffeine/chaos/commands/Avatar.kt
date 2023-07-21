@@ -2,7 +2,6 @@ package org.caffeine.chaos.commands
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.entities.users.User
 import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.api.utils.awaitThen
 
@@ -13,7 +12,7 @@ class Avatar : Command(
     override suspend fun onCalled(
         client : Client,
         event : ClientEvent.MessageCreate,
-        args : MutableList<String>,
+        args : List<String>,
         cmd : String,
     ) {
         if (args.isNotEmpty() && event.message.mentions.isEmpty()) {
@@ -30,21 +29,16 @@ class Avatar : Command(
             return
         }
 
-        val user : User
-        val avatarURL : String
-
-        if (args.isEmpty()) {
-            user = client.user
-            avatarURL = client.user.avatarUrl()
+        val user = if (args.isEmpty()) {
+            client.user
         } else {
-            user = event.message.mentions.values.first()
-            avatarURL = user.avatarUrl()
+            event.message.mentions.values.first()
         }
 
         event.message.channel.sendMessage(
             MessageBuilder()
-                .appendLine("`${user.discriminatedName}`'s Avatar")
-                .appendLine(avatarURL)
+                .appendLine("`${user.username}`'s Avatar")
+                .addAttachmentFromURL(user.avatarUrl())
         ).awaitThen { onComplete(it, true) }
     }
 }

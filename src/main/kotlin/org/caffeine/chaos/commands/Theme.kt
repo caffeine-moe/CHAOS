@@ -2,6 +2,7 @@ package org.caffeine.chaos.commands
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
+import org.caffeine.chaos.api.client.user.ClientUser
 import org.caffeine.chaos.api.typedefs.ThemeType
 import org.caffeine.chaos.api.utils.awaitThen
 
@@ -9,9 +10,11 @@ class Theme : Command(arrayOf("theme", "dth"), CommandInfo("Theme", "theme <Them
     override suspend fun onCalled(
         client : Client,
         event : ClientEvent.MessageCreate,
-        args : MutableList<String>,
+        args : List<String>,
         cmd : String,
     ) {
+        if (client.user !is ClientUser) return
+        print("gel")
         val err : String = if (args.isNotEmpty()) {
             val theme = when (args.first().lowercase()) {
                 "d", "dark" -> ThemeType.DARK
@@ -19,7 +22,7 @@ class Theme : Command(arrayOf("theme", "dth"), CommandInfo("Theme", "theme <Them
                 else -> null
             }
             if (theme != null) {
-                client.user.setTheme(theme)
+                (client.user as ClientUser).setTheme(theme)
                 return
             }
             "${args.joinToString(" ")} is not a valid theme!"

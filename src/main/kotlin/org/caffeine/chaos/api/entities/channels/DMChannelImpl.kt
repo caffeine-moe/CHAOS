@@ -8,7 +8,7 @@ import org.caffeine.chaos.api.entities.message.MessageFilters
 import org.caffeine.chaos.api.entities.users.User
 import org.caffeine.chaos.api.typedefs.ChannelType
 import org.caffeine.chaos.api.utils.MessageBuilder
-import org.caffeine.chaos.api.utils.MessageData
+import org.caffeine.chaos.api.utils.MessageSendData
 
 class DMChannelImpl(
     override val id : Snowflake,
@@ -18,7 +18,7 @@ class DMChannelImpl(
     override val name : String,
     override val recipients : Map<Snowflake, User>,
 ) : DMChannel {
-    override suspend fun sendMessage(data : MessageData) : CompletableDeferred<Message> {
+    override suspend fun sendMessage(data : MessageSendData) : CompletableDeferred<Message> {
         return client.user.sendMessage(this, data)
     }
 
@@ -30,7 +30,7 @@ class DMChannelImpl(
         return client.user.fetchMessagesFromChannel(this, messageFilters)
     }
 
-    override suspend fun fetchMessageById(id : String) : Message? {
+    override suspend fun fetchMessageById(id : String) : Message {
         return client.user.fetchMessageById(id, this)
     }
 

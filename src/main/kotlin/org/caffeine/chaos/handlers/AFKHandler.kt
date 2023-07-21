@@ -2,6 +2,7 @@ package org.caffeine.chaos.handlers
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
+import org.caffeine.chaos.api.client.user.ClientUser
 import org.caffeine.chaos.api.entities.users.User
 import org.caffeine.chaos.api.typedefs.ChannelType
 import org.caffeine.chaos.api.utils.log
@@ -18,6 +19,8 @@ var afk = false
 var afkMessage = ""
 
 suspend fun afkHandler(event : ClientEvent.MessageCreate, client : Client) {
+    if (client.user !is ClientUser) return
+    val u = client.user as? ClientUser ?: return
     val author = event.message.author
     val prefix = "AFK:"
     if (author.id == client.user.id) {
@@ -25,25 +28,13 @@ suspend fun afkHandler(event : ClientEvent.MessageCreate, client : Client) {
         cooldown.clear()
         afk = false
         log("Set AFK to $afk", prefix)
-        client.user.setCustomStatus(oldCustomStatus)
-        client.user.setStatus(oldStatus)
-        if (todm.isNotEmpty()) {
-            log("Users who talked to you while you were away:\n${todm.toString().trimEnd()}", prefix)
-            sb.clear()
-        }
-        return
+        u.setCustomStatus(oldCustomStatus)
+        u.setStatus(oldStatus)
+        if (todm.isEmpty()) return
+        log("Users who talked to you while you were away:\n${todm.toString().trimEnd()}", prefix)
+        sb.clear()
     }
-    var doit = false
-    if (event.message.mentions.values.any {
-            it.id == client.user.id
-        }
-    ) {
-        doit = true
-    }
-    if (event.channel.type == ChannelType.DM) {
-        doit = true
-    }
-    if (!doit) return
+    if (event.message.mentionsSelf || event.channel.type != ChannelType.DM) return
     if (cooldown.contains(author)) {
         val i = cooldown[author] ?: return
         val cur = System.currentTimeMillis()

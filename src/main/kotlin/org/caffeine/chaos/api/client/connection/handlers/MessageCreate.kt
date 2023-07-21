@@ -9,7 +9,7 @@ import org.caffeine.chaos.api.utils.json
 suspend fun messageCreate(payload : String, client : ClientImpl) {
     val d = json.decodeFromString<MessageCreate>(payload).d
     val result = client.utils.createMessage(d)
-    client.user.messageCache[result.id] = result
+    client.userImpl.messageCache[result.id] = result
     val event = ClientEvent.MessageCreate(
         result,
         result.channel

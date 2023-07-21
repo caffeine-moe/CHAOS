@@ -19,6 +19,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
+    implementation("io.arrow-kt:arrow-core:1.2.0-RC")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.21")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")

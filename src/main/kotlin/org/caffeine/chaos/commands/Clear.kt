@@ -8,7 +8,7 @@ class Clear : Command(arrayOf("clear"), CommandInfo("Clear", "clear", "Clears th
     override suspend fun onCalled(
         client : Client,
         event : ClientEvent.MessageCreate,
-        args : MutableList<String>,
+        args : List<String>,
         cmd : String,
     ) {
         clear()

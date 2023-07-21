@@ -1,6 +1,8 @@
 package org.caffeine.chaos.api.utils
 
 import SerialGuild
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.delay
@@ -23,9 +25,7 @@ import org.caffeine.chaos.api.client.connection.payloads.gateway.*
 import org.caffeine.chaos.api.client.connection.payloads.gateway.ready.ReadyD
 import org.caffeine.chaos.api.client.connection.payloads.gateway.ready.ReadyDCustomStatus
 import org.caffeine.chaos.api.client.connection.payloads.gateway.ready.ReadyDUserSettings
-import org.caffeine.chaos.api.client.user.ClientUserImpl
-import org.caffeine.chaos.api.client.user.ClientUserSettings
-import org.caffeine.chaos.api.client.user.CustomStatus
+import org.caffeine.chaos.api.client.user.*
 import org.caffeine.chaos.api.entities.Snowflake
 import org.caffeine.chaos.api.entities.asSnowflake
 import org.caffeine.chaos.api.entities.channels.*
@@ -64,40 +64,13 @@ class DiscordUtils(val client : ClientImpl) {
         client.httpClient.get("$BASE_URL/users/@me", headers)
     }
 
-    fun getStatusType(type : String) : StatusType {
-        StatusType.values().forEach {
-            if (it.value == type.lowercase()) {
-                return it
-            }
-        }
-        return StatusType.UNKNOWN
-    }
-
-    fun getHouseType(type : String) : HypeSquadHouseType {
-        HypeSquadHouseType.values().forEach {
-            if (it.value == type.lowercase()) {
-                return it
-            }
-        }
-        return HypeSquadHouseType.UNKNOWN
-    }
-
-    fun getHouseType(type : Number) : HypeSquadHouseType {
-        HypeSquadHouseType.values().forEach {
-            if (it.ordinal == type) {
-                return it
-            }
-        }
-        return HypeSquadHouseType.UNKNOWN
-    }
-
-    fun getThemeType(theme : String) : ThemeType {
-        ThemeType.values().forEach {
-            if (it.value == theme.lowercase()) {
-                return it
-            }
-        }
-        return ThemeType.UNKNOWN
+    val parametersFromFilters : (MessageFilters) -> String = { filters ->
+        var parameters = ""
+        if (!filters.beforeId.isZero()) parameters += "before=${filters.beforeId}&"
+        if (!filters.afterId.isZero()) parameters += "after=${filters.afterId}&"
+        if (!filters.authorId.isZero()) parameters += "author_id=${filters.authorId}&"
+        if (!filters.mentioningUserId.isZero()) parameters += "mentions=${filters.mentioningUserId}&"
+        parameters
     }
 
     suspend fun fetchMessages(channel : TextBasedChannel, filters : MessageFilters) : List<Message> {
@@ -110,11 +83,7 @@ class DiscordUtils(val client : ClientImpl) {
                 }
             }
             while (true) {
-                var parameters = ""
-                if (!filters.beforeId.isZero()) parameters += "before=${filters.beforeId}&"
-                if (!filters.afterId.isZero()) parameters += "after=${filters.afterId}&"
-                if (!filters.authorId.isZero()) parameters += "author_id=${filters.authorId}&"
-                if (!filters.mentioningUserId.isZero()) parameters += "mentions=${filters.mentioningUserId}&"
+                val parameters = parametersFromFilters(filters)
                 val response =
                     client.httpClient.get("$BASE_URL/channels/${channel.id}/messages?$parameters").await()
                 val newMessages = json.decodeFromString<MutableList<SerialMessage>>(response)
@@ -130,9 +99,7 @@ class DiscordUtils(val client : ClientImpl) {
                         ?: return collection
                     collection += lastmessage
                 } else {
-                    newMessages.forEach {
-                        collection += createMessage(it)
-                    }
+                    collection += newMessages.map { createMessage(it) }
                 }
 
                 filters.beforeId = collection.last().id
@@ -186,8 +153,8 @@ class DiscordUtils(val client : ClientImpl) {
         }
     }
 
-    suspend fun fetchGuildMember(id : Snowflake, guild : Guild?) : GuildMember? {
-        return if (guild == null) null else guild.members[id] ?: run {
+    suspend fun fetchGuildMember(id : Snowflake, guild : Guild) : GuildMember {
+        return guild.members[id] ?: run {
             val data = client.httpClient.get("$BASE_URL/guilds/${guild.id}/members/$id").await()
             createGuildMember(json.decodeFromString(data), guild)
         }
@@ -228,22 +195,22 @@ class DiscordUtils(val client : ClientImpl) {
             Snowflake(0),
             client
         ).also { g ->
-            client.user.guilds[g.id] = g
+            (client.user as BaseClientUserImpl).guilds[g.id] = g
             payload.channels.associateByTo(
-                client.user.channels,
+                (client.user as BaseClientUserImpl).channels,
                 { it.id.asSnowflake() },
                 { createGuildChannel(it, g) })
             payload.emojis.associateByTo(
-                client.user.emojis,
+                (client.user as BaseClientUserImpl).emojis,
                 { it.id.asSnowflake() },
                 { createEmoji(it, g) })
             payload.members.associateByTo(
-                client.user.guildMembers,
+                (client.user as BaseClientUserImpl).guildMembers,
                 { it.user.id.asSnowflake() },
                 { createGuildMember(it, g) }
             )
             payload.roles.associateByTo(
-                client.user.guildRoles,
+                (client.user as BaseClientUserImpl).guildRoles,
                 { it.id.asSnowflake() },
                 { createRole(it, g) }
             )
@@ -324,9 +291,6 @@ class DiscordUtils(val client : ClientImpl) {
     }
 
     suspend fun createMessage(message : SerialMessage) : Message {
-        val guild : Guild? =
-            if (message.guild_id == null) null else fetchGuild(message.guild_id.asSnowflake())
-
         val author = createUser(message.author)
 
         val mentions = message.mentions.associateBy({ it.id }, { createUser(it) }) as HashMap
@@ -347,14 +311,24 @@ class DiscordUtils(val client : ClientImpl) {
             message.tts ?: false,
             message.mention_everyone,
             mentions,
-            attachments,
             message.pinned,
             message.id,
-            MessageType.enumById(message.type)
-        ).also {
-            it.guild = guild
-        }
+            MessageType.enumById(message.type),
+            emptyList()
+        ).also { it.attachments = attachments }
     }
+
+    fun createReply(to : Message, with : MessageData) : MessageReply =
+        MessageReply(
+            with.content,
+            with.tts,
+            with.nonce,
+            MessageReference(
+                to.guild?.id.toString(),
+                to.channel.id.toString(),
+                to.id.toString()
+            )
+        )
 
     fun createAttachment(attachment : SerialAttachment) : MessageAttachment {
         return MessageAttachment(
@@ -373,7 +347,6 @@ class DiscordUtils(val client : ClientImpl) {
     fun createUser(user : SerialUser, relationshipType : Int = 0) : User =
         UserImpl(
             user.username,
-            user.discriminator,
             user.avatar,
             Snowflake(user.id),
             resolveRelationshipType(relationshipType),
@@ -417,9 +390,11 @@ class DiscordUtils(val client : ClientImpl) {
             // d.user_settings.restricted_guilds,
             listOf(),
             se.show_current_game,
-            client.utils.getStatusType(se.status),
+            StatusType.enumById(se.status),
             se.stream_notifications_enabled,
-            client.utils.getThemeType(se.theme)
+            ThemeType.enumById(se.theme),
+            se.timezone_offset,
+            client
         )
 
     /*
@@ -467,7 +442,7 @@ class DiscordUtils(val client : ClientImpl) {
             }
         )
 
-    suspend fun fetchUser(id : String) : User {
+    suspend fun fetchUser(id : Snowflake) : User {
         val response = client.httpClient.get("$BASE_URL/users/$id").await()
         return createUser(json.decodeFromString(response))
     }
@@ -509,11 +484,22 @@ class DiscordUtils(val client : ClientImpl) {
         return null
     }
 
-    fun createClientUserImpl(d : ReadyD) =
-        ClientUserImpl(
+    fun createClientUser(d : ReadyD) : BaseClientUserImpl {
+        if (client.type == ClientType.BOT) {
+            return BotClientUserImpl(
+                d.user.bio,
+                client.configuration.token,
+                client,
+                d.user.username,
+                d.user.id.asSnowflake(),
+                d.user.avatar,
+                d.user.bot,
+                RelationshipType.NONE,
+            )
+        }
+        return ClientUserImpl(
             d.user.verified,
             d.user.username,
-            d.user.discriminator,
             d.user.id.asSnowflake(),
             d.user.email,
             d.user.bio,
@@ -525,6 +511,7 @@ class DiscordUtils(val client : ClientImpl) {
             d.user.bot,
             client
         )
+    }
 
     suspend fun fetchGuild(guildId : Snowflake?) : Guild {
         return client.user.guilds[guildId] ?: run {
@@ -610,12 +597,34 @@ class DiscordUtils(val client : ClientImpl) {
                 )
             )
         )
-}
 
-suspend inline fun <reified T> CompletableDeferred<T>.awaitThen(
-    function : (T) -> Unit,
-) : T {
-    val result : T = this.await()
-    kotlin.run { function.invoke(result) }
-    return result
+    suspend fun prepareGoogleCloudBucketForAttachments(attachments : List<AttachmentSlot>) : CompletableDeferred<List<HttpResponse>> {
+        return CompletableDeferred(attachments
+            .map {
+                client.httpClient.client.options(it.uploadUrl) {
+                    Headers.build {
+                        append(HttpHeaders.AccessControlRequestHeaders, HttpHeaders.ContentType)
+                        append(HttpHeaders.AccessControlRequestMethod, HttpMethod.Put.value)
+                    }
+                }
+            })
+    }
+
+    suspend fun uploadAttachmentsToGoogleCloudBucket(
+        attachmentSlots : List<AttachmentSlot>,
+        byteAttachments : HashMap<String, ByteArray>,
+    ) : CompletableDeferred<List<Pair<String, AttachmentSlot>>> {
+        return CompletableDeferred(attachmentSlots.map {
+            val attachmentDataKey = byteAttachments.keys.first { key -> it.uploadFilename.contains(key) }
+            val type = ContentType.fromFileExtension(it.uploadFilename.replaceBefore(".", "")).toString()
+            client.httpClient.client.put(it.uploadUrl) {
+                setBody(byteAttachments[attachmentDataKey])
+                Headers.build {
+                    append(HttpHeaders.ContentLength, byteAttachments[attachmentDataKey]?.size.toString())
+                    append(HttpHeaders.ContentType, type)
+                }
+            }
+            Pair(attachmentDataKey, it)
+        })
+    }
 }

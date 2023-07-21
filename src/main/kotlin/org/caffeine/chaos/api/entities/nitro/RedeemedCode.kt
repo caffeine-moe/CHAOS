@@ -1,4 +1,4 @@
-package org.caffeine.chaos.api.client.user
+package org.caffeine.chaos.api.entities.nitro
 
 import org.caffeine.chaos.api.typedefs.RedeemedCodeErrorType
 import org.caffeine.chaos.api.typedefs.RedeemedCodeStatusType

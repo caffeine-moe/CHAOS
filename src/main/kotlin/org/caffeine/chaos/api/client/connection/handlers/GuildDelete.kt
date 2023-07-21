@@ -10,6 +10,6 @@ import org.caffeine.chaos.api.utils.json
 suspend fun guildDelete(payload : String, client : ClientImpl) {
     val parsed = json.decodeFromString<GuildDelete>(payload)
     val guild = client.user.guilds[parsed.d.id.asSnowflake()] ?: return
-    client.user.guilds.remove(parsed.d.id.asSnowflake())
+    client.userImpl.guilds.remove(parsed.d.id.asSnowflake())
     client.eventBus.produceEvent(ClientEvent.GuildDelete(guild))
 }

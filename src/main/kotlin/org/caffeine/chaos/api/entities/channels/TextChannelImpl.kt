@@ -9,7 +9,7 @@ import org.caffeine.chaos.api.entities.message.Message
 import org.caffeine.chaos.api.entities.message.MessageFilters
 import org.caffeine.chaos.api.typedefs.ChannelType
 import org.caffeine.chaos.api.utils.MessageBuilder
-import org.caffeine.chaos.api.utils.MessageData
+import org.caffeine.chaos.api.utils.MessageSendData
 
 class TextChannelImpl(
     override var id : Snowflake,
@@ -31,7 +31,7 @@ class TextChannelImpl(
             guildId = value.id
         }
 
-    override suspend fun sendMessage(data : MessageData) : CompletableDeferred<Message> =
+    override suspend fun sendMessage(data : MessageSendData) : CompletableDeferred<Message> =
         client.user.sendMessage(this, data)
 
     override suspend fun sendMessage(text : String) : CompletableDeferred<Message> =
@@ -42,7 +42,7 @@ class TextChannelImpl(
         client.user.fetchMessagesFromChannel(this, messageFilters)
 
 
-    override suspend fun fetchMessageById(id : String) : Message? =
+    override suspend fun fetchMessageById(id : String) : Message =
         client.user.fetchMessageById(id, this)
 
     override suspend fun delete() =

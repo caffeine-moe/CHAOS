@@ -12,7 +12,7 @@ class MuteAllServers : Command(
     override suspend fun onCalled(
         client : Client,
         event : ClientEvent.MessageCreate,
-        args : MutableList<String>,
+        args : List<String>,
         cmd : String,
     ) {
         val mas = "Muting all servers..."

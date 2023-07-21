@@ -2,6 +2,7 @@ package org.caffeine.chaos.commands
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
+import org.caffeine.chaos.api.client.user.ClientUser
 import org.caffeine.chaos.api.typedefs.StatusType
 
 class Status :
@@ -9,7 +10,7 @@ class Status :
     override suspend fun onCalled(
         client : Client,
         event : ClientEvent.MessageCreate,
-        args : MutableList<String>,
+        args : List<String>,
         cmd : String,
     ) {
         val err = if (args.isEmpty()) {
@@ -17,7 +18,7 @@ class Status :
         } else {
             val status = StatusType.valueOf(args[0])
             if (status != StatusType.UNKNOWN) {
-                client.user.setStatus(status).also { return }
+                (client.user as ClientUser).setStatus(status).also { println("done"); return }
             }
             "Invalid status '${args.joinToString(" ")}'."
         }

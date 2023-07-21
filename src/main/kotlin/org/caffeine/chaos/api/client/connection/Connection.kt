@@ -12,6 +12,7 @@ import kotlinx.serialization.encodeToString
 import org.caffeine.chaos.api.client.ClientImpl
 import org.caffeine.chaos.api.client.connection.payloads.client.HeartBeat
 import org.caffeine.chaos.api.client.connection.payloads.gateway.init.Init
+import org.caffeine.chaos.api.typedefs.ClientType
 import org.caffeine.chaos.api.typedefs.ConnectionType
 import org.caffeine.chaos.api.typedefs.LogLevel
 import org.caffeine.chaos.api.typedefs.LoggerLevel
@@ -44,7 +45,7 @@ class Connection(private val client : ClientImpl) {
             }
 
             ConnectionType.DISCONNECT -> {
-                disconnect(false)
+                disconnect()
                 return
             }
 
@@ -94,7 +95,7 @@ class Connection(private val client : ClientImpl) {
     private suspend fun connect(payload : DiscordUtils.PayloadDef) {
         fetchWebClientValues(client)
         client.utils.createSuperProperties()
-        client.utils.tokenValidator(client.configuration.token)
+        if (client.type != ClientType.BOT) client.utils.tokenValidator(client.configuration.token)
 
         inflater = Inflater()
 
@@ -138,6 +139,7 @@ class Connection(private val client : ClientImpl) {
                     println(init)
                 }
             }
+            awaitCancellation()
         }
     }
 
@@ -152,7 +154,7 @@ class Connection(private val client : ClientImpl) {
         }
     }
 
-    private suspend fun disconnect(keepAlive : Boolean) {
+    private suspend fun disconnect() {
         heartBeat.cancelAndJoin()
         webSocket.close()
         ready = false
@@ -160,12 +162,12 @@ class Connection(private val client : ClientImpl) {
     }
 
     private suspend fun reconnectResume() {
-        disconnect(true)
+        disconnect()
         connect(client.utils.generateResume())
     }
 
     private suspend fun reconnect() {
-        disconnect(true)
+        disconnect()
         execute(ConnectionType.CONNECT)
     }
 }

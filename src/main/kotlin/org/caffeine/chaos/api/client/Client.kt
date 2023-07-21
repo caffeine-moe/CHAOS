@@ -3,13 +3,11 @@ package org.caffeine.chaos.api.client
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 import org.caffeine.chaos.api.client.config.ClientConfig
-import org.caffeine.chaos.api.client.user.ClientUser
-import org.caffeine.chaos.api.typedefs.ClientType
+import org.caffeine.chaos.api.client.user.BaseClientUser
 
 interface Client : CoroutineScope {
 
-    val type : ClientType
-    val user : ClientUser
+    val user : BaseClientUser
     val token : String
     val configuration : ClientConfig
     val events : SharedFlow<ClientEvent>

@@ -4,7 +4,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.entities.channels.BaseChannel
 import org.caffeine.chaos.api.typedefs.ChannelType
 import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.api.utils.awaitThen
@@ -18,7 +17,7 @@ class LeaveGroupDms :
     override suspend fun onCalled(
         client : Client,
         event : ClientEvent.MessageCreate,
-        args : MutableList<String>,
+        args : List<String>,
         cmd : String,
     ) {
         var done = 0
@@ -30,7 +29,7 @@ class LeaveGroupDms :
                     .awaitThen { message -> onComplete(message, true) }
                 return
             }
-            for (channel : BaseChannel in list) {
+            list.map { channel ->
                 channel.delete()
                 channels.append("${channel.name}, ")
                 done++
@@ -38,24 +37,13 @@ class LeaveGroupDms :
                     Thread.sleep(2500)
                 }
             }
-            if (done > 1) {
-                log(channels.toString(), "CHANNELS DELETED:")
-                event.channel.sendMessage(
-                    MessageBuilder()
-                        .appendLine("Done! Deleted $done channels!")
-                        .appendLine("Check the console to see a list of the deleted channels.")
-                )
-                    .awaitThen { message -> onComplete(message, true) }
-            }
-            if (done == 1) {
-                log(channels.toString(), "CHANNELS DELETED:")
-                event.channel.sendMessage(
-                    MessageBuilder()
-                        .appendLine("Done! Deleted $done channel!")
-                        .appendLine("Check the console to see the name of the deleted channel.")
-                )
-                    .awaitThen { message -> onComplete(message, true) }
-            }
+            val s = if (done > 1) "s" else ""
+            log(channels.toString(), "CHANNELS DELETED:")
+            event.channel.sendMessage(
+                MessageBuilder()
+                    .appendLine("Done! Deleted $done channel$s!")
+                    .appendLine("Check the console to see the name$s of the deleted channel$s.")
+            ).awaitThen { message -> onComplete(message, true) }
         } catch (e : Exception) {
             println(e.printStackTrace())
         }
