@@ -10,6 +10,7 @@ import kotlinx.serialization.modules.subclass
 
 internal const val GATEWAY = "gateway.discord.gg"
 internal const val BASE_URL = "https://discord.com/api/v9"
+internal const val CDN_URL = "https://cdn.discordapp.com/"
 
 private val messageModule = SerializersModule {
     polymorphic(MessageData::class) {

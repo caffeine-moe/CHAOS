@@ -7,6 +7,7 @@ import org.caffeine.chaos.api.entities.channels.TextBasedChannel
 import org.caffeine.chaos.api.entities.message.Message
 import org.caffeine.chaos.api.entities.message.MessageSearchFilters
 import org.caffeine.chaos.api.typedefs.RelationshipType
+import org.caffeine.chaos.api.utils.CDN_URL
 
 interface User {
     val client : Client
@@ -26,7 +27,7 @@ interface User {
         else
             "embed/avatars/${(id.value shr 22) % 6u}.png"
 
-        return "https://cdn.discordapp.com/$bit?size=4096"
+        return "$CDN_URL$bit"
     }
 
     suspend fun openDM() : DMChannel? = client.user.openDMWith(id)

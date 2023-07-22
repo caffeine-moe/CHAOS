@@ -102,7 +102,7 @@ class Connection(private val client : ClientImpl) {
         client.httpClient.client.wss(
             host = if (payload.type != DiscordUtils.PayloadType.RESUME) GATEWAY
             else resumeGatewayUrl.removePrefix("wss://").ifBlank { GATEWAY },
-            path = "/?encoding=json&v=9&compress=zlib-stream",
+            path = "/?encoding=json&v=${client.configuration.gatewayVersion.value}&compress=zlib-stream",
             port = 443
         ) {
             startTime = System.currentTimeMillis()
