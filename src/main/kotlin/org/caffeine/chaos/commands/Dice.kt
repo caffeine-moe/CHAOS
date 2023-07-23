@@ -12,9 +12,10 @@ class Dice :
         args : List<String>,
         cmd : String,
     ) {
-        (1..6).random().toString()
-            .map { ":game_die: $it" }
-            .first()
-            .also { event.channel.sendMessage(it).awaitThen { message -> onComplete(message, true) } }
+        event.channel.sendMessage(
+            (1..6).random().toString()
+                .map { ":game_die: $it" }
+                .first()
+        ).awaitThen { message -> onComplete(message, true) }
     }
 }

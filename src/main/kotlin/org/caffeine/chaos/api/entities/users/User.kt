@@ -19,15 +19,16 @@ interface User {
     val asMention : String
     suspend fun fetchLastMessageInChannel(channel : TextBasedChannel, filters : MessageSearchFilters) : Message?
     fun avatarUrl() : String {
-        val bit = if (!avatar.isNullOrBlank())
-            if (avatar!!.startsWith("a_"))
-                "avatars/$id/$avatar.gif"
+        val url = if (!avatar.isNullOrBlank()) {
+            val ext = if (avatar!!.startsWith("a_"))
+                ".gif"
             else
-                "avatars/$id/$avatar.png"
-        else
+                ".png"
+            "avatars/$id/$avatar$ext"
+        } else
             "embed/avatars/${(id.value shr 22) % 6u}.png"
 
-        return "$CDN_URL$bit"
+        return "$CDN_URL$url?size=512"
     }
 
     suspend fun openDM() : DMChannel? = client.user.openDMWith(id)

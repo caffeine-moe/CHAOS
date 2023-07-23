@@ -2,7 +2,6 @@ package org.caffeine.chaos.commands
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.utils.log
 import java.util.*
 
 class ClearDMS : Command(
@@ -20,6 +19,6 @@ class ClearDMS : Command(
             .filter { it.lastMessageId.timestamp.toEpochMilliseconds() <= oneMonthEarlier }
             .map { it.delete(); it.name }
             .ifEmpty { return }
-            .also { log("Deleted channels : ${it.joinToString(", ")}") }
+            .also { onComplete("Deleted channels : ${it.joinToString(", ")}") }
     }
 }
