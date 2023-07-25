@@ -14,6 +14,7 @@ import org.caffeine.chaos.handlers.commandList
 import org.caffeine.chaos.processes.autoDeleteBot
 
 sealed class Command(val commandNames : Array<String>, val commandInfo : CommandInfo) {
+
     init {
         commandList.putAll(commandNames.associateBy({ it }, { this }))
     }

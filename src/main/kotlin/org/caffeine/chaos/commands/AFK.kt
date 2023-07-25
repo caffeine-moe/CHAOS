@@ -34,15 +34,12 @@ class AFK :
         oldCustomStatus = cu.settings.customStatus
         client as ClientImpl
         val newStatus = StatusType.enumById(config.afk.status)
-        if (newStatus != oldStatus) {
-            if (newStatus != StatusType.UNKNOWN) {
-                cu.setStatus(newStatus)
-            } else {
-                log("Invalid status type: ${config.afk.status}", prefix)
-                log("Using default status: ${StatusType.DND}", prefix)
-                cu.setStatus(StatusType.DND)
-            }
+        if (newStatus == StatusType.UNKNOWN) {
+            log("Invalid status type: ${config.afk.status}", prefix)
+            log("Using default status: ${StatusType.DND}", prefix)
+            cu.setStatus(StatusType.DND)
         }
+        cu.setStatus(newStatus)
         cu.setCustomStatus(CustomStatus(text = afkMessage))
         afk = afk.not()
         log("Set AFK to $afk", prefix)

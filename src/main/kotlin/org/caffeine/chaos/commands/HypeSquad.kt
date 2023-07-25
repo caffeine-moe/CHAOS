@@ -17,7 +17,7 @@ class HypeSquad :
         cmd : String,
     ) {
         if (client.user !is ClientUser) return
-        val house = HypeSquadHouseType.valueOf(args.first())
+        val house = HypeSquadHouseType.enumById(args.first())
         (client.user as ClientUser).setHouse(house)
     }
 }

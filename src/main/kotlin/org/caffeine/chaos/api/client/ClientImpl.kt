@@ -43,6 +43,8 @@ class ClientImpl(
 
     override suspend fun restart() = socket.execute(ConnectionType.RECONNECT)
 
+    override suspend fun destroy() = socket.execute(ConnectionType.KILL)
+
     override lateinit var user : BaseClientUser
 
     val userImpl : BaseClientUserImpl get() = user as BaseClientUserImpl

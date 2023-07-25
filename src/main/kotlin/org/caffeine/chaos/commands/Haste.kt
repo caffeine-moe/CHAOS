@@ -60,7 +60,7 @@ class Haste : Command(
                     .awaitThen { onComplete(it, true) }
                 return
             }
-            val response = normalHTTPClient.post("https://www.toptal.com/developers/hastebin/documents") {
+            val response = normalHTTPClient.post("https://hastebin.com/documents") {
                 setBody(body)
             }
             val haste = json.decodeFromString<HasteResponse>(response.bodyAsText())

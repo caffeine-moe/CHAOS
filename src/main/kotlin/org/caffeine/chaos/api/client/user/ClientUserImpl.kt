@@ -74,12 +74,12 @@ data class ClientUserImpl(
     }
 
     override suspend fun setHouse(house : HypeSquadHouseType) {
-        if (house == HypeSquadHouseType.NONE) {
+        if (house.ordinal !in 1..3) {
             client.httpClient.delete("$BASE_URL/hypesquad/online")
-        } else {
-            val data = json.parseToJsonElement("{\"house_id\":${house.ordinal}}").toString()
-            client.httpClient.post("$BASE_URL/hypesquad/online", data)
+            return
         }
+        val data = "{\"house_id\":${house.ordinal}}"
+        client.httpClient.post("$BASE_URL/hypesquad/online", data)
     }
 
     override suspend fun setCustomStatus(status : CustomStatus) {

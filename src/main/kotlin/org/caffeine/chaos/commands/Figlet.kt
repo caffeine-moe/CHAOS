@@ -21,7 +21,7 @@ class Figlet :
             return
         }
         try {
-            val textToFigletize = args.joinToString()
+            val textToFigletize = args.joinToString(" ")
             val figletizedText = FigletFont.convertOneLine(textToFigletize)
             event.channel.sendMessage("```\n$figletizedText```").awaitThen {
                 onComplete(it, true)

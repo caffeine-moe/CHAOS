@@ -57,6 +57,11 @@ class Connection(private val client : ClientImpl) {
             ConnectionType.RECONNECT_AND_RESUME -> {
                 reconnectResume()
             }
+
+            ConnectionType.KILL -> {
+                disconnect(true)
+                return
+            }
         }
     }
 
@@ -154,11 +159,12 @@ class Connection(private val client : ClientImpl) {
         }
     }
 
-    private suspend fun disconnect() {
+    private suspend fun disconnect(kill : Boolean = false) {
         heartBeat.cancelAndJoin()
         webSocket.close()
         ready = false
         log("Client logged out.", "API:", LogLevel(LoggerLevel.LOW, client))
+        if (kill) webSocket.cancel("Killed.")
     }
 
     private suspend fun reconnectResume() {

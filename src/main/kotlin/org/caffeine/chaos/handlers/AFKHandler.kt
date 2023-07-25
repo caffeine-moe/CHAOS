@@ -27,20 +27,18 @@ suspend fun afkHandler(event : ClientEvent.MessageCreate, client : Client) {
         if (event.message.content.contains(afkMessage)) return
         cooldown.clear()
         afk = false
-        log("Set AFK to $afk", prefix)
+        log("Set AFK to false", prefix)
         u.setCustomStatus(oldCustomStatus)
         u.setStatus(oldStatus)
         if (todm.isEmpty()) return
-        log("Users who talked to you while you were away:\n${todm.toString().trimEnd()}", prefix)
+        log("Users who talked to you while you were away:\n${todm.joinToString(",") { it.username }}", prefix)
         sb.clear()
     }
     if (event.message.mentionsSelf || event.channel.type != ChannelType.DM) return
     if (cooldown.contains(author)) {
         val i = cooldown[author] ?: return
         val cur = System.currentTimeMillis()
-        if (cur.minus(i) < config.afk.cooldown * 1000) {
-            return
-        }
+        if (cur.minus(i) < config.afk.cooldown * 1000) return
     }
     cooldown[event.message.author] = System.currentTimeMillis()
     if (!todm.contains(author)) todm.add(author)

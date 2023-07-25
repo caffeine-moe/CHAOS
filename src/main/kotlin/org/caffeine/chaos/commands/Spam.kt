@@ -3,7 +3,6 @@ package org.caffeine.chaos.commands
 import kotlinx.coroutines.delay
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.api.utils.awaitThen
 import org.caffeine.chaos.handlers.spamCock
 
@@ -36,24 +35,15 @@ class Spam : Command(arrayOf("spam"), CommandInfo("Spam", "spam <Message> <Amoun
             }
             val msg = args.joinToString(" ").removeSuffix(number.toString()).trim()
             var done = 0
-            val message = MessageBuilder().append(msg)
             for (i in 1..number) {
                 if (done % 10 == 0 && done != 0) delay(5000)
-                event.channel.sendMessage(message).await()
+                event.channel.sendMessage(msg).await()
                 done++
                 if (spamCock) break
                 delay(250)
             }
-            if (done > 1) {
-                event.message.channel.sendMessage(
-                    MessageBuilder().appendLine("Done spamming '$msg' $done times.")
-                )
-                    .awaitThen { message -> onComplete(message, false) }
-            }
-            if (done == 1) {
-                event.message.channel.sendMessage(MessageBuilder().appendLine("Done spamming '$msg' once."))
-                    .awaitThen { message -> onComplete(message, false) }
-            }
+            event.message.channel.sendMessage("Done spamming '$msg' ${if (done > 1) "$done times" else "once"}")
+                .awaitThen { message -> onComplete(message, false) }
         } catch (e : Exception) {
             when (e) {
                 is NumberFormatException -> {

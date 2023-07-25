@@ -356,11 +356,12 @@ class DiscordUtils(val client : ClientImpl) {
 
     fun createCustomStatus(cs : ReadyDCustomStatus) : CustomStatus =
         CustomStatus(
-            cs.emoji_id,
             cs.emoji_name,
-            cs.expires_at,
+            cs.emoji_id?.asSnowflake(),
+            cs.expires_at?.asSnowflake(),
             cs.text
         )
+
 
     private fun createUserSettings(se : ReadyDUserSettings, client : ClientImpl) : ClientUserSettings =
         ClientUserSettings(
