@@ -2,8 +2,6 @@ package org.caffeine.chaos.handlers
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.typedefs.LogLevel
-import org.caffeine.chaos.api.typedefs.LoggerLevel
 import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.commands.Command
 import org.caffeine.chaos.config
@@ -40,7 +38,6 @@ suspend fun handleCommand(event : ClientEvent.MessageCreate, client : Client) {
     if (config.logger.commands) log(
         event.message.content,
         "COMMAND:",
-        LogLevel(LoggerLevel.ALL, client)
     )
 
     if (config.autoDelete.user.enabled) autoDeleteUser(event)

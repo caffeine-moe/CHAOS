@@ -8,6 +8,7 @@ import org.caffeine.chaos.api.utils.MessageBuilder
 import java.awt.AlphaComposite
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
+import java.net.URI
 import java.net.URL
 import javax.imageio.ImageIO
 
@@ -28,10 +29,9 @@ class Pride : Command(
                     .getScaledInstance(512, 512, BufferedImage.SCALE_SMOOTH)
             }
             val gayflag = withContext(Dispatchers.IO) {
-                ImageIO.read(URL("https://upload.wikimedia.org/wikipedia/commons/8/85/Pride_Flag.png"))
+                ImageIO.read(URI("https://upload.wikimedia.org/wikipedia/commons/8/85/Pride_Flag.png").toURL())
                     .getScaledInstance(512, 512, BufferedImage.TYPE_INT_ARGB)
             }
-
             val scaledpfp = BufferedImage(512, 512, BufferedImage.TYPE_INT_ARGB)
             scaledpfp.createGraphics().drawImage(pfp, 0, 0, null)
             val g = scaledpfp.createGraphics()

@@ -48,4 +48,6 @@ interface Guild {
     val vanityUrl : String?
 
     fun muteForever()
+
+    suspend fun fetchMemberById(id : Snowflake) : GuildMember
 }

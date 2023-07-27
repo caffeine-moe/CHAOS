@@ -99,7 +99,7 @@ class Purge : Command(
         val channel = resolveChannel(client, event, args) ?: return
         val num = resolveNum(client, event, args) ?: return
         var done = 0
-        val messages = channel.fetchHistory(MessageFilters(authorId = client.user.id, needed = num))
+        val messages = channel.fetchHistory(MessageFilters(needed = num))
         if (messages.isEmpty()) {
             event.channel.sendMessage("There is nothing to delete!").awaitThen { message -> onComplete(message, false) }
             return
@@ -111,12 +111,11 @@ class Purge : Command(
             }
             .forEach { message ->
                 if (done % 10 == 0 && done != 0) delay(5000)
-                message.delete()
-                done++
+                if (message.delete()) done++
                 if (purgeCock) return
                 delay(500)
             }
-        event.channel.sendMessage("Removed $done message${if (done > 1) "s" else ""}!")
+        event.channel.sendMessage("Removed $done message${if (done > 1 || done == 0) "s" else ""}!")
             .awaitThen { message -> onComplete(message, false) }
     }
 }

@@ -42,7 +42,7 @@ suspend fun ready(client : ClientImpl, payload : String) {
 
     val time = System.currentTimeMillis() - client.socket.startTime
 
-    log("${ConsoleColour.GREEN.value}Client logged in! ${time}ms", "API:", LogLevel(LoggerLevel.LOW, client))
+    log("${ConsoleColour.GREEN.value}Client logged in! ${time}ms", level = LogLevel(LoggerLevel.LOW, client))
     client.eventBus.produceEvent(ClientEvent.Ready(client.user, time))
 }
 

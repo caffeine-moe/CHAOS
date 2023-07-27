@@ -11,7 +11,7 @@ import kotlin.system.exitProcess
 
 suspend fun loadConfig() = coroutineScope {
 
-    val prefix = "ERROR:"
+    val prefix = "CONFIG:"
 
     if (!configFile.exists()) {
         val default = javaClass.classLoader.getResource("defaultconfig.json") ?: run {

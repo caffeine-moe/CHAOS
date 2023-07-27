@@ -27,7 +27,7 @@ interface Message : MessageData {
     val embeds : List<MessageEmbed>
     val mentionsSelf : Boolean
 
-    suspend fun delete()
+    suspend fun delete() : Boolean
 
     suspend fun edit(edit : MessageSendData) : CompletableDeferred<Message>
 

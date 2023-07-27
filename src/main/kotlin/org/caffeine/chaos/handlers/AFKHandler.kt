@@ -36,9 +36,9 @@ suspend fun afkHandler(event : ClientEvent.MessageCreate, client : Client) {
     }
     if (event.message.mentionsSelf || event.channel.type != ChannelType.DM) return
     if (cooldown.contains(author)) {
-        val i = cooldown[author] ?: return
-        val cur = System.currentTimeMillis()
-        if (cur.minus(i) < config.afk.cooldown * 1000) return
+        val coolDown = cooldown[author] ?: return
+        val time = System.currentTimeMillis()
+        if (time.minus(coolDown) < config.afk.cooldown * 1000) return
     }
     cooldown[event.message.author] = System.currentTimeMillis()
     if (!todm.contains(author)) todm.add(author)

@@ -11,7 +11,5 @@ class Update :
         event : ClientEvent.MessageCreate,
         args : List<String>,
         cmd : String,
-    ) {
-        update()
-    }
+    ) = update()
 }

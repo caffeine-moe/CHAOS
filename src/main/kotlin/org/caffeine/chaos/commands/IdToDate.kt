@@ -2,9 +2,9 @@ package org.caffeine.chaos.commands
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
+import org.caffeine.chaos.api.entities.asSnowflake
 import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.api.utils.awaitThen
-import org.caffeine.chaos.api.utils.convertIdToUnix
 
 class IdToDate : Command(
     arrayOf("idtodate", "idtod", "idtd"),
@@ -29,7 +29,7 @@ class IdToDate : Command(
         }
         if (err.isEmpty()) {
             val simpleDateFormat = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-            val date = java.util.Date(convertIdToUnix(id.toString()))
+            val date = java.util.Date(id.toString().asSnowflake().timestamp.toEpochMilliseconds())
             val formattedDate = simpleDateFormat.format(date)
             event.channel.sendMessage(
                 MessageBuilder()

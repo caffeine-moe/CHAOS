@@ -21,9 +21,9 @@ data class UserImpl(
     override suspend fun fetchLastMessageInChannel(
         channel : TextBasedChannel,
         filters : MessageSearchFilters,
-    ) : Message? {
-        return client.user.fetchLastMessageInChannel(channel, filters)
-    }
+    ) : Message? =
+        client.user.fetchLastMessageInChannel(channel, filters)
+
 
     override suspend fun openDM() : DMChannel = client.user.openDMWith(id)
 

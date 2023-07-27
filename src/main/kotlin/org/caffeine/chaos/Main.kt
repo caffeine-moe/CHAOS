@@ -6,13 +6,17 @@ import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.client.on
 import org.caffeine.chaos.api.typedefs.ClientType
 import org.caffeine.chaos.api.typedefs.LoggerLevel
-import org.caffeine.chaos.api.utils.*
+import org.caffeine.chaos.api.utils.ConsoleColour
+import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.config.Config
 import org.caffeine.chaos.handlers.handleArgs
 import org.caffeine.chaos.handlers.handleMessage
 import org.caffeine.chaos.handlers.handleMessageDelete
 import org.caffeine.chaos.handlers.handleReady
 import org.caffeine.chaos.processes.loadConfig
+import org.caffeine.chaos.utils.clear
+import org.caffeine.chaos.utils.printLogo
+import org.caffeine.chaos.utils.printSeparator
 import java.io.File
 
 // version lmao
@@ -39,7 +43,7 @@ suspend fun init(args : Array<String> = arrayOf()) {
 
 fun main(args : Array<String> = arrayOf()) = runBlocking {
     init(args)
-    log("${ConsoleColour.BLUE.value}CHAOS is starting...")
+    log("${ConsoleColour.BLUE.value}CHAOS is starting...", "CHAOS:")
     val client = Client.build {
         config {
             token = config.token

@@ -45,9 +45,7 @@ interface BaseClientUser : User {
         sendMessage(channel, MessageBuilder().append(message))
 
     suspend fun editMessage(message : Message, edit : MessageSendData) : CompletableDeferred<Message> {
-        /*        if (client.user is BotClientUser)
-                    return (client.user as BotClientUserImpl).sendMultiPartMessage(channel, message)*/
-        (client.user as ClientUserImpl).finalizeAttachments(message.channel, edit)
+        client as ClientImpl
         val data = jsonNoDefaults.encodeToString(edit)
         val response =
             clientImpl.httpClient.patch(

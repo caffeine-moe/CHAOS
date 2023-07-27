@@ -9,6 +9,7 @@ import org.caffeine.chaos.api.entities.guild.Guild
 import org.caffeine.chaos.api.entities.message.embeds.MessageEmbed
 import org.caffeine.chaos.api.entities.users.User
 import org.caffeine.chaos.api.typedefs.MessageType
+import org.caffeine.chaos.api.typedefs.PermissionType
 import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.api.utils.MessageSendData
 
@@ -38,8 +39,13 @@ data class MessageImpl(
         channel.guild
     } else null
 
-    override suspend fun delete() {
-        client.user.deleteMessage(this)
+    override suspend fun delete() : Boolean {
+        return if (guild != null && this.author != client.user && !client.user.fetchGuildMember(
+                client.user,
+                this.guild
+            ).permissions.contains(PermissionType.MANAGE_MESSAGES)
+        ) false
+        else client.user.deleteMessage(this).isNotBlank()
     }
 
     override suspend fun edit(edit : MessageSendData) : CompletableDeferred<Message> {

@@ -119,6 +119,9 @@ class Snowflake : Comparable<Snowflake> {
 }
 
 fun String.asSnowflake() = Snowflake(this.ifBlank { 0 }.toString())
+fun Long.asSnowflake() = Snowflake(this.toULong())
+fun ULong.asSnowflake() = Snowflake(this)
+
 
 @OptIn(ExperimentalTime::class)
 private class SnowflakeTimeMark(private val timestamp : Instant) : TimeMark {

@@ -98,7 +98,7 @@ data class ClientUserImpl(
         client.httpClient.patch("$BASE_URL/users/@me/settings", data)
     }
 
-    suspend fun finalizeAttachments(channel : BaseChannel, message : MessageSendData) : MessageSendData {
+    private suspend fun finalizeAttachments(channel : BaseChannel, message : MessageSendData) : MessageSendData {
         val attachmentSlotRequests = mutableListOf<AttachmentSlotRequest>()
         message.byteAttachments.mapTo(attachmentSlotRequests) {
             AttachmentSlotRequest(

@@ -39,6 +39,10 @@ data class GuildImpl(
     override var embedChannelId : Snowflake,
     override var client : Client,
 ) : Guild {
+
+    override suspend fun fetchMemberById(id : Snowflake) : GuildMember =
+        client.user.fetchGuildMember(client.user.fetchUser(id), this)
+
     override val channels : Map<Snowflake, GuildChannel>
         get() = client.user.guildChannels.filterValues { it.guild.id == id }
 

@@ -18,7 +18,7 @@ import org.caffeine.chaos.api.utils.awaitThen
 import org.caffeine.chaos.api.utils.json
 import org.caffeine.chaos.api.utils.normalHTTPClient
 import java.net.InetAddress
-import java.net.URL
+import java.net.URI
 
 class IP : Command(arrayOf("ip"), CommandInfo("IP", "ip <IP/URL>", "Looks up information about a specified IP/URL.")) {
 
@@ -65,7 +65,7 @@ class IP : Command(arrayOf("ip"), CommandInfo("IP", "ip <IP/URL>", "Looks up inf
                 try {
                     val host = if (url.contains("://")) {
                         withContext(Dispatchers.IO) {
-                            URL(url).host
+                            URI(url).toURL().host
                         }
                     } else {
                         val selectorManager = ActorSelectorManager(Dispatchers.IO)

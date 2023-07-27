@@ -69,11 +69,3 @@ fun calcNonce(id : Long = 0) : String {
     val unixTs = if (id == 0L) System.currentTimeMillis() else id
     return ((unixTs - 1420070400000) * 4194304).absoluteValue.toString()
 }
-
-fun convertIdToUnix(id : String) : Long {
-    return if (id.isNotBlank()) {
-        (id.toLong() / 4194304 + 1420070400000).absoluteValue
-    } else {
-        0
-    }
-}

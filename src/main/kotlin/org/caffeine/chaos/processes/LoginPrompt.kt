@@ -3,10 +3,10 @@ package org.caffeine.chaos.processes
 import org.caffeine.chaos.api.client.user.BaseClientUser
 import org.caffeine.chaos.api.client.user.ClientUser
 import org.caffeine.chaos.api.utils.ConsoleColour
-import org.caffeine.chaos.api.utils.clear
-import org.caffeine.chaos.api.utils.printLogo
-import org.caffeine.chaos.api.utils.printSeparator
 import org.caffeine.chaos.config
+import org.caffeine.chaos.utils.clear
+import org.caffeine.chaos.utils.printLogo
+import org.caffeine.chaos.utils.printSeparator
 import org.caffeine.chaos.versionString
 
 fun loginPrompt(user : BaseClientUser) {

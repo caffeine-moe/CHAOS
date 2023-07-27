@@ -8,7 +8,7 @@ import org.caffeine.chaos.api.typedefs.LoggerLevel
 import org.caffeine.chaos.api.utils.log
 
 suspend fun reconnect(client : ClientImpl) {
-    log("Gateway sent opcode 7 RECONNECT, reconnecting...", "API:", LogLevel(LoggerLevel.LOW, client))
+    log("Gateway sent opcode 7 RECONNECT, reconnecting...", level = LogLevel(LoggerLevel.LOW, client))
     if (client.type != ClientType.BOT) {
         client.socket.execute(ConnectionType.CONNECT)
         return

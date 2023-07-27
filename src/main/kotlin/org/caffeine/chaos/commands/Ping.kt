@@ -9,7 +9,7 @@ import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.api.utils.awaitThen
-import java.net.URL
+import java.net.URI
 
 class Ping : Command(
     arrayOf("ping", "latency"),
@@ -25,9 +25,9 @@ class Ping : Command(
         args : List<String>,
         cmd : String,
     ) {
+        val pinging = event.message.channel.sendMessage("Pinging...").await()
         if (args.isEmpty()) {
-            val pinging = event.message.channel.sendMessage("Pinging...").await()
-            val ping = "${pinging.timestamp - event.message.timestamp}"
+            val ping = "${System.currentTimeMillis() - pinging.timestamp}"
             pinging.edit(
                 MessageBuilder()
                     .appendLine(":ping_pong: Pong!")
@@ -36,14 +36,13 @@ class Ping : Command(
                 .awaitThen { message -> onComplete(message, true) }
             return
         }
-        val pinging = event.message.channel.sendMessage("Pinging...").await()
         val start : Long
         val stop : Long
         val url = args.joinToString(" ")
         try {
             val host = if (url.contains("://")) {
                 withContext(Dispatchers.IO) {
-                    URL(url).host
+                    URI(url).toURL().host
                 }
             } else {
                 val selectorManager = ActorSelectorManager(Dispatchers.IO)

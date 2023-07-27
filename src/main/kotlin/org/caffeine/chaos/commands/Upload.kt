@@ -3,16 +3,14 @@ package org.caffeine.chaos.commands
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
-import io.ktor.http.*
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.api.utils.awaitThen
 import org.caffeine.chaos.api.utils.normalHTTPClient
 
 class Upload :
     Command(
-        arrayOf("upload", "updoot"),
+        arrayOf("upload"),
         CommandInfo("Upload", "upload <attachment.ext>", "Uploads a file to 0x0.st.")
     ) {
     override suspend fun onCalled(
@@ -28,13 +26,9 @@ class Upload :
                 }
             return
         }
-        event.message.channel.sendMessage(
-            MessageBuilder()
-                .appendLine("Uploading...")
-        ).awaitThen { message ->
+        event.message.channel.sendMessage("Uploading...").awaitThen { message ->
             val attachmentUrl = event.message.attachments.values.first().url
-            val rsp = normalHTTPClient.request("https://0x0.st") {
-                method = HttpMethod.Post
+            val rsp = normalHTTPClient.submitForm("https://0x0.st") {
                 setBody(
                     MultiPartFormDataContent(
                         formData {
@@ -43,12 +37,7 @@ class Upload :
                     )
                 )
             }
-            message.edit(
-                MessageBuilder()
-                    .appendLine(rsp.bodyAsText())
-            ).awaitThen {
-                onComplete(it, true)
-            }
+            message.edit(rsp.bodyAsText()).awaitThen { onComplete(it, true) }
         }
     }
 }

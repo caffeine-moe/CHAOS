@@ -28,7 +28,7 @@ dependencies {
     implementation("io.ktor:ktor-client-core:2.1.3")
     implementation("io.ktor:ktor-client-cio:2.1.3")
     implementation("io.ktor:ktor-client-content-negotiation:2.1.3")
-    implementation("ch.qos.logback:logback-classic:1.4.6")
+    implementation("ch.qos.logback:logback-classic:1.4.7")
     implementation("com.github.lalyos:jfiglet:0.0.9")
     implementation("com.github.oshi:oshi-core:6.4.0")
 }

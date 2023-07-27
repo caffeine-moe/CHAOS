@@ -3,6 +3,7 @@ package org.caffeine.chaos.api.client.user
 import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.http.content.*
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -32,10 +33,10 @@ data class BotClientUserImpl(
 
     override var asMention : String = "<@${id}>"
 
-    suspend fun sendMessageWithAttachments(
+    private suspend fun sendMessageWithAttachments(
         channel : TextBasedChannel,
         message : MessageSendData,
-    ) : CompletableDeferred<Message> {
+    ) : List<PartData> {
         client as ClientImpl
         var files = -1
         val data = json.encodeToString(message)
@@ -55,21 +56,23 @@ data class BotClientUserImpl(
                 })
             }
         }
-        val response =
-            client.httpClient.client.submitFormWithBinaryData(url = "$BASE_URL/channels/${channel.id}/messages", body)
-                .bodyAsText()
-        val serial = json.decodeFromString<SerialMessage>(response)
-        return CompletableDeferred(client.utils.createMessage(serial))
+
+        return body
     }
 
     override suspend fun sendMessage(
         channel : TextBasedChannel,
         message : MessageSendData,
     ) : CompletableDeferred<Message> {
-        if (message.attachments.isNotEmpty()) return sendMessageWithAttachments(channel, message)
         client as ClientImpl
-        val data = json.encodeToString(message)
-        val response = client.httpClient.post("$BASE_URL/channels/${channel.id}/messages", data).await()
+        val response = if (message.byteAttachments.isEmpty()) {
+            val data = json.encodeToString(message)
+            client.httpClient.post("$BASE_URL/channels/${channel.id}/messages", data).await()
+        } else {
+            val data = sendMessageWithAttachments(channel, message)
+            client.httpClient.client.submitFormWithBinaryData("$BASE_URL/channels/${channel.id}/messages", data)
+                .bodyAsText()
+        }
         val serial = json.decodeFromString<SerialMessage>(response)
         return CompletableDeferred(client.utils.createMessage(serial))
     }

@@ -29,11 +29,8 @@ class Avatar : Command(
             return
         }
 
-        val user = if (args.isEmpty()) {
-            client.user
-        } else {
-            event.message.mentions.values.first()
-        }
+        val user = if (event.message.mentions.isEmpty()) client.user
+        else event.message.mentions.values.first()
 
         event.message.channel.sendMessage(
             MessageBuilder()

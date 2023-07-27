@@ -21,7 +21,7 @@ class SysFetch : Command(
         val gpu = sysInfo.hardware.graphicsCards.first()
         val ram = sysInfo.hardware.memory
         val up = sysInfo.operatingSystem.systemUptime
-        val speed = proc.maxFreq / 1000000000
+        val speed = (proc.maxFreq / 1000000000).takeIf { it > 0 } ?: proc.maxFreq.takeIf { it == -1L } ?: "Unknown "
         event.message.channel.sendMessage(
             MessageBuilder()
                 .appendLine("Fetching info...")
@@ -40,7 +40,7 @@ class SysFetch : Command(
                     .appendLine("    •Vendor:: ${proc.processorIdentifier.vendor}")
                     .appendLine("    •Cores:: ${proc.physicalProcessorCount}")
                     .appendLine("    •Threads:: ${proc.logicalProcessorCount}")
-                    .appendLine("    •Speed:: ${if (speed > 0) speed else proc.maxFreq}GHz")
+                    .appendLine("    •Speed:: ${speed}GHz")
                     .appendLine("•RAM:\n-----")
                     .appendLine("    •Total Memory:: ${(ram.total / 1073741824) + 1}GB")
                     .appendLine("    •Free Memory:: ${(ram.available / 1073741824) + 1}GB")

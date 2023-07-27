@@ -11,7 +11,7 @@ import org.caffeine.chaos.api.utils.awaitThen
 class UserInfo :
     Command(
         arrayOf("userinfo", "user"),
-        CommandInfo("UserInfo", "user <@user>", "Displays information about a mentioned user.")
+        CommandInfo("UserInfo", "user [@user]", "Displays information about a mentioned user, or yourself.")
     ) {
     override suspend fun onCalled(
         client : Client,

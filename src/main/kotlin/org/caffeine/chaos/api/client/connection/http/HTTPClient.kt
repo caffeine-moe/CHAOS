@@ -80,13 +80,13 @@ class HTTPClient(val clientImpl : ClientImpl) {
         HttpResponseValidator {
             handleResponseExceptionWithRequest { cause, _ ->
                 if (cause is CancellationException) {
-                    log("Error: ${cause.message}", "API:", LogLevel(LoggerLevel.LOW, clientImpl))
+                    log("Error: ${cause.message}", level = LogLevel(LoggerLevel.LOW, clientImpl))
                 }
                 if (cause.localizedMessage.contains("401 Unauthorized.")) {
-                    log("Invalid token!", "API:", LogLevel(LoggerLevel.LOW, clientImpl))
+                    log("Invalid token!", level = LogLevel(LoggerLevel.LOW, clientImpl))
                     return@handleResponseExceptionWithRequest
                 }
-                log("Error: ${cause.message}", "API:", LogLevel(LoggerLevel.LOW, clientImpl))
+                log("Error: ${cause.message}", level = LogLevel(LoggerLevel.LOW, clientImpl))
             }
         }
     }

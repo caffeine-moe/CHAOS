@@ -19,8 +19,10 @@ data class GuildMemberImpl(
 
     var guildId = Snowflake(0)
 
+    var roleIds = listOf<Snowflake>()
+
     override val roles : Map<Snowflake, Role>
-        get() = client.user.guildRoles.filterValues { it.guild.id == guild.id }
+        get() = client.user.guildRoles.filterValues { it.guild.id == guild.id && it.id in roleIds }
 
     override var guild : Guild
         get() = runBlocking(client.coroutineContext) { client.user.fetchGuild(guildId) }

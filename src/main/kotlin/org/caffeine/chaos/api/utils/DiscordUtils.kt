@@ -149,6 +149,7 @@ class DiscordUtils(val client : ClientImpl) {
             payload.mute,
             client
         ).also {
+            it.roleIds = payload.roles
             it.guild = guild
         }
     }

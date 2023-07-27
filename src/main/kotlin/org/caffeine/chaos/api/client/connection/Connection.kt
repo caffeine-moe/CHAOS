@@ -40,47 +40,29 @@ class Connection(private val client : ClientImpl) {
 
     suspend fun execute(type : ConnectionType) {
         when (type) {
-            ConnectionType.CONNECT -> {
-                connect(client.utils.generateIdentify())
-            }
-
-            ConnectionType.DISCONNECT -> {
-                disconnect()
-                return
-            }
-
-            ConnectionType.RECONNECT -> {
-                reconnect()
-                return
-            }
-
-            ConnectionType.RECONNECT_AND_RESUME -> {
-                reconnectResume()
-            }
-
-            ConnectionType.KILL -> {
-                disconnect(true)
-                return
-            }
+            ConnectionType.CONNECT -> connect(client.utils.generateIdentify())
+            ConnectionType.DISCONNECT -> disconnect()
+            ConnectionType.RECONNECT -> reconnect()
+            ConnectionType.RECONNECT_AND_RESUME -> reconnectResume()
+            ConnectionType.KILL -> disconnect(true)
         }
     }
 
-    suspend fun sendHeartBeat() {
-        try {
-            val heartbeat = json.encodeToString(
-                HeartBeat(
-                    OPCODE.HEARTBEAT.value,
-                    gatewaySequence
-                )
+    suspend fun sendHeartBeat() = try {
+        webSocket.ensureActive()
+        val heartbeat = json.encodeToString(
+            HeartBeat(
+                OPCODE.HEARTBEAT.value,
+                gatewaySequence
             )
-            webSocket.send(heartbeat)
-        } catch (e : CancellationException) {
-            reconnect()
-        }
+        )
+        webSocket.send(heartbeat)
+    } catch (e : Exception) {
+        reconnect()
     }
 
     private suspend fun startHeartBeat(interval : Long) {
-        log("Heartbeat started.", "API:", LogLevel(LoggerLevel.LOW, client))
+        log("Heartbeat started.", level = LogLevel(LoggerLevel.LOW, client))
         while (true) {
             sendHeartBeat()
             delay(interval.milliseconds)
@@ -116,7 +98,7 @@ class Connection(private val client : ClientImpl) {
 
             log(
                 "${ConsoleColour.GREEN.value}Connected to the Discord gateway!",
-                "API:",
+                level =
                 LogLevel(LoggerLevel.LOW, client)
             )
 
@@ -126,7 +108,7 @@ class Connection(private val client : ClientImpl) {
                 OPCODE.HELLO.value -> {
                     log(
                         "Client received OPCODE 10 HELLO, sending ${payload.name} payload and starting heartbeat.",
-                        "API:",
+                        level =
                         LogLevel(LoggerLevel.LOW, client)
                     )
                     heartBeat = launch { startHeartBeat(init.d.heartbeat_interval) }
@@ -135,7 +117,7 @@ class Connection(private val client : ClientImpl) {
 
                     send(Frame.Text(payload.payload))
 
-                    log("${payload.name} sent.", "API:", LogLevel(LoggerLevel.LOW, client))
+                    log("${payload.name} sent.", level = LogLevel(LoggerLevel.LOW, client))
 
                     readSocket()
                 }
@@ -163,7 +145,10 @@ class Connection(private val client : ClientImpl) {
         heartBeat.cancelAndJoin()
         webSocket.close()
         ready = false
-        log("Client logged out.", "API:", LogLevel(LoggerLevel.LOW, client))
+        log(
+            "Client logged out.", level =
+            LogLevel(LoggerLevel.LOW, client)
+        )
         if (kill) webSocket.cancel("Killed.")
     }
 
