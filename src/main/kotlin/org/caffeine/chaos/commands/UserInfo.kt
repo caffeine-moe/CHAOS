@@ -11,7 +11,7 @@ import org.caffeine.chaos.api.utils.awaitThen
 class UserInfo :
     Command(
         arrayOf("userinfo", "user"),
-        CommandInfo("UserInfo", "user [@user]", "Displays information about a mentioned user, or yourself.")
+        CommandInfo("UserInfo", "user [@User/ID]", "Displays information about a mentioned user, or yourself.")
     ) {
     override suspend fun onCalled(
         client : Client,
@@ -36,15 +36,14 @@ class UserInfo :
                 }
             return
         }
-        val usrInfo = usr
         val sdf = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        val acd = sdf.format(usrInfo.id.timestamp.toEpochMilliseconds())
+        val acd = sdf.format(usr.id.timestamp.toEpochMilliseconds())
         event.message.channel.sendMessage(
             MessageBuilder()
                 .appendLine("**User info for ${usr.username}**")
-                .appendLine("**Id:** ${usrInfo.id}")
-                .appendLine("**Username:** ${usrInfo.username}")
-                .appendLine("**Avatar:** <${usrInfo.avatarUrl()}>")
+                .appendLine("**Id:** ${usr.id}")
+                .appendLine("**Username:** ${usr.username}")
+                .appendLine("**Avatar:** <${usr.avatarUrl()}>")
                 .appendLine("**Account Creation Date:** $acd")
         ).awaitThen { message ->
             onComplete(message, true)

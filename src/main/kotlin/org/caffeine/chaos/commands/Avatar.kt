@@ -2,12 +2,14 @@ package org.caffeine.chaos.commands
 
 import org.caffeine.chaos.api.client.Client
 import org.caffeine.chaos.api.client.ClientEvent
+import org.caffeine.chaos.api.entities.Snowflake
+import org.caffeine.chaos.api.entities.asSnowflake
 import org.caffeine.chaos.api.utils.MessageBuilder
 import org.caffeine.chaos.api.utils.awaitThen
 
 class Avatar : Command(
     arrayOf("avatar", "pfp", "av"),
-    CommandInfo("Avatar", "av [@autoDeleteUser]", "Sends your avatar or a mentioned users avatar.")
+    CommandInfo("Avatar", "av [@User/ID]", "Sends your avatar or a mentioned users avatar.")
 ) {
     override suspend fun onCalled(
         client : Client,
@@ -15,12 +17,15 @@ class Avatar : Command(
         args : List<String>,
         cmd : String,
     ) {
-        if (args.isNotEmpty() && event.message.mentions.isEmpty()) {
+        if (args.isNotEmpty() && event.message.mentions.isEmpty() && !Snowflake.validValues.contains(
+                args.first().toULong()
+            )
+        ) {
             event.message.channel.sendMessage(
                 error(
                     client,
                     event,
-                    "'${args.joinToString(" ")}}' is not a mention.",
+                    "'${args.joinToString(" ")}}' is not a mention or valid ID.",
                     commandInfo
                 )
             ).awaitThen {
@@ -29,7 +34,9 @@ class Avatar : Command(
             return
         }
 
-        val user = if (event.message.mentions.isEmpty()) client.user
+        val user = if (event.message.mentions.isEmpty()) if (args.isNotEmpty()) client.user.fetchUser(
+            args.first().asSnowflake()
+        ) else client.user
         else event.message.mentions.values.first()
 
         event.message.channel.sendMessage(
