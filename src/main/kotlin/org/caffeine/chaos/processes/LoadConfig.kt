@@ -4,7 +4,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.SerializationException
 import org.caffeine.chaos.config
 import org.caffeine.chaos.configFile
-import org.caffeine.chaos.utils.json
+import org.caffeine.chaos.json
 import org.caffeine.octane.utils.log
 import kotlin.system.exitProcess
 

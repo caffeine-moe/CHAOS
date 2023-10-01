@@ -1,7 +1,7 @@
 package org.caffeine.chaos.commands
 
 import kotlinx.serialization.encodeToString
-import org.caffeine.chaos.utils.json
+import org.caffeine.chaos.json
 import org.caffeine.octane.client.Client
 import org.caffeine.octane.client.ClientEvent
 import org.caffeine.octane.client.user.ClientUser

@@ -1,10 +1,7 @@
 package org.caffeine.chaos.utils
 
-import kotlinx.serialization.json.Json
 import org.caffeine.octane.utils.ConsoleColour
 import java.time.LocalDate
-
-val json = Json
 
 // clears console and sets colour to white
 fun clear() {

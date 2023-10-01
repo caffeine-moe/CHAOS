@@ -1,6 +1,7 @@
 package org.caffeine.chaos
 
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.Json
 import org.caffeine.chaos.config.Config
 import org.caffeine.chaos.handlers.handleArgs
 import org.caffeine.chaos.handlers.handleMessage
@@ -32,6 +33,8 @@ var scamLinks = listOf<String>()
 lateinit var config : Config
 
 var configFile = File("config.json")
+
+val json = Json { prettyPrint = true }
 
 suspend fun init(args : Array<String> = arrayOf()) {
     clear()

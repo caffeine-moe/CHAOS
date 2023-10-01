@@ -9,7 +9,7 @@ import io.ktor.util.network.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import org.caffeine.chaos.utils.json
+import org.caffeine.chaos.json
 import org.caffeine.octane.client.Client
 import org.caffeine.octane.client.ClientEvent
 import org.caffeine.octane.utils.MessageBuilder

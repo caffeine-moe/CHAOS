@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.caffeine.chaos.config
-import org.caffeine.chaos.utils.json
+import org.caffeine.chaos.json
 import org.caffeine.chaos.versionDouble
 import org.caffeine.chaos.versionString
 import org.caffeine.octane.utils.ConsoleColour
