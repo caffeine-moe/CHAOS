@@ -2,15 +2,14 @@ package org.caffeine.chaos.processes
 
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import kotlinx.serialization.decodeFromString
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.client.user.ClientUser
-import org.caffeine.chaos.api.utils.json
-import org.caffeine.chaos.api.utils.log
-import org.caffeine.chaos.api.utils.normalHTTPClient
 import org.caffeine.chaos.config
 import org.caffeine.chaos.scamLinks
+import org.caffeine.chaos.utils.json
+import org.caffeine.octane.client.Client
+import org.caffeine.octane.client.ClientEvent
+import org.caffeine.octane.client.user.ClientUser
+import org.caffeine.octane.utils.log
+import org.caffeine.octane.utils.normalHTTPClient
 import java.net.URL
 import kotlin.math.absoluteValue
 

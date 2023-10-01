@@ -1,10 +1,10 @@
 package org.caffeine.chaos.commands
 
 import kotlinx.coroutines.delay
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.utils.awaitThen
 import org.caffeine.chaos.handlers.spamCock
+import org.caffeine.octane.client.Client
+import org.caffeine.octane.client.ClientEvent
+import org.caffeine.octane.utils.awaitThen
 
 class Spam : Command(arrayOf("spam"), CommandInfo("Spam", "spam <Message> <Amount>", "Spams messages in a channel.")) {
     override suspend fun onCalled(

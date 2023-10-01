@@ -1,9 +1,9 @@
 package org.caffeine.chaos.commands
 
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.client.user.ClientUser
-import org.caffeine.chaos.api.typedefs.HypeSquadHouseType
+import org.caffeine.octane.client.Client
+import org.caffeine.octane.client.ClientEvent
+import org.caffeine.octane.client.user.ClientUser
+import org.caffeine.octane.typedefs.HypeSquadHouseType
 
 class HypeSquad :
     Command(

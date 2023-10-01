@@ -1,7 +1,7 @@
 package org.caffeine.chaos.commands
 
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvent
+import org.caffeine.octane.client.Client
+import org.caffeine.octane.client.ClientEvent
 
 class Restore :
     Command(arrayOf("restore"), CommandInfo("Restore", "restore", "Restores your account from a backup json.")) {

@@ -1,13 +1,13 @@
 package org.caffeine.chaos.processes
 
-import org.caffeine.chaos.api.client.user.BaseClientUser
-import org.caffeine.chaos.api.client.user.ClientUser
-import org.caffeine.chaos.api.utils.ConsoleColour
 import org.caffeine.chaos.config
 import org.caffeine.chaos.utils.clear
 import org.caffeine.chaos.utils.printLogo
 import org.caffeine.chaos.utils.printSeparator
 import org.caffeine.chaos.versionString
+import org.caffeine.octane.client.user.BaseClientUser
+import org.caffeine.octane.client.user.ClientUser
+import org.caffeine.octane.utils.ConsoleColour
 
 fun loginPrompt(user : BaseClientUser) {
     val friends = if (user is ClientUser) (user.friends.size) else 0

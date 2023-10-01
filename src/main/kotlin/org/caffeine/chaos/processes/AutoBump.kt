@@ -1,9 +1,9 @@
 package org.caffeine.chaos.processes
 /*
 import kotlinx.coroutines.coroutineScope
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvents
-import org.caffeine.chaos.api.utils.log
+client.Client
+client.ClientEvents
+import org.caffeine.octane.utils.log
 
 class AutoBump : Command(arrayOf("bump", "autobump", "sbump"), CommandInfo("AutoBump", "bump", "Autobumps.")) {
     override suspend fun onCalled(

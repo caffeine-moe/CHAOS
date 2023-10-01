@@ -2,23 +2,21 @@ package org.caffeine.chaos.commands
 
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import io.ktor.http.*
 import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
 import io.ktor.util.network.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.decodeFromString
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.utils.MessageBuilder
-import org.caffeine.chaos.api.utils.awaitThen
-import org.caffeine.chaos.api.utils.json
-import org.caffeine.chaos.api.utils.normalHTTPClient
+import org.caffeine.chaos.utils.json
+import org.caffeine.octane.client.Client
+import org.caffeine.octane.client.ClientEvent
+import org.caffeine.octane.utils.MessageBuilder
+import org.caffeine.octane.utils.awaitThen
+import org.caffeine.octane.utils.normalHTTPClient
 import java.net.InetAddress
-import java.net.URI
+import java.net.UnknownHostException
 
 class IP : Command(arrayOf("ip"), CommandInfo("IP", "ip <IP/URL>", "Looks up information about a specified IP/URL.")) {
 
@@ -59,29 +57,19 @@ class IP : Command(arrayOf("ip"), CommandInfo("IP", "ip <IP/URL>", "Looks up inf
                 .awaitThen { message -> onComplete(message, true) }
             return
         }
-        event.channel.sendMessage(MessageBuilder().appendLine("Looking up IP/URL"))
-            .awaitThen { message ->
+        var error = ""
+        event.channel.sendMessage("Looking up IP/URL")
+            .awaitThen { lookup ->
                 val url = args.joinToString(" ")
                 try {
-                    val host = if (url.contains("://")) {
-                        withContext(Dispatchers.IO) {
-                            URI(url).toURL().host
-                        }
-                    } else {
-                        val selectorManager = ActorSelectorManager(Dispatchers.IO)
-                        val con = aSocket(selectorManager).tcp().connect(url, 443)
-                        con.remoteAddress.toJavaAddress().hostname
-                    }
-                    val ip = withContext(Dispatchers.IO) {
-                        InetAddress.getByName(host).hostAddress
-                    }
+                    val ip = InetAddress.getByName(url).hostAddress
                     val response =
                         normalHTTPClient.request("http://ip-api.com/json/$ip?fields=28561407")
                     val parsedResponse =
                         json.decodeFromString<IPAPIResponse>(response.bodyAsText())
                     when (parsedResponse.status == "success") {
                         true -> {
-                            message.edit(
+                            lookup.edit(
                                 MessageBuilder()
                                     .appendLine("**Information for IP/URL $url**")
                                     .appendLine("**IP:** $ip")
@@ -99,20 +87,17 @@ class IP : Command(arrayOf("ip"), CommandInfo("IP", "ip <IP/URL>", "Looks up inf
                         }
 
                         false -> {
-                            message.edit(error(client, event, parsedResponse.message, commandInfo))
-                                .awaitThen { message -> onComplete(message, true) }
+                            error = parsedResponse.message
                         }
                     }
                 } catch (e : Exception) {
                     when (e) {
-                        is UnresolvedAddressException -> {
-                            message.edit(error(client, event, "IP/URL is invalid.", commandInfo))
-                                .awaitThen { message -> onComplete(message, true) }
-                            return
+                        is UnknownHostException, is UnresolvedAddressException -> {
+                            error = "IP/URL is invalid."
                         }
 
                         is SocketTimeoutException -> {
-                            message.edit(
+                            lookup.edit(
                                 MessageBuilder()
                                     .appendLine(":pensive: Connection timed out")
                                     .appendLine("Try a different IP or URL...")
@@ -122,11 +107,14 @@ class IP : Command(arrayOf("ip"), CommandInfo("IP", "ip <IP/URL>", "Looks up inf
                         }
 
                         else -> {
-                            message.edit(error(client, event, e.message.toString(), commandInfo))
-                                .awaitThen { message -> onComplete(message, true) }
-                            return
+                            error = e.message.toString()
+                            e.printStackTrace()
                         }
                     }
+                }
+                if (error.isNotBlank()) {
+                    lookup.edit(error(client, event, error, commandInfo))
+                        .awaitThen { message -> onComplete(message, true) }
                 }
             }
     }

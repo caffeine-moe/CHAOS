@@ -1,8 +1,8 @@
 package org.caffeine.chaos.commands
 
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.utils.clear
+import org.caffeine.octane.client.Client
+import org.caffeine.octane.client.ClientEvent
 
 class Clear : Command(arrayOf("clear"), CommandInfo("Clear", "clear", "Clears the CHAOS console.")) {
     override suspend fun onCalled(

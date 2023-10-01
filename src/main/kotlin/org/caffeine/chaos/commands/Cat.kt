@@ -2,11 +2,11 @@ package org.caffeine.chaos.commands
 
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.utils.MessageBuilder
-import org.caffeine.chaos.api.utils.awaitThen
-import org.caffeine.chaos.api.utils.normalHTTPClient
+import org.caffeine.octane.client.Client
+import org.caffeine.octane.client.ClientEvent
+import org.caffeine.octane.utils.MessageBuilder
+import org.caffeine.octane.utils.awaitThen
+import org.caffeine.octane.utils.normalHTTPClient
 
 class Cat : Command(arrayOf("cat", "meow"), CommandInfo("cat", "cat", "Sends a random cat image!")) {
     override suspend fun onCalled(

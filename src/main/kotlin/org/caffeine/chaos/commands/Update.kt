@@ -1,8 +1,8 @@
 package org.caffeine.chaos.commands
 
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvent
 import org.caffeine.chaos.processes.update
+import org.caffeine.octane.client.Client
+import org.caffeine.octane.client.ClientEvent
 
 class Update :
     Command(arrayOf("update", "updoot", "upgrade"), CommandInfo("update", "update", "Checks for CHAOS updates.")) {

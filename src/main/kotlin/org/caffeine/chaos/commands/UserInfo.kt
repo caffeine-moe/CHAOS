@@ -1,12 +1,12 @@
 package org.caffeine.chaos.commands
 
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.entities.Snowflake
-import org.caffeine.chaos.api.entities.asSnowflake
-import org.caffeine.chaos.api.entities.users.User
-import org.caffeine.chaos.api.utils.MessageBuilder
-import org.caffeine.chaos.api.utils.awaitThen
+import org.caffeine.octane.client.Client
+import org.caffeine.octane.client.ClientEvent
+import org.caffeine.octane.entities.Snowflake
+import org.caffeine.octane.entities.asSnowflake
+import org.caffeine.octane.entities.users.User
+import org.caffeine.octane.utils.MessageBuilder
+import org.caffeine.octane.utils.awaitThen
 
 class UserInfo :
     Command(

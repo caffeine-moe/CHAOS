@@ -2,9 +2,9 @@ package org.caffeine.chaos.processes
 
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.config
+import org.caffeine.octane.client.Client
+import org.caffeine.octane.utils.log
 import java.nio.file.FileSystems
 import java.nio.file.Paths
 import java.nio.file.StandardWatchEventKinds

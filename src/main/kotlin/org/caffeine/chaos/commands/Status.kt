@@ -1,9 +1,9 @@
 package org.caffeine.chaos.commands
 
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.client.user.ClientUser
-import org.caffeine.chaos.api.typedefs.StatusType
+import org.caffeine.octane.client.Client
+import org.caffeine.octane.client.ClientEvent
+import org.caffeine.octane.client.user.ClientUser
+import org.caffeine.octane.typedefs.StatusType
 
 class Status :
     Command(arrayOf("status", "st"), CommandInfo("Status", "status <Status>", "Changes your current status.")) {

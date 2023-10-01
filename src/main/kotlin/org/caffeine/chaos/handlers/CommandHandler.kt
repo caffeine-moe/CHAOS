@@ -1,11 +1,11 @@
 package org.caffeine.chaos.handlers
 
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.commands.Command
 import org.caffeine.chaos.config
 import org.caffeine.chaos.processes.autoDeleteUser
+import org.caffeine.octane.client.Client
+import org.caffeine.octane.client.ClientEvent
+import org.caffeine.octane.utils.log
 import kotlin.reflect.full.createInstance
 
 

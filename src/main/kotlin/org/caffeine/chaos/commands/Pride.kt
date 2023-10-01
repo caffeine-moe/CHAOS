@@ -2,9 +2,10 @@ package org.caffeine.chaos.commands
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.utils.MessageBuilder
+
+import org.caffeine.octane.client.Client
+import org.caffeine.octane.client.ClientEvent
+import org.caffeine.octane.utils.MessageBuilder
 import java.awt.AlphaComposite
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream

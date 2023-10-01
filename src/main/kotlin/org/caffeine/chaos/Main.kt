@@ -1,13 +1,6 @@
 package org.caffeine.chaos
 
 import kotlinx.coroutines.runBlocking
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.client.on
-import org.caffeine.chaos.api.typedefs.ClientType
-import org.caffeine.chaos.api.typedefs.LoggerLevel
-import org.caffeine.chaos.api.utils.ConsoleColour
-import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.config.Config
 import org.caffeine.chaos.handlers.handleArgs
 import org.caffeine.chaos.handlers.handleMessage
@@ -17,6 +10,13 @@ import org.caffeine.chaos.processes.loadConfig
 import org.caffeine.chaos.utils.clear
 import org.caffeine.chaos.utils.printLogo
 import org.caffeine.chaos.utils.printSeparator
+import org.caffeine.octane.client.Client
+import org.caffeine.octane.client.ClientEvent
+import org.caffeine.octane.client.on
+import org.caffeine.octane.typedefs.ClientType
+import org.caffeine.octane.typedefs.LoggerLevel
+import org.caffeine.octane.utils.ConsoleColour
+import org.caffeine.octane.utils.log
 import java.io.File
 
 // version lmao

@@ -1,17 +1,17 @@
 package org.caffeine.chaos.commands
 
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.entities.message.Message
-import org.caffeine.chaos.api.typedefs.LogLevel
-import org.caffeine.chaos.api.typedefs.LoggerLevel
-import org.caffeine.chaos.api.utils.ConsoleColour
-import org.caffeine.chaos.api.utils.MessageBuilder
-import org.caffeine.chaos.api.utils.MessageSendData
-import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.config
 import org.caffeine.chaos.handlers.commandList
 import org.caffeine.chaos.processes.autoDeleteBot
+import org.caffeine.octane.client.Client
+import org.caffeine.octane.client.ClientEvent
+import org.caffeine.octane.entities.message.Message
+import org.caffeine.octane.typedefs.LogLevel
+import org.caffeine.octane.typedefs.LoggerLevel
+import org.caffeine.octane.utils.ConsoleColour
+import org.caffeine.octane.utils.MessageBuilder
+import org.caffeine.octane.utils.MessageSendData
+import org.caffeine.octane.utils.log
 
 sealed class Command(val commandNames : Array<String>, val commandInfo : CommandInfo) {
 

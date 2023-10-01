@@ -1,14 +1,14 @@
 package org.caffeine.chaos.commands
 
 import kotlinx.coroutines.delay
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.entities.asSnowflake
-import org.caffeine.chaos.api.entities.channels.TextBasedChannel
-import org.caffeine.chaos.api.entities.message.MessageFilters
-import org.caffeine.chaos.api.typedefs.MessageType
-import org.caffeine.chaos.api.utils.awaitThen
 import org.caffeine.chaos.handlers.purgeCock
+import org.caffeine.octane.client.Client
+import org.caffeine.octane.client.ClientEvent
+import org.caffeine.octane.entities.asSnowflake
+import org.caffeine.octane.entities.channels.TextCapableChannel
+import org.caffeine.octane.entities.message.MessageFilters
+import org.caffeine.octane.typedefs.MessageType
+import org.caffeine.octane.utils.awaitThen
 
 class Purge : Command(
     arrayOf("purge", "sclear"),
@@ -19,7 +19,7 @@ class Purge : Command(
         client : Client,
         event : ClientEvent.MessageCreate,
         args : List<String>,
-    ) : TextBasedChannel? {
+    ) : TextCapableChannel? {
         return when {
             args.isEmpty() -> {
                 event.channel.sendMessage(error(client, event, "Not enough parameters.", commandInfo))

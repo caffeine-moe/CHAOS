@@ -1,14 +1,14 @@
 package org.caffeine.chaos.handlers
 
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.client.user.ClientUser
-import org.caffeine.chaos.api.entities.users.User
-import org.caffeine.chaos.api.typedefs.ChannelType
-import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.commands.oldCustomStatus
 import org.caffeine.chaos.commands.oldStatus
 import org.caffeine.chaos.config
+import org.caffeine.octane.client.Client
+import org.caffeine.octane.client.ClientEvent
+import org.caffeine.octane.client.user.ClientUser
+import org.caffeine.octane.entities.users.User
+import org.caffeine.octane.typedefs.ChannelType
+import org.caffeine.octane.utils.log
 
 private val cooldown : HashMap<User, Long> = HashMap()
 private val todm : MutableList<User> = mutableListOf()

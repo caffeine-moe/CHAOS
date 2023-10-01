@@ -1,10 +1,9 @@
 package org.caffeine.chaos.commands
 
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.utils.awaitThen
-import org.caffeine.chaos.api.utils.log
 import org.caffeine.chaos.programStartedTime
+import org.caffeine.octane.client.Client
+import org.caffeine.octane.client.ClientEvent
+import org.caffeine.octane.utils.awaitThen
 import kotlin.math.absoluteValue
 
 class Uptime : Command(
@@ -27,7 +26,6 @@ class Uptime : Command(
         val hours = (milliseconds / (1000 * 60 * 60) % 24).toInt().absoluteValue
         val days = (milliseconds / (1000 * 60 * 60 * 24)).toInt().absoluteValue
         val text = "CHAOS has been running for $days days, $hours hours, $minutes minutes and $seconds seconds."
-        log(text, "CHAOS:")
         event.message.channel.sendMessage(text).awaitThen {
             onComplete(it, false)
         }

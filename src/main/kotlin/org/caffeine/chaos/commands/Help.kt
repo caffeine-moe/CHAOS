@@ -1,12 +1,12 @@
 package org.caffeine.chaos.commands
 
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.utils.MessageBuilder
-import org.caffeine.chaos.api.utils.awaitThen
 import org.caffeine.chaos.config
 import org.caffeine.chaos.handlers.commandList
 import org.caffeine.chaos.versionString
+import org.caffeine.octane.client.Client
+import org.caffeine.octane.client.ClientEvent
+import org.caffeine.octane.utils.MessageBuilder
+import org.caffeine.octane.utils.awaitThen
 
 class Help : Command(
     arrayOf("help", "cmds", "commands"),
@@ -27,6 +27,18 @@ class Help : Command(
                 onComplete(message, true)
             }
             return
+        }
+        if (args.first() == "all") {
+            commandList.toList().sortedBy { it.first }.map { m ->
+                val command = m.second
+                "${command.commandInfo.name.trim()}${
+                    if (command.commandNames.size > 1) "\nAliases: ${
+                        command.commandNames.joinToString(
+                            ", "
+                        )
+                    }" else ""
+                }\nUsage: >${command.commandInfo.usage}\nDescription: ${command.commandInfo.description.trim()}"
+            }.toSet().map { println("\n${it}") }
         }
         val command : Command? = commandList[args.first().replace(config.prefix, "")]
         if (command != null) {

@@ -1,9 +1,9 @@
 package org.caffeine.chaos.commands
 
 import com.github.lalyos.jfiglet.FigletFont
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientEvent
-import org.caffeine.chaos.api.utils.awaitThen
+import org.caffeine.octane.client.Client
+import org.caffeine.octane.client.ClientEvent
+import org.caffeine.octane.utils.awaitThen
 
 class Figlet :
     Command(arrayOf("figlet", "fig"), CommandInfo("Figlet", "fig <Text>", "Turns your text into an ascii figlet.")) {
