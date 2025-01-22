@@ -1,16 +1,14 @@
 package org.caffeine.chaos.commands
 
-import org.caffeine.chaos.Command
-import org.caffeine.chaos.CommandInfo
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.octane.client.Client
+import org.caffeine.octane.client.ClientEvent
 
 class Restore :
     Command(arrayOf("restore"), CommandInfo("Restore", "restore", "Restores your account from a backup json.")) {
     override suspend fun onCalled(
         client : Client,
-        event : MessageCreateEvent,
-        args : MutableList<String>,
+        event : ClientEvent.MessageCreate,
+        args : List<String>,
         cmd : String,
     ) {
         if (args.isEmpty()) {

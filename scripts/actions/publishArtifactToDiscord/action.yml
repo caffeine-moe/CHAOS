@@ -1,0 +1,14 @@
+$schema: "https://json.schemastore.org/github-action.json"
+name: "Publish Artifact(s) To Discord Webhook"
+description: ""
+inputs:
+  path:
+    description: "Path of artifacts"
+    required: true
+    default: "build/libs/"
+  webhook_url:
+    description: "Discord webhook URL"
+    required: true
+runs:
+  using: "node16"
+  main: "index.mjs"

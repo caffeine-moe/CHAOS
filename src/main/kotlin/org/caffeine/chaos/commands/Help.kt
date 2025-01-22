@@ -1,60 +1,65 @@
 package org.caffeine.chaos.commands
 
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import org.caffeine.chaos.Command
-import org.caffeine.chaos.CommandInfo
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.MessageBuilder
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.commandList
+import org.caffeine.chaos.config
+import org.caffeine.chaos.handlers.commandList
 import org.caffeine.chaos.versionString
+import org.caffeine.octane.client.Client
+import org.caffeine.octane.client.ClientEvent
+import org.caffeine.octane.utils.MessageBuilder
+import org.caffeine.octane.utils.awaitThen
 
-class Help : Command(arrayOf("help", "cmds", "commands"),
-    CommandInfo("Help", "help [command]", "Sends the command list URL OR Displays info about a specified command.")) {
+class Help : Command(
+    arrayOf("help", "cmds", "commands"),
+    CommandInfo("Help", "help [command]", "Sends the command list URL OR Displays info about a specified command.")
+) {
     override suspend fun onCalled(
         client : Client,
-        event : MessageCreateEvent,
-        args : MutableList<String>,
+        event : ClientEvent.MessageCreate,
+        args : List<String>,
         cmd : String,
-    ) : Unit = coroutineScope {
+    ) {
         if (args.isEmpty()) {
-            event.channel.sendMessage(MessageBuilder()
-                .appendLine("**CHAOS v$versionString**")
-                .appendLine("**Commands:** https://caffeine.moe/CHAOS/commands/")
-                .build()
-            ).thenAccept { message ->
-                launch {
-                    onComplete(message, client, client.config.auto_delete.bot.content_generation)
-                }
+            event.channel.sendMessage(
+                MessageBuilder()
+                    .appendLine("**CHAOS v$versionString**")
+                    .appendLine("**Commands:** https://caffeine.moe/CHAOS/commands/")
+            ).awaitThen { message ->
+                onComplete(message, true)
             }
-            return@coroutineScope
+            return
         }
-        val command : Command? = commandList[args.first().replace(client.config.prefix, "")]
+        if (args.first() == "all") {
+            commandList.toList().sortedBy { it.first }.map { m ->
+                val command = m.second
+                "${command.commandInfo.name.trim()}${
+                    if (command.commandNames.size > 1) "\nAliases: ${
+                        command.commandNames.joinToString(
+                            ", "
+                        )
+                    }" else ""
+                }\nUsage: >${command.commandInfo.usage}\nDescription: ${command.commandInfo.description.trim()}"
+            }.toSet().map { println("\n${it}") }
+        }
+        val command : Command? = commandList[args.first().replace(config.prefix, "")]
         if (command != null) {
             val msg = MessageBuilder()
-                .appendLine("__**${command.commandInfo.name}**__")
-            val sb = StringBuilder()
+                .append("```asciidoc")
+                .appendLine(command.commandInfo.name)
+                .appendLine("".padStart(command.commandInfo.name.length, '-'))
             if (command.commandNames.size > 1) {
-                for (i : String in command.commandNames) {
-                    sb.append("$i ")
-                }
-                if (sb.isNotBlank()) {
-                    msg.appendLine("**Aliases:** $sb")
-                }
+                msg.appendLine("- Aliases: ${command.commandNames.joinToString(", ")}")
             }
-            msg.appendLine("**Usage:** ${client.config.prefix}${command.commandInfo.usage}")
-            msg.appendLine("**Description:** ${command.commandInfo.description}")
-            event.channel.sendMessage(msg.build()).thenAccept { message ->
-                launch {
-                    onComplete(message, client, client.config.auto_delete.bot.content_generation)
-                }
+            msg.appendLine("- Usage: ${config.prefix}${command.commandInfo.usage}")
+            msg.appendLine("- Description: ${command.commandInfo.description}")
+            msg.appendLine("```")
+            event.channel.sendMessage(msg).awaitThen { message ->
+                onComplete(message, true)
             }
-            return@coroutineScope
+            return
         }
         event.channel.sendMessage(error(client, event, "${args.joinToString(" ")} is not a command.", commandInfo))
-            .thenAccept {
-                launch { onComplete(it, client, true) }
+            .awaitThen {
+                onComplete(it, true)
             }
     }
 }

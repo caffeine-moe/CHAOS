@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Backup(
     val servers : Boolean,
-    val dmed_users : Boolean,
+    val dmedUsers : Boolean,
     val friends : Boolean,
-    val block_list : Boolean,
+    val blockList : Boolean,
 )

@@ -1,60 +1,63 @@
 {
-  "token": "YOUR-TOKEN",
+  "token": "YOUR_TOKEN",
   "prefix": ".",
   "updater": {
-    "enabled": true,
+    "enabled": false,
     "notify": true,
-    "auto_download": true,
+    "autoDownload": false,
     "exit": true
   },
   "logger": {
     "commands": true,
     "responses": true,
-    "anti_scam": true,
-    "nitro_sniper": true,
-    "auto_bump": true
+    "deletedMessages": false,
+    "antiScam": true,
+    "nitroSniper": true,
+    "autoBump": true,
+    "cdnpls": true
   },
-  "web_ui": {
-    "enabled": true
+  "afk": {
+    "message": "I am afk, back soon.",
+    "cooldown": 30,
+    "status": "idle"
   },
-  "auto_delete": {
+  "autoDelete": {
     "user": {
       "enabled": true,
       "delay": 0
     },
     "bot": {
       "enabled": true,
-      "content_generation": false,
+      "contentGeneration": false,
       "delay": 5
     }
   },
-  "anti_scam": {
+  "antiScam": {
     "enabled": true,
     "block": true
   },
-  "exchange": {
-    "base": "XMR",
-    "target": "GBP"
-  },
   "backup": {
     "servers": true,
-    "dmed_users": true,
+    "dmedUsers": true,
     "friends": true,
-    "block_list": true
+    "blockList": true
   },
   "restore": {
-    "dmed_users": true,
+    "dmedUsers": true,
     "friends": true,
-    "block_list": true
+    "blockList": true
   },
-  "nitro_sniper": {
+  "nitroSniper": {
     "enabled": true
   },
-  "auto_bump": {
+  "autoBump": {
     "interval": 2,
     "error": [
       5,
       15
     ]
+  },
+  "cdnpls": {
+    "enabled": false
   }
 }

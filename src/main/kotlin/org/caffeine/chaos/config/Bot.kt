@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Bot(
     val enabled : Boolean,
-    val content_generation : Boolean,
+    val contentGeneration : Boolean,
     val delay : Long,
 )

@@ -1,16 +1,14 @@
 package org.caffeine.chaos.commands
 
-import org.caffeine.chaos.Command
-import org.caffeine.chaos.CommandInfo
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.purgeCock
+import org.caffeine.chaos.handlers.purgeCock
+import org.caffeine.octane.client.Client
+import org.caffeine.octane.client.ClientEvent
 
 class SPurge : Command(arrayOf("spurge"), CommandInfo("SPurge", "spurge", "Stops the purger.")) {
     override suspend fun onCalled(
         client : Client,
-        event : MessageCreateEvent,
-        args : MutableList<String>,
+        event : ClientEvent.MessageCreate,
+        args : List<String>,
         cmd : String,
     ) {
         purgeCock = true

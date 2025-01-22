@@ -1,28 +1,22 @@
 package org.caffeine.chaos.commands
 
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import org.caffeine.chaos.Command
-import org.caffeine.chaos.CommandInfo
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.message.MessageBuilder
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.log
+import org.caffeine.octane.client.Client
+import org.caffeine.octane.client.ClientEvent
+import org.caffeine.octane.utils.ConsoleColour
+import org.caffeine.octane.utils.awaitThen
+import org.caffeine.octane.utils.log
 
 class Token : Command(arrayOf("token"), CommandInfo("Token", "token", "Logs your token into the console.")) {
     override suspend fun onCalled(
         client : Client,
-        event : MessageCreateEvent,
-        args : MutableList<String>,
+        event : ClientEvent.MessageCreate,
+        args : List<String>,
         cmd : String,
-    ) =
-        coroutineScope {
-            if (event.message.content.lowercase() == "${client.config.prefix}token") {
-                log(client.config.token, "TOKEN:\u001B[38;5;33m")
-                event.channel.sendMessage(MessageBuilder().append("Token logged to console.").build())
-                    .thenAccept { message ->
-                        this.launch { onComplete(message, client, true) }
-                    }
+    ) {
+        log("${client.user.username} : ${client.user.token}", "TOKEN:${ConsoleColour.BLUE.value}")
+        event.message.channel.sendMessage("Token logged to console.")
+            .awaitThen { message ->
+                onComplete(message, true)
             }
-        }
+    }
 }

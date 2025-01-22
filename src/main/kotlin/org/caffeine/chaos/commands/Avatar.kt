@@ -1,50 +1,48 @@
 package org.caffeine.chaos.commands
 
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import org.caffeine.chaos.Command
-import org.caffeine.chaos.CommandInfo
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.DiscordUser
-import org.caffeine.chaos.api.client.message.MessageBuilder
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
+import org.caffeine.octane.client.Client
+import org.caffeine.octane.client.ClientEvent
+import org.caffeine.octane.entities.Snowflake
+import org.caffeine.octane.entities.asSnowflake
+import org.caffeine.octane.utils.MessageBuilder
+import org.caffeine.octane.utils.awaitThen
 
-class Avatar : Command(arrayOf("avatar", "pfp", "av"),
-    CommandInfo("Avatar", "av [@user]", "Sends your avatar or a mentioned users avatar.")) {
+class Avatar : Command(
+    arrayOf("avatar", "pfp", "av"),
+    CommandInfo("Avatar", "av [@User/ID]", "Sends your avatar or a mentioned users avatar.")
+) {
     override suspend fun onCalled(
         client : Client,
-        event : MessageCreateEvent,
-        args : MutableList<String>,
+        event : ClientEvent.MessageCreate,
+        args : List<String>,
         cmd : String,
-    ) =
-        coroutineScope {
-            if (args.isNotEmpty() && event.message.mentions.isEmpty()) {
-                event.channel.sendMessage(error(client,
-                    event,
-                    "'${args.joinToString(" ")}}' is not a mentioned user.",
-                    commandInfo)).thenAccept { message ->
-                    this.launch { onComplete(message, client, true) }
-                }
-                return@coroutineScope
-            }
-
-            val user : DiscordUser
-            val avatarURL : String
-
-            if (args.isEmpty()) {
-                user = client.user
-                avatarURL = client.user.avatarUrl()
-            } else {
-                user = event.message.mentions.first()
-                avatarURL = user.avatarUrl()
-            }
-
-            event.channel.sendMessage(
-                MessageBuilder()
-                    .appendLine("${user.discriminatedName}'s Avatar")
-                    .appendLine(avatarURL)
-                    .build()
+    ) {
+        if (args.isNotEmpty() && event.message.mentions.isEmpty() && !Snowflake.validValues.contains(
+                args.first().toULong()
             )
-                .thenAccept { this.launch { onComplete(it, client, client.config.auto_delete.bot.content_generation) } }
+        ) {
+            event.message.channel.sendMessage(
+                error(
+                    client,
+                    event,
+                    "'${args.joinToString(" ")}}' is not a mention or valid ID.",
+                    commandInfo
+                )
+            ).awaitThen {
+                onComplete(it, false)
+            }
+            return
         }
+
+        val user = if (event.message.mentions.isEmpty()) if (args.isNotEmpty()) client.user.fetchUser(
+            args.first().asSnowflake()
+        ) else client.user
+        else event.message.mentions.values.first()
+
+        event.message.channel.sendMessage(
+            MessageBuilder()
+                .appendLine("`${user.username}`'s Avatar")
+                .addAttachmentFromURL(user.avatarUrl())
+        ).awaitThen { onComplete(it, true) }
+    }
 }

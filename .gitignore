@@ -5,3 +5,6 @@ Backup
 Resources
 out
 .gradle
+ready.json
+src/test
+scripts/actions/publishArtifactToDiscord

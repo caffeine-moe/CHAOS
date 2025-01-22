@@ -1,75 +1,93 @@
 package org.caffeine.chaos.commands
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
-import org.caffeine.chaos.Command
-import org.caffeine.chaos.CommandInfo
-import org.caffeine.chaos.api.client.Client
-import org.caffeine.chaos.api.client.ClientBlockedUser
-import org.caffeine.chaos.api.client.ClientFriend
-import org.caffeine.chaos.api.client.ClientGuild
-import org.caffeine.chaos.api.client.message.MessageBuilder
-import org.caffeine.chaos.api.client.message.MessageCreateEvent
-import org.caffeine.chaos.api.jsonp
+import org.caffeine.chaos.json
+import org.caffeine.octane.client.Client
+import org.caffeine.octane.client.ClientEvent
+import org.caffeine.octane.client.user.ClientUser
+import org.caffeine.octane.utils.MessageBuilder
+import org.caffeine.octane.utils.awaitThen
 import java.io.File
-import java.nio.file.Files
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class Backup :
-    Command(arrayOf("backup", "bak"),
-        CommandInfo("Backup", "backup", "Backs up your discord account in json format.")) {
+    Command(
+        arrayOf("backup", "bak"),
+        CommandInfo("Backup", "backup", "Backs up your discord account in json format.")
+    ) {
 
     @kotlinx.serialization.Serializable
-    data class BackupStructure(
-        val blockList : List<ClientBlockedUser>,
-        val friends : List<ClientFriend>,
-        val guilds : List<ClientGuild>,
+    private data class PrivateUser(
+        val username : String,
+        val id : String,
+        val avatar : String,
+    )
+
+    @kotlinx.serialization.Serializable
+    private data class PrivateGuild(
+        val name : String,
+        val id : String,
+        val vanityUrl : String? = null,
+    )
+
+    @kotlinx.serialization.Serializable
+    private data class BackupStructure(
+        val blockList : List<PrivateUser>,
+        val friends : List<PrivateUser>,
+        val guilds : List<PrivateGuild>,
     )
 
     override suspend fun onCalled(
         client : Client,
-        event : MessageCreateEvent,
-        args : MutableList<String>,
+        event : ClientEvent.MessageCreate,
+        args : List<String>,
         cmd : String,
-    ) : Unit = coroutineScope {
-        val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yy_HH:mm:ss"))
-        event.channel.sendMessage(MessageBuilder().append("Performing backup...").build())
-            .thenAccept { message ->
-                launch {
-                    val blockList = client.user.relationships.blockedUsers.getList()
-                    val friends = client.user.relationships.friends.getList()
-                    val guilds = client.user.guilds.getList()
-                    val textToWrite = jsonp.encodeToString(BackupStructure(blockList, friends, guilds))
+    ) {
+        val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd_MM_yy_HH_mm_ss"))
+        event.message.channel.sendMessage("Performing backup...")
+            .awaitThen { message ->
+                try {
+                    if (client.user !is ClientUser) return
+                    val cu = (client.user as ClientUser)
+                    val simpleGuilds =
+                        client.user.guilds.values.map { PrivateGuild(it.name, it.id.toString(), it.vanityUrl) }
+                    val friends = cu.friends.values.map {
+                        PrivateUser(
+                            it.username,
+                            it.id.toString(),
+                            it.avatarUrl()
+                        )
+                    }
+
+                    val blockList = cu.blocked.values.map {
+                        PrivateUser(
+                            it.username,
+                            it.id.toString(),
+                            it.avatarUrl()
+                        )
+                    }
+
+                    val textToWrite = json.encodeToString(BackupStructure(blockList, friends, simpleGuilds))
+
                     val p = File("Backup")
-                    if (!p.exists()) {
-                        p.mkdir()
+                    if (!p.exists()) p.mkdir()
+
+                    val f : File = if (p.absolutePath.startsWith("/")) {
+                        File("${p.absolutePath}/$time.json")
+                    } else {
+                        File("${p.absolutePath}\\$time.json")
                     }
-                    var f : File
-                    f = File("${p.absolutePath}\\$time.json")
-                    if (p.absolutePath.startsWith("/")) {
-                        f = File("${p.absolutePath}/$time.json")
-                    }
-                    withContext(Dispatchers.IO) {
-                        Files.createFile(f.toPath())
-                    }
-                    File(f.toPath().toString()).writeText(textToWrite)
-                    try {
-                        message.edit(MessageBuilder()
+                    f.writeText(textToWrite)
+                    message.edit(
+                        MessageBuilder()
                             .appendLine("Backup successful!")
                             .appendLine("Saved to: ${f.absolutePath}")
-                            .build()).thenAccept { message ->
-                            launch {
-                                onComplete(message, client, true)
-                            }
-                        }
-                        return@launch
-                    } catch (e : Exception) {
-                        e.printStackTrace()
+                    ).awaitThen {
+                        onComplete(it, true)
                     }
+                } catch (e : Exception) {
+                    e.printStackTrace()
                 }
             }
     }
