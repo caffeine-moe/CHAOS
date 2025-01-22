@@ -20,15 +20,9 @@ import org.caffeine.octane.utils.ConsoleColour
 import org.caffeine.octane.utils.log
 import java.io.File
 
-<<<<<<< HEAD
 // version lmao
 const val versionString : String = "3.0.0"
 const val versionDouble : Double = 3.00
-=======
-//version lmao
-const val versionString : String = "2.2.2"
-const val versionDouble : Double = 2.22
->>>>>>> main
 
 // gets unix time in ms when program starts
 val programStartedTime = System.currentTimeMillis()
@@ -60,7 +54,6 @@ fun main(args : Array<String> = arrayOf()) = runBlocking {
             loggerLevel = LoggerLevel.ALL
         }
     }
-<<<<<<< HEAD
 
     client.on<ClientEvent.Ready> { handleReady(client) }
     client.on<ClientEvent.MessageCreate> { handleMessage(this, client) }
@@ -68,6 +61,4 @@ fun main(args : Array<String> = arrayOf()) = runBlocking {
 
     client.login()
 }
-=======
-}
->>>>>>> main
+
