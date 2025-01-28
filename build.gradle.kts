@@ -20,7 +20,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("com.github.caffeine-moe:octane:main-SNAPSHOT")
+    implementation("com.github.caffeine-moe:octane:0c407936a9")
     implementation("io.arrow-kt:arrow-core:1.2.1")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.21")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
