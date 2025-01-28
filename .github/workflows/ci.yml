@@ -29,7 +29,7 @@ jobs:
       - name: Build
         run: | 
            ./gradlew ShadowJar
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: CHAOS
           path: build/libs/*.jar
